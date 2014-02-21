@@ -1,0 +1,121 @@
+/* Definitions of all the task types in Xconq.
+   Copyright (C) 1993-1996, 1998-2000 Stanley T. Shebs.
+   Copyright (C) 2005 Eric A. McDonald.
+
+Xconq is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.  See the file COPYING.  */
+
+/* The argument prototype list will be shared by the create_, set_,
+   and push_ functions, but need not include all parameters of a task,
+   only those that are useful to pass in when manipulating tasks from
+   an interface or AI.  Thus the argtypes string will not usually
+   match the list of function arguments, since argtypes may include
+   internal state for the task, and not a pointer to the unit
+   executing the task. */
+
+DEF_TASK("none", "None", TASK_NONE, "", do_none_task,
+	 create_none_task,
+	 set_none_task, net_set_none_task,
+	 push_none_task, net_push_none_task,
+	 (Unit *unit))
+
+/* In alphabetical order... */
+
+DEF_TASK("build", "Complete construction of", TASK_BUILD, "Un", do_build_task,
+	 create_build_task,
+	 set_build_task, net_set_build_task,
+	 push_build_task, net_push_build_task,
+	 (Unit *unit, int id, int cp))
+
+DEF_TASK("capture", "Capture", TASK_CAPTURE, "Unn", do_capture_task,
+	 create_capture_task,
+	 set_capture_task, net_set_capture_task,
+	 push_capture_task, net_push_capture_task,
+	 (Unit *unit, int id, int capmethod, int n))
+
+DEF_TASK("collect", "Collect", TASK_COLLECT, "mxy", do_collect_task,
+	 create_collect_task,
+	 set_collect_task, net_set_collect_task,
+	 push_collect_task, net_push_collect_task,
+	 (Unit *unit, int m, int x, int y))
+
+DEF_TASK("construct", "Construct", TASK_CONSTRUCT, "unUxy", do_construct_task,
+	 create_construct_task,
+	 set_construct_task, net_set_construct_task,
+	 push_construct_task, net_push_construct_task,
+	 (Unit *unit, int u, int run, int transid, int x, int y))
+
+DEF_TASK("develop", "Develop", TASK_DEVELOP, "un", do_develop_task,
+	 create_develop_task,
+	 set_develop_task, net_set_develop_task,
+	 push_develop_task, net_push_develop_task,
+	 (Unit *unit, int u, int n))
+
+DEF_TASK("disband", "Disband", TASK_DISBAND, "", do_disband_task,
+	 create_disband_task,
+	 set_disband_task, net_set_disband_task,
+	 push_disband_task, net_push_disband_task,
+	 (Unit *unit))
+
+DEF_TASK("hit-pos", "Hit position", TASK_HIT_POSITION, "xyz", 
+	 do_hit_position_task,
+	 create_hit_position_task,
+	 set_hit_position_task, net_set_hit_position_task,
+	 push_hit_position_task, net_push_hit_position_task,
+	 (Unit *unit, int x, int y, int z))
+
+DEF_TASK("hit-unit", "Hit", TASK_HIT_UNIT, "Un", do_hit_unit_task,
+	 create_hit_unit_task,
+	 set_hit_unit_task, net_set_hit_unit_task,
+	 push_hit_unit_task, net_push_hit_unit_task,
+	 (Unit *unit, int id, int hitmethod, int n))
+
+DEF_TASK("move-dir", "Move dir", TASK_MOVE_DIR, "dn", do_move_dir_task,
+	 create_move_dir_task,
+	 set_move_dir_task, net_set_move_dir_task,
+	 push_move_dir_task, net_push_move_dir_task,
+	 (Unit *unit, int d, int n))
+
+DEF_TASK("move-to", "Move to", TASK_MOVE_TO, "xyznc", do_move_to_task,
+	 create_move_to_task,
+	 set_move_to_task, net_set_move_to_task,
+	 push_move_to_task, net_push_move_to_task,
+	 (Unit *unit, int x, int y, int n))
+
+DEF_TASK("occupy", "Occupy", TASK_OCCUPY, "Uc", do_occupy_task,
+	 create_occupy_task,
+	 set_occupy_task, net_set_occupy_task,
+	 push_occupy_task, net_push_occupy_task,
+	 (Unit *unit, Unit *unit2))
+
+DEF_TASK("pickup", "Pickup", TASK_PICKUP, "Uc", do_pickup_task,
+	 create_pickup_task,
+	 set_pickup_task, net_set_pickup_task,
+	 push_pickup_task, net_push_pickup_task,
+	 (Unit *unit, Unit *unit2))
+
+DEF_TASK("produce", "Produce", TASK_PRODUCE, "mnn", do_produce_task,
+	 create_produce_task,
+	 set_produce_task, net_set_produce_task,
+	 push_produce_task, net_push_produce_task,
+	 (Unit *unit, int m, int n))
+
+DEF_TASK("repair", "Repair", TASK_REPAIR, "Un", do_repair_task,
+	 create_repair_task,
+	 set_repair_task, net_set_repair_task,
+	 push_repair_task, net_push_repair_task,
+	 (Unit *unit, int id, int hp))
+
+DEF_TASK("resupply", "Resupply", TASK_RESUPPLY, "mU", do_resupply_task,
+	 create_resupply_task,
+	 set_resupply_task, net_set_resupply_task,
+	 push_resupply_task, net_push_resupply_task,
+	 (Unit *unit, int m))
+
+DEF_TASK("sentry", "Sentry", TASK_SENTRY, "n", do_sentry_task,
+	 create_sentry_task,
+	 set_sentry_task, net_set_sentry_task,
+	 push_sentry_task, net_push_sentry_task,
+	 (Unit *unit, int n))

@@ -1,0 +1,8 @@
+Makefile
+*.log
+*.xcq
+Xconq.Warnings
+*.cmds
+*.cmds?
+joined.txt
+*.syms

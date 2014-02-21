@@ -1,0 +1,87 @@
+
+Conversion Instructions
+
+If you're sitting here reading this then you're probably someone
+with quite a bit of prior Xconq scenario writing behind you.  Probably
+you've just gotten xc7.0 and you've managed to compile it and your
+fingers are itching to get your old favorite from xc5.5 up and running
+with the new interface.  Well, not to spoil your fun, but it ain't
+that easy.  First off, xc7.0 is a horse of a different color.  You
+may have noticed from perusing the documentation that it has bags
+and bags of features that you always wanted in xc5.5.  And that the
+syntax has changed drastically.  And that the files and libraries
+have changed. And that... well, you get the idea.
+
+The conversion scripts provided will help to ease your transition
+from xc5.5 to xc7.0, but they won't save you from learning the new
+syntax or features.  These scripts will NOT generate working games,
+but they will generate valid GDL syntax (for the most part :-).
+From there you can start tweaking.
+
+So let's get started -- Hint Number 1, use the info file... you
+will need the doc close at hand during this process and you can
+find a copy of this document contained in the Game Design manual in
+the section on converting from xc5.5.
+
+The first thing to consider is the naming of the files/modules.
+There are already some loose guidelines for naming xc7.0 game
+modules.  Terrain or worlds tend to be in modules named t-something.g.
+These are roughly equivalent to xc5.5 .map files.  Collections
+of units, such as the cities to populate world maps, are in
+files named u-something.g, where "something" generally identifies which
+map they go with in addition to a general identifier (e.g. 1942).
+Name generators are in files starting with ng-, but you probably
+don't know or care about these yet.  And finally, if you are building
+a set of scenarios based on a core set of rules you should consider a
+naming scheme that will link them all together so that players can
+find them easily.
+
+Having said all that, let's get on to the conversion.  The conversion
+scripts go somewhat blindly on the assumption that you've split
+everything up in the "standard" way.  That is, assuming that you've
+got a super spiffy big scenario, that it comes in three parts: a
+period definition, a map and a scenario file.  If not, if you've
+DARED to combine some of these files, then you may find yourself
+doing some text editing before running the conversion.
+
+Convert the map using map2g.  You want to use the -o option and your
+new t-something name and the -b with a full pathname to the period
+file that has the terrain type definitions in it.  This allows map2g
+to set the default base module and the get the appropriate character
+list for creating the map file.  The generated map will be in world
+format, i.e. it will wrap from side to side.  This is because that's
+how all the maps were in 5.5.  Changing these over to area format is
+definitely non-trivial (at least for me :-).
+
+Next do a pass over the .scn file with scn2g.  Again you should use
+-o to get the naming the way you want it.  This should leave you with
+a very pretty set of units and a very rough hack at a set of victory
+conditions (i.e. scorekeepers).  The scorekeepers will need to be
+completely reworked since the guy who wrote scn2g didn't understand
+how scorekeepers are supposed to be designed.
+
+Now the home stretch, convert the .per file with per2g.  Keep an eye
+on the output.  If it complains about Unkown keywords then you've
+probably used one of the more obscure features of Xconq 5.5.  Don't
+panic because your obscurity will be preserved in the resulting game
+module.  Now you have to edit the module and start sorting out the
+bits that per2g couldn't handle.  Search for occurances of FIX.  These
+are lines inserted by per2g to note places that need your attention.
+Per2g may have done nothing to the line except comment it out or it
+may have done a partial (or partially correct) conversion or it may
+have done a complete and valid conversion but wishes to call your
+attention to related forms that can be added.
+
+For this process you are going to need to have the documentation
+close at hand to make sure you get the syntax right.  The best thing
+to do is read thru the Game Design section of the manual and then have
+the Reference Manual on hand while editing the module.
+
+Generally the place to start will be the make and maker lines from
+the from the old period definition.  These are not converted at all
+by per2g (because the machinery has changed so radically in 7.0) and
+are essential to being able to start up the game.  From there you
+can work your way through the rest of the file with frequent references
+to the manual and occasional test runs.  Check out the debugging tips
+in the Game Design manual.
+

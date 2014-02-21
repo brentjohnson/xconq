@@ -1,0 +1,30 @@
+(game-module "ww2-sides"
+  (default-base-module "ww2-adv")
+  )
+
+(set sides-min 10)
+(set sides-max 10)
+
+;;; All the participants and major neutrals.
+;;; (should include all the "minor powers" eventually)
+
+(side 1 uk (name "UK") (noun "Brit") (adjective "British")
+  (emblem-name "flag-uk"))
+(side 2 fr (name "France") (adjective "French")
+  (emblem-name "flag-france"))
+(side 3 us (name "USA") (adjective "American")
+  (emblem-name "flag-usa"))
+(side 4 de (name "Germany") (adjective "German")
+  (emblem-name "flag-swastika"))
+(side 5 it (name "Italy") (adjective "Italian")
+  (emblem-name "flag-italy"))
+(side 6 jp (name "Japan") (adjective "Japanese")
+  (emblem-name "flag-japan"))
+(side 7 su (name "USSR") (adjective "Soviet")
+  (emblem-name "flag-ussr"))
+(side 8 zh (name "China") (adjective "Chinese")
+  (emblem-name "flag-china-old"))
+(side 9 es (name "Spain") (noun "Spaniard") (adjective "Spanish")
+  (emblem-name "flag-spain"))
+(side 10 tr (name "Turkey") (noun "Turk") (adjective "Turkish")
+  (emblem-name "flag-turkey"))

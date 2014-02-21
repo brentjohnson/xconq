@@ -1,0 +1,323 @@
+
+RCS file: /cvs/xconq/xconq/kernel/skelconq.c,v
+Working file: skelconq.c
+head: 1.25
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.13
+	xconq-7_4-branch: 1.13.0.2
+	xconq-7_4-branchpoint: 1.13
+	xtconq-pre-removal: 1.10
+	xconq-7_3_3-release: 1.8
+	xconq-7_3_2-release: 1.8
+	xconq-7_3_1-release: 1.8
+	xconq-7_3-branch: 1.8.0.2
+	xconq-7_3-branchpoint: 1.8
+keyword substitution: kv
+total revisions: 25;	selected revisions: 25
+description:
+----------------------------
+revision 1.25
+date: 2004/01/04 19:32:11;  author: kingdon;  state: Exp;  lines: +18 -2
+	* curses/ccmd.c (cmd_error): Call vsnprintf not vsprintf.
+	* kernel/skelconq.c (cmd_error): Add this function.
+----------------------------
+revision 1.24
+date: 2003/12/02 04:48:49;  author: kingdon;  state: Exp;  lines: +12 -0
+	Fix bug which produced a warning every time one tried to save the
+	game:
+	* kernel/skelconq.c (low_run_warning, low_init_warning): Exit on
+	warnings, so they don't show up as "pass" in autotests.
+	* kernel/autotest.c (test_save): New test, which catches this bug.
+	* kernel/write.c, kernel/misc.h (find_name): Extract the module
+	name code from write_entire_game_state to here.  Allocate the
+	buffer in init_write.
+----------------------------
+revision 1.23
+date: 2003/03/02 13:17:09;  author: ronne;  state: Exp;  lines: +7 -0
+Update feature legends at the start of each turn.
+----------------------------
+revision 1.22
+date: 2003/02/25 23:25:14;  author: ronne;  state: Exp;  lines: +4 -0
+Comment out agreement code. Fix some bugs.
+----------------------------
+revision 1.21
+date: 2002/12/30 20:58:20;  author: ronne;  state: Exp;  lines: +3 -1
+Expurgate wrapx from the interfaces.
+----------------------------
+revision 1.20
+date: 2002/11/10 21:12:13;  author: ronne;  state: Exp;  lines: +1 -1
+Fix so that skelconq compiles again.
+----------------------------
+revision 1.19
+date: 2002/10/28 14:16:23;  author: shebs;  state: Exp;  lines: +0 -9
+Prune all the obsolete Think C and MPW bits, streamline macheaders.h.
+----------------------------
+revision 1.18
+date: 2002/10/12 22:25:27;  author: kingdon;  state: Exp;  lines: +0 -47
+	* kernel/autotest.c, kernel/autotest.h: Move autotester
+	from skelconq.c to here.
+	* kernel/Makefile.in: Update accordingly.
+	* kernel/move.c (prep_enter_action, do_enter_action,
+	check_enter_action): Rename unit3 to newtransport for clarity.
+	* kernel/unit.c (type_can_occupy): Rename u2 to utransport.
+	* kernel/autotest.c, test/auto.g: Add tests regarding occupancy:
+	headed for reproducing the
+	http://sources.redhat.com/ml/xconq7/2000/msg00365.html bug (in
+	which tcltk "i" skips a bomber in a certain common case) but
+	aren't there yet.
+----------------------------
+revision 1.17
+date: 2002/09/21 21:31:33;  author: ronne;  state: Exp;  lines: +15 -3
+Fixes to the research display code.
+----------------------------
+revision 1.16
+date: 2002/07/11 21:49:29;  author: kingdon;  state: Exp;  lines: +60 -0
+	* kernel/actions.c (adjust_tooling_crossover): Fix formula for
+	computing the crossover.
+	* kernel/skelconq.c: Add automated test for this (functions
+	autotest, fail, and assert_true; --auto option).
+	* test/auto.g: Added.
+	* test/Makefile.in: Add "make check-auto" target.
+----------------------------
+revision 1.15
+date: 2002/05/10 19:07:11;  author: ronne;  state: Exp;  lines: +1 -1
+Make skelconq C++ compatible.
+----------------------------
+revision 1.14
+date: 2001/01/17 01:26:33;  author: ronne;  state: Exp;  lines: +0 -6
+Clean up mac network code.
+----------------------------
+revision 1.13
+date: 2000/11/25 18:24:56;  author: shebs;  state: Exp;  lines: +4 -3
+	* skelconq.c (update_side_display): Fix bad variable ref.
+----------------------------
+revision 1.12
+date: 2000/11/24 01:17:18;  author: ronne;  state: Exp;  lines: +7 -46
+General cleanup of kernel prototypes - part 3.
+----------------------------
+revision 1.11
+date: 2000/09/16 12:54:29;  author: shebs;  state: Exp;  lines: +1 -1
+	* unit.h (unit_in_vector): New macro, access to unit vector.
+	* ai.c (run_ai_plan_adjust): Use it.
+	* cmd.c (apply_to_all_selected_units): Ditto.
+	* run.c (units_still_acting, side_move_some_units): Ditto.
+	* skelconq.c (list_actors): Ditto.
+	* ui.c (autonext_unit, autonext_unit_inbox): Ditto.
+	* maclist.c (draw_unit_list_entry, etc): Ditto.
+	* macwins.c (get_selected_construction_unit, etc): Ditto.
+	* cdraw.c (draw_unit_list_entry): Ditto.
+
+	* run.c (need_ai_plan_research): Remove.
+	(run_side_research): Don't set it.
+	* ai.c (run_local_ai): Test numatypes instead of
+	need_ai_plan_research.
+
+	* run.c (side_move_some_units): Add more comments, use local vars
+	for side->actionvector.
+	(run_construction): Test side_has_ai instead of side_has_local_ai,
+	fix occupant test.
+----------------------------
+revision 1.10
+date: 2000/08/21 21:34:35;  author: ronne;  state: Exp;  lines: +1 -1
+Consolidate for_all_sides macros.
+----------------------------
+revision 1.9
+date: 2000/07/03 16:43:38;  author: shebs;  state: Exp;  lines: +0 -2
+	Change unit viewing to use view objects instead of a layer.
+	* unit.h (UnitView): New struct.
+	* side.h (Side unitview, unitviewdate): Remove.
+	(Side unit_views): New field.
+	(for_all_view_stack): New macro.
+	(unit_view, set_unit_view, builduview, vside, vtype, vhp, EMPTY,
+	appears_empty, vside_indep, unit_view_date, set_unit_view_date):
+	Remove, no longer used.
+	* config.h (MAXVIEWHISTORY): Remove, no longer used.
+	* side.c (init_view): Remove unit view layer init.
+	(unit_view_at, unit_view_next, add_unit_view, remove_unit_view,
+	mistake_view): New functions.
+	(fn_set_unit_view, fn_set_unit_view_date): Remove.
+	(side_sees_image, all_see_leave, reset_all_views,
+	react_to_seen_unit, see_cell, see_exact, paint_view_1): Rewrite to
+	use view objects.
+	* ai.c (enemies_present): Ditto.
+	* iplayer.c (preferred_build_type): Ditto.
+	* mkroads.c (unit_sees_other_unit): Ditto.
+	* mplayer.c (review_theaters, estimate_strengths,
+	preferred_build_type): Ditto.
+	* plan.c (alternate_target_here, victim_here, target_here,
+	indep_captureable_here, useful_captureable_here,
+	can_capture_neighbor): Ditto.
+	* ps.c (sideno_of_seen_unit_at): Ditto.
+	* run2.c (unit_revolt, visible_to): Ditto.
+	* task.c (target_visible): Ditto.
+	* ui.c (oneliner, dump_text_view
+	* cdraw.c (draw_units, draw_legend, show_closeup): Ditto.
+	* xdraw.c (draw_map_info, etc): Ditto.
+	* macdesign.c (apply_designer_tool): Ditto.
+	* macrow.c (draw_units): Ditto.
+	* tkmain.c (update_mouseover): Ditto.
+	* tkmap.c (draw_units, handle_designer_mouse_down): Ditto.
+	(x_xform_unit_view): New function.
+
+	* init.c (init_all_views): Fold in init_view_2, comment out
+	unit view clearing.
+	* plan.c (threat, usable_cell): Comment out, not used apparently.
+	* read.c (fill_in_side): Comment out unit view reading.
+	* ui.c, ui.h (xform_unit_view_: New function.
+	(utype_seen_at): Comment out unit view case.
+	* write.c (fn_unit_view, fn_unit_view_date): Remove.
+	(write_side_view): Write unit view list instead of layer.
+
+	* cmdline.h (make_default_player_spec): Move decl to here
+	from cmdline.c.
+	* skelconq.c, wconq.c, xconq.c, xtconq.c, xtmain.c: Remove decls
+	that are in cmdline.h.
+	* tkmain.c: Ditto, and include cmdline.h.
+	* cconq.c (make_default_player_spec): New function.
+
+	* tkmain.c (tk_reset_popup_flag): New tcl command.
+
+	* nlang.c (medium_long_unit_handle): Remove unused local.
+----------------------------
+revision 1.8
+date: 2000/04/24 12:56:58;  author: shebs;  state: Exp;  lines: +8 -0
+	* cmdline.c (parse_command_line): Make -host a general option,
+	display info about game module, put variant info after it.
+	(general_usage_info): Mention -x, flush refs to options that have
+	been removed.
+	(player_usage_info): Similarly.
+	(set_players_from_options): Fix location of indepside player
+	creation, use make_default_player_spec.
+	* skelconq.c, wconq.c, xconq.c, xtconq.c (make_default_player_spec):
+	Define.
+	* xconq.c (main): Make version/usage info appear without welcome
+	message.
+----------------------------
+revision 1.7
+date: 2000/03/12 19:55:13;  author: shebs;  state: Exp;  lines: +18 -1
+	skelconq.c, cconq.c (unit_research_dialog, side_research_dialog):
+	Add dummy versions.
+----------------------------
+revision 1.6
+date: 1999/09/21 02:25:17;  author: shebs;  state: Exp;  lines: +1 -22
+	General cleanup of networking support.
+	* side.h (side_has_local_display): Move to here from various
+	files.
+	* tp.h (add_remote_program, etc): Move decls here from tp.c.
+	* tp.c (hosting): Define here.
+	(download_game_module): Copy over more module properties.
+	(receive_packet): Remove L packet.
+	(receive_player_prop): Remove "Pyou" packet.
+	* mac.c (hosting, connection_method_name): Remove, comment out
+	code that uses.
+	(open_remote_connection): Add hosting arg, return result.
+	(close_remote_connection): Add argument.
+	* socket.c: Similarly.
+	* macconq.c, macconq.h, macinit.c, tkmain.c, wconq.c, xconq.c,
+ 	xtconq.c, xtmain.c, cconq.c: Update references.
+	* system.h (open_remote_connection): Update decl.
+	* skelconq.c, macinit.c, wconq.c, xconq.c, xtconq.c, cconq.c
+ 	(you_player, set_you_player, add_remote_player, launch_game):
+ 	Remove, no longer used.
+	* wimfapp.c, imf2x.c, x2imf.c, ximfapp.c, xshowimf.c (my_rid,
+ 	numremotes): Remove, no longer needed.
+
+	* tkmain.c (tk_start_new_game): New tcl command.
+	(check_network): Call popup_game_dialog instead of only removing
+	splash screen items.
+
+	* wconq.c (host_the_game): Register self as first remote program
+	(try_join_game): Send a player spec to host.
+	(launch_game_2): New function.
+----------------------------
+revision 1.5
+date: 1999/09/09 15:02:54;  author: shebs;  state: Exp;  lines: +13 -0
+        Support chat window interaction and >2 network players on Unix.
+        * tp.c (broadcast_message): Remove, move into net_send_message.
+        (add_remote_program, send_remote_id, net_send_chat): New functions.
+        (send_packet): Also wait if hosting, before rids set up.
+        (receive_packet): Add c, p, and r packets.
+        (receive_chat, receive_remote_program): New functions.
+        * unix.c (public_fd, public_fd_valid, remote_fd, fd_valid): New
+        globals.
+        (open_remote_connection, low_send, wait_for, low_receive,
+        close_remote_connection): Rewrite to use them.
+        (accept_remote_connection): New function.
+        (low_receive): Call it for input from public fd.
+
+        * tkconq.tcl (popup_connect_dialog, etc): Remove.
+        (host_game): New proc.
+        (popup_pregame_chat): Implement connection functionality at
+        top of dialog.
+        (add_program): New proc.
+        (send_chat_bdg): New proc.
+        (insert_chat_string): Rewrite to handle different rids.
+        * tkmain.c (tk_try_host_game, tk_send_chat): New functions.
+        (check_network): New function.
+        (initial_ui_init): Set up to call it.
+        (ui_mainloop): Call Tcl_DoOneEvent directly.
+        (add_remote_locally, send_chat): New functions.
+
+        * xconq.c: Change function definitions to new style.
+        (host_the_game): Call add_remote_locally.
+        (try_join_game): Build a default player spec, loop only until
+        my_rid is nonzero.
+
+        * skelconq.c, xtconq.c, macconq.c, cconq.c (add_remote_locally,
+        send_chat): New functions, dummy versions.
+----------------------------
+revision 1.4
+date: 1999/08/28 23:22:44;  author: shebs;  state: Exp;  lines: +6 -0
+        * configure.in: Add --enable-build-warnings to control extra
+        warnings, choose which subdirs to configure based on Unix vs
+        Windows.
+        * configure: Regenerate.
+        * Makefile.in: Eliminate refs to lib-x11.
+        * x11/Makefile.in: Ditto.
+        * curses/Makefile.in, kernel/Makefile.in, tcltk/Makefile.in,
+        x11/Makefile.in: Change UNIX_CFLAGS to autoconf-using HFLAGS,
+        remove WARNING_CFLAGS.
+        * actions.c, ai.c, ai.h, cmdline.c, cmdline.h, conq.h, generic.c,
+        help.h, imf.c, imf.h, imf2imf.c, lisp.c, lisp.h, misc.h, system.h,
+        imf2x.c, xcutil.h: Remove PARAMS usages.
+        * gif.c, help.c, imf.c, imf2imf.c, lisp.c, unix.c, tkmain.c,
+        wimfapp.c, imf2x.c, x2imf.c, xconq.c, xcutil.c: Remove unused
+        variables, add prototypes, etc.
+        * run2.c, side.c, macconq.c: Remove decl of update_area_display.
+        * skelconq.c: Declare _dialog functions.
+        * tkcmd.c: Remove exit_xconq decl.
+        * wconq.c (check_player_displays): Remove uses.
+        * xconq.c: Include tkconq.h.
+
+        * tkconq.h (IMFLIB): Remove.
+        (exit_xconq): Declare.
+        * tkimf.c, tkinit.c: Remove imflib uses.
+        * xconq.h, xcutil.c: Ditto.
+        * ximf.c, xinit.c: Ditto.
+        * PROJECTS: Remove lib-x11 item.
+----------------------------
+revision 1.3
+date: 1999/08/17 12:29:42;  author: shebs;  state: Exp;  lines: +129 -216
+        Eliminate more compiler warnings.
+        * unit.h (ActionDefn dofn, checkfn): Remove fields.
+        * actions.c (execute_action): Dispatch on action type directly,
+        instead of using checkfn and dofn fields.
+        * actions.c, init.c, task.c: Remove unused vars.
+        * game.h, skelconq.c, unit.h: Convert to pure standard C
+        * kernel.h: Move decls of attack_can_damage_or_capture, etc.
+        * misc.h: Remove decl of getenv.
+        * obstack.h, obstack.c: Prototype fn argument of obstack_begin.
+        * plan.c: Make static vars extern.
+        (find_closest_unit): Prototype fn argument.
+----------------------------
+revision 1.2
+date: 1999/06/04 17:25:07;  author: shebs;  state: Exp;  lines: +7 -3
+	* skelconq.c: Update to reflect recent kernel changes.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:33;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

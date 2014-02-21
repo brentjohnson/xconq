@@ -1,0 +1,49 @@
+.TH CCONQ 6 GNU
+.SH NAME
+cconq - curses-based configurable strategy game
+.SH SYNOPSIS
+.B
+cconq
+[ options ] ...
+.SH DESCRIPTION
+\fIcconq\fP is a configurable multi-player strategy game.
+.SH OPTIONS
+.TP 5
+.I [name[,ai]@]host[+advantage]
+adds a human player to the game and assigns to the given host.
+Players get created in the same order as they appear on the command line,
+interleaved with the players created via \fB-e\fP and \fB-A\fP.
+All of the player adding options may be used any number of times in any order.
+.LP
+The following options apply to both \fIcconq\fP and \fIxconq\fP:
+
+.so ../kernel/cmdline.6in
+
+Unlike \fIxconq(6)\fP, \fIcconq\fP allows only one human player in a game.
+.SH AUTHOR
+Stan Shebs (shebs@cygnus.com)
+(with help from many)
+.SH FILES
+\fI~/.xconq/save.xconq\fP	saved game
+.br
+\fI/usr/local/share/xconq/lib/game.dir\fP	directory of playable games
+.br
+\fI/usr/local/share/xconq/lib/*.g\fP	predefined games
+.br
+\fI/usr/local/share/xconq/lib/news.txt\fP	news about features and additions
+.SH "SEE ALSO"
+.br
+.IR xconq(6)
+.br
+.IR "Xconq - the School for Strategy"
+.SH DIAGNOSTICS
+.PP
+If the world is too small for the desired number of players,
+the program will complain about not being able to place units
+in good locations.
+.SH BUGS
+.PP
+Specifying multiple games on the command line is usually asking
+for trouble. 
+.PP
+Some annoying behaviors are actually features.

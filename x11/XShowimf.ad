@@ -1,0 +1,54 @@
+XShowimf*Command.Font:		-adobe-helvetica-bold-r-*-*-12-*-*-*-*-*-*-*
+XShowimf*Label.Font:		-adobe-helvetica-medium-r-*-*-12-*-*-*-*-*-*-*
+XShowimf*Toggle.Font:		-adobe-helvetica-medium-r-*-*-10-*-*-*-*-*-*-*
+XShowimf*increase_magn.Label:	+ magn
+XShowimf*decrease_magn.Label:	- magn
+XShowimf*mainViewport.height:	484
+XShowimf*mainForm.?.top:	ChainTop
+XShowimf*mainForm.?.bottom:	ChainTop
+XShowimf*mainForm.?.left:	ChainLeft
+XShowimf*mainForm.?.right:	ChainLeft
+XShowimf*mainForm.mainViewport.bottom:	ChainBottom
+XShowimf*mainForm.mainViewport.right:	ChainRight
+XShowimf*viewForm.?.top:	ChainTop
+XShowimf*viewForm.?.bottom:	ChainTop
+XShowimf*viewForm.?.left:	ChainLeft
+XShowimf*viewForm.?.right:	ChainLeft
+XShowimf*form.label.width:	310
+XShowimf*message.width:		365
+
+XShowimf*helpText.font:		-adobe-helvetica-medium-r-*-*-14-*-*-*-*-*-*-*
+XShowimf*help.title:		xshowimf help
+XShowimf*helpDone.Label:	done
+XShowimf*helpText.label:\
+\    MAIN WINDOW\n\
+help:  if you see this, you know what it does\n\
+select:  select all families\n\
+deselect:  deselect all families\n\
+toggle:  toggle selection\n\
+read:  read a imf/xbm/xpm file\n\
+save:  save selected families to an imf file\n\
+delete:  delete selected families\n\
+quit:  terminate\n\
+ \n\
+family icons:  click to popup a close-up window\n\
+family names:  click to toggle selection\n\
+ \n\
+    CLOSE-UP WINDOWS\n\
++ magn:  increase mgnification\n\
+- magn:  decrease mgnification\n\
+delete:  delete a single image\n\
+update:  re-read an image from disk\n\
+export:  export an image to disk \n\
+close:  pop down this window\n\
+ \n\
+There are no edit buttons (yet); to edit an\n\
+image, export it to disk, edit it with your\n\
+favorite paint program (in the directory\n\
+selected by the \"-o\" option), and update.
+
+selFile.selFileForm.Font: 	-adobe-helvetica-medium-r-*-*-12-*-*-*-*-*-*-*
+selFile.selFileForm.Label.Font:   -adobe-helvetica-bold-r-*-*-12-*-*-*-*-*-*-*
+selFile.selFileForm.Command.Font: -adobe-helvetica-bold-r-*-*-12-*-*-*-*-*-*-*
+selFile*Scrollbar.thickness:	6
+selFile*selFilePrompt.height:	30

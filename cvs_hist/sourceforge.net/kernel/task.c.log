@@ -1,0 +1,247 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/task.c,v
+Working file: task.c
+head: 1.14
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.12
+	BPT_EMCDONALD_AI_15: 1.12
+	SS_7_5_0_0pre_0_20050612: 1.8
+	BPT_MSKALA_IMF_3: 1.8
+	BPT_MSKALA_SUPPLY_12: 1.8
+	BPT_EMCDONALD_AI_14: 1.8
+	MPT_EMCDONALD_AI_7: 1.3.2.11
+	BPT_EMCDONALD_AI_13: 1.7
+	SS_7_5_0_0pre_0_20050501: 1.7
+	BPT_EMCDONALD_AI_12: 1.7
+	MPT_EMCDONALD_AI_6: 1.3.2.6
+	BPT_EMCDONALD_AI_11: 1.6
+	SS_7_5_0_0pre_0_20050416: 1.6
+	BPT_EMCDONALD_AI_10: 1.6
+	MPT_EMCDONALD_AI_5: 1.3.2.3
+	BPT_EMCDONALD_AI_9: 1.5
+	BPT_EMCDONALD_AI_8: 1.5
+	MPT_EMCDONALD_AI_4: 1.3.2.2
+	BPT_EMCDONALD_AI_7: 1.4
+	MPT_EMCDONALD_AI_3: 1.3.2.1
+	BPT_EMCDONALD_AI_6: 1.4
+	BPT_MSKALA_SUPPLY_11: 1.4
+	BPT_EMCDONALD_AI_5: 1.4
+	MPT_EMCDONALD_AI_2: 1.3.2.1
+	SS_7_5_0_0pre_0_20050322: 1.4
+	BPT_MSKALA_SUPPLY_10: 1.4
+	BPT_EMCDONALD_AI_4: 1.4
+	MPT_EMCDONALD_AI_1: 1.3.2.1
+	BPT_EMCDONALD_AI_3: 1.3
+	BPT_MSKALA_SUPPLY_9: 1.3
+	MPT_MSKALA_SUPPLY_3: 1.2.2.1
+	BPT_EMCDONALD_AI_2: 1.3
+	BPT_MSKALA_SUPPLY_8: 1.3
+	MPT_MSKALA_SUPPLY_2: 1.2.2.1
+	BPT_MSKALA_SUPPLY_7: 1.3
+	BRANCH_EMCDONALD_AI: 1.3.0.2
+	BPT_EMCDONALD_AI_1: 1.3
+	BPT_MSKALA_SUPPLY_6: 1.3
+	SS_7_5_0_0pre_0_20050225: 1.3
+	BPT_MSKALA_SUPPLY_5: 1.3
+	MPT_MSKALA_SUPPLY_1: 1.2.2.1
+	BPT_MSKALA_SUPPLY_4: 1.3
+	BPT_MSKALA_SUPPLY_3: 1.3
+	BPT_MSKALA_SUPPLY_2: 1.3
+	SS_7_5_0_0pre_0_20050208: 1.3
+	BPT_MSKALA_IMF_2: 1.2
+	BRANCH_MSKALA_SUPPLY: 1.2.0.2
+	BPT_MSKALA_SUPPLY_1: 1.2
+	SS_7_5_0_0pre_0_20050117: 1.1.1.1
+	SS_7_5_0_0pre_0_20050108: 1.1.1.1
+	SS_7_5_0_0pre_0_20041228: 1.1.1.1
+	BRANCH_MSKALA_IMF: 1.1.1.1.0.2
+	BPT_MSKALA_IMF_1: 1.1.1.1
+	SS_7_5_0_0pre_0_20041211: 1.1.1.1
+	SS_7_5_0_0pre_0_20041126: 1.1.1.1
+	GENESIS: 1.1.1.1
+	PRIVATE_TREE_1: 1.1.1
+keyword substitution: kv
+total revisions: 33;	selected revisions: 33
+description:
+----------------------------
+revision 1.14
+date: 2005/09/17 16:21:22;  author: eric_mcdonald;  state: Exp;  lines: +3 -0
+Fix non-adjacent movement from transport bug.
+----------------------------
+revision 1.13
+date: 2005/08/28 00:45:39;  author: matthewskala;  state: Exp;  lines: +1 -1
+Fix a segfault with the "idle" command
+----------------------------
+revision 1.12
+date: 2005/07/10 13:28:38;  author: eric_mcdonald;  state: Exp;  lines: +6 -0
+Update and extend image library.
+Improvement of AI tactical response.
+----------------------------
+revision 1.11
+date: 2005/07/04 00:51:12;  author: eric_mcdonald;  state: Exp;  lines: +71 -24
+Simplify and improve capture logic.
+Further improve hit-unit logic.
+Allow fire to capture out to ZOC range, plus 1.
+----------------------------
+revision 1.10
+date: 2005/07/03 02:20:38;  author: eric_mcdonald;  state: Exp;  lines: +55 -19
+Simplify and improve hit-unit logic.
+----------------------------
+revision 1.9
+date: 2005/06/25 22:57:48;  author: eric_mcdonald;  state: Exp;  lines: +5 -5
+Remove multi-part units functionality.
+----------------------------
+revision 1.8
+date: 2005/06/06 03:03:46;  author: eric_mcdonald;  state: Exp;  lines: +463 -397
+Merge from 'MPT_EMCDONALD_AI_6' to 'MPT_EMCDONALD_AI_7'.
+----------------------------
+revision 1.7
+date: 2005/04/30 23:35:09;  author: eric_mcdonald;  state: Exp;  lines: +98 -101
+Merge from 'MPT_EMCDONALD_AI_5' to 'MPT_EMCDONALD_AI_6'.
+Many non-AI-related changes included in this merge.
+----------------------------
+revision 1.6
+date: 2005/04/16 01:17:11;  author: eric_mcdonald;  state: Exp;  lines: +31 -3
+Merge from 'MPT_EMCDONALD_AI_4' to 'MPT_EMCDONALD_AI_5'.
+----------------------------
+revision 1.5
+date: 2005/04/05 01:53:38;  author: eric_mcdonald;  state: Exp;  lines: +21 -0
+Merge from 'MPT_EMCDONALD_AI_3' to 'MPT_EMCDONALD_AI_4'.
+----------------------------
+revision 1.4
+date: 2005/03/21 03:42:07;  author: eric_mcdonald;  state: Exp;  lines: +8 -5
+Merge from root of 'BRANCH_EMCDONALD_AI' to 'MPT_EMCDONALD_AI_1'.
+----------------------------
+revision 1.3
+date: 2005/01/30 05:21:50;  author: eric_mcdonald;  state: Exp;  lines: +0 -18
+branches:  1.3.2;
+Fix bug in ACP-indep construction.
+Fix obscure bug with AI-controlled sides not finishing their turns.
+Add a short circuit to one of the ACP-indep construction util functions.
+----------------------------
+revision 1.2
+date: 2005/01/22 18:42:02;  author: eric_mcdonald;  state: Exp;  lines: +1 -0
+branches:  1.2.2;
+Fix crashing bug in ACP-indep construction.
+----------------------------
+revision 1.1
+date: 2004/11/21 03:01:22;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.1;
+Initial revision
+----------------------------
+revision 1.1.1.1
+date: 2004/11/21 03:01:22;  author: eric_mcdonald;  state: Exp;  lines: +0 -0
+branches:  1.1.1.1.2;
+Initial import from private repo into SF repo.
+----------------------------
+revision 1.1.1.1.2.2
+date: 2005/06/06 03:39:36;  author: eric_mcdonald;  state: Exp;  lines: +620 -523
+Merged in all trunk changes between BPT_MSKALA_IMF_2 and BPT_MSKALA_IMF_3.
+----------------------------
+revision 1.1.1.1.2.1
+date: 2005/01/28 03:35:59;  author: eric_mcdonald;  state: Exp;  lines: +1 -0
+Merge in trunk changes between BPT_MSKALA_IMF_1 and BPT_MSKALA_IMF_2.
+----------------------------
+revision 1.2.2.3
+date: 2005/06/06 03:18:21;  author: eric_mcdonald;  state: Exp;  lines: +613 -501
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_11' and 'BPT_MSKALA_SUPPLY_12'.
+----------------------------
+revision 1.2.2.2
+date: 2005/03/21 03:58:09;  author: eric_mcdonald;  state: Exp;  lines: +8 -5
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_9' and 'BPT_MSKALA_SUPPLY_10'.
+----------------------------
+revision 1.2.2.1
+date: 2005/02/09 18:11:30;  author: matthewskala;  state: Exp;  lines: +0 -18
+Merge in changes from trunk, fix bug by allowing unit material stores to go negative during economy phase.
+----------------------------
+revision 1.3.2.13
+date: 2005/07/23 22:21:55;  author: eric_mcdonald;  state: Exp;  lines: +21 -77
+Start improvement of AI tactical handler.
+Fix combat awards bugs.
+Fix crashing bugs.
+Fix change type bug.
+----------------------------
+revision 1.3.2.12
+date: 2005/07/10 15:42:53;  author: eric_mcdonald;  state: Exp;  lines: +131 -42
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_14' and 'BPT_EMCDONALD_AI_15'.
+----------------------------
+revision 1.3.2.11
+date: 2005/06/05 20:53:01;  author: eric_mcdonald;  state: Exp;  lines: +0 -2
+Ensure that Tkconq and the generic UI code rebuild when AI files are changed.
+Add support for autoconf assignment of "sizeof" macros.
+Start to add support for making primitve integer types of known size.
+Remove or disable more code associated with the colonization plan.
+Improve colonization support in constructor oprole.
+Prepare support for action masks.
+Remove now-unused 'buildingdone' flag.
+Delete remnants of special ACP-indep construction code.
+----------------------------
+revision 1.3.2.10
+date: 2005/06/05 03:03:01;  author: eric_mcdonald;  state: Exp;  lines: +1 -2
+Fix bugs in building and self-improvement.
+Fix bug with Tkconq action-enablement in UI.
+Make ACP-indep construction work correctly again.
+Fix some (but not all) end-of-turn pauses.
+----------------------------
+revision 1.3.2.9
+date: 2005/06/03 02:32:43;  author: eric_mcdonald;  state: Exp;  lines: +68 -278
+Make creation and building ACP-less.
+Rework build task.
+Some more repair-related tests.
+Improvement task management. Include support for enqueuing ops.
+Fix crashing bug in SDL interface.
+Fix apparent bug in net receive code.
+Cleanup code.
+----------------------------
+revision 1.3.2.8
+date: 2005/05/29 22:32:28;  author: eric_mcdonald;  state: Exp;  lines: +153 -2
+Implement new construction features.
+Fix bugs in operational roles.
+Fix bug in hp-recovery mechanism.
+Improve construction AI.
+Fix bugs related to change-type action.
+----------------------------
+revision 1.3.2.7
+date: 2005/05/21 17:29:29;  author: eric_mcdonald;  state: Exp;  lines: +258 -130
+Archive or delete some unmaintained games that do not work well.
+Implement new construction and repair features.
+Improve support for operational roles.
+Add tatical-level calculations for AI.
+Enhance materials consumption code.
+----------------------------
+revision 1.3.2.6
+date: 2005/04/30 20:42:54;  author: eric_mcdonald;  state: Exp;  lines: +0 -1
+Fix bug in resupply.
+----------------------------
+revision 1.3.2.5
+date: 2005/04/27 02:57:26;  author: eric_mcdonald;  state: Exp;  lines: +23 -32
+Couple of minor AI tweaks regarding resupply.
+----------------------------
+revision 1.3.2.4
+date: 2005/04/22 16:36:17;  author: eric_mcdonald;  state: Exp;  lines: +75 -68
+Some experimental AI improvements.
+Some proven-to-be-good AI improvements.
+----------------------------
+revision 1.3.2.3
+date: 2005/04/13 01:55:21;  author: eric_mcdonald;  state: Exp;  lines: +31 -3
+More treasury-checking functions.
+Many AI tweaks, plus foundation for further enhancements.
+Fix bug in my earlier bugfix in the economy code.
+----------------------------
+revision 1.3.2.2
+date: 2005/04/04 02:45:14;  author: eric_mcdonald;  state: Exp;  lines: +21 -0
+Fix crashing bug in unit creation code.
+Various and sundry AI improvements.
+----------------------------
+revision 1.3.2.1
+date: 2005/03/21 03:19:40;  author: eric_mcdonald;  state: Exp;  lines: +8 -5
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_1' and 'BPT_EMCDONALD_AI_3'.
+Add new unit analysis capabilities to AI.
+Implement a plan-decision lottery. (Still needs work.)
+Break out common, useful parts of kernel action-checking code.
+Provide a normalization macro.
+Fix bug with quoted encounter lists.
+=============================================================================

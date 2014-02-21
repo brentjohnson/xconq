@@ -1,0 +1,292 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/table.def,v
+Working file: table.def
+head: 1.21
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.21
+	BPT_EMCDONALD_AI_15: 1.21
+	SS_7_5_0_0pre_0_20050612: 1.16
+	BPT_MSKALA_IMF_3: 1.14
+	BPT_MSKALA_SUPPLY_12: 1.14
+	BPT_EMCDONALD_AI_14: 1.14
+	MPT_EMCDONALD_AI_7: 1.8.2.9
+	BPT_EMCDONALD_AI_13: 1.13
+	SS_7_5_0_0pre_0_20050501: 1.13
+	BPT_EMCDONALD_AI_12: 1.13
+	MPT_EMCDONALD_AI_6: 1.8.2.5
+	BPT_EMCDONALD_AI_11: 1.13
+	SS_7_5_0_0pre_0_20050416: 1.13
+	BPT_EMCDONALD_AI_10: 1.13
+	MPT_EMCDONALD_AI_5: 1.8.2.5
+	BPT_EMCDONALD_AI_9: 1.12
+	BPT_EMCDONALD_AI_8: 1.11
+	MPT_EMCDONALD_AI_4: 1.8.2.3
+	BPT_EMCDONALD_AI_7: 1.11
+	MPT_EMCDONALD_AI_3: 1.8.2.3
+	BPT_EMCDONALD_AI_6: 1.10
+	BPT_MSKALA_SUPPLY_11: 1.10
+	BPT_EMCDONALD_AI_5: 1.10
+	MPT_EMCDONALD_AI_2: 1.8.2.2
+	SS_7_5_0_0pre_0_20050322: 1.9
+	BPT_MSKALA_SUPPLY_10: 1.9
+	BPT_EMCDONALD_AI_4: 1.9
+	MPT_EMCDONALD_AI_1: 1.8.2.1
+	BPT_EMCDONALD_AI_3: 1.9
+	BPT_MSKALA_SUPPLY_9: 1.9
+	MPT_MSKALA_SUPPLY_3: 1.3.2.5
+	BPT_EMCDONALD_AI_2: 1.9
+	BPT_MSKALA_SUPPLY_8: 1.9
+	MPT_MSKALA_SUPPLY_2: 1.3.2.5
+	BPT_MSKALA_SUPPLY_7: 1.8
+	BRANCH_EMCDONALD_AI: 1.8.0.2
+	BPT_EMCDONALD_AI_1: 1.8
+	BPT_MSKALA_SUPPLY_6: 1.8
+	SS_7_5_0_0pre_0_20050225: 1.8
+	BPT_MSKALA_SUPPLY_5: 1.8
+	MPT_MSKALA_SUPPLY_1: 1.3.2.4
+	BPT_MSKALA_SUPPLY_4: 1.7
+	BPT_MSKALA_SUPPLY_3: 1.7
+	BPT_MSKALA_SUPPLY_2: 1.4
+	SS_7_5_0_0pre_0_20050208: 1.4
+	BPT_MSKALA_IMF_2: 1.3
+	BRANCH_MSKALA_SUPPLY: 1.3.0.2
+	BPT_MSKALA_SUPPLY_1: 1.3
+	SS_7_5_0_0pre_0_20050117: 1.3
+	SS_7_5_0_0pre_0_20050108: 1.3
+	SS_7_5_0_0pre_0_20041228: 1.2
+	BRANCH_MSKALA_IMF: 1.2.0.2
+	BPT_MSKALA_IMF_1: 1.2
+	SS_7_5_0_0pre_0_20041211: 1.2
+	SS_7_5_0_0pre_0_20041126: 1.1.1.1
+	GENESIS: 1.1.1.1
+	PRIVATE_TREE_1: 1.1.1
+keyword substitution: kv
+total revisions: 42;	selected revisions: 42
+description:
+----------------------------
+revision 1.21
+date: 2005/06/21 01:30:40;  author: eric_mcdonald;  state: Exp;  lines: +0 -4
+Fix typos in reference manual.
+Remove outdated comment.
+Fix bug in dice scaling.
+Remove 'transfer-part' action.
+----------------------------
+revision 1.20
+date: 2005/06/19 23:39:37;  author: eric_mcdonald;  state: Exp;  lines: +8 -7
+Fix serious bugs in the encoding of negative dice reps.
+Add support of occs-on-completion for initial units placement.
+----------------------------
+revision 1.19
+date: 2005/06/19 20:42:51;  author: eric_mcdonald;  state: Exp;  lines: +14 -2
+Refine support of occs-on-completion.
+Various bits of cleanup.
+----------------------------
+revision 1.18
+date: 2005/06/18 23:50:07;  author: eric_mcdonald;  state: Exp;  lines: +11 -8
+Alter the way dice specs work.
+Honor dice specs for unit explosion damage.
+Move another game to the bitrot archive.
+----------------------------
+revision 1.17
+date: 2005/06/15 03:18:46;  author: eric_mcdonald;  state: Exp;  lines: +4 -0
+Prepare for some new side-based action-restriction properties.
+Restrict damaged terrain outcomes based on detonator type.
+----------------------------
+revision 1.16
+date: 2005/06/08 03:08:57;  author: eric_mcdonald;  state: Exp;  lines: +10 -0
+Add occs-on-completion feature.
+Bring docs up-to-date.
+Polish Default game a little bit.
+Remove StarFleet Battles test from games lib.
+----------------------------
+revision 1.15
+date: 2005/06/07 02:46:21;  author: eric_mcdonald;  state: Exp;  lines: +5 -0
+Fix colonizer-doesn't-garrision-anymore bug.
+Add test for merge "action" to AI.
+----------------------------
+revision 1.14
+date: 2005/06/06 03:03:46;  author: eric_mcdonald;  state: Exp;  lines: +108 -46
+Merge from 'MPT_EMCDONALD_AI_6' to 'MPT_EMCDONALD_AI_7'.
+----------------------------
+revision 1.13
+date: 2005/04/16 01:17:11;  author: eric_mcdonald;  state: Exp;  lines: +4 -0
+Merge from 'MPT_EMCDONALD_AI_4' to 'MPT_EMCDONALD_AI_5'.
+----------------------------
+revision 1.12
+date: 2005/04/06 02:29:50;  author: eric_mcdonald;  state: Exp;  lines: +28 -0
+New features to enhance unit cxp and side treasuries as a result of combat.
+New testbed game: awls-testbed.g.
+----------------------------
+revision 1.11
+date: 2005/04/01 02:20:46;  author: eric_mcdonald;  state: Exp;  lines: +5 -0
+Merge from 'MPT_EMCDONALD_AI_2' to 'MPT_EMCDONALD_AI_3'.
+----------------------------
+revision 1.10
+date: 2005/03/28 03:56:51;  author: eric_mcdonald;  state: Exp;  lines: +2 -2
+Merge from 'MPT_EMCDONALD_AI_1' to 'MPT_EMCDONALD_AI_2'.
+----------------------------
+revision 1.9
+date: 2005/03/14 01:48:30;  author: eric_mcdonald;  state: Exp;  lines: +24 -0
+Merge from 'MPT_MSKALA_SUPPLY_1' to 'MPT_MSKALA_SUPPLY_2'.
+----------------------------
+revision 1.8
+date: 2005/02/23 05:06:05;  author: eric_mcdonald;  state: Exp;  lines: +5 -1
+branches:  1.8.2;
+Merge in changes from root of 'BRANCH_MSKALA_SUPPLY' to 'MPT_MSKALA_SUPPLY_1'.
+----------------------------
+revision 1.7
+date: 2005/02/12 17:13:15;  author: eric_mcdonald;  state: Exp;  lines: +1 -1
+One last mod to 'transfer-parts'.
+----------------------------
+revision 1.6
+date: 2005/02/12 16:51:40;  author: eric_mcdonald;  state: Exp;  lines: +1 -1
+Modify transfer parts action some more.
+Relax the "ACP left" check.
+Update documentation.
+----------------------------
+revision 1.5
+date: 2005/02/11 03:42:56;  author: eric_mcdonald;  state: Exp;  lines: +5 -0
+Fix bug with the 'transfer-part' action.
+----------------------------
+revision 1.4
+date: 2005/02/07 01:33:55;  author: matthewskala;  state: Exp;  lines: +8 -0
+Automated generation of connections based on adjacent terrain.
+----------------------------
+revision 1.3
+date: 2005/01/01 06:44:01;  author: eric_mcdonald;  state: Exp;  lines: +12 -0
+branches:  1.3.2;
+New feature: zone-of-overwatch and overwatch fire.
+----------------------------
+revision 1.2
+date: 2004/12/04 22:24:00;  author: eric_mcdonald;  state: Exp;  lines: +4 -0
+branches:  1.2.2;
+Fix building of KWIC pogram with C++ compiler.
+Refine and expand "parambox" system for search functions that take predicates.
+Two new versions of 'search_around' that use paramboxen.
+Begin a namespace for Xconq vars outside of function scope.
+Revise 'see_cell' code. (NOTE: This is not perfected yet.)
+Fix to 3rd Age game. (Thanks to Kevin O'Gorman for reporting the bug.)
+----------------------------
+revision 1.1
+date: 2004/11/21 03:01:22;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.1;
+Initial revision
+----------------------------
+revision 1.1.1.1
+date: 2004/11/21 03:01:22;  author: eric_mcdonald;  state: Exp;  lines: +0 -0
+Initial import from private repo into SF repo.
+----------------------------
+revision 1.2.2.2
+date: 2005/06/06 03:39:36;  author: eric_mcdonald;  state: Exp;  lines: +162 -22
+Merged in all trunk changes between BPT_MSKALA_IMF_2 and BPT_MSKALA_IMF_3.
+----------------------------
+revision 1.2.2.1
+date: 2005/01/28 03:35:59;  author: eric_mcdonald;  state: Exp;  lines: +12 -0
+Merge in trunk changes between BPT_MSKALA_IMF_1 and BPT_MSKALA_IMF_2.
+----------------------------
+revision 1.3.2.7
+date: 2005/06/06 03:18:21;  author: eric_mcdonald;  state: Exp;  lines: +121 -22
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_11' and 'BPT_MSKALA_SUPPLY_12'.
+----------------------------
+revision 1.3.2.6
+date: 2005/03/28 04:17:56;  author: eric_mcdonald;  state: Exp;  lines: +2 -2
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_10' and 'BPT_MSKALA_SUPPLY_11'.
+----------------------------
+revision 1.3.2.5
+date: 2005/02/25 16:36:43;  author: matthewskala;  state: Exp;  lines: +24 -0
+Add cell->unit, unit->cell, cell->cell transfers to new economy code.
+New version of solar.g.
+----------------------------
+revision 1.3.2.4
+date: 2005/02/21 03:35:39;  author: matthewskala;  state: Exp;  lines: +4 -0
+Split advanced unit and terrain cell production, add new economy as a variant
+for a bunch of games, resulting bug fixes.
+----------------------------
+revision 1.3.2.3
+date: 2005/02/18 04:43:24;  author: matthewskala;  state: Exp;  lines: +5 -0
+Merge changes from mainline, fix doctrine check bug.
+----------------------------
+revision 1.3.2.2
+date: 2005/02/14 01:53:47;  author: matthewskala;  state: Exp;  lines: +1 -1
+Unit/treasury (almost complete) and unit/cell (partial) material exchange, documentation.
+----------------------------
+revision 1.3.2.1
+date: 2005/02/09 18:11:30;  author: matthewskala;  state: Exp;  lines: +8 -0
+Merge in changes from trunk, fix bug by allowing unit material stores to go negative during economy phase.
+----------------------------
+revision 1.8.2.11
+date: 2005/07/23 22:21:55;  author: eric_mcdonald;  state: Exp;  lines: +4 -4
+Start improvement of AI tactical handler.
+Fix combat awards bugs.
+Fix crashing bugs.
+Fix change type bug.
+----------------------------
+revision 1.8.2.10
+date: 2005/07/10 15:42:53;  author: eric_mcdonald;  state: Exp;  lines: +43 -12
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_14' and 'BPT_EMCDONALD_AI_15'.
+----------------------------
+revision 1.8.2.9
+date: 2005/06/06 01:23:10;  author: eric_mcdonald;  state: Exp;  lines: +8 -4
+Allow create action to act as a build action.
+Possibly fix "repair of healthy units" bug.
+Rename 'unit-consumption-per-cp' for consistency.
+More cleanup and archival of the games library.
+----------------------------
+revision 1.8.2.8
+date: 2005/06/03 02:32:43;  author: eric_mcdonald;  state: Exp;  lines: +8 -0
+Make creation and building ACP-less.
+Rework build task.
+Some more repair-related tests.
+Improvement task management. Include support for enqueuing ops.
+Fix crashing bug in SDL interface.
+Fix apparent bug in net receive code.
+Cleanup code.
+----------------------------
+revision 1.8.2.7
+date: 2005/05/29 22:32:28;  author: eric_mcdonald;  state: Exp;  lines: +70 -37
+Implement new construction features.
+Fix bugs in operational roles.
+Fix bug in hp-recovery mechanism.
+Improve construction AI.
+Fix bugs related to change-type action.
+----------------------------
+revision 1.8.2.6
+date: 2005/05/21 17:29:29;  author: eric_mcdonald;  state: Exp;  lines: +29 -12
+Archive or delete some unmaintained games that do not work well.
+Implement new construction and repair features.
+Improve support for operational roles.
+Add tatical-level calculations for AI.
+Enhance materials consumption code.
+----------------------------
+revision 1.8.2.5
+date: 2005/04/13 01:55:21;  author: eric_mcdonald;  state: Exp;  lines: +4 -0
+More treasury-checking functions.
+Many AI tweaks, plus foundation for further enhancements.
+Fix bug in my earlier bugfix in the economy code.
+----------------------------
+revision 1.8.2.4
+date: 2005/04/09 16:45:36;  author: eric_mcdonald;  state: Exp;  lines: +28 -0
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_8' and 'BPT_EMCDONALD_AI_9'.
+----------------------------
+revision 1.8.2.3
+date: 2005/03/31 02:55:43;  author: eric_mcdonald;  state: Exp;  lines: +5 -0
+New functions for handling materials checking and consumption for any actions.
+Add support for tech restriction associated with change-type action.
+Add support for materials consumption restriction for change-type action.
+----------------------------
+revision 1.8.2.2
+date: 2005/03/26 20:26:29;  author: eric_mcdonald;  state: Exp;  lines: +2 -2
+Various and sundry improvements to the AI.
+----------------------------
+revision 1.8.2.1
+date: 2005/03/21 03:19:40;  author: eric_mcdonald;  state: Exp;  lines: +24 -0
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_1' and 'BPT_EMCDONALD_AI_3'.
+Add new unit analysis capabilities to AI.
+Implement a plan-decision lottery. (Still needs work.)
+Break out common, useful parts of kernel action-checking code.
+Provide a normalization macro.
+Fix bug with quoted encounter lists.
+=============================================================================

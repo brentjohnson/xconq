@@ -1,0 +1,199 @@
+# RPM spec file for Xconq
+# Builds a package for each interface, plus one for the sources.
+# Attempts some compliance with FHS 2.2 and conventions used by 
+#  Redhat and Mandrake.
+
+# NOTE: Make sure that you have a reasonable %_tmppath defined in your 
+# '.rpmmacros' file before attempting to build RPM packages from this spec file.
+
+%define name		xconq
+
+%define version		@XCONQ_VERSION_MAIN@
+# To prevent Epoch madness, we now use the fairly common trick of 
+#  making snapshots and prereleases be Release "0pre". See 'configure.in' 
+#  for details.
+%define release		@XCONQ_VERSION_RELEASE@
+
+Name: %{name}
+
+Summary: General turn-based 2D strategy game system, plus games.
+Version: %{version}
+Release: %{release}
+
+URL: http://xconq.sourceforge.net
+License: GPL
+Packager: Eric McDonald <eric_mcdonald [at] users [dot] sourceforge [dot] net>
+
+Group: Amusements/Games/Strategy
+
+#Source: ftp://sources.redhat.com/pub/xconq/xconq-7.4.0.tar.gz
+# For CVS builds we use a local tarball.
+Source0: xconq-%{version}-%{release}.tar.gz
+
+%define buildroot   %{_tmppath}/%{name}-%{version}-%{release}-BUILDROOT
+BuildRoot: %{buildroot}
+
+BuildRequires: tcl-devel tk-devel SDL-devel ncurses-devel
+
+%description
+Xconq is a general strategy game system.  It is a complete system that
+includes all the components: a portable engine, graphical interfaces
+for Unix/Linux/X11, Macintosh, and Windows, multiple AIs, networking
+for multi-player games, and an extensive game library.
+
+In addition to Xconq's "standard" game, which is similar to the
+classic Empire/Empire Deluxe games of years ago, the game library
+includes games for ancient civilizations, the Peloponnesian War, the
+Roman Civil War, Frederician strategy, Napoleonic strategy, Gettysburg
+at a brigade scale, the Russian revolution, the Normandy invasion,
+WWII at scales from tactical to grand strategic, Beirut street
+fighting, voyages of discovery, African exploration, and many others,
+including space and fantasy games.
+
+As befits its emphasis on strategy, Xconq's forte is turn-based play
+using overhead or isometric views of a tiled world.  The world is 
+basically two-dimensional, although varying elevations are available 
+for games that need elevation effects or line-of-sight.  Xconq is 
+especially interesting for games about unusual or lesser-known strategic
+situations; it is unique in providing a single system for modelling
+the conflicts and strategies of any period in history.
+
+%package common
+Summary: Games library and common files for the Xconq game system.
+Group: Amusements/Games/Strategy
+# Make sure that the subpackages conflict with the older Tcl/Tk Xconq packages.
+Conflicts: xconq <= %{version}, xconq <= %{releasedate}, xconq <= 1:%{version}
+%description common
+The games and images libraries, sounds, utilities, documentation, and 
+other supporting files for the Xconq game system.
+
+Xconq is a general strategy game system.  It is a complete system that
+includes all the components: a portable engine, graphical interfaces
+for Unix/Linux/X11, Macintosh, and Windows, multiple AIs, networking
+for multi-player games, and an extensive games library.
+
+%package tcltk
+Summary: The Tcl/Tk user interface for the Xconq game system.
+Group: Amusements/Games/Strategy
+Requires: xconq-common = %{version}-%{release}
+%description tcltk
+The Tcl/Tk user interface for the Xconq game engine relies on a mixture of 
+Tcl scripts and C code to provide a multi-windowed user experience. This 
+is presently the one which most players use.
+
+%package curses
+Summary: The curses (console) user interface for the Xconq game system.
+Group: Amusements/Games/Strategy
+Requires: xconq-common = %{version}-%{release}
+%description curses
+The Curses user interface is for running games in the Xconq engine on a 
+text console. It is quick, but lacking the more complete experience and 
+conveniecne of a graphical user interface.
+
+%package sdl
+Summary: The SDL user interface for the Xconq game system.
+Group: Amusements/Games/Strategy
+Requires: xconq-common = %{version}-%{release}
+%description sdl
+The SDL user interface is in its infancy and much development needs to be 
+done on it. However, it is a more modern game interface following the 
+single-window paradigm, and it is speedy.
+
+%prep
+%setup -n xconq-%{version}-%{release}
+
+%build
+./configure --disable-freetypetest --disable-paraguitest --prefix=%{buildroot}/usr --bindir=%{buildroot}/usr/bin --datadir=%{buildroot}/usr/share/xconq --infodir=%{buildroot}/usr/share/info --mandir=%{buildroot}/usr/share/man --enable-alternate-scoresdir=%{buildroot}/var/lib/games/xconq --enable-alternate-gameuser=`id -u` --enable-alternate-gamegroup=`id -g`
+make all-tkconq
+make all-cconq
+make all-sdlconq
+make info
+make html
+
+%install
+rm -rf %{buildroot}
+xconq_scores_dir=%{buildroot}/var/lib/games/xconq
+if [ ! -d ${xconq_scores_dir} ]; then
+  mkdir -p ${xconq_scores_dir}
+fi
+xconq_doc_dir=%{buildroot}/usr/share/doc/xconq-7.5
+if [ ! -d ${xconq_doc_dir} ]; then
+  mkdir -p ${xconq_doc_dir}
+fi
+xconq_changelog_dir=%{buildroot}/usr/share/doc/xconq-7.5/changelogs
+if [ ! -d ${xconq_changelog_dir} ]; then
+  mkdir -p ${xconq_changelog_dir}
+fi
+make install-tkconq
+mv %{buildroot}/usr/bin/xconq %{buildroot}/usr/bin/tkconq
+make install-cconq
+make install-sdlconq
+make install-info
+cp -f README* NEWS COPYING* ${xconq_doc_dir}
+cp -f doc/README* doc/INSTALL* doc/PROJECTS doc/TODO ${xconq_doc_dir}
+cp -f ChangeLog* changelogs/* ${xconq_changelog_dir}
+if [ ! -d ${xconq_doc_dir}/html ]; then
+  mkdir ${xconq_doc_dir}/html
+fi
+cp doc/*.html ${xconq_doc_dir}/html
+
+%clean
+rm -rf %{buildroot}
+
+%files common
+%defattr(-,root,games,0755)
+/usr/share/xconq
+# Indicate in the RPM DB that the following are documentation:
+%doc /usr/share/info/xconq.info*
+%doc /usr/share/info/xcdesign.info*
+%doc /usr/share/info/hacking.info*
+%docdir /usr/share/doc/xconq-7.5
+/usr/share/doc/xconq-7.5
+# Just want the directory, not any scorefiles that might be in it
+%dir /var/lib/games/xconq
+
+%files tcltk
+%defattr(-,root,games,0755)
+%attr(4755,root,games) /usr/bin/tkconq
+/usr/bin/imfapp
+/usr/bin/imf2x
+/usr/bin/x2imf
+# Wildcard needed because the manpage may or may not have a .gz extension.
+%doc /usr/share/man/man6/xconq.6*
+
+%files curses
+%defattr(-,root,games,0755)
+%attr(4755,root,games) /usr/bin/cconq
+# Wildcard needed because the manpage may or may not have a .gz extension.
+%doc /usr/share/man/man6/cconq.6*
+
+%files sdl
+%attr(4755,root,games) /usr/bin/sdlconq
+
+%post tcltk
+ln -s /usr/bin/tkconq /usr/bin/xconq
+
+%preun tcltk
+rm -f /usr/bin/xconq
+
+%changelog
+
+* Fri Nov 19 2004 Eric McDonald <eric_mcdonald@users.sourceforge.net>
+- Update 'URL' and 'Packager' tags.
+- Add 'BuildRequires' tag.
+
+* Fri Nov 19 2004 Eric McDonald <eric_mcdonald@users.sourceforge.net>
+- Release new RPM (last release: 2004/05/23); see ChangeLog for details.
+- Create master RPM spec file in 'pkg' directory.
+- Remove 'xtxaw' package, since that is now obsolescent.
+
+* Sun May 23 2004 Eric McDonald <mcdonald@sources.redhat.com>
+- Release new RPM (last release: 2004/05/19); see ChangeLog for details.
+- Create master RPM spec file in top-level directory.
+- Make master RPM spec file build separate packages for all interfaces.
+- 'Epoch' tag no longer needed because new packages conflict with older ones.
+
+* Tue May 18 2004 Eric McDonald <mcdonald@sources.redhat.com>
+- Release new RPM (last release: 2003/11); see ChangeLog for details.
+- Update RPM spec file to build RPM without root.
+- Update RPM spec file to include 'changelog' section.

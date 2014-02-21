@@ -1,0 +1,182 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/kernel.h,v
+Working file: kernel.h
+head: 1.8
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.8
+	BPT_EMCDONALD_AI_15: 1.8
+	SS_7_5_0_0pre_0_20050612: 1.8
+	BPT_MSKALA_IMF_3: 1.8
+	BPT_MSKALA_SUPPLY_12: 1.8
+	BPT_EMCDONALD_AI_14: 1.8
+	MPT_EMCDONALD_AI_7: 1.6.2.5
+	BPT_EMCDONALD_AI_13: 1.7
+	SS_7_5_0_0pre_0_20050501: 1.7
+	BPT_EMCDONALD_AI_12: 1.7
+	MPT_EMCDONALD_AI_6: 1.6.2.1
+	BPT_EMCDONALD_AI_11: 1.6
+	SS_7_5_0_0pre_0_20050416: 1.6
+	BPT_EMCDONALD_AI_10: 1.6
+	MPT_EMCDONALD_AI_5: 1.6
+	BPT_EMCDONALD_AI_9: 1.6
+	BPT_EMCDONALD_AI_8: 1.6
+	MPT_EMCDONALD_AI_4: 1.6
+	BPT_EMCDONALD_AI_7: 1.6
+	MPT_EMCDONALD_AI_3: 1.6
+	BPT_EMCDONALD_AI_6: 1.6
+	BPT_MSKALA_SUPPLY_11: 1.6
+	BPT_EMCDONALD_AI_5: 1.6
+	MPT_EMCDONALD_AI_2: 1.6
+	SS_7_5_0_0pre_0_20050322: 1.6
+	BPT_MSKALA_SUPPLY_10: 1.6
+	BPT_EMCDONALD_AI_4: 1.6
+	MPT_EMCDONALD_AI_1: 1.6
+	BPT_EMCDONALD_AI_3: 1.6
+	BPT_MSKALA_SUPPLY_9: 1.6
+	MPT_MSKALA_SUPPLY_3: 1.3.2.3
+	BPT_EMCDONALD_AI_2: 1.6
+	BPT_MSKALA_SUPPLY_8: 1.6
+	MPT_MSKALA_SUPPLY_2: 1.3.2.3
+	BPT_MSKALA_SUPPLY_7: 1.6
+	BRANCH_EMCDONALD_AI: 1.6.0.2
+	BPT_EMCDONALD_AI_1: 1.6
+	BPT_MSKALA_SUPPLY_6: 1.6
+	SS_7_5_0_0pre_0_20050225: 1.6
+	BPT_MSKALA_SUPPLY_5: 1.6
+	MPT_MSKALA_SUPPLY_1: 1.3.2.3
+	BPT_MSKALA_SUPPLY_4: 1.5
+	BPT_MSKALA_SUPPLY_3: 1.5
+	BPT_MSKALA_SUPPLY_2: 1.4
+	SS_7_5_0_0pre_0_20050208: 1.4
+	BPT_MSKALA_IMF_2: 1.3
+	BRANCH_MSKALA_SUPPLY: 1.3.0.2
+	BPT_MSKALA_SUPPLY_1: 1.3
+	SS_7_5_0_0pre_0_20050117: 1.3
+	SS_7_5_0_0pre_0_20050108: 1.2
+	SS_7_5_0_0pre_0_20041228: 1.2
+	BRANCH_MSKALA_IMF: 1.2.0.2
+	BPT_MSKALA_IMF_1: 1.2
+	SS_7_5_0_0pre_0_20041211: 1.2
+	SS_7_5_0_0pre_0_20041126: 1.1.1.1
+	GENESIS: 1.1.1.1
+	PRIVATE_TREE_1: 1.1.1
+keyword substitution: kv
+total revisions: 20;	selected revisions: 20
+description:
+----------------------------
+revision 1.8
+date: 2005/06/06 03:03:45;  author: eric_mcdonald;  state: Exp;  lines: +10 -7
+Merge from 'MPT_EMCDONALD_AI_6' to 'MPT_EMCDONALD_AI_7'.
+----------------------------
+revision 1.7
+date: 2005/04/30 23:35:09;  author: eric_mcdonald;  state: Exp;  lines: +1 -0
+Merge from 'MPT_EMCDONALD_AI_5' to 'MPT_EMCDONALD_AI_6'.
+Many non-AI-related changes included in this merge.
+----------------------------
+revision 1.6
+date: 2005/02/23 05:06:04;  author: eric_mcdonald;  state: Exp;  lines: +5 -0
+branches:  1.6.2;
+Merge in changes from root of 'BRANCH_MSKALA_SUPPLY' to 'MPT_MSKALA_SUPPLY_1'.
+----------------------------
+revision 1.5
+date: 2005/02/15 04:36:36;  author: eric_mcdonald;  state: Exp;  lines: +1 -1
+Fix bug that prevented death-by-detonation from causing any death effects.
+Lay foundation for scorekeeper analysis by AI.
+Fix bug in scorekeeper parsing.
+Fix a small misdocumenation of 'change-type' action.
+----------------------------
+revision 1.4
+date: 2005/02/07 02:31:55;  author: eric_mcdonald;  state: Exp;  lines: +2 -0
+Finish scorekeeper improvements (for now).
+New util function for flagging an array of utypes based on a GDL object.
+----------------------------
+revision 1.3
+date: 2005/01/15 23:02:42;  author: eric_mcdonald;  state: Exp;  lines: +7 -0
+branches:  1.3.2;
+New family of games, Valhalla, from Elijah Meeks.
+Fix bug with unit views in designer mode.
+Fix bug with overwatch in designer mode.
+Continue fixing uview lookups to match new uview code.
+----------------------------
+revision 1.2
+date: 2004/12/05 23:20:20;  author: eric_mcdonald;  state: Exp;  lines: +1 -1
+branches:  1.2.2;
+Fix game restoration bug reported by Elijah Meeks.
+----------------------------
+revision 1.1
+date: 2004/11/21 03:01:09;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.1;
+Initial revision
+----------------------------
+revision 1.1.1.1
+date: 2004/11/21 03:01:09;  author: eric_mcdonald;  state: Exp;  lines: +0 -0
+Initial import from private repo into SF repo.
+----------------------------
+revision 1.2.2.2
+date: 2005/06/06 03:39:35;  author: eric_mcdonald;  state: Exp;  lines: +19 -8
+Merged in all trunk changes between BPT_MSKALA_IMF_2 and BPT_MSKALA_IMF_3.
+----------------------------
+revision 1.2.2.1
+date: 2005/01/28 03:35:59;  author: eric_mcdonald;  state: Exp;  lines: +7 -0
+Merge in trunk changes between BPT_MSKALA_IMF_1 and BPT_MSKALA_IMF_2.
+----------------------------
+revision 1.3.2.4
+date: 2005/06/06 03:18:20;  author: eric_mcdonald;  state: Exp;  lines: +11 -7
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_11' and 'BPT_MSKALA_SUPPLY_12'.
+----------------------------
+revision 1.3.2.3
+date: 2005/02/18 04:43:23;  author: matthewskala;  state: Exp;  lines: +1 -1
+Merge changes from mainline, fix doctrine check bug.
+----------------------------
+revision 1.3.2.2
+date: 2005/02/15 19:03:37;  author: matthewskala;  state: Exp;  lines: +5 -0
+Move economy code to new economy.c file.
+----------------------------
+revision 1.3.2.1
+date: 2005/02/09 18:11:27;  author: matthewskala;  state: Exp;  lines: +2 -0
+Merge in changes from trunk, fix bug by allowing unit material stores to go negative during economy phase.
+----------------------------
+revision 1.6.2.5
+date: 2005/06/05 20:53:01;  author: eric_mcdonald;  state: Exp;  lines: +0 -1
+Ensure that Tkconq and the generic UI code rebuild when AI files are changed.
+Add support for autoconf assignment of "sizeof" macros.
+Start to add support for making primitve integer types of known size.
+Remove or disable more code associated with the colonization plan.
+Improve colonization support in constructor oprole.
+Prepare support for action masks.
+Remove now-unused 'buildingdone' flag.
+Delete remnants of special ACP-indep construction code.
+----------------------------
+revision 1.6.2.4
+date: 2005/06/03 02:32:43;  author: eric_mcdonald;  state: Exp;  lines: +0 -3
+Make creation and building ACP-less.
+Rework build task.
+Some more repair-related tests.
+Improvement task management. Include support for enqueuing ops.
+Fix crashing bug in SDL interface.
+Fix apparent bug in net receive code.
+Cleanup code.
+----------------------------
+revision 1.6.2.3
+date: 2005/05/29 22:32:28;  author: eric_mcdonald;  state: Exp;  lines: +2 -0
+Implement new construction features.
+Fix bugs in operational roles.
+Fix bug in hp-recovery mechanism.
+Improve construction AI.
+Fix bugs related to change-type action.
+----------------------------
+revision 1.6.2.2
+date: 2005/05/21 17:29:29;  author: eric_mcdonald;  state: Exp;  lines: +8 -3
+Archive or delete some unmaintained games that do not work well.
+Implement new construction and repair features.
+Improve support for operational roles.
+Add tatical-level calculations for AI.
+Enhance materials consumption code.
+----------------------------
+revision 1.6.2.1
+date: 2005/04/30 20:42:52;  author: eric_mcdonald;  state: Exp;  lines: +1 -0
+Fix bug in resupply.
+=============================================================================

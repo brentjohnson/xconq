@@ -1,0 +1,253 @@
+
+RCS file: /cvs/xconq/xconq/kernel/mkterr.c,v
+Working file: mkterr.c
+head: 1.15
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.6
+	xconq-7_4-branch: 1.6.0.2
+	xconq-7_4-branchpoint: 1.6
+	xtconq-pre-removal: 1.4
+	xconq-7_3_3-release: 1.3
+	xconq-7_3_2-release: 1.3
+	xconq-7_3_1-release: 1.3
+	xconq-7_3-branch: 1.3.0.2
+	xconq-7_3-branchpoint: 1.3
+keyword substitution: kv
+total revisions: 15;	selected revisions: 15
+description:
+----------------------------
+revision 1.15
+date: 2004/06/27 11:00:22;  author: ronne;  state: Exp;  lines: +1 -0
+Fix image path problem in the MacOS Classic Imfapp.
+----------------------------
+revision 1.14
+date: 2004/06/27 05:44:22;  author: mcdonald;  state: Exp;  lines: +70 -21
+Improve terrain generation capabilities.
+New file and updates to Wreckreation.
+----------------------------
+revision 1.13
+date: 2003/08/18 20:13:41;  author: ronne;  state: Exp;  lines: +6 -0
+Various cleanups and bug fixes.
+----------------------------
+revision 1.12
+date: 2003/01/12 13:08:53;  author: ronne;  state: Exp;  lines: +7 -7
+Fixes to the elevation code.
+----------------------------
+revision 1.11
+date: 2002/12/30 20:58:20;  author: ronne;  state: Exp;  lines: +8 -11
+Expurgate wrapx from the interfaces.
+----------------------------
+revision 1.10
+date: 2002/08/28 20:38:45;  author: ronne;  state: Exp;  lines: +31 -41
+Improved feature naming and research bug fix.
+----------------------------
+revision 1.9
+date: 2002/08/17 12:06:14;  author: ronne;  state: Exp;  lines: +280 -81
+Improve support for feature names.
+----------------------------
+revision 1.8
+date: 2002/05/08 23:51:17;  author: ronne;  state: Exp;  lines: +25 -52
+Make sources C++ compatible.
+----------------------------
+revision 1.7
+date: 2000/12/18 16:50:48;  author: shebs;  state: Exp;  lines: +76 -53
+	Eliminate the macros MAXUTYPES, MAXTTYPES, MAXMTYPES, and
+	MAXATYPES, size all type handling dynamically.
+	* config.h (MAXUTYPES, MAXTTYPES, MAXMTYPES, MAXATYPES): Remove.
+	* game.h (NONUTYPE, NONTTYPE, NONMTYPE, NONATYPE): Define to be -1.
+	(count_terrain_subtypes, numcelltypes, numbordtypes, numconntypes,
+	numcoattypes): Declare here instead of in world.h.
+	(tmp_u_array, tmp_t_array): Declare.
+	* gvar.def (edge-terrain, river-sink-terrain): Don't use type
+	bounds.
+	* table.def (adjacent-terrain-effect, terrain-exhaustion-type): Ditto.
+	* utype.def (obsolete, wrecked-type): Ditto.
+	* generic.c (count_terrain_subtypes, numcelltypes, etc): Move here
+	from world.c.
+	(tmp_u_array, tmp_t_array): New globals.
+	(curmaxutypes, curmaxmtypes, curmaxttypes, curmaxatypes): Set to
+	defaults convenient for the first allocation.
+	(create_unit_type): New function.
+	(disallow_more_unit_types, disallow_more_terrain_types): New functions.
+	(allocate_table): Use them.
+	* help.c (tm_table_row_desc): Remove, never used.
+	* init.c (check_game_validity): Call disallow_* to make sure
+	some type arrays are computed and cached.
+	(calculate_globals): Ditto.
+	(make_initial_materials): Use tmp_t_array.
+	* mkrivers.c (make_up_river_borders): Ditto.
+	* mkterr.c (elev_range, elev_lo, elev_hi, raw_range, raw_lo,
+	raw_hi): New static globals.
+	(compose_area, compose_earthlike_area): Use them.
+	(make_random_terrain, fix_adjacent_terrain,
+	flatten_liquid_terrain): Use tmp_t_array.
+	* mkunits.c (make_countries): Dynalloc local arrays.
+	(country_is_complete, make_independent_units): Use tmp_u_array.
+	* nlang.c (ohd_nums, ohd_incomplete): New static globals.
+	(others_here_desc, occupants_desc): Use them.
+	* plan.c (plan_colonize_support): Use tmp_u_array.
+	(gctc_supply): New static global.
+	(good_cell_to_colonize): Use it.
+	* ps.c (summary_of_seen_units_at): Use tmp_u_array.
+	* read.c (default_supply): Remove, no longer to use.
+	(init_predefined_symbols): Remove its setup.
+	(interp_unit_default): Similarly.
+	(interp_unit): Don't use default_supply.
+	(interp_utype): Remove test for too many types, call
+	create_unit_type.
+	(interp_ttype, interp_mtype, interp_atype): Remove tests
+	for too many types.
+	(too_many_types): Remove, no longer needed.
+	(rd_u_arr): New static global.
+	(interp_standing_order, read_utype_doctrine): Use it.
+	* run.c (rau_incrs): New static global.
+	(run_advanced_units): Use it.
+	(apr_type): New static global.
+	(auto_pick_unit_research, auto_pick_side_research): Use it.
+	(auto_pick_new_build_task): Use tmp_u_array.
+	* run2.c (ttotals, uttotals): New static globals.
+	(run_economy): Use them.
+	* score.c (sum_property): Use tmp_u_array.
+	* side.c (new_doctrine): Call disallow_more_unit_types.
+	* supply.c (mad): New static global.
+	(init_supply_system): Set it up.
+	* unit.c (create_unit): Allocate numlivebytype and completenesses.
+	(oc_numtypes): New static global.
+	(can_occupy_unit): Use it.
+	(toc_numtypes, type_can_occupy_cell): Similarly.
+	(ocw_numtypes, can_occupy_cell_without): Similarly.
+	(tocw_numtypes, type_can_occupy_cell_without): Similarly.
+	(conn_num_types, can_occupy_conn_1): Similarly.
+	(can_carry, type_can_occupy): Use tmp_u_array.
+	(num_each_type, shared_each_type): New static globals.
+	(eject_excess_occupants): Use them.
+	(shortest_unique_name): Dynalloc firstuniq, use it as flag
+	instead of shortestdone.
+	(shortest_generic_name): Similarly.
+	* write.c (write_table): Increase histogram size.
+
+	* ai.c (atc_type): New static global.
+	(assign_to_colonize): Use it.
+	(pbt_prefs, pbt_fringe_terrain, pbt_enemy_types,
+	pbt_num_to_transport): New static globals.
+	(preferred_build_type): Use them.
+	* ai.h (Strategy): Declare strengths etc as arrays of pointers
+	instead of 2D arrays, unitlist and unitlistcount as pointers.
+	(Theater): Similarly for numassigned, numneeded, etc.
+	(strength_est, etc): New macros (not used yet).
+	* iplayer.c (iru_numoffensive, iru_numdefensive): New static globals.
+	(iplayer_review_units): Use them.
+	* mplayer.c (mplayer_create_strategy): Allocate strength arrays.
+	(create_theater): Dynalloc numassigned etc fields.
+	(estimate_strengths, mplayer_read_strengths, mplayer_save_state):
+	Change to pointer-to-pointer refs.
+	(mru_numoffensive, mru_numdefensive): New static globals.
+	(mplayer_review_units): Use them.
+	* oplayer.c: Similarly.
+
+	* cmd.c (gt_amts, gt_rslts): New static globals.
+	(do_one_give, do_one_take): Use them.
+	* ui.h (VP draw_materials): Make into a pointer.
+	* ui.c (new_vp): Allocate draw_materials field.
+
+	* maccmd.c (do_one_add_terrain): Use tmp_t_array.
+	* macwins.c (side_research_dialog): Make participants static global.
+
+	* tkconq.h (UI material_color, etc): Change from array to pointer.
+	(UI cell_color, cell_shades): Rename from cellcolor and cellshades.
+	(UI best_timages): Similarly.
+	(UI unitpics, unitmasks, bestmimages): Remove, not used.
+	(Map uvec, ustr, tvec, tstr): Change from array to pointer.
+	* tkcmd.c (do_add_terrain, do_remove_terrain): Use tmp_t_array.
+	(do_build): Use tmp_u_array.
+	* tkinit.c (utype_indexes, mtype_indexes): Change to pointers.
+	(init_display): Remove inits of unused fields, alloc space for
+	cell_shades and material_color.
+	(init_material_images): Remove setup of bestmimages.
+	(init_terrain_images): Allocate for best_timages and terrpics.
+	(init_shades): Use array-of-array refs to cell_shades.
+	* tkmain.c (last_num_units_in_play, last_num_units_incomplete):
+	Change from arrays to pointers.
+	(init_redraws, update_unit_type_list): Allocate them.
+	(create_map): Alloc map uvec, ustr, etc.
+	* tkmap.c: Update refs to renamed fields.
+	(MapW draw_aux_terrain, draw_materials): Make into pointers.
+
+	* ccmd.c (do_build): Use tmp_u_array.
+	* cconq.c (init_display): Use numutypes to size allocs.
+	(ask_unit_type, ask_terrain_type): Use array of int instead of short.
+	* cdraw.c (draw_type_list_entry): Init lasttypevisible from numutypes.
+
+	* cconq.c (do_dir_2): Fix a variable name.
+	* cconq.h: Use #else instead of #elif.
+----------------------------
+revision 1.6
+date: 2000/11/16 23:33:12;  author: ronne;  state: Exp;  lines: +0 -2
+General cleanup of kernel prototypes - part 2.
+----------------------------
+revision 1.5
+date: 2000/11/12 00:39:53;  author: ronne;  state: Exp;  lines: +0 -1
+General cleanup of kernel prototypes - part 1.
+----------------------------
+revision 1.4
+date: 2000/07/14 15:55:39;  author: shebs;  state: Exp;  lines: +51 -34
+	* kernel/Makefile.in, tcltk/Makefile.in: Add dependencies on
+	kernel.h and kpublic.h.
+
+	* world.c, kernel.h (paint_elevation): Add code (set vs modify)
+	and random variation args.
+	(fix_elevations): New function.
+	* tp.c, kpublic.h (net_paint_elevation): Similarly.
+	(broadcast_layer_change): Add an argument.
+	(receive_world_prop): Handle extra argument in packet.
+	* mkterr.c (set_edge_terrrain): New function, generalizes
+	add_edge_terrain to control mods of edge terrain.
+	(set_edge_elevation): New function, split out from set_edge_values.
+
+	* macdesign.c (apply_designer_tool, paint_on_drag): Fix usages
+	of net_paint_elevation.
+
+	* tkconq.h (UI curelevationcode, curelevationvary): New fields.
+	* tkconq.tcl (popup_design_palette): Add close button.
+	(make_elev_paint_frame): Rewrite to support random vary and
+	elevation fixing, plus give better feedback.
+	(set_elevation, etc): Pass additional random vary arg.
+	(dbg_set_design_data): Update elevation painting feedback.
+	* tkmain.c (tk_designer_fix): New tcl command.
+	(tk_set_design_data): Handle random vary value.
+	* tkmap.c (paint_elev_code, paint_elev_vary): New globals.
+	(handle_designer_mouse_down): Set them, call net_paint_elevation
+	with new args.
+	(paint_on_drag): Similarly.
+
+	* tkmap.c (move_the_selected_unit): Beep if advance_into_cell
+	fails.
+----------------------------
+revision 1.3
+date: 1999/12/14 03:07:37;  author: shebs;  state: Exp;  lines: +38 -19
+	* table.def (terrain-density): New table.
+	* mkterr.c (add_random_changes): New function.
+	(make_fractal_terrain): Call it.
+----------------------------
+revision 1.2
+date: 1999/08/21 12:16:39;  author: shebs;  state: Exp;  lines: +37 -37
+        Eliminate still more warnings.
+        * cmd.c, help.c, history.c, mknames.c, mkterr.c, mkunits.c,
+        nlang.c, read.c, read2.c, score.c, side.c, supply.c, tp.c, ui.c,
+        unit.c, unit.h, world.c, write.c: Remove PARAMS usages, remove
+        unused variables, add missing function decls, comment out unused
+        functions, etc.
+        * obstack.h (obstack_begin): Add parameter types to fn pointer.
+        * mknames.c (propose_unit_name): Fix "junky" naming method.
+        * read.c (find_unit_spec_by_name, find_unit_spec_by_number):
+        Use PARSE_PROPERTY_RETURN instead of PARSE_PROPERTY.
+        * score.c (all_sides_draw): Assign result of add_side_to_set.
+        * side.c: Include ai.h.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:28;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

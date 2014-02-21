@@ -1,0 +1,80 @@
+
+RCS file: /cvs/xconq/xconq/kernel/aiutil.c,v
+Working file: aiutil.c
+head: 1.8
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 8;	selected revisions: 8
+description:
+----------------------------
+revision 1.8
+date: 2004/07/01 23:18:55;  author: ronne;  state: Exp;  lines: +1 -1
+More fixes to the unit view code.
+----------------------------
+revision 1.7
+date: 2004/06/19 21:53:13;  author: mcdonald;  state: Exp;  lines: +0 -53
+Transplant type-based ACP computations to more ubiquitously cited files.
+Make a substitute implementation of 'offsetof' more widely available.
+More improvements to the help system.
+Add a TODO note regarding ACP computations.
+----------------------------
+revision 1.6
+date: 2004/06/15 04:14:21;  author: mcdonald;  state: Exp;  lines: +53 -0
+Update player documentation.
+Extend night and occupant effects on ACP.
+Provide universal ACP arithmetic.
+Update games in library to use some replacement tables.
+Provide true capture prevention/allowance tables.
+Provide toggle for use of combat protection tables in capture computations.
+Allow units to change type on capture. Add new table for this.
+Improvements and modifications to help system.
+Improvements to and comments about type changing code.
+Some housekeeping of the table definitions.
+Source formatting improvments.
+New version of Wreckreation.
+----------------------------
+revision 1.5
+date: 2004/02/02 04:14:10;  author: mcdonald;  state: Exp;  lines: +22 -0
+Add automatic unit type upgrade feature.
+Add ability to apply new criteria to change-type action.
+Add new safeguard to some materials-related functions.
+Remove redundant checks from materials transfer code.
+Remove extra paramter from some of the "assert_*" family of macros.
+More preparations for more intelligent AI resupply code.
+Update Bellum Aeternum to use automatic upgrades.
+----------------------------
+revision 1.4
+date: 2004/01/26 02:02:17;  author: mcdonald;  state: Exp;  lines: +268 -0
+Improve victim rating calculation.
+Fix some bugs in victim seeking code.
+Prepare for making AI more intelligent wrt resupply.
+Fix strange movement bug.
+Make Random plan more intelligent about certain task assignments.
+Cancel a movement/resupply task combo, if it is no longer needed.
+----------------------------
+revision 1.3
+date: 2004/01/19 21:07:36;  author: mcdonald;  state: Exp;  lines: +96 -0
+Improve victim rating computation.
+Improve performance of non-networked games.
+Add new macro routines for debugging.
+Add new search algorithm.
+----------------------------
+revision 1.2
+date: 2004/01/16 06:33:10;  author: mcdonald;  state: Exp;  lines: +126 -45
+Unify victim finding for capturing, firing, and attacking.
+Make new victim finder the one and only.
+Fix bug in UI move-to checking.
+----------------------------
+revision 1.1
+date: 2004/01/10 20:49:10;  author: mcdonald;  state: Exp;
+Add new files for general AI/UI utility functions.
+Start adding more AI-related functions to "ai_" namespace.
+Include 'assert.h' in a master header instead of various and sundry sources.
+Rewrite 'could_hit' in terms of new functions.
+Begin migrating general AI/UI utility functions to 'aiutil'.
+Create some new general AI/UI utility functions in 'aiutil'.
+Improve victim finder by rejecting unreachable targets.
+=============================================================================

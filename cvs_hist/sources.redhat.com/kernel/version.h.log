@@ -1,0 +1,268 @@
+
+RCS file: /cvs/xconq/xconq/kernel/version.h,v
+Working file: version.h
+head: 1.40
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.12.2.1
+	xconq-7_4-branch: 1.12.0.2
+	xconq-7_4-branchpoint: 1.12
+	xtconq-pre-removal: 1.11
+	xconq-7_3_3-release: 1.8.2.3
+	xconq-7_3_2-release: 1.8.2.2
+	xconq-7_3_1-release: 1.8.2.1
+	xconq-7_3-branch: 1.8.0.2
+	xconq-7_3-branchpoint: 1.8
+keyword substitution: kv
+total revisions: 44;	selected revisions: 44
+description:
+----------------------------
+revision 1.40
+date: 2004/08/04 00:56:04;  author: ronne;  state: Exp;  lines: +1 -1
+Improvements to IMFApp.
+----------------------------
+revision 1.39
+date: 2004/07/01 23:18:56;  author: ronne;  state: Exp;  lines: +1 -1
+More fixes to the unit view code.
+----------------------------
+revision 1.38
+date: 2004/06/05 16:38:13;  author: ronne;  state: Exp;  lines: +1 -1
+Various bug fixes.
+----------------------------
+revision 1.37
+date: 2004/04/30 22:27:57;  author: ronne;  state: Exp;  lines: +1 -1
+Fix crashes in nearest_cell.
+----------------------------
+revision 1.36
+date: 2004/04/02 20:16:19;  author: ronne;  state: Exp;  lines: +1 -1
+Fix auto-repair related synch error.
+----------------------------
+revision 1.35
+date: 2004/03/07 01:14:52;  author: ronne;  state: Exp;  lines: +1 -1
+Update to March 2004.
+----------------------------
+revision 1.34
+date: 2004/02/15 20:28:53;  author: ronne;  state: Exp;  lines: +1 -1
+Update the game library.
+----------------------------
+revision 1.33
+date: 2004/01/01 02:18:36;  author: ronne;  state: Exp;  lines: +1 -1
+Split ChangeLog file.
+----------------------------
+revision 1.32
+date: 2003/12/01 01:20:25;  author: ronne;  state: Exp;  lines: +1 -1
+Make it possible to save/restore network games.
+----------------------------
+revision 1.31
+date: 2003/10/31 21:39:46;  author: ronne;  state: Exp;  lines: +1 -1
+Update pre-release version to November.
+----------------------------
+revision 1.30
+date: 2003/10/01 22:16:03;  author: ronne;  state: Exp;  lines: +1 -1
+Fix GDI memory problems on Windows ME and below.
+----------------------------
+revision 1.29
+date: 2003/09/20 05:24:02;  author: mcdonald;  state: Exp;  lines: +1 -1
+Clean out the now defunct win directory.
+Remove extraneous '-g' flags (at least in GCC case) from makefile templates.
+Fix error in default UI_TARGET.
+Update Xconq version to reflect the "new" month.
+----------------------------
+revision 1.28
+date: 2003/08/11 22:34:16;  author: ronne;  state: Exp;  lines: +1 -1
+Further improvements to resupply and repair code.
+----------------------------
+revision 1.27
+date: 2003/07/01 19:16:17;  author: ronne;  state: Exp;  lines: +1 -1
+Fix dead self unit bug.
+----------------------------
+revision 1.26
+date: 2003/06/05 23:25:26;  author: ronne;  state: Exp;  lines: +1 -1
+Fixes to terrain transitions and wreck unit code.
+----------------------------
+revision 1.25
+date: 2003/05/01 19:39:50;  author: ronne;  state: Exp;  lines: +1 -1
+Update pre-release version.
+----------------------------
+revision 1.24
+date: 2003/04/17 18:08:41;  author: ronne;  state: Exp;  lines: +1 -1
+Enable drawing of occs in the sdl interface.
+----------------------------
+revision 1.23
+date: 2003/03/01 00:00:39;  author: ronne;  state: Exp;  lines: +1 -1
+Fix two bugs in the mac ppc image code.
+----------------------------
+revision 1.22
+date: 2003/02/01 00:07:07;  author: ronne;  state: Exp;  lines: +1 -1
+Fixes to tcltk zooming and scrolling.
+----------------------------
+revision 1.21
+date: 2003/01/12 13:08:53;  author: ronne;  state: Exp;  lines: +1 -1
+Fixes to the elevation code.
+----------------------------
+revision 1.20
+date: 2002/12/25 19:32:38;  author: ronne;  state: Exp;  lines: +1 -1
+Add 3 new gvars for display control.
+----------------------------
+revision 1.19
+date: 2002/11/08 21:29:24;  author: ronne;  state: Exp;  lines: +1 -1
+Update prerelease version month.
+----------------------------
+revision 1.18
+date: 2002/10/03 20:27:18;  author: ronne;  state: Exp;  lines: +1 -1
+Update prerelease version.
+----------------------------
+revision 1.17
+date: 2002/09/01 00:34:42;  author: ronne;  state: Exp;  lines: +1 -1
+Fix date line bug and tcltk update bug.
+----------------------------
+revision 1.16
+date: 2002/08/01 23:02:19;  author: ronne;  state: Exp;  lines: +1 -1
+Fix sporadic lockups in network hosts.
+----------------------------
+revision 1.15
+date: 2002/07/05 22:30:13;  author: ronne;  state: Exp;  lines: +1 -1
+Fixes to reserve and sleep code.
+----------------------------
+revision 1.14
+date: 2002/06/24 21:27:27;  author: ronne;  state: Exp;  lines: +1 -1
+Update date.
+----------------------------
+revision 1.13
+date: 2000/12/18 14:07:15;  author: shebs;  state: Exp;  lines: +1 -1
+	* version.h: Bump to 7.5pre.
+	* NEWS: Update from branch.
+	* Xconq.r: Fix line endings.
+----------------------------
+revision 1.12
+date: 2000/12/11 19:19:07;  author: shebs;  state: Exp;  lines: +1 -1
+branches:  1.12.2;
+	* version.h: Bump to 7.4.0.
+	* NEWS: Update.
+	* README, xconq.spec, gdlref.texi, hacking.texi, playref.texi,
+	xcdesign.texi, xconq.texi, Xconq.r: Update version numbers.
+----------------------------
+revision 1.11
+date: 2000/06/17 13:16:54;  author: shebs;  state: Exp;  lines: +1 -1
+	* version.h: Bump to 7.4pre.
+----------------------------
+revision 1.10
+date: 2000/06/15 12:36:19;  author: shebs;  state: Exp;  lines: +1 -1
+	* version.h: Bump to 7.3.2.
+
+	* xconq.spec: Update version.
+	* Xconq.r, IMFApp.r: Update version resources.
+	* NEWS: Update.
+
+	* search.g, t3.g: Fix syntax.
+	* test-save.sh: Fix pathnames.
+	* test-run.sh, test-test.sh: Fix use of -L.
+----------------------------
+revision 1.9
+date: 2000/06/14 15:16:48;  author: shebs;  state: Exp;  lines: +1 -1
+	* version.h: Bump to 7.3.1.
+
+	* xconq.spec: Update version.
+	* Xconq.r, IMFApp.r: Update version resources.
+	* NEWS: Update.
+
+	* init.c (set_ai_for_player): Allow any empty string.
+	* tkconq.tcl (add_player_dialog_items): Split indepside button
+	into one to add/remove, another to configure.
+	(set_indepside): New proc.
+	(popup_indepside_config): Rename from popup_indepside, limit to
+	config of indepside options.
+	(cancel_indepside): New proc.
+	* tkinit.c (init_display): Remove indepside settings, too late
+	to have any effect here.
+	* tkmain.c (tk_launch_game): Do it here instead.
+----------------------------
+revision 1.8
+date: 2000/06/09 15:08:48;  author: shebs;  state: Exp;  lines: +1 -1
+branches:  1.8.2;
+	* version.h: Bump to 7.3.0.
+
+	* README: Update to 7.3, improve some phrasing.
+	* xconq.spec: Update versions and paths.
+	* Xconq.r, IMFApp.r: Update version resources.
+----------------------------
+revision 1.7
+date: 2000/04/25 15:53:41;  author: shebs;  state: Exp;  lines: +1 -1
+	* version.h: Bump to 7.2.97.
+----------------------------
+revision 1.6
+date: 2000/03/13 16:01:02;  author: shebs;  state: Exp;  lines: +2 -2
+	* version.h: Bump to 7.2.96.
+
+	* refman.texi: Document many added symbols.
+----------------------------
+revision 1.5
+date: 1999/11/23 03:58:31;  author: shebs;  state: Exp;  lines: +1 -1
+	* version.h: Bump to 7.2.95.
+----------------------------
+revision 1.4
+date: 1999/11/19 03:33:21;  author: shebs;  state: Exp;  lines: +1 -1
+	* version.h: Bump to 7.2.94.
+----------------------------
+revision 1.3
+date: 1999/10/03 18:51:20;  author: shebs;  state: Exp;  lines: +1 -1
+        * version.h: Bump to 7.2.93.
+----------------------------
+revision 1.2
+date: 1999/08/31 02:47:48;  author: shebs;  state: Exp;  lines: +1 -1
+bump version number
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:35;  author: shebs;  state: Exp;
+Initial checkin.
+----------------------------
+revision 1.8.2.3
+date: 2000/06/19 15:54:33;  author: shebs;  state: Exp;  lines: +1 -1
+	* version.h: Bump to 7.3.3.
+
+	* NEWS: Update.
+
+	* INSTALL-mac, README-mac: Update.
+----------------------------
+revision 1.8.2.2
+date: 2000/06/15 13:02:45;  author: shebs;  state: Exp;  lines: +1 -1
+	* version.h: Bump to 7.3.2.
+
+	* xconq.spec: Update version.
+	* Xconq.r, IMFApp.r: Update version resources.
+	* NEWS: Update.
+
+	* search.g, t3.g: Fix syntax.
+	* test-save.sh: Fix pathnames.
+	* test-run.sh, test-test.sh: Fix use of -L.
+----------------------------
+revision 1.8.2.1
+date: 2000/06/14 15:19:03;  author: shebs;  state: Exp;  lines: +1 -1
+	* version.h: Bump to 7.3.1.
+
+	* xconq.spec: Update version.
+	* Xconq.r, IMFApp.r: Update version resources.
+	* NEWS: Update.
+
+	* init.c (set_ai_for_player): Allow any empty string.
+	* tkconq.tcl (add_player_dialog_items): Split indepside button
+	into one to add/remove, another to configure.
+	(set_indepside): New proc.
+	(popup_indepside_config): Rename from popup_indepside, limit to
+	config of indepside options.
+	(cancel_indepside): New proc.
+	* tkinit.c (init_display): Remove indepside settings, too late
+	to have any effect here.
+	* tkmain.c (tk_launch_game): Do it here instead.
+----------------------------
+revision 1.12.2.1
+date: 2000/12/18 14:01:57;  author: shebs;  state: Exp;  lines: +1 -1
+	* version.h: Bump to 7.4.1.
+	* NEWS: Update, add note about Windows.
+	* xconq.spec, Xconq.r: Update version numbers.
+
+	* cconq.c (do_dir_2): Fix a variable name.
+	* cconq.h: Use #else instead of #elif.
+=============================================================================

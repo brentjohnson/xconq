@@ -1,0 +1,481 @@
+/* Definitions of all the global variables in Xconq GDL.
+   Copyright (C) 1991-2000 Stanley T. Shebs.
+
+Xconq is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.  See the file COPYING.  */
+
+DEF_VAR_L("action-movies", g_action_movies, set_g_action_movies,
+	"movies to play as result of actions and their outcomes",
+	gactionmovies, 0)
+
+DEF_VAR_L("action-notices", g_action_notices, set_g_action_notices,
+	"text to use in describing actions and their outcomes in the present",
+	gactionnotices, 0)
+
+DEF_VAR_I("advantage-default", g_advantage_default, set_g_advantage_default,
+	"default advantage of each side",
+	gadvantagedefault, 1, 1, 100)
+
+DEF_VAR_I("advantage-max", g_advantage_max, set_g_advantage_max,
+	"maximum advantage that a player can request",
+	gadvantagemax, 0, 0, 100)
+
+DEF_VAR_I("advantage-min", g_advantage_min, set_g_advantage_min,
+	"minimum advantage that a player can request",
+	gadvantagemin, 0, 0, 100)
+
+DEF_VAR_L("ai-initial-research-goals", g_ai_initial_research_goals, 
+	  set_g_ai_initial_research_goals,
+	  "weighted list of possible initial research goals for AI",
+	  gaiinitialresearchgoals, 0)
+
+DEF_VAR_I("alt-blob-density", g_alt_blob_density, set_g_alt_blob_density,
+	"number of altitude blobs to generate for fractal terrain",
+	galtblobdensity, 0, 1000, VARHI)
+
+DEF_VAR_I("alt-blob-height", g_alt_blob_height, set_g_alt_blob_height,
+	"height of altitude blobs to generate for fractal terrain",
+	galtblobheight, 0, 500, 10000)
+
+DEF_VAR_I("alt-blob-size", g_alt_blob_size, set_g_alt_blob_size,
+	"size of altitude blobs to generate for fractal terrain",
+	galtblobsize, 0, 30, VARHI)
+
+DEF_VAR_I("alt-smoothing", g_alt_smoothing, set_g_alt_smoothing,
+	"number of averaging steps to do on generated altitudes",
+	galtsmoothing, 0, 2, VARHI)
+
+DEF_VAR_S("attack-cursor", g_attack_cursor, set_g_attack_cursor,
+	"the cursor to use when over a unit that may be attacked",
+	gattackcursor, "cursor-sword")
+
+DEF_VAR_I("backdrop-ignore-doctrine", g_backdrop_ignore_doctrine, set_g_backdrop_ignore_doctrine,
+	"whether backdrop model 1 should ignore doctrine",
+	gbkdrpignoredoctrine, 0, 0, 1)
+
+DEF_VAR_I("backdrop-model", g_backdrop_model, set_g_backdrop_model,
+	"algorithm to use for backdrop economy",
+	gbkdrpmodel, 0, 0, VARHI)
+
+DEF_VAR_L("calendar", g_calendar, set_g_calendar,
+	"calendar system to use",
+	gcalendar, 0)
+
+DEF_VAR_I("combat-model", g_combat_model, set_g_combat_model,
+	"algorithm to use for combat",
+	gcombatmodel, 0, 0, VARHI)
+
+DEF_VAR_S("contour-color", g_contour_color, set_g_contour_color,
+	"name of the color to use when displaying contour lines",
+	gcontourcolor, "saddle-brown")
+
+DEF_VAR_S("country-border-color", g_country_border_color, set_g_country_border_color,
+	"name of the color to use when displaying country borders",
+	gcountrybordercolor, "deep-pink")
+
+DEF_VAR_I("country-radius-max", g_radius_max, set_g_radius_max,
+	"maximum radius of each side's country",
+	gradiusmax, 0, 0, VARHI)
+
+DEF_VAR_I("country-radius-min", g_radius_min, set_g_radius_min,
+	"default initial radius of each side's country",
+	gradiusmin, -1, -1, VARHI)
+
+DEF_VAR_I("country-separation-max", g_separation_max, set_g_separation_max,
+	"maximum distance between countries",
+	gmaxseparation, -1, -1, VARHI)
+
+DEF_VAR_I("country-separation-min", g_separation_min, set_g_separation_min,
+	"minimum distance from each country to some other",
+	gminseparation, 0, 0, VARHI)
+
+DEF_VAR_I("create-units-from-specs", g_create_units, set_g_create_units,
+	"true if should create units while reading, false if should save",
+	gcreateunits, 0, 1, 1)
+
+DEF_VAR_S("default-namer", g_default_namer, set_g_default_namer,
+	"namer to run when everything else fails",
+	gdefaultnamer, "")
+
+DEF_VAR_I("edge-terrain", g_edge_terrain, set_g_edge_terrain,
+	"type of terrain that goes around the edge of the world",
+	gedgeterrain, VARLO, 0, VARHI)
+
+DEF_VAR_I("edge-road-density", g_edge_road_density, set_g_edge_road_density,
+	"number of roads from edge to edge",
+	gedgeroaddensity, 0, 0, VARHI)
+
+DEF_VAR_I("elapsed-real-time", g_elapsed_time, set_g_elapsed_time,
+	"number of seconds of real time in the game so far",
+	gelapsedtime, -1, -1, VARHI)
+
+DEF_VAR_L("event-movies", g_event_movies, set_g_event_movies,
+	"movies to play when events are recorded",
+	geventmovies, 0)
+
+DEF_VAR_L("event-narratives", g_event_narratives, set_g_event_narratives,
+	"text to use in describing events in the past",
+	geventnarratives, 0)
+
+DEF_VAR_L("event-notices", g_event_notices, set_g_event_notices,
+	"text to use in describing events in the present",
+	geventnotices, 0)
+
+DEF_VAR_I("extra-turn-chance", g_extra_turn, set_g_extra_turn,
+	"chance that game will last one more turn",
+	gextraturn, 0, 0, 99)
+
+DEF_VAR_L("feature-namers", g_feature_namers, set_g_feature_namers,
+	"definitions of namers of geographical features",
+	gfeaturenamers, 0)
+
+DEF_VAR_L("feature-types", g_feature_types, set_g_feature_types,
+	"definitions of types of geographical features",
+	gfeaturetypes, 0)
+
+DEF_VAR_S("frontline-color", g_frontline_color, set_g_frontline_color,
+	"color to use for drawing differing control",
+	gfrontlinecolor, "red")
+
+DEF_VAR_S("generic-cursor", g_generic_cursor, set_g_generic_cursor,
+	"the default cursor to use",
+	ggenericcursor, "cursor-pointer")
+
+DEF_VAR_S("grid-color", g_grid_color, set_g_grid_color,
+	"name of the color to use when displaying cell grid",
+	ggridcolor, "dark-gray")
+
+DEF_VAR_I("growth-stop-chance", g_growth_stop, set_g_growth_stop,
+	"chance that country growth will stop after expanding by one",
+	ggrowthstop, 0, 0, 100)
+
+DEF_VAR_I("indepside-can-develop", g_indepside_can_develop, set_g_indepside_can_develop,
+	"independent side can do development",
+	gindepsidecandevelop, 0, 0, 1)
+	
+DEF_VAR_I("indepside-can-research", g_indepside_can_research, set_g_indepside_can_research,
+	"independent side can do research",
+	gindepsidecanresearch, 0, 0, 1)
+	
+DEF_VAR_I("indepside-has-ai", g_indepside_has_ai, set_g_indepside_has_ai,
+	"independent side has AI",
+	gindepsidehasai, 0, 0, 1)
+	
+DEF_VAR_I("indepside-has-economy", g_indepside_has_economy, set_g_indepside_has_economy,
+	"independent side can produce and consume materials",
+	gindepsidehaseconomy, 0, 1, 1)
+
+DEF_VAR_I("indepside-has-treasury", g_indepside_has_treasury, set_g_indepside_has_treasury,
+	"independent side has a treasury",
+	gindepsidehastreasury, 0, 0, 1)
+
+DEF_VAR_S("initial-date", g_initial_date, set_g_initial_date,
+	"date of the first turn",
+	ginitialdate, "")
+
+DEF_VAR_S("initial-date-max", g_initial_date_max, set_g_initial_date_max,
+	"latest possible date of the first turn",
+	ginitialdatemax, "")
+
+DEF_VAR_S("initial-date-min", g_initial_date_min, set_g_initial_date_min,
+	"earliest possible date of the first turn",
+	ginitialdatemin, "")
+
+DEF_VAR_I("initial-day-part", g_initial_day_part, set_g_initial_day_part,
+	"day part of the first (possible) turn",
+	ginitialdaypart, 0, 0, VARHI)
+
+DEF_VAR_I("initial-year-part", g_initial_year_part, set_g_initial_year_part,
+	"year part of the first (possible) turn",
+	ginitialyearpart, 0, 0, VARHI)
+
+DEF_VAR_I("last-turn", g_last_turn, set_g_last_turn,
+	"last possible turn in the game",
+	glastturn, 1, VARHI, VARHI)
+
+DEF_VAR_I("maze-passage-density", g_maze_passage, set_g_maze_passage,
+	"density of passages in a maze",
+	gmazepassages, 0, 3000, 10000)
+
+DEF_VAR_I("maze-room-density", g_maze_room, set_g_maze_room,
+	"density of rooms in a maze",
+	gmazerooms, 0, 1000, 10000)
+
+DEF_VAR_S("meridian-color", g_meridian_color, set_g_meridian_color,
+	"name of the color to use when displaying meridians",
+	gmeridiancolor, "black")
+
+DEF_VAR_I("player-sides-locked", g_player_sides_locked, set_g_player_sides_locked,
+	"true if player-side assignments can't be changed",
+	gplayersideslocked, 0, 0, 1)
+
+DEF_VAR_I("protection-resists-capture", g_prot_resists_capture, 
+	  set_g_prot_resists_capture, 
+	  "true, if the protection tables are used to resist capture", 
+	  gprotresistscapture, 0, 1, 1)
+
+DEF_VAR_I("random-state", g_random_state, set_g_random_state,
+	"value of the random state",
+	grandomstate, -1, -1, 32767)
+
+DEF_VAR_I("real-time-for-game", g_rt_for_game, set_g_rt_for_game,
+	"total real time that the game may last",
+	grtforgame, 0, 0, VARHI)
+
+DEF_VAR_I("real-time-per-side", g_rt_per_side, set_g_rt_per_side,
+	"total real time that a side gets for this game",
+	grtperside, 0, 0, VARHI)
+
+DEF_VAR_I("real-time-per-turn", g_rt_per_turn, set_g_rt_per_turn,
+	"maximum real time that any turn may last",
+	grtperturn, 0, 0, VARHI)
+
+DEF_VAR_I("river-sink-terrain", g_river_sink_terrain, set_g_river_sink_terrain,
+	"terrain type of a cell completely surrounded by river",
+	griversinkterrain, NONTTYPE, NONTTYPE, VARHI)
+
+DEF_VAR_I("zz-run-serial-number", g_run_serial_number, set_g_run_serial_number,
+	"identifying number of a simulation run step",
+	grunserialnumber, 0, 0, VARHI)
+
+DEF_VAR_S("scorefile-name", g_scorefile_name, set_g_scorefile_name,
+	"name for the scorefile",
+	gscorefilename, "")
+
+DEF_VAR_L("season-names", g_season_names, set_g_season_names,
+	"names of seasons in yearly cycle",
+	gseasonnames, 0)
+
+DEF_VAR_I("see-all", g_see_all, set_g_see_all,
+	"true if everything is always seen all the time",
+	gseeall, 0, 0, 1)
+
+DEF_VAR_I("see-terrain-always", g_see_terrain_always, set_g_see_terrain_always,
+	"true if terrain is always seen all the time",
+	gseeterrainalways, 0, 1, 1)
+
+DEF_VAR_I("see-weather-always", g_see_weather_always, set_g_see_weather_always,
+	"true if weather is always seen all the time",
+	gseeweatheralways, 0, 1, 1)
+
+DEF_VAR_I("self-required", g_self_required, set_g_self_required,
+	"true if each side must have a self-unit",
+	gselfrequired, 0, 0, 1)
+
+DEF_VAR_S("shoreline-color", g_shoreline_color, set_g_shoreline_color,
+	"name of the color to use for drawing shorelines",
+	gshorelinecolor, "blue")
+
+DEF_VAR_I("side-can-research", g_side_can_research, set_g_side_can_research,
+	"true when side as a whole can do research",
+	gsidecanresearch, 0, 0, 1)
+	
+DEF_VAR_L("side-color-library", g_side_color_lib, set_g_side_color_lib,
+	"list of default color schemes to use for sides",
+	gsidecolorlib, 0)
+
+DEF_VAR_L("side-library", g_side_lib, set_g_side_lib,
+	"list of available sides",
+	gsidelib, 0)
+
+DEF_VAR_S("side-namer", g_side_namer, set_g_side_namer,
+	"namer or naming method for sides",
+	gsidenamer, "default-side-names")
+
+DEF_VAR_I("sides-max", g_sides_max, set_g_sides_max,
+	"maximum number of sides in a game",
+	gsidesmax, 1, MAXSIDES, MAXSIDES)
+
+DEF_VAR_I("sides-min", g_sides_min, set_g_sides_min,
+	"minimum number of sides in a game",
+	gsidesmin, 1, 2, MAXSIDES)
+
+DEF_VAR_I("sides-wanted", g_sides_wanted, set_g_sides_wanted,
+	"preferred number of sides in a game",
+	gsideswanted, 1, 2, MAXSIDES)
+
+DEF_VAR_S("survey-cursor", g_survey_cursor, set_g_survey_cursor,
+	"the cursor to use in survey mode",
+	gsurveycursor, "cursor-hand")
+
+DEF_VAR_L("synthesis-methods", g_synth_methods, set_g_synth_methods,
+	"list of synthesis methods to run during init",
+	gsynthmethods, g_synth_methods_default)
+
+DEF_VAR_L("synthesis-done", g_synth_done, set_g_synth_done,
+	"list of synthesis results",
+	gsynthdone, 0)
+
+DEF_VAR_I("temperature-floor", g_temp_floor, set_g_temp_floor,
+	"absolute minimum possible temperature",
+	gtempfloor, VARLO, 0, VARHI)
+
+DEF_VAR_I("temperature-floor-elevation", g_temp_floor_elev, set_g_temp_floor_elev,
+	"elevation at which minimum temperature occurs",
+	gtempfloorelev, VARLO, 0, VARHI)
+
+DEF_VAR_I("temperature-moderation-range", g_temp_mod_range, set_g_temp_mod_range,
+	"how far to go in averaging temperature variations",
+	gtempmodrange, 0, 0, 2)
+
+DEF_VAR_I("terrain-seen", g_terrain_seen, set_g_terrain_seen,
+	"true if the world's terrain is already completely known",
+	gterrainseen, 0, FALSE, 1)
+
+DEF_VAR_I("turn", g_turn, set_g_turn,
+	"the current turn",
+	gturn, 0, 0, 32767)
+
+DEF_VAR_I("units-in-game-max", g_units_in_game_max, set_g_units_in_game_max,
+	"limit on the total number of units at any time in the game",
+	gunitsingamemax, -1, -1, VARHI)
+
+DEF_VAR_S("unit-gbox-border-color", g_unit_gbox_border_color, 
+	  set_g_unit_gbox_border_color,
+	  "name of color for border of unit grouping box",
+	  gunitgboxbordercolor, "black")
+
+DEF_VAR_S("unit-gbox-fill-color", g_unit_gbox_fill_color, 
+	  set_g_unit_gbox_fill_color,
+	  "name of fill color for unit grouping box",
+	  gunitgboxfillcolor, "white")
+
+DEF_VAR_S("unit-name-color", g_unit_name_color, set_g_unit_name_color,
+	"name of the color to use for displaying unit names",
+	gunitnamecolor, "lemon-chiffon")
+
+DEF_VAR_I("units-per-side-max", g_units_per_side_max, set_g_units_per_side_max,
+	"limit on the total number of units on each side",
+	gunitspersidemax, -1, -1, VARHI)
+
+DEF_VAR_S("unseen-char", g_unseen_char, set_g_unseen_char,
+	"name of the char representing unseen terrain",
+	gunseenchar, " ?")
+
+DEF_VAR_S("unseen-color", g_unseen_color, set_g_unseen_color,
+	"name of the color(s) representing unseen terrain",
+	gunseencolor, "black")
+
+DEF_VAR_I("use-side-priority", g_use_side_priority, set_g_use_side_priority,
+	"true if sides are to move according to priority",
+	gusesidepriority, 0, 0, 1)
+
+DEF_VAR_I("wet-blob-density", g_wet_blob_density, set_g_wet_blob_density,
+	"number of wetness blobs to generate for fractal terrain",
+	gwetblobdensity, 0, 100, VARHI)
+
+DEF_VAR_I("wet-blob-height", g_wet_blob_height, set_g_wet_blob_height,
+	"height of wetness blobs to generate for fractal terrain",
+	gwetblobheight, 0, 100, 10000)
+
+DEF_VAR_I("wet-blob-size", g_wet_blob_size, set_g_wet_blob_size,
+	"size of wetness blobs to generate for fractal terrain",
+	gwetblobsize, 0, 100, VARHI)
+
+DEF_VAR_I("wet-smoothing", g_wet_smoothing, set_g_wet_smoothing,
+	"number of averaging steps to do on generated altitudes",
+	gwetsmoothing, 0, 2, VARHI)
+
+DEF_VAR_I("wind-mix-range", g_wind_mix_range, set_g_wind_mix_range,
+	"how far to go in averaging wind variations",
+	gwindmixrange, 0, 0, 2)
+
+/* Various automatic settings for advanced units. */
+
+DEF_VAR_I("disband-unfinished-units", g_disband_unfinished_units, set_g_disband_unfinished_units,
+	"true if abandoned unfinished construction projects are disbanded",
+	gdisbandunfinishedunits, 0, 0, 1)
+
+DEF_VAR_I("salvage-unfinished-cps", g_salvage_unfinished_cps, set_g_salvage_unfinished_cps,
+	"true if cps of disbanded unfinsihed unit are salvaged to unit->cp_stash",
+	gsalavageunfinishedcps, 0, 0, 1)
+
+DEF_VAR_I("salvage-unfinished-materials", g_salvage_unfinished_materials, set_g_salvage_unfinished_materials,
+	"true if materials used to make disbanded unfinished unit are salvaged to unit->supply",
+	gsalavageunfinishedmaterials, 0, 0, 1)
+
+DEF_VAR_I("ai-advanced-unit-separation", g_ai_advanced_unit_separation, set_g_ai_advanced_unit_separation,
+	"minimal distance between advanced units used by AI when picking a new cell to colonize",
+	gaiadvancedunitseparation, 0, 3, VARHI)
+	
+/* Used to debug task and plan code. */
+
+DEF_VAR_I("ai-badtask-remove-chance", g_ai_badtask_remove_chance, set_g_ai_badtask_removel_chance,
+	"probability that a failed task will be removed from the task queue",
+	gaibadtaskremovechance, 0, 20, 100)
+	
+DEF_VAR_I("ai-badtask-max-retries", g_ai_badtask_max_retries, set_g_ai_badtask_max_retries,
+	"max number of times the AI will bang its head into the wall",
+	gaibadtaskmaxretries, 0, 6, VARHI)
+	
+DEF_VAR_I("ai-badtask-reserve-chance", g_ai_badtask_reserve_chance, set_g_ai_badtask_reserve_chance,
+	"probability that a failed task will put the unit into reserve ",
+	gaibadtaskreservechance, 0, 20, 100)
+	
+/* What code should run in this game? */
+
+DEF_VAR_I("people", g_people, set_g_people,
+	"run population code so that cities can grow",
+	gpeople, 0, 1, 1)
+
+DEF_VAR_I("economy", g_economy, set_g_economy,
+	"run standard economy code",
+	geconomy, 0, 1, 1)
+
+DEF_VAR_I("supply", g_supply, set_g_supply,
+	"run supply system code",
+	gsupply, 0, 1, 1)
+
+DEF_VAR_I("no-indepside-ingame", g_no_indepside_ingame, set_g_no_indepside_ingame,
+	"disable indepside even if there are independent units",
+	gnoindepsideingame, 0, 0, 1)
+	
+DEF_VAR_I("ai-may-resign", g_ai_may_resign, set_g_ai_may_resign,
+	"just what it says",
+	gaimayresign, 0, 1, 1)
+
+DEF_VAR_S("window-color", g_window_color, set_g_window_color,
+	"name of the default window background color outside the map border",
+	gwindowcolor, "sandy-brown")
+
+DEF_VAR_S("fore-color", g_fore_color, set_g_fore_color,
+	"name of the default foreground color to use for icons",
+	gforecolor, "black")
+
+DEF_VAR_S("mask-color", g_mask_color, set_g_mask_color,
+	"name of the default color to use for masks and grouping boxes",
+	gmaskcolor, "lemon-chiffon")
+
+DEF_VAR_S("text-color", g_text_color, set_g_text_color,
+	"name of the default color to use for text in maps",
+	gtextcolor, "midnight-blue")
+
+DEF_VAR_S("feature-color", g_feature_color, set_g_feature_color,
+	"name of the default color to use for feature names and borders",
+	gfeaturecolor, "light-salmon")
+
+DEF_VAR_I("feature-boundaries", g_feature_boundaries, set_g_feature_boundaries,
+	"draw feature boundaries",
+	gfeatureboundaries, -1, -1, 1)
+
+DEF_VAR_I("meridians", g_meridians, set_g_meridians,
+	"draw meridians",
+	gmeridians, -1, -1, 1)
+
+DEF_VAR_I("shorelines", g_shorelines, set_g_shorelines,
+	"draw shorelines",
+	gshorelines, -1, -1, 1)
+
+DEF_VAR_I("terrain-transitions", g_terrain_transitions, set_g_terrain_transitions,
+	"draw terrain transitions",
+	gterraintransitions, -1, -1, 1)
+
+/* This should really be an mtype property, but since type properties
+are limited to short size, we have to make it a gvar instead. */ 
+
+DEF_VAR_I("treasury-size", g_treasury_size, set_g_treasury_size,
+	"max amount of material in each side's treasury",
+	gtreasurysize, 0, VARHI, VARHI)
+

@@ -1,0 +1,25 @@
+THINGS TO DO
+
+(These should be resolved before releasing the next version.)
+
+Save/restore side->ai_may_resign.
+
+Save/restore unit->curadvance by name not number.
+
+Decide whether maxcells needs to be saved/restored.
+
+Fix triple twitch redraw when zooming from 8x8 -> 16x16.
+
+Fix where cover doesn't change, but see-chance does (vision range > 1,
+move adj when adj chance higher).
+
+Figure out why 800ms delay of autoscrolling doesn't work on right side
+of map. (apparent delay seems to jump suddenly)
+
+Fix drawing of cylinder areas when scrolling in parts with negative
+coords.
+
+In Windows version, handle error displays prior to tcl/tk interface
+setup without needing console.
+
+In W98, make game exit without hanging the machine.

@@ -1,0 +1,82 @@
+#!/usr/local/bin/perl
+#eval 'exec /usr/local/bin/perl -S $0 ${1+"$@"}'
+#	if $running_under_some_shell;
+
+require "getopts.pl";
+&Getopts('o:b:');
+#die "Usage: map2g [-o outfile] [-b base-module] [infile]\n" if @ARGV > 1;
+
+#
+# Get stdout set up and the default module name
+#
+if ( $opt_o ) {
+    #
+    # If they give us an output file name, open it
+    # and use it as the module name (minus path and extension).
+    #
+    open(STDOUT, ">$opt_o") || die "Couldn't open $opt_o for output: $!\n";
+    ($m = $opt_o) =~ s#(.*/)?(.*)\.g$#$2#;
+} elsif (@ARGV) {
+    #
+    # If they give us an input file,
+    # use it as the output file name (minus path and extension plus .g)
+    # and use it as the module name (minus path and extension).
+    #
+    ($m = $ARGV[0]) =~ s#(.*/)?(.*)\.map$#$2#;
+    unless ( -e "$m.g" ) {
+	open(STDOUT, ">$m.g") || die "Couldn't open $m.g for output: $!\n";
+    }
+} else {
+    #
+    # OK, we got nothin', output is stdout and module name is junk.
+    #
+    $m = 'xxx';
+}
+
+#
+# This is the base-module option
+#
+if ( $opt_b ) {
+
+    # Try to open it as a file
+    if ( open(BM, "$opt_b") ) {
+
+	# assume that it's an old-style map, period or scenario file.
+	@types = grep(s/^\s*"(.)"\s+.*\s+ttype\s*(;.*)*$/$1/, <BM>);
+	$c = join('', @types);
+    }
+
+    # strip the path and extension (if there is one).
+    $opt_b =~ s#(.*/)?(.*)\.(map|per|scn)$#$2#;
+
+    # otherwise it's probably just a name.
+    $b = qq/  (default-base-module "$opt_b")\n/;
+}
+
+while (<>) {
+
+    # Nab the header line...
+    if (/^Xconq . [\+-]* \s*(.*)$/) {
+        print qq/(game-module "$m"\n$b  (blurb "$1")\n  )\n/;
+	next;
+    }
+
+    # Get the world size...
+    if (/^Map ([0-9]*) ([0-9]*) /) {
+	local($i);
+
+	# if this is .map file the the world is cylindrical.
+	print qq/(area $1 $2) (world $1)\n  (area (terrain (by-char "$c")\n/;
+	for ($i = 0; $i < $2; ++$i) {
+	    $_ = <>;
+	    chop;
+	    print qq/  "$_"\n/;
+	}
+	# close the parens at the end of the map.
+	print "  ))\n";
+	next;
+    }
+
+    s/^/;/;
+    print;
+}

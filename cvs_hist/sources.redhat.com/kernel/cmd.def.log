@@ -1,0 +1,87 @@
+
+RCS file: /cvs/xconq/xconq/kernel/cmd.def,v
+Working file: cmd.def
+head: 1.10
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.6
+	xconq-7_4-branch: 1.6.0.4
+	xconq-7_4-branchpoint: 1.6
+	xtconq-pre-removal: 1.6
+	xconq-7_3_3-release: 1.6
+	xconq-7_3_2-release: 1.6
+	xconq-7_3_1-release: 1.6
+	xconq-7_3-branch: 1.6.0.2
+	xconq-7_3-branchpoint: 1.6
+keyword substitution: kv
+total revisions: 10;	selected revisions: 10
+description:
+----------------------------
+revision 1.10
+date: 2004/01/03 15:56:08;  author: ronne;  state: Exp;  lines: +2 -2
+Enable change-type on all platforms.
+----------------------------
+revision 1.9
+date: 2004/01/01 06:59:41;  author: mcdonald;  state: Exp;  lines: +2 -2
+Add disabled but tested change-type to all interfaces except Mac.
+----------------------------
+revision 1.8
+date: 2003/02/25 23:25:14;  author: ronne;  state: Exp;  lines: +4 -0
+Comment out agreement code. Fix some bugs.
+----------------------------
+revision 1.7
+date: 2002/05/20 05:45:18;  author: ronne;  state: Exp;  lines: +3 -0
+Fix Windows compile problems.
+----------------------------
+revision 1.6
+date: 2000/04/10 13:02:36;  author: shebs;  state: Exp;  lines: +1 -1
+	* cmd.def: Rename "D" debug toggle to "DD", for consistency.
+
+	* commands.texi: Make consistent with code.
+	* refman.texi: Fix small mistakes from last checkin.
+----------------------------
+revision 1.5
+date: 1999/12/14 03:13:02;  author: shebs;  state: Exp;  lines: +3 -0
+	* side.h (Side c_rates): New field.
+	* cmd.def (c-rate): New command, sets material conversion rates.
+	* cmd.c (do_c_rate): New function.
+	* run.c (run_advanced_units): Rewrite conversion to use user
+	specified rates.
+----------------------------
+revision 1.4
+date: 1999/12/01 04:02:01;  author: shebs;  state: Exp;  lines: +4 -1
+	* cmd.def (research): New command.
+	* cmd.c (do_research, parse_advance_spec): New functions.
+----------------------------
+revision 1.3
+date: 1999/06/04 17:22:59;  author: shebs;  state: Exp;  lines: +155 -155
+	* cmd.c (find_agreement): Declare.
+	* cmd.c, ui.h (DEF_CMD): Remove unused argtype argument.
+	* cmd.def: Update all command definitions.
+----------------------------
+revision 1.2
+date: 1999/05/11 19:53:52;  author: shebs;  state: Exp;  lines: +21 -0
+	* cmd.def (agreement-draft, agreement-drafter, agreement-propose,
+	agreement-proposer, agreement-sign, agreement-signer,
+	agreement-term): New commands.
+	* cmd.c (do_agreement_draft, do_agreement_drafter, etc): New
+	functions.
+	* cmdline.c (parse_command_line): Handle -h by creating player
+	specs immediately.
+	* side.h (agreement_list, etc): Rename from agreementlist etc.
+	* side.c (agreement_list, etc): Ditto.
+	(find_agreement): New function.
+	(create_agreement): Fix.
+	* ui.h (VP see_all): New slot.
+	* ui.c (find_unit_or_occ): Add side arg, account for occupant
+ 	visibility rules.
+	Change all callers.
+	(calc_view_misc): Comment out hexagon_adjust, seems unneeded.
+	* write.c (write_agreements): Use for_all_agreements.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:22;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

@@ -1,0 +1,209 @@
+Supply System 1.0 Sep-7-1998
+
+Release Notes
+
+All features are in but testing has been minimal so far. This document is
+still a bit too short (?). All the tables are described, though.
+
+I did grab 4 bytes from a_unit structure after all. See supply-importance.
+The flags wouldn't have been of as much use. Now "isolation" can be defined as
+"supply connectedness < x%" and "supply shortage" as "supply inflow < y%"
+etc.
+
+supply.g is a simple test game.
+
+TODO:
+
+*Add code to allocate the cell control layer when needed! I.e. when any
+ control-range is > 0. The country synthesis method should automatically
+ allocate cell control (or, more preferably, add this as a setting).
+
+Interface-TODO:
+
+*Add code to display the cell control layer.
+*Replace supply inflow/connectedness hack from xdraw.c with something nicer.
+*Add code to update material information after run_supply() (and
+ run_economy(), for that matter)!
+*Add code to display supply potentials.
+
+Introduction
+
+This project is an attempt to improve support for supply and logistics in
+Xconq. Included are the new supply module (supply.c, supply.h), some patches
+to kernel files and a hastily put-together test game. GDL changes consist of
+about twenty new tables.
+
+The game effect of the supply system is a new per-turn backdrop process
+integrated with other economic events: automatic distribution of materials
+among a side's units according to a set of highly configurable supply rules.
+The new supply system should enable designers to set up elaborate supply
+schemes with little effort. The algorithm responsible for sharing supplies
+is designed to yield an optimal distribution without player intervention,
+allowing even complex games to run smoothly.
+
+Key Concepts
+
+The supply system is material-specific: supply is run separately for each type
+of material.
+
+Distribution of supplies takes place in _supply zones_, areas of suitable,
+connected cells with a non-zero "supply potential".
+
+Supply zones are established by units. If a unit's effective supply potential
+is above zero it has the capacity to establish a supply zone, that is, run
+supply lines into surrounding terrain. The basic supply potential of a unit
+for a specific material is controlled with the table supply-potential. An
+effective potential is calculated by taking into account possible modifications
+from supply-potential-terrain-effect and occupant-supply-potential. This
+potential directly translates to a supply potential of the cell the unit is in.
+
+The establishment of supply zones is a recursive process. All supply zones
+begin from the center of a cell containing a unit with a non-zero supply
+potential and "ripple" outwards. The expansion continues as long as new cells
+can be added to the zone. A cell is added if the potential of a supply line
+run through or into it is non-zero. The supply zones of different units may
+"link up" and create a larger supply zone.
+
+Distribution of supplies is often restricted in both the distance supplies
+can travel and the quantity of materials that may be transferred. Supply lines
+may deteriorate when traced into or through a hostile type of terrain, as
+specified in the table supply-deterioration. Neutral or enemy control of a
+cell may interdict a supply line. This feature is controlled with the tables
+supply-neutral-interdiction and supply-enemy-interdiction. Finally, enemy
+units may interdict supply lines, as given in tables supply-interdiction-at,
+supply-interdiction-at-for-material, supply-interdiction-adjacent and supply-
+interdiction-adjacent-for-material. Deterioration or interdiction results in
+the weakening of the supply line. A supply line ends, or is cut, when its
+potential reaches zero.
+
+A unit can normally receive up to supply-in-max and give out up to supply-out-
+max of a specific material. These values may drop if the supply zone potential
+in the unit's cell falls below supply-capacity-threshold.
+
+There is no intrinsic limit to the area of a single supply zone, the number of
+units that may share supplies in a supply zone nor the net amount of supplies
+that may change hands in a supply zone. These are limitations of the employed
+algorithm.
+
+GDL Keywords
+
+Table: supply-out-threshold u m -> n
+
+If unit u has more than n of material m it can distribute the excess among the
+consumers in its supply zone. Defaults to -1 which disables supplying. Note
+that a unit can be both a producer and a consumer in a supply zone and also
+"distribute" supplies to itself.
+
+Table: supply-out-max u m -> n
+
+The maximum amount of material m that a unit of type u can give out to other
+units in its supply zone in a given turn. Defaults to -1 which means an
+unlimited amount.
+
+Table: supply-potential u m -> n
+
+The minimum potential of a supply line of material m when it is traced from,
+through or into a cell containing a unit of type u. Supply potential means the
+ability to establish supply lines. This property applies equally to producers
+and consumers (since there is no real distinction between the two). Supply
+potentials of multiple units never reinforce each other; the maximum is used.
+Nearby enemy units, or enemy control of the cell the unit is in, have no
+effect on this value. Defaults to 0.
+
+Table: supply-potential-terrain-effect u t -> n%
+
+The effect of terrain of type t on the supply-potentials of units of type u.
+Defaults to 100.
+
+Table: supply-capacity-threshold u m -> n
+Table: supply-capacity-deterioration u m -> n%
+
+If a unit of type u is in a cell where the calculated supply zone potential is
+less than n, the maximum amount of material m that can be transferred to/from
+it in a given turn will diminish according to supply-capacity-deterioration.
+If the supply potential of the cell is 0, the relevant supply-in-max and
+supply-out-max values are multiplied by n%. if the supply potential equals
+supply-potential-threshold, they are unchanged, with a linear distribution
+in between. The former defaults to 0; the latter to 100.
+
+Table: occupant-supply-potential u1 u2 -> n%
+
+The effect on the supply-potentials of a unit of type u1 when an occupant in a
+unit of type u2. Defaults to 100 which means that occupancy doesn't alter the
+supply line establishment capability of a unit.
+
+Table: supply-in-threshold u m -> n
+
+If unit u has less than n of material m it can receive supplies from the
+unit's supply zone, but only up to the threshold. Defaults to 0. Large values
+are clipped to the relevant unit-storage-x.
+
+Table: supply-in-max u m -> n
+
+The maximum amount of material m that a unit of type u can receive from its
+supply zone in a given turn. Defaults to -1 which means an unlimited amount.
+
+Table: supply-in-weight u m -> n
+Table: supply-starve-weight u m -> n
+
+The relative supply weight of unit type u with respect to material m. The
+actual supply weight of a unit is linearly interpolated between supply-starve-
+weight and supply-in-weight according to the amount of material m the unit has
+before supply distribution: 0 produces supply-starve-weight, while supply-in-
+threshold produces supply-in-weight. A unit whose supply weight is twice as
+high as another unit's receives twice as much of material type m if in the
+same supply zone, assuming there's a shortage of supplies and both units have
+an equal capacity for receiving material m. Both default to 1 which translates
+to an equal distribution of supplies among all consumers.
+
+Table: supply-deterioration t m -> n
+
+The amount by which a supply line for material type m deteriorates when traced
+into, across or along terrain of type t. t can be a cell, border or connection
+type, respectively. A supply line is cut or ends if its potential reaches zero.
+The mechanics of supply zone expansion are similar to the movement of units
+except that only entry costs apply and there is no cost associated with
+entering or leaving a connection terrain. Both default to 0 which translates
+to supply lines of unlimited length.
+
+Table: supply-enemy-interdiction t m -> n
+
+The amount by which enemy control of a cell of type t weakens a supply line of
+material type m traced through or into it. Defaults to 0.
+
+Table: supply-neutral-interdiction t m -> n
+
+The amount by which an uncontrolled cell or a cell controlled by a neutral
+party causes a supply line traced through or into it to weaken. Defaults to 0.
+
+Table: supply-interdiction-at u t -> n
+Table: supply-interdiction-at-for-material u m -> n%
+
+The amount by which an enemy unit of type u, in terrain of type t, can
+weaken a supply line of material m. t should be a cell type. The former
+defaults to 0; the latter to 100.
+
+Table: supply-interdiction-adjacent u t -> n
+Table: supply-interdiction-adjacent-for-material u m -> n%
+
+The amount by which an enemy unit of type u, adjacent to a supply line for
+material type m traced through/into terrain of type t, can weaken the supply
+line. The former defaults to 0; the latter to 100.
+
+Table: supply-importance u m -> n
+
+The relative importance of material m to a unit of type u in context of the
+supply system. These weights are used to compute suitable values for two unit
+variables: "supply inflow" and "supply connectedness". Interfaces may examine
+these values to notify players of the supply stati of their units. The former
+value refers to the ratio of the amount of supplies a unit received at the
+start of the turn to how much it could have received; the latter is a measure
+of how well a unit is connected to supply zones (any non-zero supply potential
+at or above supply-capacity-threshold yields maximum connectedness). The
+variables are independent of each other. Note that this table has no function
+in the supply system itself. The importance values default to 0.
+
+Interfaces should first find out if the supply system is used at all (with
+supply_system_in_use()) and then use the macros supply_inflow(unit) and
+supply_connectedness(unit) to query a unit's supply status. Both percentages
+could be displayed in a unit's status window.

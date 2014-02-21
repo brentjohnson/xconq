@@ -1,0 +1,33 @@
+/* Definitions of the advance type properties in Xconq GDL.
+   Copyright (C) 1998, 1999 Hans Ronne.
+   Copyright (C) 2004 Eric A. McDonald.
+
+Xconq is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.  See the file COPYING.  */
+
+DEF_APROP_L("ai-next-goal", a_ai_next_goal,
+	    "list of possible next research goals for AI to choose",
+	    ainextgoal)
+
+DEF_APROP_S("help", a_help,
+	"brief description of this advance",
+	help, "")
+
+DEF_APROP_S("image-name", a_image_name,
+	"graphical representation of this advance",
+	imagename, "")
+
+DEF_APROP_S("name", a_type_name,
+	"name of this advance",
+	name, "")
+
+DEF_APROP_L("notes", a_notes,
+	"player notes",
+	notes)
+
+DEF_APROP_I("rp", a_rp,
+	"number of research points to discover a new advance",
+	rp, 1, 1, PROPHI)
+

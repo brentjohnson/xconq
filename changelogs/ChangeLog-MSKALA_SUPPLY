@@ -1,0 +1,260 @@
+2005-03-16  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	Fix "ACP-independent construction draw from treasury cannot be set
+	to unlimited" bug.
+	* run.c (take_all_from_treasury): If unit-storage-x is 0 but unit is
+	otherwise configured to be able to take material from treasury, then
+	take all the material from the treasury.
+
+	Make "add terrain" action (only - not "alter" at this time) able to
+	take materials from treasury.
+	* actions.c (check_add_terrain_action): Allow the action if there is
+	appropriate treasury material available.
+	  (do_add_terrain_action): Remove material from treasury if
+	necessary and appropriate.
+
+	Allow auto-repair of self.
+	* run2.c (auto_repair_from_here): Remove check against auto-repair
+	of self.
+
+	New version of SRE.
+	* solar.g: added a bunch of new units and stuff.
+
+	Handle auxilliary terrain's effect on terrain-to-terrain diffusion.
+	* economy.c (distribute_materials_1): Compute global maximum
+	diffusion distance, compute range for diffusion including modifiers.
+	  (can_transfer_material): Apply modifiers to diffusion range.
+
+2005-03-14  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_6' and 
+	'BPT_MSKALA_SUPPLY_7'.
+
+2005-03-09  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	Merge in CVS trunk between BPT_MSKALA_SUPPLY_5 and
+	BPT_MSKALA_SUPPLY_6.
+
+2005-02-27  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	New version of Solar Regions Explorer.
+	* solar.g: Replace file.
+	* solunits.gif: New file.
+
+2005-02-25  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	Fix "resupplying enemy units" bug.
+	* economy.c (can_transfer_material): Add check for
+	terrain-to-unit-out-length.  That turned out not to be the cause
+	of the present bug, but it was wrong and would probably have caused
+	trouble too, eventually.
+	* world.h (cell_is_within_range): Add parentheses so that this macro
+	can be used in logical expressions without causing horrific
+	misbehaviour.
+
+2005-02-25  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	Implement unit-to-cell, cell-to-unit, and cell-to-cell transfers.
+	* table.def (unit-to-terrain-in-length, unit-to-terrain-out-length,
+	terrain-to-unit-in-length, terrain-to-unit-out-length,
+	terrain-to-terrain-in-length, terrain-to-terrain-out-length): New
+	tables.
+	* economy.c (distribute_materials_1): Include cells as destinations.
+	  (can_transfer_material): Allow cell->unit, unit->cell, and
+	cell->cell transfers, according to the new tables.
+	* refman.texi (Supply Lines): Document new tables, including planned
+	future enhancement for border/connection/coating terrain.
+
+	Fix "units excused from starving if transport has materials" bug. 
+	The issue is that just because the transport has materials doesn't
+	mean it can or will share them; if the designer wanted the starving
+	occupant to have those materials, they would have already been
+	transferred by the time of the starvation check; and in any case
+	materials should be consumed every time a unit fails to starve.
+	* economy.c (in_supply): Remove function.
+	  (maybe_starve): Don't call in_supply.
+
+	New version of Solar Regions Explorer (and new name for it).
+	* solar.g: Add a bunch of new features.  This file is still
+	experimental, not tracking changes in detail yet.
+
+2005-02-23  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_3' and 
+	'BPT_MSKALA_SUPPLY_4'.
+
+2005-02-20  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	Separate advanced unit production from terrain production.
+	* table.def (production-from-terrain): New table.
+	* run.c (production_at): Use production-from-terrain for advanced
+	unit production.
+	* help.c (describe_ttype): Explain terrain-production and
+	production-from-terrain values.
+	* refman.texi (Terrain Production and Consumption): Document that
+	terrain-production is for cells themselves.
+	  (Advanced Units): Document production-from-terrain table.
+	* 3rd-age.c, advances.g, awls-rules.g, bolodd2.g, bolodd3.g,
+	cil-rules.g, civ2.g, colonizer.g, space-civ.g, t-bellum.g,
+	valhalla.g: Use production-from-terrain.
+
+	Add model 1 to library games.
+	* 3rd-age.g, advances.g, africa.g, ancient-days.g, antar-stdgame.g,
+	bellum.g, bolodd2.g, bolodd3.g, civ2.g, colonizer.g, empire.g,
+	fantasy.g, galaxy2.g, lhs.g, mars.g, neurope.g, opal.g, panzer.g,
+	pgu.g, postmodern.g, roman.g, russian-rev.g, solar.g, space-civ.g,
+	spec.g, standard.g, tailhook.g, time.g, voyages.g, wizard.g,
+	wreckreation.g: Add "Alternate Economy" and "AltEcon uses doctrine"
+	options.
+	* space-civ.g: Just go ahead and make it automatic.
+
+	Fix bugs revealed in testing library games with model 1.
+	* economy.c (distribute_materials_1): Don't attempt to shuffle last
+	entry of array with itself (harmless, but better not to).
+	  (make_mh_from_unit): Don't touch the MaterialHandler if
+	you're going to return FALSE, because it might not actually have
+	been allocated.
+	* tkmain.c (MAXCHECKBOXES): Increase hardcoded limit.  Would be
+	better to remove, but I don't understand what the code is doing.
+	* tkconq.tcl (popup_variants_dialog): Make variants dialog taller.
+	  (add_variants_dialog_items): Handle more variants.
+
+2005-02-17  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	Implement backdrop-ignore-doctrine.
+	* economy.c (MaterialHandler): New field, doclevel, minimum store
+	set by doctrine.
+	  (distribute_materials_1): If following doctrine, don't transfer
+	away in such a way as to reduce store below doclevel.
+	  (make_mh_from_unit): Set doclevel to zero or doctrine level
+	according to backdrop-ignore-doctrine gvar.
+	  (make_mh_from_treasury): Set doclevel to zero.
+	  (make_mh_from_cell): Set doclevel to zero.
+	* gvar.def (backdrop-ignore-doctrine): Fix typo, it refers to model
+	1, not 0.
+	* refman.texi (Module Variants): Clarify that "economy" isn't the
+	same thing as "supply".
+	  (Supply Lines): Document backdrop-model and
+	backdrop-ignore-doctrine, describe differences between models 0 and
+	1 for in-length and out-length.
+
+	Merged in changes from trunk (between BPT_MSKALA_SUPPLY_2 and
+	BPT_MSKALA_SUPPLY_3), hoping that'll fix observed infinite-loop bug. 
+	No conflicts in merge.
+
+	Fix infinite-loop bug.
+	* economy.c (distribute_materials_1): Actually do the doctrine
+	check correctly instead of looking at wrong field of wrong unit.
+
+2005-02-16  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Make both the terrain production and advanced unit production usage 
+	of 'terrain-production' account for all aux terrain types.
+	* economy.c (run_economy): Make the terrain production 
+	'terrain-production' account for all aux terrain types. (I could 
+	not test this because all games that define terrain storage do 
+	not use 'terrain-production'.) (Also note that each aux terrain 
+	does not have its own materials storage, and thus must rely on the 
+	cell terrain's cell storage of materials.)
+	* run.c (production_at): Make advanced unit 'terrain-production' 
+	account for all aux terrain types and not just connectors.
+
+2005-02-15  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	Move economy code into a separate file.
+	* economy.c: New file, containing all the economy and consumption
+	code.  Not containing advanced-unit production.  Group all
+	run_foo_consumption functions into new run_all_consumption.
+	* kernel/Makefile.in: Build economy.o.
+	* kernel.h: Declare run_economy and run_all_consumption.
+	* run2.c: Remove functions that have been moved to economy.c.
+
+2005-02-13  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	Clarify a couple of points in documentation of existing code.
+	* refman.texi (Unit Production and Consumption): Clarify
+	documentation of occupant-base-production and base-consumption.
+
+	Start building support for material exchange with cells.
+	* run2.c (make_mh_from_cell): New function.  Create a MaterialHandler
+	structure pointing at a cell.
+	  (distribute_materials_1): Iterate over cells too in FROM loops.
+	* world.h (Area): Change Area.materials field to long **.
+	* world.c (allocate_area_material): Allocate longs for materials.
+
+	Implement treasury support.
+	* run2.c (make_mh_from_treasury): Use treasury-size gvar.
+	  (can_transfer_material): Transfers between units and treasuries.
+	* actions.c (storage_possible): Units could store material in model
+	1 even when there's a treasury.
+	* table.def (gives-to-treasury): Don't say it always gives all.
+	* refman.texi (Initial Supply): Document pre-existing but
+	undocumented treasury-size gvar.
+	  (Unit Production and Consumption): Don't say gives-to-treasury
+	always gives all.
+
+2005-02-09  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	Merged in changes from trunk (between BPT_MSKALA_SUPPLY_1 and
+	BPT_MSKALA_SUPPLY_2), mostly to get the adjacent-terrain-connection
+	patch.  No conflicts in merge.
+
+	Allow unit stores to go temporarily negative, to fix bug by which
+	units wouldn't starve with insufficient but more than zero supply.
+	* run2.c (run_unit_base_consumption): Remove store>=0 enforcement.
+	  (run_economy): Add store>=0 enforcement in final "clipping" stage.
+
+2005-01-28  Matthew Skala  <matthewskala@users.sourceforge.net>
+
+	Switch from shorts to longs for unit material stores.
+	* read.c (interp_unit): Use interp_treasury_list to read longs
+	* run2.c (MaterialHandler): Change storage and capacity to longs
+	* unit.c (create_unit): Allocate longs for unit supply
+	* unit.h (Unit): Change Unit.supply field to long *
+	* write.c (write_unit_properties): Use write_treasury_list to
+	write longs
+
+	Streamline handling of different types of "material-handling thing",
+	and add support for treasuries.
+	* run2.c (make_mh_from_unit): New static function.  Create a
+	MaterialHandler structure pointing to a unit's supply
+	  (make_mh_from_treasury): New static function.  Create a
+	MaterialHandler structure pointing to a side's treasury.  There is
+	no known GDL-specified limit to treasury capacity; for the moment,
+	use a hardcoded limit of 2000000000 (two billion).
+	  (CHECK_MAXGAP): New macro.  Check whether the current TO
+	MaterialHandler is the biggest-gap one found so far, taking into
+	account the random breaking of ties.
+	  (distribute_materials_1): Iterate over treasuries as well as
+	units.  Remove tentative support in previous version for iterating
+	over treasuries twice - my current thinking is that it makes more
+	sense to treat them just the same as units.  Use return value from
+	make_mh_from_unit and make_mh_from_treasury to determine whether
+	unit or treasury can participate in material diffusion, instead of
+	trying to incorporate that check in main code.
+
+2005-01-28  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Applied patch from Matthew.
+	* game,h: Fix tyops.
+	* gvar.def (g_backdrop_ignore_doctrine): New GDL global, 
+	"backdrop-ignore-doctrine". Should the supply system ignore the 
+	supply level doctrines or not?
+	  (g_backdrop_model): New GDL global, "backdrop-model". Which 
+	backdrop economy model should be used?
+	* run.c (distribute_materials_1): New function. Distribute materials 
+	under model 1.
+	  (distribute_materials_0): New function. Distribute materials under 
+	model 0.
+	  (share_scarce_materials_0): New function. Share scarce materials 
+	under model 0.
+	  (run_economy): Rewrite to handle the two models. Also clean up 
+	some stuff from model 0. Remove weird debugging hack.
+	  (can_transfer_material): New function. If one thing can transfer 
+	a given material to another thing, then return TRUE.
+	  (material_gap): New function. The difference between one thing's 
+	stock of a material and another thing's stock of a material.
+
+2005-01-28  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+        Changelog for CVS branch: BRANCH_MSKALA_SUPPLY.

@@ -1,0 +1,151 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/move.c,v
+Working file: move.c
+head: 1.8
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.8
+	BPT_EMCDONALD_AI_15: 1.7
+	SS_7_5_0_0pre_0_20050612: 1.6
+	BPT_MSKALA_IMF_3: 1.6
+	BPT_MSKALA_SUPPLY_12: 1.6
+	BPT_EMCDONALD_AI_14: 1.6
+	MPT_EMCDONALD_AI_7: 1.4.2.2
+	BPT_EMCDONALD_AI_13: 1.6
+	SS_7_5_0_0pre_0_20050501: 1.6
+	BPT_EMCDONALD_AI_12: 1.6
+	MPT_EMCDONALD_AI_6: 1.4.2.2
+	BPT_EMCDONALD_AI_11: 1.6
+	SS_7_5_0_0pre_0_20050416: 1.6
+	BPT_EMCDONALD_AI_10: 1.6
+	MPT_EMCDONALD_AI_5: 1.4.2.2
+	BPT_EMCDONALD_AI_9: 1.6
+	BPT_EMCDONALD_AI_8: 1.6
+	MPT_EMCDONALD_AI_4: 1.4.2.2
+	BPT_EMCDONALD_AI_7: 1.6
+	MPT_EMCDONALD_AI_3: 1.4.2.2
+	BPT_EMCDONALD_AI_6: 1.6
+	BPT_MSKALA_SUPPLY_11: 1.6
+	BPT_EMCDONALD_AI_5: 1.6
+	MPT_EMCDONALD_AI_2: 1.4.2.2
+	SS_7_5_0_0pre_0_20050322: 1.5
+	BPT_MSKALA_SUPPLY_10: 1.5
+	BPT_EMCDONALD_AI_4: 1.5
+	MPT_EMCDONALD_AI_1: 1.4.2.1
+	BPT_EMCDONALD_AI_3: 1.4
+	BPT_MSKALA_SUPPLY_9: 1.4
+	MPT_MSKALA_SUPPLY_3: 1.2.4.2
+	BPT_EMCDONALD_AI_2: 1.4
+	BPT_MSKALA_SUPPLY_8: 1.4
+	MPT_MSKALA_SUPPLY_2: 1.2.4.2
+	BPT_MSKALA_SUPPLY_7: 1.4
+	BRANCH_EMCDONALD_AI: 1.4.0.2
+	BPT_EMCDONALD_AI_1: 1.4
+	BPT_MSKALA_SUPPLY_6: 1.4
+	SS_7_5_0_0pre_0_20050225: 1.3
+	BPT_MSKALA_SUPPLY_5: 1.3
+	MPT_MSKALA_SUPPLY_1: 1.2.4.1
+	BPT_MSKALA_SUPPLY_4: 1.3
+	BPT_MSKALA_SUPPLY_3: 1.3
+	BPT_MSKALA_SUPPLY_2: 1.2
+	SS_7_5_0_0pre_0_20050208: 1.2
+	BPT_MSKALA_IMF_2: 1.2
+	BRANCH_MSKALA_SUPPLY: 1.2.0.4
+	BPT_MSKALA_SUPPLY_1: 1.2
+	SS_7_5_0_0pre_0_20050117: 1.2
+	SS_7_5_0_0pre_0_20050108: 1.2
+	SS_7_5_0_0pre_0_20041228: 1.2
+	BRANCH_MSKALA_IMF: 1.2.0.2
+	BPT_MSKALA_IMF_1: 1.2
+	SS_7_5_0_0pre_0_20041211: 1.2
+	SS_7_5_0_0pre_0_20041126: 1.1.1.1
+	GENESIS: 1.1.1.1
+	PRIVATE_TREE_1: 1.1.1
+keyword substitution: kv
+total revisions: 17;	selected revisions: 17
+description:
+----------------------------
+revision 1.8
+date: 2005/07/28 03:28:27;  author: matthewskala;  state: Exp;  lines: +14 -1
+New version of SRE, and fix for ZOC bug revealed during testing it.
+----------------------------
+revision 1.7
+date: 2005/07/10 13:28:37;  author: eric_mcdonald;  state: Exp;  lines: +1 -1
+Update and extend image library.
+Improvement of AI tactical response.
+----------------------------
+revision 1.6
+date: 2005/03/28 03:56:51;  author: eric_mcdonald;  state: Exp;  lines: +103 -57
+Merge from 'MPT_EMCDONALD_AI_1' to 'MPT_EMCDONALD_AI_2'.
+----------------------------
+revision 1.5
+date: 2005/03/21 03:42:07;  author: eric_mcdonald;  state: Exp;  lines: +69 -31
+Merge from root of 'BRANCH_EMCDONALD_AI' to 'MPT_EMCDONALD_AI_1'.
+----------------------------
+revision 1.4
+date: 2005/03/01 02:49:10;  author: eric_mcdonald;  state: Exp;  lines: +2 -3
+branches:  1.4.2;
+Attempt a fix to a transport entry bug.
+----------------------------
+revision 1.3
+date: 2005/02/15 04:36:36;  author: eric_mcdonald;  state: Exp;  lines: +1 -1
+Fix bug that prevented death-by-detonation from causing any death effects.
+Lay foundation for scorekeeper analysis by AI.
+Fix bug in scorekeeper parsing.
+Fix a small misdocumenation of 'change-type' action.
+----------------------------
+revision 1.2
+date: 2004/12/05 21:25:43;  author: eric_mcdonald;  state: Exp;  lines: +11 -1
+branches:  1.2.2;  1.2.4;
+Fix two more crashing bugs reported by Matthew Skala.
+Fix a game loading problem reported by Matthew Skala.
+Further tune Tkconq's event servicing.
+----------------------------
+revision 1.1
+date: 2004/11/21 03:01:12;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.1;
+Initial revision
+----------------------------
+revision 1.1.1.1
+date: 2004/11/21 03:01:12;  author: eric_mcdonald;  state: Exp;  lines: +0 -0
+Initial import from private repo into SF repo.
+----------------------------
+revision 1.2.4.4
+date: 2005/03/28 04:17:56;  author: eric_mcdonald;  state: Exp;  lines: +103 -57
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_10' and 'BPT_MSKALA_SUPPLY_11'.
+----------------------------
+revision 1.2.4.3
+date: 2005/03/21 03:58:09;  author: eric_mcdonald;  state: Exp;  lines: +69 -31
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_9' and 'BPT_MSKALA_SUPPLY_10'.
+----------------------------
+revision 1.2.4.2
+date: 2005/03/09 21:25:00;  author: matthewskala;  state: Exp;  lines: +2 -3
+Merge in changes from CVS trunk.
+----------------------------
+revision 1.2.4.1
+date: 2005/02/18 04:43:23;  author: matthewskala;  state: Exp;  lines: +1 -1
+Merge changes from mainline, fix doctrine check bug.
+----------------------------
+revision 1.2.2.1
+date: 2005/06/06 03:39:36;  author: eric_mcdonald;  state: Exp;  lines: +121 -38
+Merged in all trunk changes between BPT_MSKALA_IMF_2 and BPT_MSKALA_IMF_3.
+----------------------------
+revision 1.4.2.3
+date: 2005/07/10 15:42:52;  author: eric_mcdonald;  state: Exp;  lines: +1 -1
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_14' and 'BPT_EMCDONALD_AI_15'.
+----------------------------
+revision 1.4.2.2
+date: 2005/03/26 20:26:29;  author: eric_mcdonald;  state: Exp;  lines: +103 -57
+Various and sundry improvements to the AI.
+----------------------------
+revision 1.4.2.1
+date: 2005/03/21 03:19:40;  author: eric_mcdonald;  state: Exp;  lines: +69 -31
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_1' and 'BPT_EMCDONALD_AI_3'.
+Add new unit analysis capabilities to AI.
+Implement a plan-decision lottery. (Still needs work.)
+Break out common, useful parts of kernel action-checking code.
+Provide a normalization macro.
+Fix bug with quoted encounter lists.
+=============================================================================

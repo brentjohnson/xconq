@@ -1,0 +1,50 @@
+#include "XShowimf"
+
+XShowimf*Scrollbar.background:	lightgray
+XShowimf*Scrollbar.foreground:	dimgray
+XShowimf*Scrollbar.thumb:	None
+XShowimf*Form.Background:	gray
+XShowimf*viewForm.Background:	gray60
+XShowimf*message.Background:	moccasin
+XShowimf*label.Background:	moccasin
+XShowimf*mainForm.Command.Background:	purple
+XShowimf*mainForm.Command.Foreground:	white
+XShowimf*mainForm.quit.Background:	deep pink
+XShowimf*mainForm.help.Background:	olive drab
+XShowimf*mainForm.quit.Foreground:	light yellow
+XShowimf*mainForm.help.Foreground:	light yellow
+
+XShowimf*close.Background:	purple
+XShowimf*close.Foreground:	white
+XShowimf*delete.Background:	purple
+XShowimf*delete.Foreground:	white
+XShowimf*update.Background:	purple
+XShowimf*update.Foreground:	white
+XShowimf*export.Background:	purple
+XShowimf*export.Foreground:	white
+XShowimf*increase_magn.Background: purple
+XShowimf*increase_magn.Foreground: white
+XShowimf*decrease_magn.Background: purple
+XShowimf*decrease_magn.Foreground: white
+XShowimf*maskColor: 		white
+XShowimf*comb-8x8.background:   light slate blue
+XShowimf*comb-8x9.background:   light slate blue
+XShowimf*comb-16x12.background: light slate blue
+XShowimf*comb-16x16.background: light slate blue
+XShowimf*comb-32x32.background: light slate blue
+XShowimf*colr-8x8.background:   light slate blue
+XShowimf*colr-8x9.background:   light slate blue
+XShowimf*colr-16x12.background: light slate blue
+XShowimf*colr-16x16.background: light slate blue
+XShowimf*colr-32x32.background: light slate blue
+
+XShowimf*helpText.background:  moccasin
+XShowimf*helpForm.Command.Background:	purple
+XShowimf*helpForm.Command.Foreground:	white
+
+selFile*selFileForm.Background:	gray
+selFile*Command.Background:	purple
+selFile*Command.Foreground:	white
+selFile*Scrollbar.background:	lightgray
+selFile*Scrollbar.foreground:	dimgray
+selFile*Scrollbar.thumb:	None

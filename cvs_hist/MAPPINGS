@@ -1,0 +1,292 @@
+kernel/actions.c ==== REFACTOR ====> src/gdl/unit/action.cc
+kernel/actions.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/ai.c ==== REFACTOR ====> src/gdl/side/side.cc
+kernel/ai.c ==== REFACTOR ====> src/gdl/unit/goal.cc
+kernel/ai.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/ai.h ==== REFACTOR ====> src/gdl/side/side.h
+kernel/ai.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/config.h ==== REFACTOR ====> src/include/gdl/world.h
+kernel/config.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/conq.h ==== REFACTOR ====> src/include/gdl/gamearea/world.h
+kernel/conq.h ==== REFACTOR ====> src/include/gdl/history.h
+kernel/conq.h ==== REFACTOR ====> src/include/gdl/module.h
+kernel/conq.h ==== REFACTOR ====> src/include/gdl/namer.h
+kernel/conq.h ==== REFACTOR ====> src/include/gdl/side/doctrine.h
+kernel/conq.h ==== REFACTOR ====> src/include/gdl/side/unitview.h
+kernel/conq.h ==== REFACTOR ====> src/include/gdl/types.h
+kernel/conq.h ==== REFACTOR ====> src/include/gdl/ui.h
+kernel/conq.h ==== REFACTOR ====> src/include/gdl/unit/goal.h
+kernel/conq.h ==== REFACTOR ====> src/include/gdl/unit/task.h
+kernel/conq.h ==== REFACTOR ====> src/include/gdl/unit/unit.h
+kernel/conq.h ==== REFACTOR ====> src/include/util/memory.h
+kernel/conq.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/dir.h ==== REFACTOR ====> src/include/gdl/dir.h
+kernel/dir.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/game.h ==== DELETE ====
+kernel/game.h ==== REFACTOR ====> src/include/gdl/gvars.h
+kernel/game.h ==== REFACTOR ====> src/include/gdl/tables.h
+kernel/game.h ==== REFACTOR ====> src/include/gdl/types.h
+kernel/game.h ==== REFACTOR ====> src/include/gdl/unit/unit.h
+kernel/game.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/generic.c ==== DELETE ====
+kernel/generic.c ==== REFACTOR ====> src/gdl/gvars.cc
+kernel/generic.c ==== REFACTOR ====> src/gdl/tables.cc
+kernel/generic.c ==== REFACTOR ====> src/gdl/types.cc
+kernel/generic.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/history.c ==== REFACTOR ====> src/gdl/history.cc
+kernel/history.c ==== REFACTOR ====> src/gdl/unit/pastunit.cc
+kernel/history.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/history.h ==== REFACTOR ====> src/include/gdl/history.h
+kernel/history.h ==== REFACTOR ====> src/include/gdl/unit/pastunit.h
+kernel/history.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/imf.c ==== REFACTOR ====> src/gdl/media/imf.cc
+kernel/imf.c ==== REFACTOR ====> src/gdl/media/img.cc
+kernel/imf.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/imf.h ==== REFACTOR ====> src/include/gdl/media/imf.h
+kernel/imf.h ==== REFACTOR ====> src/include/gdl/media/img.h
+kernel/imf.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/init.c ==== REFACTOR ====> src/gdl/types.cc
+kernel/init.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/kernel.h ==== REFACTOR ====> src/include/gdl/gamearea/feature.h
+kernel/kernel.h ==== REFACTOR ====> src/include/gdl/side/unitview.h
+kernel/kernel.h ==== REFACTOR ====> src/include/gdl/unit/action.h
+kernel/kernel.h ==== REFACTOR ====> src/include/gdl/unit/goal.h
+kernel/kernel.h ==== REFACTOR ====> src/include/gdl/unit/task.h
+kernel/kernel.h ==== REFACTOR ====> src/include/gdl/unit/unit.h
+kernel/kernel.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/lisp.c ==== REFACTOR ====> src/gdl/dice.cc
+kernel/lisp.c ==== REFACTOR ====> src/gdl/lisp.cc
+kernel/lisp.c ==== REFACTOR ====> src/gdl/tables.cc
+kernel/lisp.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/lisp.h ==== REFACTOR ====> src/include/gdl/dice.h
+kernel/lisp.h ==== REFACTOR ====> src/include/gdl/lisp.h
+kernel/lisp.h ==== REFACTOR ====> src/include/gdl/tables.h
+kernel/lisp.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/misc.h ==== REFACTOR ====> src/include/util/fs.h
+kernel/misc.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/mknames.c ==== MIGRATE ====> src/gdl/namer.cc
+kernel/mknames.c ==== MIGRATE ====> src/gdl/side/side.cc
+kernel/mknames.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/module.c ==== REFACTOR ====> src/gdl/module.cc
+kernel/module.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/module.h ==== REFACTOR ====> src/include/gdl/module.h
+kernel/module.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/nlang.c ==== REFACTOR ====> src/gdl/desc.cc
+kernel/nlang.c ==== REFACTOR ====> src/gdl/dir.cc
+kernel/nlang.c ==== REFACTOR ====> src/gdl/history.cc
+kernel/nlang.c ==== REFACTOR ====> src/gdl/side/side.cc
+kernel/nlang.c ==== REFACTOR ====> src/gdl/unit/pastunit.cc
+kernel/nlang.c ==== REFACTOR ====> src/gdl/unit/task.cc
+kernel/nlang.c ==== REFACTOR ====> src/gdl/unit/unit.cc
+kernel/nlang.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/plan.c ==== REFACTOR ====> src/gdl/side/side.cc
+kernel/plan.c ==== REFACTOR ====> src/gdl/unit/plan.cc
+kernel/plan.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/player.h ==== REFACTOR ====> src/include/gdl/player.h
+kernel/player.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/read.c ==== DELETE ====
+kernel/read.c ==== REFACTOR ====> src/gdl/gamearea/area.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/gamearea/layers.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/gvars.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/history.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/media/imf.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/media/img.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/module.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/namer.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/pact.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/player.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/score.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/side/cellview.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/side/doctrine.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/side/side.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/side/sidemask.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/side/sorder.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/side/unitview.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/tables.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/types.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/unit/action.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/unit/goal.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/unit/pastunit.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/unit/plan.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/unit/task.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/unit/unit.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/unit/unitview.cc
+kernel/read.c ==== REFACTOR ====> src/gdl/world.cc
+kernel/read.c ==== REFACTOR ====> src/include/gdl/gamearea/area.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/gamearea/layers.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/gvars.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/history.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/media/imf.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/media/img.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/namer.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/pact.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/player.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/score.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/side/cellview.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/side/doctrine.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/side/side.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/side/sidemask.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/side/sorder.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/side/unitview.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/tables.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/types.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/unit/action.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/unit/goal.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/unit/pastunit.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/unit/plan.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/unit/task.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/unit/unit.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/unit/unitview.h
+kernel/read.c ==== REFACTOR ====> src/include/gdl/world.h
+kernel/read.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/run2.c ==== REFACTOR ====> src/gdl/world.cc
+kernel/run2.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/score.c ==== REFACTOR ====> src/gdl/score.cc
+kernel/score.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/score.h ==== REFACTOR ====> src/include/gdl/score.h
+kernel/score.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/side.c ==== REFACTOR ====> src/gdl/player.cc
+kernel/side.c ==== REFACTOR ====> src/gdl/side/cellview.cc
+kernel/side.c ==== REFACTOR ====> src/gdl/side/doctrine.cc
+kernel/side.c ==== REFACTOR ====> src/gdl/side/side.cc
+kernel/side.c ==== REFACTOR ====> src/gdl/side/sorder.cc
+kernel/side.c ==== REFACTOR ====> src/gdl/unit/unitview.cc
+kernel/side.c ==== REFACTOR ====> src/include/gdl/side/cellview.h
+kernel/side.c ==== REFACTOR ====> src/include/gdl/side/doctrine.h
+kernel/side.c ==== REFACTOR ====> src/include/gdl/side/unitview.h
+kernel/side.c ==== REFACTOR ====> src/include/gdl/unit/unitview.h
+kernel/side.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/side.h ==== REFACTOR ====> src/include/gdl/side/cellview.h
+kernel/side.h ==== REFACTOR ====> src/include/gdl/side/doctrine.h
+kernel/side.h ==== REFACTOR ====> src/include/gdl/side/side.h
+kernel/side.h ==== REFACTOR ====> src/include/gdl/side/side_FWD.h
+kernel/side.h ==== REFACTOR ====> src/include/gdl/side/sidemask.h
+kernel/side.h ==== REFACTOR ====> src/include/gdl/side/sorder.h
+kernel/side.h ==== REFACTOR ====> src/include/gdl/side/unitview.h
+kernel/side.h ==== REFACTOR ====> src/include/gdl/unit/unitview.h
+kernel/side.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/tables.c ==== REFACTOR ====> src/gdl/tables.cc
+kernel/tables.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/task.c ==== REFACTOR ====> src/gdl/unit/task.cc
+kernel/task.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/tp.h ==== REFACTOR ====> src/include/gdl/kernel.h
+kernel/tp.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/types.c ==== REFACTOR ====> src/gdl/types.cc
+kernel/types.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/ui.c ==== REFACTOR ====> src/gdl/side/unitview.cc
+kernel/ui.c ==== REFACTOR ====> src/gdl/unit/unit.cc
+kernel/ui.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/ui.h ==== REFACTOR ====> src/include/gdl/side/unitview.h
+kernel/ui.h ==== REFACTOR ====> src/include/gdl/unit/unit.h
+kernel/ui.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/unit.c ==== REFACTOR ====> src/gdl/types.cc
+kernel/unit.c ==== REFACTOR ====> src/gdl/unit/action.cc
+kernel/unit.c ==== REFACTOR ====> src/gdl/unit/unit.cc
+kernel/unit.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/unit.h ==== REFACTOR ====> src/include/gdl/types.h
+kernel/unit.h ==== REFACTOR ====> src/include/gdl/side/side.h
+kernel/unit.h ==== REFACTOR ====> src/include/gdl/unit/action.h
+kernel/unit.h ==== REFACTOR ====> src/include/gdl/unit/goal.h
+kernel/unit.h ==== REFACTOR ====> src/include/gdl/unit/plan.h
+kernel/unit.h ==== REFACTOR ====> src/include/gdl/unit/task.h
+kernel/unit.h ==== REFACTOR ====> src/include/gdl/unit/unit.h
+kernel/unit.h ==== REFACTOR ====> src/include/gdl/unit/unit_FWD.h
+kernel/unit.h ==== REFACTOR ====> src/include/gdl/unit/unitview.h
+kernel/unit.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/util.c ==== REFACTOR ====> src/gdl/dir.cc
+kernel/util.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/world.c ==== REFACTOR ====> src/gdl/gamearea/area.cc
+kernel/world.c ==== REFACTOR ====> src/gdl/gamearea/feature.cc
+kernel/world.c ==== REFACTOR ====> src/gdl/gamearea/layers.cc
+kernel/world.c ==== REFACTOR ====> src/gdl/world.cc
+kernel/world.c ==== MIGRATE ====> [sourceforge.net]
+
+kernel/world.h ==== REFACTOR ====> src/include/gdl/gamearea/area.h
+kernel/world.h ==== REFACTOR ====> src/include/gdl/gamearea/feature.h
+kernel/world.h ==== REFACTOR ====> src/include/gdl/gamearea/layers.h
+kernel/world.h ==== REFACTOR ====> src/include/gdl/unit/unit.h
+kernel/world.h ==== REFACTOR ====> src/include/gdl/world.h
+kernel/world.h ==== MIGRATE ====> [sourceforge.net]
+
+kernel/write.c ==== MIGRATE ====> src/gdl/gamearea/area.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/gamearea/layers.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/gvars.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/history.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/lisp.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/media/imf.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/module.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/namer.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/player.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/score.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/side/cellview.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/side/doctrine.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/side/side.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/side/sorder.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/tables.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/types.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/unit/goal.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/unit/plan.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/unit/task.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/unit/unit.cc
+kernel/write.c ==== MIGRATE ====> src/gdl/world.cc
+kernel/write.c ==== MIGRATE ====> src/include/gdl/gamearea/area.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/gamearea/layers.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/gvars.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/history.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/lisp.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/media/imf.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/module.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/namer.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/player.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/score.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/side/cellview.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/side/doctrine.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/side/side.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/side/sorder.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/tables.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/types.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/unit/goal.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/unit/plan.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/unit/task.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/unit/unit.h
+kernel/write.c ==== MIGRATE ====> src/include/gdl/world.h
+kernel/write.c ==== MIGRATE ====> src/util/fs.cc
+kernel/write.c ==== MIGRATE ====> [sourceforge.net]

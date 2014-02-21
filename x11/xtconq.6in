@@ -1,0 +1,124 @@
+.TH XTCONQ 6
+.SH NAME
+xtconq - Xt/Xaw-based configurable strategy game
+.SH SYNOPSIS
+.B
+xtconq
+[ options ] ...
+.SH DESCRIPTION
+\fIxtconq\fP is a configurable multi-player strategy game.
+.PP
+By default, \fIxtconq\fP
+starts up with one human (on the display in $DISPLAY) and one
+machine, playing on a randomly generated 60x30 world.  Options are
+available to set numbers and kinds of players, as well as the
+kind of map used.  In addition, \fIxtconq\fP has extensive and
+elaborate facilities for building maps, scenarios, and sets of rules,
+allowing for a wide variety of games.
+.PP
+NOTE: \fIxtconq\fP is no longer under active development.  It is
+available for backwards compatibility, and to play multiplayer games
+when the new networking code in \fIxconq\fP has problems.
+.SH OPTIONS
+.LP
+The following options are X-specific:
+.TP 5
+.B \-bg \fIbgcolor\fP
+sets the background color of the windows.
+.TP 5
+.B \-display \fIdisplay\fP
+sets the display to be used by the default player.
+.TP 5
+.B \-fg \fIfgcolor\fP
+sets the foreground color of the windows.
+.TP 5
+.B \-geometry \fIgeometry\fP
+sets the geometry of the first window.
+.TP 5
+.B \-name \fIname\fP
+sets the name of the application.
+.TP 5
+.B \-x
+allows the game and the players to be set up interactively
+via menus.  The menus should be self-explanatory.
+.LP
+The following options are generic, and may be used with any version of
+Xconq that allows command-line arguments:
+
+.so ../kernel/cmdline.6in
+
+.TP 8
+.B
+xconq joe@taurus:0.0 cirdan:0.0
+Three players in standard game.
+.TP 8
+.B
+xconq -r -e,ai+3 2 stan@andros:0.0 dhw@skaro:0.0
+Standard game, two mplayers each at advantage 3, two humans,
+using displays on andros and skaro.
+
+.SH "X DEFAULTS"
+.TP 10
+.B TextFont
+Font for all text.
+.TP 10
+.B HelpFont
+Font for the help pages.
+
+.SH AUTHOR
+Stan Shebs (shebs@cygnus.com)
+(with help from many)
+.SH FILES
+.TP 5
+\fI~/.xconq/save.xconq\fP
+.br
+saved game
+.TP 5
+\fI/usr/local/share/xconq/lib/game.dir\fP
+.br
+list of playable games
+.TP 5
+\fI/usr/local/share/xconq/lib/*.g\fP
+.br
+predefined games
+.TP 5
+\fI/usr/local/share/xconq/lib/imf.dir\fP
+.br
+list of predefined images
+.TP 5
+\fI/usr/local/share/xconq/lib/*.imf\fP
+.br
+predefined images
+.TP 5
+\fI/usr/local/share/xconq/lib/news.txt\fP
+.br
+news about features and additions
+.TP 5
+\fIXconq\fP
+.br
+Xconq application defaults
+.TP 5
+\fIXconq-color\fP
+.br
+Xconq application defaults for color displays
+.SH "SEE ALSO"
+.br
+.IR xconq(6), cconq(6)
+.br
+.IR "Xconq - the School for Strategy"
+.SH DIAGNOSTICS
+.PP
+If the world is too small for the desired number of players,
+the program will complain about not being able to place units
+in good locations.
+.SH BUGS
+.PP
+Specifying multiple games on the command line is usually asking
+for trouble.
+.PP
+Some annoying behaviors are actually features.
+.PP
+All of the displays must still be decided when starting the program.
+Players should be able to run helper programs that connect them up
+and pass along display, display settings, and so forth.
+.PP

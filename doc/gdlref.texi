@@ -1,0 +1,32 @@
+\input texinfo
+@setfilename gdlref.info
+@settitle Xconq GDL Quick Reference
+
+@finalout
+@setchapternewpage off
+
+@iftex
+@raggedbottom
+@global@parindent=0pt
+@end iftex
+
+@titlepage
+@title Xconq GDL Quick Reference
+@subtitle December 2000
+@author Stanley T. Shebs
+
+@iftex
+@headings off
+@everyheading  @| @thistitle @| @thispage
+@everyfooting Version 7.4 @| December 2000 @| (printed @today{})
+@end iftex
+
+@chapter GDL Syntax
+
+@include syntax.texi
+
+@chapter Permuted Index of Symbols
+
+@include syms.texi
+
+@bye

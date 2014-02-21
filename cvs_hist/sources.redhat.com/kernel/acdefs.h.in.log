@@ -1,0 +1,20 @@
+
+RCS file: /cvs/xconq/xconq/kernel/acdefs.h.in,v
+Working file: acdefs.h.in
+head: 1.2
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1.2
+date: 2004/07/05 18:25:24;  author: mcdonald;  state: Exp;  lines: +10 -0
+Make Xtconq build on Cygwin/X11.
+----------------------------
+revision 1.1
+date: 2004/07/05 00:21:09;  author: mcdonald;  state: Exp;
+Improvements to and remodeling of the configure/make system.
+=============================================================================

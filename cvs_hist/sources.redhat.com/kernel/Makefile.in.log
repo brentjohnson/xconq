@@ -1,0 +1,271 @@
+
+RCS file: /cvs/xconq/xconq/kernel/Makefile.in,v
+Working file: Makefile.in
+head: 1.30
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.11
+	xconq-7_4-branch: 1.11.0.2
+	xconq-7_4-branchpoint: 1.11
+	xtconq-pre-removal: 1.9
+	xconq-7_3_3-release: 1.8
+	xconq-7_3_2-release: 1.8
+	xconq-7_3_1-release: 1.8
+	xconq-7_3-branch: 1.8.0.2
+	xconq-7_3-branchpoint: 1.8
+keyword substitution: kv
+total revisions: 30;	selected revisions: 30
+description:
+----------------------------
+revision 1.30
+date: 2004/07/11 08:15:43;  author: mcdonald;  state: Exp;  lines: +13 -0
+New program! Xcscribe, an automatic documentation generator for Xconq games.
+----------------------------
+revision 1.29
+date: 2004/07/05 04:20:29;  author: mcdonald;  state: Exp;  lines: +0 -80
+Improvements to and remodeling of the configure/make system.
+----------------------------
+revision 1.28
+date: 2004/07/05 00:21:09;  author: mcdonald;  state: Exp;  lines: +2 -2
+Improvements to and remodeling of the configure/make system.
+----------------------------
+revision 1.27
+date: 2004/05/02 22:19:18;  author: mcdonald;  state: Exp;  lines: +0 -3
+Revert to the pathfinder in use prior to 2003/11/13.
+Add appropriate replacements for useful elements of post-2003/11/13 pathfinder.
+----------------------------
+revision 1.26
+date: 2004/01/10 20:49:10;  author: mcdonald;  state: Exp;  lines: +4 -1
+Add new files for general AI/UI utility functions.
+Start adding more AI-related functions to "ai_" namespace.
+Include 'assert.h' in a master header instead of various and sundry sources.
+Rewrite 'could_hit' in terms of new functions.
+Begin migrating general AI/UI utility functions to 'aiutil'.
+Create some new general AI/UI utility functions in 'aiutil'.
+Improve victim finder by rejecting unreachable targets.
+----------------------------
+revision 1.25
+date: 2003/11/28 00:49:55;  author: mcdonald;  state: Exp;  lines: +3 -1
+Lay groundwork for Win32 curses support.
+Add a missing header dep in kernel makefile.
+Help Tcl/Tk app build under MinGW32 (and perhaps others).
+----------------------------
+revision 1.24
+date: 2003/11/22 23:34:37;  author: mcdonald;  state: Exp;  lines: +2 -2
+Use contingent execution of makefile subshell commands.
+----------------------------
+revision 1.23
+date: 2003/11/20 17:04:00;  author: kingdon;  state: Exp;  lines: +2 -1
+	* missing/Makefile.in: Use "cd foo && something" idiom rather than
+	"cd foo; something" - this give a better error if someone hasn't
+	run "cvs update -d" yet.
+	* kernel/Makefile.in (skelconq): Also link libmissing.a.
+----------------------------
+revision 1.22
+date: 2003/11/13 21:18:47;  author: ronne;  state: Exp;  lines: +3 -0
+New path-finding code from Peter Garrone.
+----------------------------
+revision 1.21
+date: 2003/11/10 00:28:31;  author: mcdonald;  state: Exp;  lines: +6 -2
+Finish hooking in missing functions support.
+Provide buffer overflow protection in Xconq's tprintf() functions.
+Cosmetic fix to configure.in.
+----------------------------
+revision 1.20
+date: 2003/11/01 05:04:23;  author: mcdonald;  state: Exp;  lines: +10 -4
+Mostly hook in the portable snprintf(3) implementation.
+Fix problem with certain build flags being clobbered during configuration.
+----------------------------
+revision 1.19
+date: 2003/10/19 04:59:52;  author: mcdonald;  state: Exp;  lines: +71 -11
+Finish (hopefully) work related to building with MinGW32 under Cygwin.
+Make configuration system more intelligent regarding Tcl/Tk headers and libs.
+----------------------------
+revision 1.18
+date: 2003/10/16 01:12:22;  author: kingdon;  state: Exp;  lines: +2 -2
+	* kernel/Makefile.in (libconq.a): Don't depend on clean-kobjs.
+	(libconqlow.a): Don't depend on clean-lobjs.
+----------------------------
+revision 1.17
+date: 2003/10/06 03:32:02;  author: mcdonald;  state: Exp;  lines: +18 -2
+Simplify and enhance configury and build system.
+Improve chances of building for Windows apps.
+New Windows build/install documentation.
+----------------------------
+revision 1.16
+date: 2003/09/20 05:24:02;  author: mcdonald;  state: Exp;  lines: +1 -1
+Clean out the now defunct win directory.
+Remove extraneous '-g' flags (at least in GCC case) from makefile templates.
+Fix error in default UI_TARGET.
+Update Xconq version to reflect the "new" month.
+----------------------------
+revision 1.15
+date: 2003/09/03 04:12:07;  author: mcdonald;  state: Exp;  lines: +3 -3
+Change Makefile templates to add config flexibility.
+Minor aesthetic improvements to configure script.
+Minor change to Bellum Aeternum game.
+----------------------------
+revision 1.14
+date: 2003/08/31 02:50:13;  author: mcdonald;  state: Exp;  lines: +2 -2
+Revise documentation to reflect change to hit-by table usage.
+Several bug fixes to Bellum Aeternum game.
+Change combat material consumption to use hit-by multipliers.
+----------------------------
+revision 1.13
+date: 2002/10/12 22:25:27;  author: kingdon;  state: Exp;  lines: +4 -2
+	* kernel/autotest.c, kernel/autotest.h: Move autotester
+	from skelconq.c to here.
+	* kernel/Makefile.in: Update accordingly.
+	* kernel/move.c (prep_enter_action, do_enter_action,
+	check_enter_action): Rename unit3 to newtransport for clarity.
+	* kernel/unit.c (type_can_occupy): Rename u2 to utransport.
+	* kernel/autotest.c, test/auto.g: Add tests regarding occupancy:
+	headed for reproducing the
+	http://sources.redhat.com/ml/xconq7/2000/msg00365.html bug (in
+	which tcltk "i" skips a bomber in a certain common case) but
+	aren't there yet.
+----------------------------
+revision 1.12
+date: 2002/07/17 23:05:38;  author: ronne;  state: Exp;  lines: +0 -2
+Fixes to the AI build code.
+----------------------------
+revision 1.11
+date: 2000/11/16 23:33:12;  author: ronne;  state: Exp;  lines: +0 -2
+General cleanup of kernel prototypes - part 2.
+----------------------------
+revision 1.10
+date: 2000/11/05 19:47:01;  author: shebs;  state: Exp;  lines: +2 -0
+	Add an old copy of the mplayer for comparison purposes, call it
+	"oplayer".
+	* kernel/oplayer.c: New file, 7.3.3 version of mplayer, updated.
+	* kernel/Makefile.in (OBJS): Add oplayer.o.
+	* config.h (numaitypes): Increment.
+	* ai.h (oplayertype): New enum value.
+	* ai.c (init_ai_types): Add oplayer.
+
+	Add help info for AI types.
+	* ai.h (AI_ops help): New field, brief info about AI.
+	* ai.c (ai_type_name, ai_type_help): New functions.
+	* iplayer.c (iplayer_ops): Add help field.
+	* mplayer.c (mplayer_ops): Ditto.
+
+	* mplayer.c: Use side->id instead of side_number() throughout.
+	(rethink_plan): Sit still if we found a transport to accelerate
+	with.
+	* tp.c (net_push_sentry_task): New function.
+----------------------------
+revision 1.9
+date: 2000/07/14 15:39:55;  author: shebs;  state: Exp;  lines: +36 -31
+	* kernel/Makefile.in, tcltk/Makefile.in: Add dependencies on
+	kernel.h and kpublic.h.
+----------------------------
+revision 1.8
+date: 2000/06/09 14:52:41;  author: shebs;  state: Exp;  lines: +7 -10
+	Fix Unix installation issues, make consistent with FHS 2.1.
+	* Makefile.in (datadir): Set to $(prefix)/share/xconq.
+	(scoresdir): Set to /var/lib/xconq/scores, pass down to sub-makes.
+	* kernel/Makefile.in (ALL_CFLAGS): Define XCONQSCORES.
+	* unix.c (score_file_pathname): Use value of XCONQSCORES verbatim.
+	* */Makefile.in (datadir): Set to $(prefix)/share/xconq.
+	* curses/Imakefile (DEFINES): Don't define XCONQDATA.
+	* tcltk/Makefile.in (ALL_CFLAGS): Ditto.
+	* images/Makefile.in (imagesdir): Rename from gameimdir, set
+	to $(datadir)/images.
+	* x11/Makefile.in (install-only): Install ximfapp instead of
+	xshowimf.
+	(clean): Be more thorough.
+----------------------------
+revision 1.7
+date: 1999/10/28 23:19:49;  author: ronne;  state: Exp;  lines: +2 -0
+Add iplayer.
+----------------------------
+revision 1.6
+date: 1999/09/18 00:06:28;  author: shebs;  state: Exp;  lines: +1 -0
+	* kernel/socket.c: New file, networking code common to Unix and
+	Windows (Cygwin).
+	* kernel/Makefile.in (socket.o): Add dependencies.
+	* configure.in (HOBJS): Add socket.o.
+	* configure: Regenerate.
+	* unix.c, win32.c: Remove networking code.
+----------------------------
+revision 1.5
+date: 1999/08/28 23:22:44;  author: shebs;  state: Exp;  lines: +2 -4
+        * configure.in: Add --enable-build-warnings to control extra
+        warnings, choose which subdirs to configure based on Unix vs
+        Windows.
+        * configure: Regenerate.
+        * Makefile.in: Eliminate refs to lib-x11.
+        * x11/Makefile.in: Ditto.
+        * curses/Makefile.in, kernel/Makefile.in, tcltk/Makefile.in,
+        x11/Makefile.in: Change UNIX_CFLAGS to autoconf-using HFLAGS,
+        remove WARNING_CFLAGS.
+        * actions.c, ai.c, ai.h, cmdline.c, cmdline.h, conq.h, generic.c,
+        help.h, imf.c, imf.h, imf2imf.c, lisp.c, lisp.h, misc.h, system.h,
+        imf2x.c, xcutil.h: Remove PARAMS usages.
+        * gif.c, help.c, imf.c, imf2imf.c, lisp.c, unix.c, tkmain.c,
+        wimfapp.c, imf2x.c, x2imf.c, xconq.c, xcutil.c: Remove unused
+        variables, add prototypes, etc.
+        * run2.c, side.c, macconq.c: Remove decl of update_area_display.
+        * skelconq.c: Declare _dialog functions.
+        * tkcmd.c: Remove exit_xconq decl.
+        * wconq.c (check_player_displays): Remove uses.
+        * xconq.c: Include tkconq.h.
+
+        * tkconq.h (IMFLIB): Remove.
+        (exit_xconq): Declare.
+        * tkimf.c, tkinit.c: Remove imflib uses.
+        * xconq.h, xcutil.c: Ditto.
+        * ximf.c, xinit.c: Ditto.
+        * PROJECTS: Remove lib-x11 item.
+----------------------------
+revision 1.4
+date: 1999/08/19 12:36:47;  author: shebs;  state: Exp;  lines: +3 -1
+        * kernel/Makefile.in (WARNING_CFLAGS): New symbol.
+        (ALL_CFLAGS): Use it.
+----------------------------
+revision 1.3
+date: 1999/08/10 11:05:27;  author: shebs;  state: Exp;  lines: +7 -6
+        * aclocal.m4: New file, custom autoconf macros.
+        * configure.in: Call autoconf macros to find tcl/tk libraries,
+        add substs for host-specific flags and kernel files.
+        * configure: Regenerate.
+        * kernel/Makefile.in (HOBJS): New var, list of host-specific
+        files, use instead of unix.o.
+        * kernel/win32.c: New file, Windows-specific kernel functions.
+        * x11/Makefile.in (TCLTK_LIB): Build from autoconf vars.
+        (xconq): Link in -lm -ldl explicitly for now.
+----------------------------
+revision 1.2
+date: 1999/06/14 18:51:26;  author: shebs;  state: Exp;  lines: +3 -0
+	Add support for reading images from GIFs directly, plus ability
+	to collect multiple images from a single "file image".
+	* kernel/gif.c: New file, GIF reader lifted from NetPBM.
+	* kernel/Makefile.in: Compile it.
+	* keyword.def (file): New keyword.
+	* imf.h (Image filedata, file_image, subimages): New slots.
+	(FileImage): New structure.
+	* imf.c (K_FILE_): New enum.
+	(file_images): New global.
+	(get_img): Replace dummy style arg with subimage arg.
+	(get_subimg): New function.
+	(interp_image): Recognize connection and border images, and
+	images whose data is in a file.
+	(make_image_from_file_image): New function.
+	(add_shrunken_image, add_magnified_image): Call it.
+	(best_image): Rewrite to handle images that are mixes of
+	regular images and tiles.
+	(get_file_image, load_file_image): New functions.
+	* ui.c (halfsides): New global array.
+	* tkimf.c (tk_interp_image): Add subimg arg, change callers,
+	call make_image_from_file_image and self recursively.
+	* tkinit.c (bordpics, connpics, rrpics): Remove, no longer needed.
+	* tkmap.c (set_terrain_gc_for_image): Only do for tiles.
+	(draw_unseen_fuzz): Use halfsides array.
+	(draw_borders, draw_connections): Rewrite to use subimages.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:21;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

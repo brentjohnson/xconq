@@ -1,0 +1,898 @@
+@c The basic generic command list.
+@c @set FULL
+@c @clear FULL
+
+You may specify a command in two ways; by typing the single letter for
+the command, or by using the @samp{o} command and typing in a long
+command name followed by any additional data, as appropriate to the
+command.
+
+You may also specify a numerical prefix argument by entering a sequence
+of digits 0-9 before entering the command.  The interpretation of the
+prefix argument depends on the command; typically it will be a
+repetition or size.  Negative prefix arguments are not possible.
+Prefixes apply to both single-letter and long-name commands.
+
+@i{Xconq} uses the ``standard'' letters to specify directions.
+@cindex move in direction commands
+@cindex Commands, move in direction
+@ifset FULL
+While the positions of ``yubn'' are all analogous to their respective
+directions from ``h'' on a normal keyboard, the rationale for ``hjkl''
+is lost in the mists of time; but those of you who are already
+programmed from years of vi, rogue, nethack, etc will appreciate the
+compatibility!
+@end ifset
+@example
+                       y  k  u
+                        \ | / 
+                       h- . -l
+                        / | \ 
+                       b  j  n
+@end example
+As commands, lower-case letters @code{[yubnhjkl]} indicate that the
+unit(s) should move one cell in that direction.  Upper-case letters
+@code{[YUBNHJKL]} tell the unit(s) to move repeatedly in that direction,
+either forever, or to a distance specified by the prefix.  Control-case
+letters are reserved for future definition.
+
+In worlds with hexagonal cells, two of the directions (usually @samp{j}
+and @samp{k}) cannot designate an adjacent cell.  In those cases, the
+commands will alternately move the unit to one of the two cells whose
+direction is closest.  So for instance, if @samp{k} moves north, the
+unit will move northwest for every other move, and northeast otherwise.
+
+The following list is generally in alphabetical order.
+
+@table @kbd
+
+@item ' '
+(@code{reserve}) Reserve unit.  (This is the space bar.)
+@cindex Reserve command
+@cindex Commands, reserve
+@ifset FULL
+Put selected unit(s) into reserve for the remainder of this turn.
+Units that are in reserve may still be selected and moved by direct
+order, but will not insist on being moved before the turn can end.
+@end ifset
+
+@item !
+(@code{detonate}) Detonate.
+@cindex Detonate command
+@cindex Commands, detonate
+@ifset FULL
+The selected unit will detonate at its current location.
+@c need a way to select loc
+@end ifset
+
+@item ?
+(@code{help}) Display help info.
+@cindex Help command
+@cindex Commands, help
+
+@item ^[
+(@code{escape}) Escape character.
+@cindex escape
+@ifset FULL
+This is implemented as a command, but in practice, it is a
+way to escape from interaction modes.
+@end ifset
+
+@item @@
+(@code{angle}) Change view angle.
+@cindex angle
+@ifset FULL
+This command will cause the map to display at an angle.  This is useful
+for seeing elevations more realistically.  The command cycles through
+angles of 90 degrees (overhead), 30 degrees, and 15 degrees; the prefix
+argument sets the vertical exaggeration.
+@end ifset
+
+@item #
+(@code{distance}) Display distance to selected place.
+@cindex Distance command
+@cindex Commands, distance
+
+@item +
+(@code{up}) Move to a higher altitude. (not yet implemented)
+@cindex Up command
+
+@item -
+(@code{down}) Move to a lower altitude. (not yet implemented)
+@cindex Down command
+
+@item .
+(@code{recenter}) Center around the current point.
+@cindex Recenter command
+@cindex Commands, recenter
+@ifset FULL
+For interfaces that can zoom, this command also focusses on the current
+point, so that it will still be in the middle as you zoom in.
+@end ifset
+
+@item @{
+(@code{zoom-out}) Zoom out (cells appear smaller).
+@cindex Zoom out command
+@cindex Commands, zoom out
+
+@item @}
+(@code{zoom-in}) Zoom in (cells appear larger).
+@cindex Zoom in command
+@cindex Commands, zoom in
+
+@item a
+(@code{attack}) Attack.
+@cindex Attack command
+@cindex Commands, attack
+
+@item A
+(@code{add-terrain}) Add terrain.
+@cindex Terrain add command
+@cindex Commands, terrain add
+@ifset FULL
+If you supply no prefix argument, and the selected unit(s) can add any
+one of several types of terrain, then you will be asked to choose the
+terrain type.  Then you will be asked for the cell or edge to modify.
+@end ifset
+
+@item ^A
+(@code{auto}) Set AI control of unit.
+@cindex AI control command
+@cindex Commands, AI control
+@ifset FULL
+If you supply a prefix of 1, then the unit(s) will become AI-controlled.
+If you supply a prefix of 0, then the unit(s) become manually controlled.
+If you supply no prefix, then the AI control will toggle.
+@end ifset
+
+@item b
+(@code{southwest}) Move southwest.
+@cindex Move southwest command
+@cindex Commands, move southwest
+@c prefix is ignored apparently - document?
+
+@item B
+(@code{southwest-multiple}) Move southwest multiple.
+@cindex Move southwest command
+@cindex Commands, move southwest
+@ifset FULL
+If supplied, the prefix argument specifies how many cells
+to move by; otherwise, the unit(s) will move as far as possible.
+@end ifset
+
+@c ^B Attack southwest?
+
+@item c
+(@code{change-type}) Change unit's type (if possible).
+@cindex Change type command
+@cindex Commands, change type
+
+@item C
+(@code{clear-plan}) Clear unit plans.
+@cindex Clear plan command
+@cindex Commands, clear plan
+
+@item d
+(@code{delay}) Delay unit.
+@cindex Delay command
+@cindex Commands, delay
+@ifset FULL
+Postpone doing anything with the selected unit(s) until after all
+others have moved in this turn.
+@end ifset
+
+@item D
+(@code{disband}) Disband unit.
+@cindex Disband command
+@cindex Commands, disband
+@ifset FULL
+Make the selected unit(s) do one disband action.
+@end ifset
+
+@item ^D
+(@code{detach})
+Detach a unit from the selected multi-part unit.
+@cindex Detach command
+@cindex Commands, detach
+@ifset FULL
+The prefix argument gives the number of parts of detach;
+by default, the unit will be divided in half.
+@end ifset
+
+@item e
+(@code{embark}) Embark on transport.
+@cindex Embark command
+@cindex Commands, embark
+
+@item ^E
+(@code{disembark})
+Disembark from transport, staying in same location.
+@cindex Disembark command
+@cindex Commands, disembark
+
+@item f
+(@code{fire}) Fire unit.
+@cindex Fire command
+@cindex Commands, fire
+
+@item F
+(@code{formation}) Set formation.
+@cindex Formation command
+@cindex Commands, formation
+@ifset FULL
+You will be asked to designate a unit to lead the formation.
+Then the selected unit(s) will get a goal to maintain the
+same relative position to the leader that existed at the
+time the command was entered.  The prefix argument says
+by how many cells the following unit may vary from its
+designated position; for instance, if the value is 1,
+then the unit is in formation if it is in any cell adjacent
+to its nominal location.  The variation defaults to 1.
+@end ifset
+
+@item ^F
+(@code{fire-into}) Fire into a location.
+@cindex Fire into command
+@cindex Commands, fire into
+@ifset FULL
+Fire indiscriminately into a designated location,
+whether any target units are visible.
+@end ifset
+
+@item g
+(@code{give}) Give supplies.
+@cindex Give supplies command
+@cindex Commands, give supplies
+@ifset FULL
+Transfer non-essential supply from the selected unit(s)
+to occupants and others in same and adjacent cells.
+@end ifset
+
+@item G
+(@code{give-unit}) Give unit to side, with number given by prefix.
+@cindex Give unit command
+@cindex Commands, give unit
+@ifset FULL
+@c explain side numbering elsewhere?
+The sides are numbered in order, starting from 1.  To make a unit
+independent, give it to side 0.
+@end ifset
+
+@item h
+(@code{west}) Move west.
+@cindex Move west command
+@cindex Commands, move west
+
+@item H
+(@code{west-multiple}) Move west multiple.
+@cindex Move west multiple command
+@cindex Commands, move west multiple
+@ifset FULL
+If supplied, the prefix argument specifies how many cells
+to move by; otherwise, the unit will move as far as possible.
+@end ifset
+
+@item i
+(@code{in}) Cycle through cell's interior.
+@cindex In command
+@cindex Commands, in
+@ifset FULL
+Use this command to cycle through all the units at the
+location(s) of the selected unit(s).  Successive
+commands eventually go down through all occupants
+and through each unit stacked in the cell.
+@end ifset
+
+@item I
+(@code{idle}) Do nothing for a specific number of turns.
+@cindex Idle command
+@cindex Commands, idle
+
+@item j
+(@code{south}) Move south.
+@cindex Move south command
+@cindex Commands, move south
+
+@item J
+(@code{south-multiple}) Move south multiple.
+@cindex Move south multiple command
+@cindex Commands, move south multiple
+@ifset FULL
+If supplied, the prefix argument specifies how many cells
+to move by; otherwise, the unit will move as far as possible.
+@end ifset
+
+@item k
+(@code{north}) Move north.
+@cindex Move north command
+@cindex Commands, move north
+
+@item K
+(@code{north-multiple}) Move north multiple.
+@cindex Move north multiple command
+@cindex Commands, move north multiple
+@ifset FULL
+If supplied, the prefix argument specifies how many cells
+to move by; otherwise, the unit will move as far as possible.
+@end ifset
+
+@item l
+(@code{east}) Move east.
+@cindex Move east command
+@cindex Commands, Move east
+
+@item L
+(@code{east-multiple}) Move east multiple.
+@cindex Move east multiple command
+@cindex Commands, Move east multiple
+@ifset FULL
+If supplied, the prefix argument specifies how many cells
+to move by; otherwise, the unit will move as far as possible.
+@end ifset
+
+@item m
+(@code{move-to}) Move to a place.
+@cindex Move to command
+@cindex Commands, move to
+@ifset FULL
+You will be asked to specify a location to move to.
+The prefix argument specifies how closely will be
+satisfactory; the default is 0, meaning that the
+unit must actually be in the chosen destination cell.
+If, for instance, the prefix is 2, then the unit will
+stop moving when it reaches the first cell that is 2
+or fewer cells from the destination.
+@end ifset
+
+@item M
+(@code{message}) Send a message to another side or sides.
+@cindex Message command
+@cindex Commands, message
+@ifset FULL
+The default is to broadcast to all sides; if you wish
+to send a message to only one side, prefix the command
+with the side's number (1 for the first side in the list
+of sides, and so forth).
+
+By default, you will be identified as the sender.
+To send an anonymous message, begin the message with
+"@code{(anon)}".  Note that the parentheses are required.
+
+The message @code{%reveal} is special; if you send this,
+then the receiving sides will receive information
+on the positions of your units.  This is obviously
+useful for allies; it is useful for enemies, if you
+want to convince them to resign.  (Of course, if they're
+stronger than you think and don't resign, then you just
+gave away your secrets!)
+@end ifset
+
+@item 'return'
+(@code{end-turn}) End activity for this turn.
+(This is the ``return'' key.)
+@cindex End turn command
+@cindex Commands, end turn
+@ifset FULL
+This command indicates that you are done with your moves,
+and that the game may proceed to the next turn.  If sides
+are moving sequentially one-at-a-time, then the next side
+will become the only one actually moving, and you will not
+be able to have any of your units do anything more (although
+you may set orders to be executed during the next turn).
+If sides are moving simultaneously, then you may still
+do actions, but you will have to select the units manually.
+@end ifset
+
+@item n
+(@code{southeast}) Move southeast.
+@cindex Move southeast command
+@cindex Commands, move southeast
+
+@item N
+(@code{southeast-multiple}) Move southeast multiple.
+@cindex Move southeast multiple command
+@cindex Commands, move southeast multiple
+@ifset FULL
+If supplied, the prefix argument specifies how many cells
+to move by; otherwise, the unit will move as far as possible.
+@end ifset
+
+@item o
+(@code{other}) Do other commands.
+@cindex Other command
+@cindex Commands, other
+@ifset FULL
+This command brings up a dialog or prompt that lets you enter
+a long-name command and additional data for it, all as text.
+When you indicate that you are done composing (either by typing
+return or by clicking OK, as appropriate), @i{Xconq}) will
+attempt to interpret and then execute the command.
+The parenthesized names in this list are the long names to use
+for single-character commands, should you wish to do so.)
+@end ifset
+
+@item p
+(@code{produce}) Set material production.
+
+@item P
+(@code{produce-unit}) Set up unit construction.
+@cindex Build command
+@cindex Commands, build
+@cindex Construction
+@ifset FULL
+@i{Xconq} will ask you for a unit type to construct, then
+sets up a construction task to produce one or more of that
+type.  You can use the prefix argument to request the number
+to build; the default comes from the side's doctrine,
+and is usually 99.
+@end ifset
+
+@item ^P
+(@code{repair}) Repair a unit.
+@cindex Repair command
+@cindex Commands, repair
+
+@item Q
+(@code{quit}) Quit the game.
+@cindex Quit command
+@cindex Commands, quit
+@ifset FULL
+If the game is still in progress, then you will be asked
+if you wish to draw or resign.  If no other players are
+willing to declare a draw, then you must resign in order
+to get out.
+@end ifset
+
+@item r
+(@code{return}) Return to a resupply point.
+@cindex Return command
+@cindex Commands, return
+@ifset FULL
+The unit will search for the closest unit which has supplies
+of the types that it needs, and attempt to move there.
+If it cannot find such a unit within the radius that it
+expects to survive without resupplying, the command will
+fail and the unit will do nothing.
+@end ifset
+
+@item R
+(@code{remove-terrain}) Remove terrain.
+@cindex Terrain remove command
+@cindex Commands, terrain remove
+@ifset FULL
+This command will usually ask for a type of terrain to remove and
+a location/direction for the removal.
+@end ifset
+
+@item ^R
+(@code{refresh}) Redraw/refresh display.
+@cindex Redraw
+@cindex Refresh command
+@cindex Commands, refresh
+@ifset FULL
+For various reasons (usually a bug in the code), an @i{Xconq} display
+might become incorrect.  This command will erase all windows and redraw
+them.
+@end ifset
+
+@item s
+(@code{sleep}) Sleep.
+@cindex Sleep command
+@cindex Commands, sleep
+@ifset FULL
+Put selected unit(s) to sleep.  A sleeping unit will not ask to move
+again until it wakes up.  Units may be woken explicitly, or may wake
+up automatically if an unfriendly unit gets too close.
+@end ifset
+
+@item S
+(@code{save}) Save the game.
+@cindex Save game command
+@cindex Commands, save game
+@ifset FULL
+@i{Xconq}) will save the complete state of the game into a file.  You
+may or may not get a choice of file name, depending on the interface
+you're using.
+@end ifset
+
+@item t
+(@code{take}) Take supplies.
+@cindex Take supplies command
+@cindex Commands, take supplies
+@ifset FULL
+Transfer materials from a ``nearby'' unit into the selected one(s).
+First choice of donor unit is the transport if there is one,
+then units stacked in the same cell, then occupants.
+@end ifset
+
+@item u
+(@code{northeast}) Move northeast.
+@cindex Move northeast command
+@cindex Commands, move northeast
+
+@item U
+(@code{northeast-multiple}) Move northeast multiple.
+@cindex Move northeast multiple command
+@cindex Commands, move northeast multiple
+@ifset FULL
+If supplied, the prefix argument specifies how many cells
+to move by; otherwise, the unit will move as far as possible.
+@end ifset
+
+@item v
+(@code{flash}) Flash the current unit. (Xt/Xaw interface only)
+@cindex Flash command
+@cindex Commands, flash
+
+@item w
+(@code{wake}) Wake up.
+@cindex Wake command
+@cindex Commands, wake
+@ifset FULL
+Selected units that are asleep or in reserve will be woken up.
+@c also cancel sentry tasks?
+The prefix argument specifies a radius of effect around each unit, in
+which all units not in transports will also be awakened.  A value of 0
+means to affect just the cell of the unit, so @samp{0w} will wake up
+all units stacked with the selected unit.
+@end ifset
+
+@item W
+(@code{wakeall}) Wake up all.
+@cindex Wake all command
+@cindex Commands, wake all
+@ifset FULL
+Similar to @code{wake}, but wakes all occupants of each unit as well.
+@end ifset
+
+@item y
+(@code{northwest}) Move northwest.
+@cindex Move northwest command
+@cindex Commands, move northwest
+
+@item Y
+(@code{northwest-multiple}) Move northwest multiple.
+@cindex Move northwest multiple command
+@cindex Commands, move northwest multiple
+@ifset FULL
+If supplied, the prefix argument specifies how many cells
+to move by; otherwise, the unit will move as far as possible.
+@end ifset
+
+@item z
+(@code{survey}) Switch between survey and move modes.
+@cindex Move mode command
+@cindex Survey mode command
+@cindex Commands, move mode
+@cindex Commands, survey mode
+@ifset FULL
+In move mode, there is a current unit to which commands apply,
+and when the current unit has exhausted its available action
+points (or has been explicitly told to wait), the next unit
+will be automatically made current.  In survey mode, you can
+look at anything and give orders to anything, but the turn
+will not be over until you explicitly end it, or have manually
+moved all units that have action points.
+@end ifset
+
+@end table
+
+The following commands do not have single-letter versions.  Instead,
+use the @samp{o} command or bring up a command window if available,
+and start typing.
+
+Some of these commands may take arguments.  Spaces and/or tabs separate
+the arguments from the command name, and from each other.  If any
+argument, such as the name of a unit, must include a space or tab, you
+may enclose the argument in double quotes.
+
+@table @code
+
+@item add-player [ @var{playerspec} ]
+Add a side and player into the game.
+@cindex Add player command
+@cindex Commands, add player
+@ifset FULL
+If supplied, the command argument is a specification of the player, with
+the same syntax as used to specify players when starting a game.  If no
+command argument is supplied, the new player will be an AI of the
+default type.  The new player's side will have a set of starting units
+comparable to those of other sides @i{at the time of addition}, and will
+be placed according to the same rules as applied to the existing sides.
+@end ifset
+
+@item agreement-draft
+agreement-draft
+@item agreement-drafter
+agreement-drafter
+@item agreement-propose
+agreement-propose
+@item agreement-proposer
+agreement-proposer
+@item agreement-sign
+agreement-sign
+@item agreement-signer
+agreement-signer
+@item agreement-term
+(Unfinished) agreement-building commands.
+
+@item ai [ + | - | @var{typename} ]
+Toggle the AI.
+@cindex AI command
+@cindex Commands, AI
+@ifset FULL
+If you're turning the AI on, it will immediately take control of all
+units, unless the AI control has been explicitly disabled (unit plan
+displays @samp{NoAI}).  When you turn the AI off, all unit plans and
+tasks will be cleared.
+@end ifset
+
+@item c-rate @var{rate} ...
+Set material conversion rates for the side.
+@cindex Conversion rate command
+@cindex Commands, conversion rate
+@ifset FULL
+This command sets the conversion rates of one type of material into
+another.  At present, it is only useful for Civ emulation, where the
+arguments would be three values giving the conversion rates of trade
+into taxes, luxuries, and science.
+@end ifset
+
+@item collect @var{material-type}
+Begin collecting material of type @var{material-type}.
+@cindex Collect command
+@cindex Commands, collect
+
+@item copying
+Display the copying rules.
+@cindex Copying command
+@cindex Commands, copying
+
+@item distrust
+Distrust the given side.
+@cindex Distrust command
+@cindex Commands, distrust
+
+@item doctrine @var{unit-type} @var{property} [ @var{value} ]
+Set/show doctrine.
+@cindex Doctrine command
+@cindex Commands, doctrine
+@c what about doctrine objects?
+
+@item draw
+Declare a willingness to draw.
+@cindex Draw command
+@cindex Commands, draw
+@ifset FULL
+If all players are willing to draw, then the game simply ends,
+without any losers or winners being declared.
+@end ifset
+
+@item follow-action
+Follow the action.
+@cindex Follow action command
+@cindex Commands, follow action
+@ifset FULL
+When set, the map or view will automatically scroll to any place where
+combat actions are happening.
+@end ifset
+
+@item if @var{condition} @var{task}
+Set up a standing order.
+@cindex If command
+@cindex Standing order command
+@cindex Commands, if
+@cindex Commands, standing order
+@ifset FULL
+@c note redundancy with previous section, which should be more
+@c generic, while this concentrates on syntax
+A unit will execute a standing order if it has done all of its pending
+tasks, and the order's condition applies, by adding the specified task
+to its agenda.  The condition has the form
+@example
+@var{type} at/in/near/within @var{location}/@var{unit-name}
+@end example
+where @var{type} is the name of a unit type, @var{location} is of the
+form @var{x},@var{y}, and @var{unit-name} is the name of some unit.  The
+@var{task} has the form
+@example
+@var{task-type} @var{arguments}
+@end example
+where the arguments are determined by the task's type.
+@c add xrefs to previous sections
+
+Note that units consider standing orders only when it has nothing else
+to do.  For instance, if a unit is moving to some location, and on the
+way happens to pass through a cell that has a standing order, it will
+NOT be affected by that order.  The unit must actually stop in that
+cell.
+@end ifset
+
+@item map
+Map commands specific to an interface.
+@cindex Map command
+@cindex Commands, map
+@ifset FULL
+The arguments to this command are interface-specific subcommands,
+usually to manipulate the map display somehow.  See the interface
+documentation for the exact list of subcommands it supports.
+@end ifset
+
+@item name
+@cindex Name command
+@cindex Commands, name
+Set the name of a unit.
+
+@item new-map
+@cindex New map command
+@cindex Commands, new map
+Create a new map window.
+
+@item orders
+
+@item print
+Print the current view of the world.
+@cindex Print command
+@cindex Commands, print
+
+@item rate @var{slow} @var{fast}
+Set AI play rates.
+@cindex Ai play rate command
+@cindex Commands, AI play rate
+@ifset FULL
+The values @var{slow} and @var{fast} are numbers of plan executions per
+minute.  The slow rate is for when human players are still actively
+moving, while the fast rate is for when only AIs are doing anything.
+@end ifset
+
+@item release
+Make a side no longer controlled.
+@cindex Release command
+@cindex Commands, release
+
+@item replan
+Make the AI replan.
+@cindex Replan command
+@cindex Commands, replan
+
+@item research [ @var{advance} ]
+Set/show the side's research activity.
+@cindex Research command
+@cindex Commands, research
+@ifset FULL
+@samp{research} with no argument displays the current advance being
+researched, its degree of completion, and other advances that are
+available to be researched.  An @var{advance} of @samp{nothing} stops the
+side's research indefinitely.
+@end ifset
+
+@item resign
+Resign from the game.
+@cindex Resign command
+@cindex Commands, resign
+@ifset FULL
+This causes the side to lose, but leaves the game running.
+@end ifset
+
+@item run
+[This command only has effect in curses interface.]  Run continuously
+for several turns.  By default, you must manually end each turn.  This
+command allows you to set the number of turns that will auto-finish.
+Note that if the AI is controlling your side, and turns auto-finish, you
+will not be able to do any of sort of input, even to look around, unless
+the AI allows for it (by giving one or more units a @code{passive}
+plan).
+
+@item side
+
+@item submit
+Be controlled by the given side.
+@cindex Submit command
+@cindex Commands, submit
+@ifset FULL
+This causes the side to become controlled by the side being submitted
+to, but the side still remains in the game.
+@end ifset
+
+@item trust
+Trust the given side.
+@cindex Trust command
+@cindex Commands, trust
+@ifset FULL
+This is a unilateral declaration of trust, which means that the trusted
+side will see what your side sees, its units may use your units, and so
+forth.  (This is quite risky if the other side does not also trust you!)
+@end ifset
+
+@item unit
+Open a closeup window for the current unit. (Xt/Xaw interface only)
+@cindex Unit command
+@cindex Commands, unit
+
+@item version
+Display the version and copyright.
+@cindex Version command
+@cindex Commands, version
+
+@item warranty
+Display the lack of warranty.
+@cindex Warranty command
+@cindex Commands, warranty
+
+@item world-map
+
+@item Wlog
+Toggle warning logging.
+
+@end table
+
+The following commands are intended for game designers,
+and are only available if designing has been compiled into @i{Xconq}.
+See the chapters on game design and GDL for more information.
+
+@table @code
+
+@item design
+Toggle design mode.
+@cindex Design command
+@cindex Commands, design
+@ifset FULL
+The exact effect depends on the interface, but in general the designer
+may move units arbitrarily, may change terrain and other layers, and
+save selected parts of a game.
+@end ifset
+
+@item gdl
+Evaluate a GDL expression.
+@cindex Gdl command
+@cindex Commands, gdl
+@ifset FULL
+Note that some values derived from GDL forms are precomputed and cached,
+and it is not guaranteed that they will all be recalculated.  It may
+even be that the new value of a table or property is not compatible with
+something that is cached, and the game may crash as a result; so you
+should use this command carefully and sparingly.  (It may be that future
+versions of Xconq will not need this caveat.)
+@end ifset
+
+@end table
+
+@ifset FULL
+The following commands are intended for debugging, and are only
+available if debugging support has been compiled into @i{Xconq}.
+
+They act as toggles, and are independent of each other, so you can
+control what kind of information is output.  The transcript will go to
+standard output or to a file, depending on the interface and system.
+These commands are really only of use to @i{Xconq} hackers and sometimes
+to game designers.
+
+@table @code
+
+@item DD
+Toggle general debugging.
+@cindex Debug command
+@cindex Commands, debug
+
+@item DG
+Toggle graphics debugging.
+@cindex Debug graphics command
+@cindex Commands, debug graphics
+
+@item DM
+Toggle AI debugging.
+@cindex Debug AI command
+@cindex Commands, debug AI
+
+@item DP
+Toggle profiling.
+@cindex Profiling command
+@cindex Commands, profiling
+
+@item DT
+Toggle activity tracing.
+@cindex Tracing command
+@cindex Commands, tracing
+
+@end table
+@end ifset

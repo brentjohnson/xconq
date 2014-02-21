@@ -1,0 +1,163 @@
+/* Definitions of the terrain type properties in Xconq GDL.
+   Copyright (C) 1991-1997, 1999 Stanley T. Shebs.
+
+Xconq is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.  See the file COPYING.  */
+
+DEF_TPROP_I("alt-percentile-max", t_alt_max,
+	"highest altitude percentile for this type",
+	altmax, 0, 0, 100)
+
+DEF_TPROP_I("alt-percentile-min", t_alt_min,
+	"lowest altitude percentile for this type",
+	altmin, 0, 0, 100)
+
+DEF_TPROP_I("capacity", t_capacity,
+	"useful area of a cell of this terrain type, relative to units",
+	capacity, 0, 1, PROPHI)
+
+DEF_TPROP_S("char", t_char,
+	"single character representing this type of terrain",	
+	tchar, "")
+
+DEF_TPROP_I("clouds-max", t_clouds_max,
+	"highest density of clouds in this terrain",
+	cloudsmax, 0, 0, 100)
+
+DEF_TPROP_I("clouds-min", t_clouds_min,
+	"lowest density of clouds in this terrain",
+	cloudsmin, 0, 0, 100)
+
+DEF_TPROP_I("country-growth-chance", t_country_growth,
+	"chance that a country will be grown into terrain",
+	countrygrowth, 0, 100, 100)
+
+DEF_TPROP_I("country-people-chance", t_country_people,
+	"chance that terrain has people belonging to the country",
+	countrypeople, 0, 0, 100)
+
+DEF_TPROP_I("country-takeover-chance", t_country_takeover,
+	"chance that country will be grown into terrain already given to another side",
+	countrytakeover, 0, 0, 100)
+
+DEF_TPROP_I("country-terrain-max", t_country_max,
+	"maximum amount of this type in each country's initial radius",
+	countrymax, -1, -1, PROPHI)
+
+DEF_TPROP_I("country-terrain-min", t_country_min,
+	"minimum amount of this type in each country's initial radius",
+	countryminterrain, 0, 0, PROPHI)
+
+DEF_TPROP_I("elevation-max", t_elev_max,
+	"highest possible elevation",
+	elevmax, PROPLO, 0, PROPHI)
+
+DEF_TPROP_I("elevation-min", t_elev_min,
+	"lowest possible elevation",
+	elevmin, PROPLO, 0, PROPHI)
+
+DEF_TPROP_S("help", t_help,
+	"brief description of this terrain",
+	help, "")
+
+DEF_TPROP_S("image-name", t_image_name,
+	"graphical representation of this terrain",
+	imagename, "")
+
+DEF_TPROP_I("independent-people-chance", t_indep_people,
+	"chance that terrain has people belonging to the country",
+	indeppeople, 0, 0, 100)
+
+DEF_TPROP_I("liquid", t_liquid,
+	"true if this type is a liquid",
+	liquid, 0, 0, 1)
+
+DEF_TPROP_I("maze-passage-occurrence", t_maze_passage_occurrence,
+	"frequency of this type in maze passageways",
+	mazepassageoccurrence, 0, 0, PROPHI)
+
+DEF_TPROP_I("maze-room-occurrence", t_maze_room_occurrence,
+	"frequency of this type in maze rooms",
+	mazeroomoccurrence, 0, 0, PROPHI)
+
+DEF_TPROP_S("name", t_type_name,
+	"name of this type of terrain",
+	name, "")
+
+DEF_TPROP_L("notes", t_notes,
+	"player notes",
+	notes)
+
+DEF_TPROP_I("occurrence", t_occurrence,
+	"frequency of this type in random worlds",
+	occurrence, 0, 1, PROPHI)
+
+DEF_TPROP_I("people-max", t_people_max,
+	"max number of people of all types added together",
+	peoplemax, -1, -1, PROPHI)
+
+DEF_TPROP_I("river-chance", t_river_chance,
+	"chance of river starting in this terrain",
+	riverchance, 0, 0, 10000)
+
+DEF_TPROP_I("subtype", t_subtype,
+	"subtype of the terrain",
+	subtype, cellsubtype, cellsubtype, coatingsubtype)
+
+DEF_TPROP_I("subtype-x", t_subtype_x,
+	"extra subtype used for synthesis",
+	subtypex, 0, 0, PROPHI)
+
+DEF_TPROP_I("temperature-average", t_temp_avg,
+	"average temperature in this terrain",
+	tempavg, PROPLO, 0, PROPHI)
+
+DEF_TPROP_I("temperature-max", t_temp_max,
+	"highest possible temperature",
+	tempmax, PROPLO, 0, PROPHI)
+
+DEF_TPROP_I("temperature-min", t_temp_min,
+	"lowest possible temperature",
+	tempmin, PROPLO, 0, PROPHI)
+
+DEF_TPROP_I("temperature-variability", t_temp_variability,
+	"amount by which temperature will vary randomly",
+	tempvariability, 0, 0, PROPHI)
+
+DEF_TPROP_I("thickness", t_thickness,
+	"Elevation of `top' of terrain over nominal elevation",
+	thickness, 0, 0, PROPHI)
+
+DEF_TPROP_I("wet-percentile-max", t_wet_max,
+	"highest moisture percentile",
+	maxwet, 0, 0, 100)
+
+DEF_TPROP_I("wet-percentile-min", t_wet_min,
+	"lowest moisture percentile",
+	wetmin, 0, 0, 100)
+
+DEF_TPROP_I("wind-force-average", t_wind_force_avg,
+	"average wind force",
+	gwindavg, 0, 0, PROPHI)
+
+DEF_TPROP_I("wind-force-max", t_wind_force_max,
+	"highest possible wind force",
+	gwindmax, 0, 0, PROPHI)
+
+DEF_TPROP_I("wind-force-min", t_wind_force_min,
+	"lowest possible wind force",
+	gwindmin, 0, 0, PROPHI)
+
+DEF_TPROP_I("wind-force-variability", t_wind_force_variability,
+	"chance that wind force will change randomly",
+	windforcevariability, 0, 0, 10000)
+
+DEF_TPROP_I("wind-variability", t_wind_variability,
+	"chance that wind direction will change randomly",
+	windvariability, 0, 0, 10000)
+
+DEF_TPROP_I("zz-fr", t_fraction,
+	"estimated amount of terrain in the world",
+	fraction, 0, 0, PROPHI)

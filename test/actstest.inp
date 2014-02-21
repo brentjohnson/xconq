@@ -1,0 +1,33 @@
+finall
+finall
+
+(* 40 move randomly)
+(* 40 enter randomly)
+(* 40 attack randomly)
+(* 40 overrun randomly)
+(* 40 fire-at randomly)
+(* 40 fire-into randomly)
+(* 40 detonate randomly)
+(* 40 capture randomly)
+(* 40 produce randomly)
+(* 40 transfer randomly)
+(* 40 research randomly)
+(* 40 toolup randomly)
+(* 40 create-in randomly)
+(* 40 create-at randomly)
+(* 40 build randomly)
+(* 40 repair randomly)
+(* 40 disband randomly)
+(* 40 transfer-part randomly)
+(* 40 change-type randomly)
+(* 40 change-side randomly)
+(* 40 alter-terrain randomly)
+(* 40 add-terrain randomly)
+(* 40 remove-terrain randomly)
+
+?a
+
+save
+finall
+memory
+quit

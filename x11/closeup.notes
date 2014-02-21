@@ -1,0 +1,28 @@
+new commands:
+
+* unit-closeup ('c'), which pops up a window giving detailed
+  information on a unit and summary information on its occupant
+
+* (a clickable list of unit closeups is automatically maintained)
+
+* side-closeup (no char), which pops up a window giving a summary of
+  the units owned by a side and tools (filters) to build a list of
+  units belonging to the site.  This is used to build a
+
+* clickable list of units (clicking pops up unit closeup)
+
+
+programming notes:
+
+I used free and realloc (without checking the returned pointer) a lot;
+if you are serious about malloc statistics, you should write xfree and
+xrealloc.
+
+The new resources in Xconq.ad are crucial, so they should be
+duplicated in the fallbacks.
+
+Almost all the the new stuff is in xcloseup.c, which should be added
+to (I)makefiles.  Some of the new routines belong to other files, move
+them as you like.
+
+	Massimo

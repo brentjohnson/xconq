@@ -1,0 +1,489 @@
+XCONQ RELEASE NOTES
+
+*** 7.5.0
+
+This has not been released yet.
+Current estimates put it at 1Q of 2005 sometime.
+There are lots and lots of bugfixes and new features.
+
+*** 7.4.1
+
+The Windows port has not been built, and probably won't build without
+some work, because of networking changes in shared Windows/Unix code.
+
+Made cconq build again.
+
+*** 7.4.0
+
+Hans Ronne contributed a new Tolkien-inspired game "Lord of the Rings"
+(lord-rings.g), and its supporting modules 3rd-age.g and t-midearth.g.
+
+Keir Novik's "Carrier Battles" (tailhook.g), a detailed game of WWII
+naval combat, and "Coral Sea", a Coral Sea scenario for it, are now
+part of the game library.
+
+Erik Sigra and Michael Burschik contributed better random name
+generators, for Swedish and German place names respectively.
+
+Standard flags now include 16-pixel-wide versions, and the 8-pixel
+version use more colors.
+
+The program tracks views of units using individual objects, which
+enables more accurate display of multiple enemy units stacked at a
+single location.
+
+Networked games can be started from a mix of interactive and
+command-line invocations.  The game module will not be downloaded
+through the network connection, which makes startup faster.
+
+Some unused and un-useful GDL constructs are gone, such as extension
+properties, program-version, and image palettes.
+
+The program supplies more feedback on why actions and tasks fail.
+
+There is a "new" AI type named oplayer, which is just the previous
+version of the AI.  This is mainly for testing that the AI is actually
+getting smarter rather than dumber.
+
+There is now more control available for the behavior of independent
+units, for instance, you can set whether they will research and build
+other units.
+
+Sides now get colors instead of numbers if they have no emblems.
+
+Games can use unit images that fill an entire hex, where previously
+they were limited to a smaller bounding box within the hex.  This
+is controlled by a new GDL variable "bigicons".
+
+The tcl/tk interface now has a working isometric display mode.
+
+The tcl/tk interface now lists only finished games by default,
+and includes a button to list all games.
+
+The Mac interface has many display improvements, from terrain
+transitions to more floating windows.
+
+The old Xt/Xaw interface has been removed, since it was no longer
+being maintained.
+
+There have been a host of minor improvements throughout the programs
+and game libraries.
+
+*** 7.3.3
+
+Fix pathnames to tcl/tk libraries.
+
+Fix Mac bugs: 1-bit images, loading of emblems from saved games, large
+map handling, removed variants.
+
+Add better solid colors in advterr.g.
+
+*** 7.3.2
+
+Fix crash with no-indepside games on Unix.
+
+Add terrain images for advances.g.
+
+*** 7.3.1
+
+In Unix/Windows player setup, make separate buttons to add/remove
+indepside AI and to configure indepside behavior.
+
+Add --enable-alternate-scoresdir configure option.
+
+Update config.guess and config.sub.
+
+*** 7.3.0
+
+This release accumulates over two years of changes throughout the
+program.  In general, the emphasis has been on improving the program's
+usability, making the AI smarter, improving existing games, and
+extending to Civ-type games, rather than adding random new games to
+the library.
+
+The Unix user interface has been rewritten to use tcl/tk.  It includes
+a full set of menus, resizeable panes in the map windows, buttons for
+common operations, a mouseover display, and many additional map
+display options.  There is also a full set of dialogs for setting up a
+game, plus a chat window to facilitate setting up networked games.
+
+There is now a port to Windows, using the tcl/tk-based interface,
+which means no more requirement to run an X server.  The Windows port
+still has bugs though.
+
+The Mac interface now has floating windows for most auxiliary windows,
+city and research dialogs, and more display controls, including
+player controls over most colors and imagery used.  Selected units
+can now blink rather than being surrounded with a box.
+
+Unix networking support now allows for more than two players in a
+game, and the game setup dialogs are synchronized, so for instance
+clicking on a variant checkbox causes all players' checkboxes to
+change.
+
+Hans Ronne added the game "Ancient Near East" (anc-near-east.g),
+similar to Civilization but with more detail, such as different kinds
+of wheat to discover.  The included map of the Near East is
+spectacularly large and detailed.
+
+A Civilization II emulation (civ2.g) has been added.  The game works,
+but happiness is not implemented, most of the city improvements have
+no effect, nor do the Wonders.
+
+Linn Stanton added an extended version of the standard game (lhs.g)
+that includes radar, artillery, aaa, engineers, mines, and minefields.
+
+Many new graphic images are available, particularly for terrain.
+Xconq can load images directly from image files in standard formats
+(although only GIF is available at present).
+
+Players in the standard game get towns with names appropriate to
+their chosen nationalities.
+
+It is now possible to play independent units as if they were a regular
+side, and (more usefully), it's possible to have an AI run the
+independent units.  Watch out for the marauding barbarians!
+
+A second AI type, the "iplayer", is available.  It is a minimal
+AI that does basic tactical planning for individual units, but
+does not attempt to coordinate them.
+
+A set of commands, agreement-draft etc, are available for setting
+up agreements.  (Agreement support is still incomplete though.)
+
+New commands:
+	"c-rate" sets conversion rates for materials (division of 
+		trade into science/shields/luxuries in Civ, for instance).
+	"collect" sets up a task to collect materials from terrain.
+	"research" sets per-side research into advances.
+
+There is a new GDL type "advance", to represent scientific or
+technological advances.  Game designers can lay out a whole technology
+tree, and either units or whole sides may do research to achieve
+advances.
+
+To allow "research" to apply to advances, the existing research
+activity to develop tech levels has been renamed to "development".
+Its characteristics remain the same however.
+
+The "extract" action is available for units to get materials
+directly from terrain.
+
+A game design can include "advanced" units that are like Civ
+cities; they are variable-sized, and can collect materials from
+the surrounding terrain.
+
+GDL includes many more variables, type properties, and tables.
+Some of the more notable additions include:
+	global "combat-model", to choose algorithm for combat resolution
+	global "indepside-has-ai", to control indepside use of AI.
+	global "country-border-color" etc, to control colors used by
+		interfaces
+	side property "treasury", tables "gives-to-treasury" and
+		"takes-from-treasury", to accumulate materials for the
+		side as a whole
+	table "advance-needed-to-build", to define how the technology
+		tree enables the construction of unit types
+	table "terrain-density", to add random variation to synthesized
+		terrain
+	tables "unit-consumption-to-grow", "size-limit-without-advance",
+		and "side-limit-without-occupant", to regulate the
+		growth of advanced units (cities)
+	table "cellwide-protection-for", that controls protection for
+		all units in a cell
+	unit type properties "attack" and "defend", to define generic
+		attack/defense strengths
+	unit type property "advanced", to define advanced units
+	unit type properties "advanced-auto-construct" and
+		"advanced-auto-research", to automate the activities
+		of advanced units
+	unit type property "ai-tactical-range", to control the area
+		of awareness for a unit's tactical decisions
+
+Sami Perttu contributed a supply system model; see doc/README.supply
+for more detail on how to use in game designs.
+
+The tcl/tk port includes experimental support for isometric display,
+but this needs more work, and so is turned off by default.  (See the
+top of tcltk/tkconq.tcl to see how to enable.)
+
+The Unix port uses autoconf for configuration.  Xconq now conforms
+better to FHS; library files reside in /usr/local/share/xconq, while
+score files live in /var/lib/xconq/scores.
+
+Many many bug fixes and smaller cleanups.
+
+*** 7.2.1
+
+All image scaling and default image generation now happens in
+generic code, which gives X11 interface the ability to draw
+unit images that are shrunken or magnified to fit properly.
+
+If a game design does not specify a side library, Xconq will assign
+side names A, B, C, etc, in order, instead of choosing random letters.
+(While technically this is a GDL change, this does not affect
+compatibility with base 7.2.)
+
+Now builds under cygwin32!  See INSTALL for instructions.
+
+Bug fixes for crashing commands, Mac edge cases, name reporting,
+Solaris builds, and networked game reliability, among others.
+
+*** 7.2
+
+Standard commands now include "doctrine" to set unit doctrine, 'I'
+("idle") to sleep only for a limited time specified by the prefix
+argument, '^P' ("repair") to do repair actions, "submit" and "release"
+to change side control.
+
+Xconq now includes basic support for networked games.  Use the
+"Connect" button on the Mac startup screen, and the -host/-join
+options in Unix (use host:port syntax, -host thera.com:1234 for the
+first player, -join thera.com:1234 to join in).
+
+Unix Xconq has updated configury for new versions of Unix, and it now
+installs as a setuid program so that the scorefile may be shared by
+multiple users.  Saved games go into the directory ~/.xconq .
+
+The Mac interface to Xconq now includes offscreen drawing for smoother
+and faster scrolling, more player control over color usage, more
+preference settings, and other goodies, all thanks to Hans Ronne.
+
+New games added to the library:
+  "metz-1944", the siege of Metz during WWII
+  "gazala", a North African battle in 1942
+  "ww2-pac-41", the Pacific theater in WWII using advanced WWII units
+  "ww2s-pac-41", the Pacific theater using standard units
+  "africa-1850", exploration of Africa in the 19th century
+  "space", exploration and conquest of outer space
+
+The large maps "earth-1deg" and "earth-50km", and associated unit lists,
+"u-e1-1998" and "u-e50-1998", are more accurate and up-to-date, as is
+the list of nationalities "nat-names.g"
+
+Many images now have full-color versions.
+
+Most library games have been enhanced to use new features, or have had
+serious bugs fixed.
+
+Due to copyright issues, the tolkien and starwars games are no longer
+part of the distributed library.
+
+The manual's chapters on game design have been split into a separate
+manual.
+
+Maze generation now guarantees a completely connected maze.
+
+Image colors are now handled as 1x1 tiles.
+
+Games may now include a per-cell control layer that is like the people
+layer, but is for temporary control that reverts if people revolt.
+
+Predefined sides may specify preferred units, and predefined units may
+specify preferred sides.
+
+Scorekeepers may now allow a group of allied sides to win, by using
+the last-alliance-wins test.
+
+New GDL variables include action-movies, action-narratives,
+action-notices, event-movies, event-narratives, and event-notices, for
+customization of text output; create-units-from-specs, for use in
+controlling unit creation when including modules in each other.  The
+variable random-events is no longer defined, while
+temperature-year-cycle is now a property of areas.
+
+The material type property "description-format" is gone.  The terrain
+type properties "color" and "description-format" are gone.
+
+New unit type properties include acp-morale-effect, courage-min,
+courage-max (currently unused), cp-attrition, fire-angle-max,
+generic-char, hp-to-recover, lost-revolt-chance, lost-vanish-chance,
+lost-wreck-chance, morale-max, morale-recovery, opinion-min,
+opinion-max, revolt-at-opinion-min, see-terrain-if-captured.
+
+New GDL tables include body-height, capacity-negation,
+consumption-per-add-terrain, consumption-per-fire, control-range,
+keep-control-range, looks-like, lose-track-chance,
+lose-surrender-chance, material-per-remove-terrain,
+material-to-add-terrain, material-to-attack, material-to-fire,
+material-to-remove-terrain, material-to-research, morale-hit,
+morale-hit-by, morale-on-creation, morale-terrain-effect,
+mp-to-enter-own, productivity-adjacent, see-material-always,
+see-mistake-chance, see-others-if-captured, speed-occupant-effect,
+spy-track-chance, tp-damage, track-chance, weapon-height.
+
+Innumerable bug fixes.
+
+*** 7.1
+
+"Long-name" commands (those entered via 'o') may now accept arguments.
+
+Standing orders are now available, and are more general than those in
+5.x.  The long-name command has the form "if <condition> <task>", so
+for instance to move all infantry at a given location to Berlin, use
+the command "if infantry at 32,25 move-to Berlin".  The X11 interface
+includes a dialog to set up standing orders; the long-name command
+"orders" gets to it.
+
+View coverage changes are now calculated and displayed incrementally.
+This means that for games such as "panzer" with both line-of-sight
+and varying elevations, displayed coverage will update correctly
+as units move around.
+
+New players may be added to a game while it is in progress.
+
+Nearly all of the defined commands have been implemented for each
+interface.  The new command "disembark" (^E) causes occupants to leave
+the transport but remain in the same cell.
+
+Scores are now recorded and read back from a scorefile.
+
+The X11 interface includes commands "side" and "unit" that display
+closeups of sides and units, respectively, the command line allows
+multiple -L locations to look for modules
+
+The Mac interface now displays elevations using contour lines, the
+command dialog is longer modal, and closeup info about the selected
+unit appears at the top of each map window.
+
+The mplayer AI is smarter in various ways.
+
+The library now includes "time", a game of technological development
+a la Civilization; and "omaha", the Omaha Beach landings in Normandy,
+using the ww2-bn module.
+
+In the standard game, aircraft now have no stacking limits, all unit
+types get 1 free movement point, damaged ships move more slowly, towns
+near roads get their own spur roads connecting.
+
+Many of the library games have been improved.
+
+GDL now includes the following new constructs (see the manual for details
+of how they work):
+Tables: counterattack, countercapture, fire-hit-chance, fire-damage,
+fire-attack-terrain-effect, fire-defend-terrain-effect
+Global variables: edge-road-density, initial-date-max, initial-date-min.
+Unit type properties: road-to-edge-change, spur-chance, spur-range.
+Side properties: material-view, temperature-view, etc.
+Image/image family properties: notes.
+
+GDL's "print" form works in all interfaces now.
+
+Many many bug fixes and minor enhancements.
+
+*** 7.0.1
+
+The Mac interface now includes a preference for whether to dump the
+game statistics into a file.
+
+Keyboard direction commands for the Mac and X11 interfaces now work for
+attack as well as for movement.
+
+The library now include Chris Christensen's "insects" game.  It's kind of
+silly, and still needs some design work to use more version 7 features,
+but is worth trying out.
+
+The "starwars" game now has various improvements and fixes, including
+the ability of Death Stars to detonate planets, and its associated
+"planets" module is larger, with many small planets.
+
+Several bugs noted in 7.0.0 have been fixed.
+
+*** 7.0
+
+Xconq 7.0 is a comprehensive rewrite and expansion of Xconq 5.5.
+Nearly every part of the program and its game library has been changed
+in some way.
+
+Xconq now includes a Mac interface.  This is a full-featured interface
+that works on nearly any Mac, both b/w and color, large screen and small.
+
+The X11 interface now uses Xaw/Xt to provide more interface
+functionality, such as buttons for common operations, popups for view
+controls, designing, and printing, and a panner to get to a particular
+part of the world more quickly.  Each player may now have multiple map
+windows.  Maps zoom in and out, from 1x1 to 128x128 pixels per hex.
+The interface can display color images for terrain, units, and sides.
+
+The curses interface now includes status lines and adjustable panes.
+
+There is now support for printing maps using PostScript(tm).
+
+The numbers of unit, terrain, and material (used to be "resource")
+types may now range up to 126.  The number of sides may be up to 30.
+
+Terrain may now be "borders" (such as rivers), "connections" (such as
+roads), and "coatings" (such as snow).
+
+The world may now be a hexagon as well as a cylinder.  It may include
+elevations, temperatures, wind, clouds, named geographical features,
+people, and materials for each hex (now called "cell").
+
+Units may now get combat experience, they can be incomplete (meaning
+that construction may start on a unit, halt, then resume later where
+it left off), they can have an altitude, they have tooling (affects
+startup time for construction), and they can be of varying size.
+
+Multiple units may stack in a single cell.
+
+Unit abilities are now defined by the "actions" that they can perform.
+Previously, the actions were to move, build, disband, and attack; 7.0
+also includes adding and removing terrain, research, change of unit
+type, material production and transfer, detaching and merging
+multi-part units, ranged fire, and detonation as actions.
+
+The combat model is more sophisticated, now including the possibility
+for stack and occupants to protect a defender, for retreat, and for
+variable damage from a single hit.
+
+Units now have plans that include multiple goals and a task agenda.
+Tasks track successes and failures of actions, choosing actions as
+needed to complete successfully.
+
+Sides may have a "tech level" that governs usage and construction of
+unit types, they may be in "classes" that restrict which types of
+units they can own, may control other sides, and have an emblem to be
+used for display.
+
+Games may include a day/night cycle and associated effects.
+
+Games may include a seasonal cycle and associated effects.
+
+Random game synthesis methods now include maze generation, country
+expansion, river and road generation, and grammar-based unit and
+feature name synthesis.
+
+Games may now have variants that are chosen at game setup time.
+
+The AI machinery now supports any number of different types of AIs.
+
+The generic AI "mplayer" has been rewritten; it now uses an explicit
+strategy based on division of the world into theaters, and relies on the
+new plan and task mechanisms to improve individual unit behavior.
+
+The game library now has many new games, including a tactical-level
+panzer game, detailed battalion-, division-, and strategic-level WWII
+games, Tolkien-inspired fantasy games, a Russian Revolution game, a
+Roman Empire game, and an Age of Discovery game with a Magellan scenario.
+
+The period/map/scenario file structure is gone, replaced by a Game
+Design Language (GDL).  GDL looks like Lisp, but is still a
+declarative language oriented towards for defining the types, tables,
+and other objects in a game.  Lisp syntax supplies power, flexibility,
+and a degree of standardization, while the declarative nature of the
+language means that the game designer can still concentrate on
+defining properties rather than writing code.  Also, since all files
+are in the same language and modules can include each other, game
+designers can build designs by including an existing game and
+modifying it, rather than by defining a totally new game.
+
+There are now over 160 tables available to the game designer, over 100
+unit type properties and over 60 global variables as well.  The designer
+now has control over nearly every detail of a game.
+
+Memory allocation is almost entirely on an as-needed basis, so Xconq's
+memory usage starts at around 100K and goes up only with the size and
+complexity of the game.
+
+The source code is more portable, both to Unix and non-Unix systems.
+It is also fully prototyped and ANSI-compatible.

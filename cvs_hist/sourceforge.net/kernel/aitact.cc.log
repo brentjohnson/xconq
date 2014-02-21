@@ -1,0 +1,90 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/aitact.cc,v
+Working file: aitact.cc
+head: 1.3
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.3
+	BPT_EMCDONALD_AI_15: 1.3
+	SS_7_5_0_0pre_0_20050612: 1.2
+	BRANCH_MSKALA_IMF: 1.2.0.4
+	BPT_MSKALA_IMF_3: 1.2
+	BRANCH_MSKALA_SUPPLY: 1.2.0.2
+	BPT_MSKALA_SUPPLY_12: 1.2
+	BPT_EMCDONALD_AI_14: 1.2
+	MPT_EMCDONALD_AI_7: 1.1.2.3
+	BRANCH_EMCDONALD_AI: 1.1.0.2
+keyword substitution: kv
+total revisions: 12;	selected revisions: 12
+description:
+----------------------------
+revision 1.3
+date: 2005/07/10 13:28:37;  author: eric_mcdonald;  state: Exp;  lines: +618 -11
+Update and extend image library.
+Improvement of AI tactical response.
+----------------------------
+revision 1.2
+date: 2005/06/06 03:03:45;  author: eric_mcdonald;  state: Exp;  lines: +188 -0
+branches:  1.2.2;  1.2.4;
+Merge from 'MPT_EMCDONALD_AI_6' to 'MPT_EMCDONALD_AI_7'.
+----------------------------
+revision 1.1
+date: 2005/05/21 17:29:29;  author: eric_mcdonald;  state: dead;
+branches:  1.1.2;
+file aitact.cc was initially added on branch BRANCH_EMCDONALD_AI.
+----------------------------
+revision 1.1.2.5
+date: 2005/07/23 22:21:55;  author: eric_mcdonald;  state: Exp;  lines: +189 -280
+Start improvement of AI tactical handler.
+Fix combat awards bugs.
+Fix crashing bugs.
+Fix change type bug.
+----------------------------
+revision 1.1.2.4
+date: 2005/07/10 15:42:51;  author: eric_mcdonald;  state: Exp;  lines: +618 -11
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_14' and 'BPT_EMCDONALD_AI_15'.
+----------------------------
+revision 1.1.2.3
+date: 2005/06/05 20:53:01;  author: eric_mcdonald;  state: Exp;  lines: +1 -1
+Ensure that Tkconq and the generic UI code rebuild when AI files are changed.
+Add support for autoconf assignment of "sizeof" macros.
+Start to add support for making primitve integer types of known size.
+Remove or disable more code associated with the colonization plan.
+Improve colonization support in constructor oprole.
+Prepare support for action masks.
+Remove now-unused 'buildingdone' flag.
+Delete remnants of special ACP-indep construction code.
+----------------------------
+revision 1.1.2.2
+date: 2005/06/05 03:03:01;  author: eric_mcdonald;  state: Exp;  lines: +118 -0
+Fix bugs in building and self-improvement.
+Fix bug with Tkconq action-enablement in UI.
+Make ACP-indep construction work correctly again.
+Fix some (but not all) end-of-turn pauses.
+----------------------------
+revision 1.1.2.1
+date: 2005/05/21 17:29:29;  author: eric_mcdonald;  state: Exp;  lines: +70 -0
+Archive or delete some unmaintained games that do not work well.
+Implement new construction and repair features.
+Improve support for operational roles.
+Add tatical-level calculations for AI.
+Enhance materials consumption code.
+----------------------------
+revision 1.2.4.2
+date: 2005/06/06 03:39:34;  author: eric_mcdonald;  state: Exp;  lines: +188 -0
+Merged in all trunk changes between BPT_MSKALA_IMF_2 and BPT_MSKALA_IMF_3.
+----------------------------
+revision 1.2.4.1
+date: 2005/06/06 03:03:45;  author: eric_mcdonald;  state: dead;  lines: +0 -188
+file aitact.cc was added on branch BRANCH_MSKALA_IMF on 2005-06-06 03:39:34 +0000
+----------------------------
+revision 1.2.2.2
+date: 2005/06/06 03:18:20;  author: eric_mcdonald;  state: Exp;  lines: +188 -0
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_11' and 'BPT_MSKALA_SUPPLY_12'.
+----------------------------
+revision 1.2.2.1
+date: 2005/06/06 03:03:45;  author: eric_mcdonald;  state: dead;  lines: +0 -188
+file aitact.cc was added on branch BRANCH_MSKALA_SUPPLY on 2005-06-06 03:18:20 +0000
+=============================================================================

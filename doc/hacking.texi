@@ -1,0 +1,1668 @@
+\input texinfo
+@setfilename hacking.info
+
+@c @set DOUBLEDENSITY
+@clear DOUBLEDENSITY
+
+@settitle Hacking Xconq
+@setchapternewpage odd
+
+@ifinfo
+This file documents the internals of @i{Xconq}.
+
+Copyright (C) 1987-1989, 1991-2000 Stanley T. Shebs
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+@ignore
+Permission is granted to process this file through Tex and print the
+results, provided the printed document carries copying permission
+notice identical to this one except for the removal of this paragraph
+(this paragraph not being relevant to the printed manual).
+@end ignore
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided also that the
+section entitled ``GNU General Public License'' is
+included exactly as in the original, and provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that the section entitled ``GNU General Public License'',
+and this permission notice, may be included in translations
+approved by the Free Software Foundation instead of in the original
+English.
+@end ifinfo
+
+@c This is one way to make a double-density printout.  Another
+@c way is to use the mpage utility on postscript.
+@c
+@c @ifset DOUBLEDENSITY
+@c @iftex
+@c @magnification = 833
+@c @smallbook
+@c @c from @afourpaper:
+@c @global@tolerance=700
+@c @global@hfuzz=1pt
+@c @setleading{12pt}
+@c @global@parskip 2pt plus 1pt
+@c @global@vsize= 65@baselineskip
+@c @advance@vsize by @topskip
+@c @global@hsize= 20cm
+@c @global@outerhsize=@hsize
+@c @global@advance@outerhsize by 0.5in
+@c @global@outervsize=@vsize
+@c @global@advance@outervsize by 0.6in
+@c @global@pagewidth=@hsize
+@c @global@pageheight=@vsize
+@c @end iftex
+@c @end ifset
+
+@titlepage
+@sp 6
+@center @titlefont{Hacking Xconq}
+@sp 4
+@center The School for Strategy
+@sp 4
+@center Version 7.4
+@sp 4
+@center December 2000
+@sp 5
+@center Stanley T. Shebs
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 1987-1989, 1991-2000
+Stanley T. Shebs
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided also that the
+section entitled ``GNU General Public License'' is
+included exactly as in the original, and provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that the section entitled ``GNU General Public License'',
+and this permission notice, may be included in translations
+approved by the Free Software Foundation instead of in the original
+English.
+@end titlepage
+
+@iftex
+
+@headings off
+@everyheading @thistitle @| @thischapter @| @thispage
+@everyfooting Version 7.4 @| December 2000 @| (printed @today{})
+
+@end iftex
+
+@ifinfo
+
+@node Top, , (dir), (dir)
+@top Top
+
+This manual is a full description of how to design games for @i{Xconq}.
+We will assume that you are already familiar with playing games in
+@i{Xconq}; if not, you should try a few different games in the standard
+library, so as to get more of a feel for the game system.
+
+@menu
+* Introduction::
+* Kernel::                      
+* Interface::
+* Networking::                  
+* Miscellany::                  
+@end menu
+
+@end ifinfo
+
+@node Introduction
+
+@chapter Introduction
+
+This manual describes the internal architecture of @i{Xconq}, and
+provides information and guidelines for modifying the sources.  You
+should know what you are doing; @i{Xconq} is designed to be modifiable,
+but it is not simple code.  In the past, people have found it easy to
+make changes, but much harder to make them correctly!
+
+First, the overall goals of @i{Xconq}.  @i{Xconq} cannot and does not
+attempt to be all things to all people; instead it focusses on a very
+particular class of game, namely map/overhead-view strategy games.  This
+has become a rather well-worn genre of game, but the field is still open
+for innovation; @i{Xconq}'s main contribution is that it allows the
+construction of many different games in this genre, without requiring
+low-level programming.
+
+These are the specific goals for @i{Xconq}:
+
+@table @b
+
+@item Portability
+@i{Xconq} should be able to run on a wide variety of machines.  However,
+new versions need not restricted by the limits of old systems.
+
+@item AI
+It should be possible for a game AI to play any side in any game.
+
+@item Networking
+It should be possible for any player on the net to play any side.
+
+@item Scale
+@i{Xconq} should work well for games of strategic and operational
+maneuver based on a 2D surface.  It does not need to work well for
+tactical games, adventure games, space games, or anything requiring full
+3D.  (This doesn't mean that it should be excluded from those types
+of games, just that they are not required to be possible.)
+
+@i{Xconq} should be able to handle very large games.
+
+@item Game Design
+The designer should be able to use GDL to build any strategic-level game
+desired.  There should be multiple computational models available to the
+designer, such as different algorithms combat resolution.
+
+@item Graphics
+It should be possible to use graphics of a high quality, but it should
+not be required to produce a playable game.  The designer should be able
+to adjust all aspects of a game's appearance.
+
+@item Play Action
+It should be possible to design both turn-based and real-time games, the
+choice being left to the game designer.  It should also be possible to
+design both simple easy-to-play games and complex detailed games.
+
+@end table
+
+@i{Xconq} is designed to be portable to different types of user
+interfaces.  It is based on a kernel-interface architecture, where the
+semantics of the game, as documented in the preceding chapters, is part
+of the kernel, while the main program and player interaction are
+specific to each system.
+
+@i{Xconq} is also designed to allow the addition of new AIs.  The
+default @code{"mplayer"} AI, while it is flexible and will attempt to
+play any side in any game, does not have the depth that is often
+important to success in a game.  Its position is that of a generic AI
+program that can learn to play any game, given only the rules; while
+such a program might figure out how to win at tic-tac-toe or checkers,
+it is not going to be particularly good at the subtleties of go or
+chess.
+
+The @i{Xconq} GDL is also extensible.  This is useful when the basic GDL
+does not provide some feature that is essential to a game.  It is
+fairly easy to add new global variables, properties, and tables.
+
+@node Kernel
+ 
+@chapter Kernel
+
+The kernel is the part of @i{Xconq} shared by all interfaces.
+It does no I/O except to files or for debugging.
+
+Specifically, the kernel supplies the following functionality:
+
+@itemize @bullet
+
+@item
+Data structure initialization. (@code{init_data_structures})
+
+@item
+Game module loading and interpretation. (@code{load_game_module})
+
+@item
+Initial player/side setup. (@code{make_trial_assignments})
+
+@item
+Synthesis methods. (@code{run_synthesis_methods})
+
+@item
+Final player/side setup. (@code{make_assignments})
+
+@item
+Game execution. (@code{run_game})
+
+@item
+Implementations of unit actions. (@code{prep_*_action})
+
+@item
+AI players.
+
+@item
+Help Info (@code{get_help_text})
+
+@item
+Game saving and scorekeeping.
+
+@end itemize
+
+@menu
+* Configuration Options::       
+* Porting the Kernel::          
+* Writing New Synthesis Methods::  
+* Writing New Namers::          
+* Writing New AIs::             
+* Extending GDL::               
+* GDL Design Decisions::               
+@end menu
+
+@node Configuration Options
+
+@section Configuration Options
+
+There are a small number of options available to alter aspects of
+the kernel.  These are defined and described in @file{kernel/config.h}.
+It is unlikely that you will ever need to change any of these.
+
+@node Porting the Kernel
+
+@section Porting the Kernel
+
+The kernel must be in ANSI C.  Although the kernel uses stdio, it does
+not assume the presence of a console (stdin, stdout, stderr).  For
+instance, a graphical interface can arrange to disable stdin entirely
+and direct stdout/stderr into a file (see the Mac interface sources for
+an example).
+
+You should be careful about memory consumption.  In general, the kernel
+takes the attitude that if it was worth allocating, it's worth hanging
+onto; and so the program does not free much storage.  Also, nearly all
+of the allocation happens during startup.  Since a game may run for a
+very long time (thousands of turns perhaps), it is important not to run
+the risk of exhausting memory at a climactic moment in the game!
+
+Also, the kernel should not exit on its own.  The only permissible times
+are when the internal state is so damaged that interface error-handling
+routines (see below) cannot be called safely.  Such situations are rare.
+If you add something to the kernel and need to handle error situations,
+then you should call one of the interface's error-handling routines.
+There are distinct routines for problems during initializations vs
+problems while running, and both error and warning routines.  Warning
+routines may return, so kernel code should be prepared to continue on,
+while error routines will never return.
+
+@node Writing New Synthesis Methods
+
+@section Writing New Synthesis Methods
+
+You can add new synthesis methods to @i{Xconq}.  Synthesis methods
+should start out by testing whether or not to run, and should never
+assume that any other method has been run before or after, nor that any
+particular game module has been loaded.  However, ``tricks'' are usually
+OK, such as setting a particular global variable in a particular module
+only, then having the synthesis method test whether that global is set.
+See the file @file{init.c} for further details.
+
+Synthesis methods that take longer than a second or two to execute
+should generate percent-done info for the interface to use, via the
+function @code{announce_progress}.  Be aware that most methods will be
+O(n) or O(n*n) on the size of the world or the number of units, so they
+can take much longer to set up a large game than a small one.  Players
+will often go overboard and start up giant games, so this happens
+frequently.  Also, @i{Xconq} may be running on a much smaller and slower
+machine than what you're using now.
+
+@node Writing New Namers
+
+@section Writing New Namers
+
+[describe hook and interface]
+
+@node Writing New AIs
+
+@section Writing New AIs
+
+You can add new types of AIs to @i{Xconq}.  You would do this to add
+different strategies as well as to add AIs that are programmed
+specifically for a single game or class of games.  (This is useful
+because the generic AI does not always understand the appropriate
+strategy for each game.)
+
+You have to design the object that is the AI's ``mental state''.  If
+your AI need only react to the immediate situation, then this object can
+be very simple, but in general you will need to design a fairly
+elaborate structure with a number of substructures.  Since there may be
+several AIs in a single game, you should be careful about using globals,
+and since @i{Xconq} games may often run for a long time, you should be
+careful not to consume memory recklessly.
+
+@itemize @bullet
+
+@item
+Name.
+This is a string, such as @code{"mplayer"}.
+It may be displayed to players, so it should not be too cryptic.
+
+@item
+Validity function.
+This runs after modules are loaded, and during player/side
+setup, and decides whether it can be in the given game on the given side.
+[have a chain of fallback AIs, or blow off the game?]
+
+@item
+Game init function.  This runs before displays are set up, just in case
+a display needs to examine the AI's data (for instance to display whether
+the AI is friendly or unfriendly).
+
+The game init function should also look for and interpret the contents
+of the side's @code{aidata}, if appropriate.  The generic game reading code
+fills the slot, but does not interpret the data further.
+
+@item
+Turn init function.  This runs after all the units get their acp and mp
+for the turn, but before anybody actually gets to move.
+
+@item
+Unit order function.  This gets run to decide what the unit should do.
+Usually it should be allowed to follow its plan.
+[do separate fns for before and after plan execution?]
+
+@item
+Event reaction functions. [how many?]
+
+@item
+State save function.  This formats state that should be saved into a
+Lisp object.  The game saving code then writes this state into the file
+so that it can be read in again.  You may not do any allocation while
+saving a game however, so if you need space (and note that even a single
+cons allocates space), you must have the AI init routine or some such do
+the allocation early on, then reuse the space.
+
+@end itemize
+
+Note that these functions have very few constraints, so you can write them
+to work together in various ways.  For instance, an AI can decide whether
+to resign once/turn, once/action, or once for each 4 units it moves, every
+other turn.
+
+[describe default AI as illustrative example]
+
+@node Extending GDL
+
+@section Extending GDL
+
+GDL has been designed so as to be relatively easily extensible.  I say
+``relatively'' because although it is quite easy to define a new keyword
+or table, it is not always so easy to integrate the implementation code
+into the kernel correctly.
+
+The file @file{gvar.def} defines all the global variables.
+
+The file @file{utype.def} defines all the unit type properties.
+Similarly for @file{atype.def}, @file{mtype.def}, and @file{ttype.def},
+for advance types, material types, and terrain types, respectively.
+
+The file @file{table.def} defines all of the tables.
+
+The file @file{keyword.def} defines keywords, which are just random
+symbols.  Keywords include the names of properties for objects like
+areas and units, as well as syntactic things used within GDL forms.
+
+The files @file{action.def}, @file{goal.def}, @file{history.def},
+@file{plan.def}, and @file{task.def} enumerate the types of actions,
+goals, historical events, plans, and tasks, respectively.
+
+From time to time, it may be worthwhile to extend unit objects.  This
+should be rare, because games may have thousands of units, and each unit
+requires at least 100 bytes of storage already, so you should avoid
+making them any larger.  Properties of an individual unit are scattered
+through @file{keyword.def}.  Once the structure slot is added, you just
+need to add reading and writing of the value, using the
+@code{K_@var{xxx}} enum that was defined with the keyword.  You should
+attempt to make a reasonable default and use it to avoid writing out the
+value, so as to save time when @i{Xconq} reads a game in.
+
+GDL symbols beginning with @code{zz-} should be reserved for the use of
+AI code.  You may want to add some of these, either to serve as a
+convenient place for AIs to cache the results of their analyis of a
+game, or else as a way for game designers to add ``hints'' for AIs that
+know to look at them.
+
+Note that all the @samp{*.def} files together are to define the exact
+set of symbols defined by GDL.  You should not add any expedient
+matching on symbols or searching for particular symbols without adding
+them to an appropriate @samp{.def} file.
+
+@node GDL Design Decisions
+
+@section GDL Design Decisions
+
+The most fundamental decision is that GDL is declarative rather than
+procedural.  This may have advantages in making game definitions
+readable or limiting the consequences of buggy GDL, but the key
+advantage is that a generic AI can cope with a declarative language.
+For example, suppose that a hypothetical game design language had a
+procedure that got run to figure out the results of combat.  It is
+very powerful and simple: run this procedure, and you know whether the
+attacker or defender wins.  But the problem is that pretty much all
+you can do with it is run it.  The AI can't reason about what kinds of
+units are best as attackers, which are best as defenders, or the like.
+
+Having decided on a declarative language, there is still the syntax.
+GDL uses an s-expression syntax (which comes from Lisp).  The main
+popular alternative to s-expressions these days seems to be XML.  For
+example:
+
+@example
+(table mp-to-leave-terrain
+  (ground water 99)
+  (armor (swamp forest mountains) 99)
+  )
+@end example
+
+might become
+
+@example
+<table name="mp-to-leave-terrain">
+  <entry>
+    <ref>ground</ref>
+    <ref>water</ref>
+    <value>99</value>
+  </entry>
+  <entry>
+    <ref>armor</ref>
+    <list><ref>swamp</ref><ref>forest</ref><ref>mountains</ref></list>
+    <value>99</value>
+  </entry>
+</table>
+@end example
+
+Given the conciseness of the s-expression syntax, it seems unwise to
+simply dismiss it as an anachronism.  The real question is what would
+be the benefits of an XML syntax - for example would it enable data
+exchange, and if so with what (XML editors? Game design
+tools?).
+
+Also see @ref{Rationale and Future Directions}.
+
+@node Interface
+
+@chapter Interface
+
+The player interface is how actual players interact with the game.  It
+need not be graphical or even particularly interactive, in fact it could
+even be a network server-style interface!  However, this section will
+concentrate on the construction of interactive graphical interfaces.
+
+@menu
+* Interface Architecture::
+* Main Program::                
+* Startup Options::             
+* Progress Indication::         
+* Feedback and Control::        
+* Play Commands::                    
+* Error Handling::              
+* Textual Displays::            
+* Display Update::              
+* Types of Windows and Panels::  
+* Graphics::                     
+* Animation::                   
+* Game Designer Tools::         
+* Porting and Multiple Interfaces::  
+* Useful Displays::             
+* Useful Options::              
+* Guidelines and Suggestions::  
+@end menu
+
+@node Interface Architecture
+
+@section Interface Architecture
+
+An interface is always compiled in, so it has complete access to the
+game state.  However, if your version of @i{Xconq} has any networking
+support, the interface should not modify kernel structures directly, but
+should instead use the networking-enabled kernel modification routines.
+The kernel routines will forward any state modifications to all other
+programs participating in a game, so that everybody's state remains
+consistent.
+
+A working interface must provide some level of capability in each of
+these areas:
+
+@itemize @bullet
+
+@item
+Main program.
+The interface includes the main application and any
+system-specific infrastructure, such as event handling.
+
+@item
+Interpretation of startup options.
+This includes choice of games, variants, and players.
+
+@item
+Display of game state.
+This includes both textual and graphical displays,
+both static and dynamic.
+
+@item
+Commands/gestures for unit tasks and actions,
+and for general state modifications.
+
+@item
+Display update in response to state changes.
+
+@item
+Realtime progress.
+Some game designs require the interface
+to support realtime.
+
+@item
+Error handling.
+@end itemize
+
+The file @file{skelconq.c} in the @file{kernel} directory is
+a good example of a minimum working interface.
+
+Don't let interfaces ever set kernel object values directly, always
+go through calls that can be ``siphoned'' for networking.
+
+@node Main Program
+
+@section Main Program
+
+The interface provides @code{main()} for @i{Xconq}; this allows maximum
+flexibility in adapting to different environments.  In a sense, the
+kernel is a large library that the interface calls to do game-related
+operations.
+
+There is a standard set of calls that need to be made during
+initialization.  The set changes from time to time, so the following
+extract from @file{skelconq} should not be taken as definitive:
+@example
+    init_library_path(NULL);
+    clear_game_modules();
+    init_data_structures();
+    parse_command_line(argc, argv, general_options);
+    load_all_modules();
+    check_game_validity();
+    parse_command_line(argc, argv, variant_options);
+    set_variants_from_options();
+    parse_command_line(argc, argv, player_options);
+    set_players_from_options();
+    parse_command_line(argc, argv, leftover_options);
+    make_trial_assignments();
+    calculate_globals();
+    run_synth_methods();
+    final_init();
+    assign_players_to_sides();
+    init_displays();
+    init_signal_handlers();
+    run_game(0);
+@end example
+Note that this sequence is only straight-through for a simple command
+line option program; if you have one or more game setup dialogs, then
+you choose which to call based on how the players have progressed
+through the dialogs.  The decision points more-or-less correspond to the
+different @code{parse_command_line} calls in the example.  You may also
+need to interleave some interface-specific calls; for instance, if you
+want to display side emblems in a player/side selection dialog, then you
+will need to arrange for the emblem images to be loaded and displayable,
+rather than doing it as part of opening displays.
+
+Once a game is underway, the interface is basically self-contained,
+needing only to call @code{run_game} periodically to keep the game
+moving along.  @code{run_game} takes one argument which can be -1, 0, or
+1.  If 1, then one unit gets to do one action, then the routine returns.
+If 0, the calculations are gone through, but no units can act.  If -1,
+then all possible units will move before @code{run_game} returns.  This
+last case is not recommended for interactive programs, since moving all
+units in a large game may take a very long time; several minutes
+sometimes, and @code{run_game} may not necessarily call back to the
+interface very often.
+
+@node Startup Options
+
+@section Startup Options
+
+Although there are many different ways to get a game started, you have
+three main categories of functionality to support: 1) selection of the
+game to play, 2) setting of variants, and 3) selection of players.  For
+command-line-using programs, the file @code{cmdline.c} need only be
+linked in to provide all of this functionality.  For graphical
+interfaces, you will need to design appropriate dialogs.  This can be a
+lot of work, exacerbated by the fact that these dialogs will be the
+first things that new @i{Xconq} players see, and will therefore shape
+their opinions about the quality of the interface and of the game.
+
+[more detail about what has to be in dialogs?]
+
+Interface code should check all player specs, not proceed with
+initialization until these are all valid.
+
+Both standard and nonstandard variants should vanish from or be grayed
+out in dialog boxes if irrelevant to a selected game.
+
+@node Progress Indication
+
+@section Progress Indication
+
+Some synthesis methods are very slow, and become even slower when
+creating large games, so the kernel will announce a slow process,
+provide regular updates, and signal when the process is done.  The
+interface should display this in some useful way.  In general, progress
+should always be displayed, although one could postpone displaying
+anything until after the first progress update, calculate an estimated
+time to completion, and not display anything if that estimate is for
+less than a few seconds.  However, this is probably unnecessary.
+
+@itemize @bullet
+
+@item
+@code{void announce_read_progress()}
+
+The kernel calls this regularly while reading game definitions.
+Interfaces running on slow machines should use this to indicate that
+everything is still working; for instance, the Mac interface animates a
+special cursor that indicates reading is taking place.
+
+@item
+@code{void announce_lengthy_process(char *msg)}
+
+The kernel calls this at the beginning of each synthesis.  The argument
+is a readable string that the interface can show to players.
+
+@item
+@code{void announce_progress(int pctdone)}
+
+The kernel may call this at milestones within a synthesis.
+The number ranges from 0 to 100.
+
+@item
+@code{void finish_lengthy_process()}
+
+The kernel calls this at the end of a synthesis.
+
+@end itemize
+
+@node Feedback and Control
+
+@section Feedback and Control
+
+The interface should provide visible feedback for every successful unit
+action initiated directly by the player, but it need not do so for
+failures, unless they are serious.  It is better to prevent nonsensical
+input, for instance by disabling menus and control panel items.  Simple
+interfaces such as for character terminals will have to relax these
+rules somewhat.
+
+Interfaces should enable/disable display of lighting conditions.
+
+@node Play Commands
+
+@section Play Commands
+
+There is no single correct way to support direct player control over
+units.  Although keyboard commands and mouse clicks are obvious choices,
+it would be very cool to allow a pen or mouse to sketch a movement plan,
+or to be able to give verbal orders...
+
+There is a common set of ASCII keyboard commands that are recommended
+for all @i{Xconq} interfaces that use a keyboard.  These are defined in
+@file{kernel/cmd.def}.  If you use these, @i{Xconq} players will be able
+to switch platforms and still use familiar commands.  @file{cmd.def}
+defines a single character, a command name, a help string, and a
+function name, always in the form @code{do_*}.  However, @file{cmd.def}
+does not specify arguments, return types, or behavior of those
+functions, so each interface must still define its own command lookup
+and calling conventions.
+
+Many commands are common to all interfaces; their implementations
+are in @file{kernel/cmd.c}.
+
+If you include @file{cmd.def}, you must then provide definitions for all
+the functions that it mentions.  You should also provide some sort of
+feedback for commands that are not implemented, or that are not useful.
+Players who are used to another interface will expect to be able to type
+the same commands, and can get very confused if the familiar commands
+neither work nor complain about not working.  One way to fill in
+defaults for functions that you don't want to do yet is to use macros
+ahead of the inclusion of @file{cmd.def}:
+@example
+#define do_quit default_empty_do
+#define do_save default_empty_do
+...
+
+#include "cmd.def"
+
+default_empty_do()
+@{
+	notify(a_side, "Command not implemented in this interface");
+@}
+@end example
+
+Prefixed number args should almost always be repetitions.
+
+If already fully fueled, refuel commands should come back immediately.
+
+A quit cmd can always take a player out of the game, but player may have
+to agree to resign.  Player can also declare willingness to quit or draw
+without actually doing so, then resolution requires that everybody agree.
+If quitting but others continuing on, also have option of being a
+spectator.  Could have notion of "leaving game without declaring entire
+game a draw" for some players.
+Allow for a timeout and default vote in case some voters have disappeared
+mysteriously.
+Must never force a player to stay in.
+Add a notion of login/logout so a side can be inactive but untouchable,
+possibly freezes entire game if a side is inactive.
+1. if one player or no scoring
+	confirm, then shut player down
+	if one player, then shut game down
+2. if side is considered a sure win (how to tell? is effectively a win
+condition then) or all sides willing to draw
+	confirm, take side out, declare a draw, shut player down
+3. if all sides willing to quit
+	take entire game down
+4. ask about resigning - if yes,
+	resign, close display, keep game running
+   if no, ask if willing to quit and/or draw, send msg to other sides
+Kernel support limited to must_resign_to_quit(side), similar tests.
+
+@node Error Handling
+
+@section Error Handling
+
+The interface must provide implementations of these error-handling
+functions:
+
+@itemize @bullet
+
+@item
+@code{void cmd_error(Side *side, char *fmt, ...)}
+
+This is for player command errors.  Syntax is like printf.  Normal
+behavior should be to display the formatted output somewhere that will
+get the player's attention.
+
+@item
+@code{void low_init_warning(char *str)}
+
+This is for undesirable but not necessarily wrong things that happen
+while setting up a game.  For instance, if players start out too close
+or too far from each other, it will often affect the play of the game
+adversely, so the kernel issues a warning, therby giving the prospective
+players a chance to cancel the game and start over.  The kernel's
+warning message should indicate any likely results of continuing on, so
+the players can decide whether or not to chance it.
+
+@item
+@code{low_init_error(char *str)}
+
+This function should indicate a serious and unrecoverable error during
+initialization.  It should not return to its caller.
+
+@item
+@code{low_run_warning(char *str)}
+
+Warnings during the game are rare but not unknown.  They are very often
+due to bugs in @i{Xconq}, so any occurrence should be investigated
+further.  It is possible for some game designs to have latent flaws that
+may result in a warning.  In any case, the interface should allow the
+players to continue on, to save their game and quit, by calling
+@code{save_the_game}, or else quit without saving anything.
+
+@item
+@code{low_run_error(char *str)}
+
+In the worst case, @i{Xconq} can get into a situation, such as memory
+exhaustion, where there is no way to continue.  The kernel will then
+call @code{run_error}, which should inform players that @i{Xconq} must
+shut itself down.  They do get the option of saving the game, and the
+routine should call @code{save_game_state??} to do this safely.  This
+routine should also not return to its caller.
+
+@item
+@code{printlisp(Obj *obj)}
+
+This is needed to print GDL objects to ``stdout'' or its equivalent.
+
+@end itemize
+
+@node Textual Displays
+
+@section Textual Displays
+
+Text can take a long time to read, and can be difficult to provide in
+multiple human languages. (What, you thought only English speakers
+played @i{Xconq}?  Think again!)  Therefore, text displays in the
+interfaces should be as minimal as possible, and derive from strings
+supplied in the game design, since they can be altered without
+rebuilding the entire program.
+
+(@i{Xconq} is not, at the moment, completely localizable, but that is a
+design goal.)
+
+@node Display Update
+
+@section Display Update
+
+Usually the interface's display is controlled by the player, but when
+@code{run_game} is executing, it will frequently change the state of an
+object in a way that needs to be reflected in the display immediately.
+Examples include units leaving or entering a cell, sides losing or
+winning, and so forth.  The interface must define a set of callbacks
+that will be invoked by the kernel.
+
+@itemize @bullet
+
+@item
+@code{update_cell_display(side, x, y, rightnow)}
+
+[introduce area (radius or rect) update routines?]
+
+@item
+@code{update_side_display(side, side2, rightnow)}
+
+@item
+@code{update_unit_display(side, unit, rightnow)}
+
+@item
+@code{update_unit_acp_display(side, unit, rightnow)}
+
+@item
+@code{update_turn_display(side, rightnow)}
+
+@item
+@code{update_action_display(side, rightnow)}
+
+@item
+@code{update_action_result_display(side, unit, rslt, rightnow)}
+
+@item
+@code{update_fire_at_display(side, unit, unit2, m, rightnow)}
+
+@item
+@code{update_fire_at_display(side, unit, x, y, z, m, rightnow)}
+
+@item
+@code{update_event_display(side, hevt, rightnow)}
+
+@item
+@code{update_all_progress_displays(str, s)}
+
+@item
+@code{update_clock_display(side, rightnow)}
+
+@item
+@code{update_message_display(side, sender, str, rightnow)}
+
+@item
+@code{update_everything()}
+
+@end itemize
+
+Each of these routines has a flag indicating whether the change may be
+buffered or not.
+To ensure that buffered data is actually onscreen,
+the kernel may call @code{flush_display_buffers()},
+which the interface must define.
+
+@itemize @bullet
+
+@item
+@code{flush_display_buffers()}
+
+@end itemize
+
+These may or may not be called on reasonable sides, so the
+interface should always check first that @code{side} actually
+exists and has an active display.
+[If side has a "remote" display, then interface has to forward??
+No, because remote copy of game is synchronized and does own
+update_xxx calls more-or-less simultaneously]
+
+Note that this is as much as the kernel interests itself in displays.
+Map, list, etc drawing and redrawing are under the direct control
+of the interface code.
+
+Unix-hosted versions must provide @code{void close_displays()}
+for signal handlers to call.
+
+@node Types of Windows and Panels
+
+@section Types of Windows and Panels
+
+@i{Xconq} is best with a window-style interface, either tiled
+or overlapping.  Overlapping is more flexible, but also more
+complicated for players.
+In the following discussion, "window" will refer to a logically
+unified part of the display,
+which can be either a distinct window or merely a panel
+embedded in some larger window.
+
+The centerpiece window should be a map display.  This will be the
+most-used window, since it will typically display more useful
+information than any other window.  This means that it must also exhibit
+very good performance.
+
+When a game starts up, the map display should be centered on one of the
+player's units, preferably one close to the center of all the player's
+units.
+
+Another recommended window is a list of all the sides and where they
+stand in both the current turn and in the game as a whole.  Each side's
+entry should include its name, a progress bar or other doneness
+indicator, and room for all the scores and scorekeepers that apply to
+that side.
+
+If possible, you should also implement some kind of "face" or group of
+faces/expressions for a side, so get a barbarian's face to repn a side
+instead of generic.  Could have interface generate remarks/balloons if
+face clicked on, perhaps a reason for feelings, slogan, citation of
+agreement or broken agreement, etc.  Need 5 faces for hostile,
+unfavorable, neutral, favorable, friendly/trusting.
+
+Since the rules for when sides are in or out of a game can be
+complicated, it is important to indicate each side's status clearly.
+The most important bit is the @i{in} or @i{out} part.  You should
+indicate sides that are out of the game by dimming or graying, and by
+removing any indicators of game play, such as the side's progress
+display.  Keep in mind that you may need to list the sides before or
+after the actual game.
+
+To indicate that a side lost, you can draw a line through it.
+To indicate that it won, you can draw laurels or other
+decoration all around.
+
+The action progress bar for each side tells all the players about how
+turn is progressing, and should reflect the aggregate of unit states.
+Here are some suggested appearances:
+
+@itemize @bullet
+
+@item
+missing: no units or no ai/no display
+
+@item
+grayed frame: no acting units
+
+@item
+empty solid frame: all acted
+
+@item
+part full, black: partly acted
+
+@item
+part full, gray: finished turn
+
+@end itemize
+
+Technically, the progress bars for other sides gives away information
+about how strong they are and what they're doing.  However, the interface
+benefit of players knowing how fast each of them is moving and when the
+turn is likely to be over is tremendous.
+
+@node Graphics
+
+@section Graphics
+
+Graphics are an important feature of @i{Xconq}.  Although not every
+interface needs it -- for instance the curses interface is limited to
+drawing two ASCII characters for each cell, and its ``graphics'' code
+just has to choose which two to draw -- nearly all players prefer a
+graphically rich display.
+
+@i{Xconq} graphics basically consists of the drawing of a number of
+small images into a map or view window, along with some geometric
+shapes (lines, rectangles, etc) and text.
+
+Most of a map's layout can be handled by common code found in
+@file{kernel/ui.c} and @file{kernel/ui.h}.  The common code does the
+tricky computations, and the platform-specific drawing code just needs
+to do the rendering proper.  For instance, @code{xform_cell} takes the
+location of a hex cell and returns the pixel coordinates of its upper
+left corner.  The main structure defined by @file{ui.h} is the viewport
+type @code{VP}, which is a complete description of a viewport into
+the world.
+
+@subsection Images
+
+While the layout code decides placement and ordering, the images contain
+the actual pixels that will go onto the screen.  The @i{Xconq} image
+machinery is somewhat complicated, since the game designer is only
+required to specify an image by name; it's up to the program to locate
+the image data, to process the images into a form that may be
+efficiently rendered, and to choose the best image for the view's
+magnification.
+
+Image data may come either from a standard image format file, such as a
+GIF, or from Xconq's own GDL-based format, which was designed to handle
+large numbers of small images efficiently.  You may also add
+platform-specific file format handling, such as resource files for Mac
+and XPMs for Unix.
+
+Internally, each image family is a list of images of different sizes.
+Each image may include an array of subimages, of a size depending on the
+image's type.  For instance, a connection image type has 64 subimages,
+one for each combination of connections around the six edges of a
+hexagon.
+
+Platform-specific handling should come as late as possible, ideally
+just before the display needs an image.  It may be that a player never
+needs a particular unit type, or that the player never uses a particular
+magnification; so you can save some startup type and memory consumption
+by only doing conversion when absolutely necessary.
+
+If a requested image family cannot be found, the standard image setup
+code in @file{ui.c} will create a substitute family (usually by doing a
+sort of ``bar code'' of the unit or terrain type number), and mark it as
+ersatz.  The interface should still warn that the image family could not
+be found though.  In the case of terrain, where solid colors may be
+used, the interface should warn if neither color nor image is available.
+
+@subsection Suggestions
+
+No graphical icon should be drawn smaller than about 8x8, unless it's
+a text character drawn in two contrasting colors.
+
+Interfaces should cache optimal displays for each mag, not search
+for best image each time.
+
+Imaging variations can be randomly selected by UI,
+but must be maintained so redraws are consistent.
+
+Draw partial cells around edges of a window, to indicate that the world
+continues on in that direction.
+
+Interface needs to draw only the terrain (but including connections and
+borders) in edge cells.
+
+Could draw grid by blitting large light pattern over world, do by inverting
+so is easy to turn on/off.  Do grids by changing hex size only in
+unpatterned color?
+
+Draw large hexagon or rect in unseen-color after clearing window to bg
+stipple (if unseen-color different).  Polygon should be inside area
+covered by edge hexes, so unseen area more obvious.
+Make large unseen-pattern that includes question marks?
+
+If picture not defined for a game, use some sort of nondescript image
+instead of leaving blank. (small "no picture available" for instance,
+like in yearbooks)
+
+To display night, overlay a black mask on the terrain, both cell and
+linear.  World is totally lit if dimensions < half of world
+circumference and all six corners of hexagon have same lighting.  If
+world totally dark, can draw darkening mask once for entire map.
+
+To display elevation, use deep blue -> light gray -> dark brown progression,
+and/or contour lines.
+
+If multiple connection or border types, the interface should draw them offset
+slightly from each other.
+
+@node Animation
+
+@section Animation
+
+In addition to basic imaging, you can also support requests for the
+playing of animations or @i{movies}.
+
+The kernel just calls @code{schedule_movie} to create one, and then
+@code{play_movies} when it is time to run all the movies that have been
+scheduled.  It is up to the interface to do something useful.  Note that
+the kernel is not aware of the movies' timing, so it is better not to
+call @code{run_game} until all the movies have finished playing
+(although the kernel doesn't care, the display might end up looking
+screwy when detonations happen in just-vacated cells.)
+
+@itemize @bullet
+
+@item
+@code{schedule_movie(side, movie_type, args...)}
+
+The kernel calls this to request that the given type of movie be
+displayed to the given side, with the given args to describe it.  If the
+interfaces supports this, it must arrange its own storage and handling
+of movie data.
+
+@item
+@code{play_movies(sidemask)}
+
+The kernel calls to request that all previously-scheduled movies be run,
+for the sides enabled in the side mask.  It is allowable for the
+interface not to act on any user input while these are playing.
+
+@end itemize
+
+Several types of movies are predefined, so your interface can
+recognize them specially.  These include @code{movie_miss},
+@code{movie_hit}, @code{movie_death}, which are scheduled
+for the appropriate outcomes of combat.
+
+@node Game Designer Tools
+
+@section Game Designer Tools
+
+An interface is not required to provide any sort of online designing
+tools, or even to provide a way to enable the special design privileges.
+Nevertheless, minimal tools can be very helpful, and you will often find
+that they are helpful in debugging the rest of the interface, since you
+can use them to construct test cases at any time.
+
+A basic set of design tools should include a way to enable and disable
+designing for at least one side, a command to create units of a given
+type, and some sort of tool to set the terrain type at a given location.
+A full set would include ``painting'' tools for all area layers,
+including geographical features, materials, weather, side views, and so
+forth - about a dozen in all.
+
+A least one level of undo for designer actions is very desirable,
+although it may be hard to implement.  A useful rule for layers is to
+save a layer's previous state at the beginning of each painting or other
+modification action, when the mouse button first goes down.
+
+The designer will often want to save only the part of the game being
+worked on, for instance only the units or only the terrain.  The "save
+game" action should give designers a choice about what to save.  For
+units particularly, the designer should be able to save only some
+properties of units.  The most basic properties are type, location,
+side, and name/number.  The unit id should not be saved by default, but
+should have its own option (not clear why).
+
+Note that because game modules are textual and can be moved easily from
+one system to another, it is entirely possible to use one @i{Xconq}
+(perhaps on a Mac) to design games to be played on a Unix box under X11,
+or vice versa.  This means that the interface should always save the
+designer's work as an ordinary text file if possible, so as not to
+require any further manipulation.
+
+Likewise, any image design tools should have some sort of option to save
+as text, so that the imagery for a game design can be used on every
+platform that the design can.
+
+@node Porting and Multiple Interfaces
+
+@section Porting and Multiple Interfaces
+
+In theory, it is possible to compile multiple interfaces into a single
+@i{Xconq} program, but this would be hard at best.  They would have to
+be multiplexed appropriately and not conflict anywhere in the address
+space.  Sometimes this is intrinsically impossible; how could you
+compile the Mac and X interfaces into the same program, and would the
+result be a Mac application, a Unix program, or what?
+
+@node Useful Displays
+
+@section Useful Displays
+
+This is a collection of minor but useful displays that might be worth
+adding to an interface.
+
+A ``mouse over'' is a line or two of text that describes what the
+mouse/pointer is currently pointing at, and which updates automatically
+as the player moves the pointer around.  This is better for
+high-bandwidth interfaces, since there may be a lot of updating
+involved.  The volume can be reduced slightly by only redisplaying when
+the mouse moves, or, better, when what is being looked at changes.  This
+is probably best done by recalculating the line of text and then
+comparing it to what has been drawn already, although if the display is
+very fast, you may not save much in drawing time.  One approx 40-char
+lines covers basic info, such as terrain type and unit type; more detail
+may require multiple long lines.
+
+@node Useful Options
+
+@section Useful Options
+
+A ``follow action'' option scrolls the screen to where the last event
+happened, such as combat. [etc]
+
+@node Guidelines and Suggestions
+
+@section Guidelines and Suggestions
+
+Although as the interface builder, you are free to make it work in any
+way you like, there are a number of basic things you should do.  Some of
+these are general user interface principles, others are specific to
+@i{Xconq}, usually based on experiences with the existing interfaces.
+Applying some of these guidelines will require judicious balancing
+between consistency with the different version of @i{Xconq} and
+consistency with the system you're porting to.
+
+[following items should be better organized, moved in with relevant sections]
+
+Draw single selected unit in a stack larger.
+
+Draw single selected occupant in UR corner next to transport, when at
+mags that show both transport and occs.
+
+There should always be some sort of "what's happening now" display
+so player doesn't wonder about apparently dead machine.
+
+Image tool should report which type of resource is generating a
+given image, so can find which to hack on (report for selected image only).
+
+Interfaces should ensure stability of display choices
+if random possibilities, so need to cache local decisions about
+appearance of units if multiple images to choose from, choice of
+text messages, etc.
+
+Rules of Interaction:
+1. Player can get to any unit in any mode.
+2. Any player can prevent a turn from completing(/progressing?),
+   unless a hard real limit is encountered.
+3. All players see each others' general move/activity state, modes, etc.
+4. Players can "nudge" each other.
+5. Real time limits can be set for sides, turns, and games, both by players
+   and by scenarios.
+
+Player should be able to click on a desired unit or image, and effectively
+say "take this", either grabs directly or else composes a task to approach
+and capture.
+
+Unit closeups should be laid out individually for each type, too much
+variability to make a single format reasonable.
+
+Add option where game design can specify use or avoidance of masks
+with unit icons.
+
+Player could escape a loss by saving a game, then discarding save.
+Mplayers could register suspicion when player saves then quits -
+"You're not trying to cheat, are you?" - but can't prevent this.
+
+All interfaces should be able to bring up an "Instructions" window
+that informs player(s) about the current game, includes xrefs to all
+game design info.  Restrict help to generic and interface info only.
+
+Graph display should graphing of various useful values, such as amounts
+of units and materials over time, attitudes of sides, combat, etc.
+Maximal is timeline for all sides and units, usually too elaborate but
+allow tracking movement for some "important" units.  Note that move
+actions may be recorded anyway.
+
+Make specialized dialog for agreements, put name on top, then scrolling list of
+terms, then signers, then random bits (public/secret, etc).  Use for proposals
+also, so allow for "tentative" signers, desired signers who have not looked at
+agreement.  Be able to display truth of each term, but need test to know when
+a side can know the truth of a term?
+
+Interfaces should have a ``wake up dummy'' button that can be used by players
+who have finished their turn, to prod other players not yet done.
+
+Commands that are irrelevant for a game ought to be grayed out in
+help displays, and error messages should identify as completely invalid
+(or just not do anything, a la grayed Mac menu shortcuts).
+
+Should be able to drag out a route and have unit follow it (user input
+of a complete task sequence).
+
+Hack formatting so that variable-width fonts usually work reasonably.
+
+Add xref buttons to various windows to go to other relevant windows and
+focus in.
+
+The current turn or date should be displayed prominently and be visible
+somewhere by default.
+
+Add some high-level verbs as commands ("assault Berlin", "bomb London until
+destroyed").
+
+Don't draw outline boxes at mags that would let them get outside the hex.
+
+If dating view data, allow it to gray out rather than disappear entirely.
+Could even have a "fade time" for unit images...
+
+Even if display is textual, use red text (and other colors) to indicate
+dangerous conditions.
+
+Next/prev unit controls should change map focus, even if screen
+unaffected.
+
+In general, ability to "select" a unit implies ability to examine,
+but not control.  Control implies ability to select, however.
+
+Use a builtin color matching a color name if possible, otherwise
+use the imc definition.
+
+Connections may need to be drawn differently in each of the two hexes
+they involve, such as straits connecting to a sea.
+(what is this supposed to mean?)
+
+If cell cramped for space, show only one material type at a time,
+require redraw to show amounts of a different type.
+
+Draw time remaining both digitally and as hourglass, for all time
+limits in effect.
+
+Could tie map to follow a specified unit (or to flip there quickly
+a la SimAnt).
+
+Have a separate message window from notices, allow broadcasting w/o
+specific msg command? (a "talk" window)
+
+Redraw hexes exposed when a unit with a legend moves.
+Truncate or move legend if would overlap some other unit/legend.
+
+Put limits on the number of windows of each type, set up so will reuse
+windows, except for ones that are "staked down".
+
+Fix border removal so inter-hex boundary pixels are cleaned up also.
+
+Need a specialized window or display to check on current scores
+(showing actual situation vs what's still needed).
+(Show both scorekeepers actually in force, as well as the others.)
+Side display could also display scores relevant to that side.
+
+Every unit plan display should have a place to record notes and general
+info about the unit, add a slot to units also.  Use in scenarios.
+
+Need a command for when a player can explicitly change the self-unit.
+
+Players should be able to rename any named object.  The interface should
+also provide a button or control to run any namer that might be available
+to the unit.
+
+Be able to select unit number display indep of unit name display,
+and feature name display indep of unit names.
+
+Don't draw things that xform to 0 pixel areas,
+only draw the most important things if 1-4 pixels or so.
+
+If time/effort to do action is > length of game, then interface
+can disable that action permanently.
+
+Use moving bar or gray under black to indicate reserve/asleep units.
+
+Autoscrolling should always position so that each adjacent cell to a unit
+also shows *entire* adjacent cells, all around.
+
+@node Networking
+
+@chapter Networking
+
+The @i{Xconq} networking strategy is based on having each connected program
+maintain a complete and accurate game state, and propagating user commands
+from one of the programs to all others.  Thus all programs are equal; but
+in order to serialize multiple simultaneous user commands, one of the
+programs is a ``first among equals'' called the @i{master}.  If a player
+interacting with a non-master clicks to move, then the command actually
+just goes to the master and doesn't actually happen until the master
+propagates the command to all programs.
+
+The high-level protocol for all this is part of the @i{Xconq} kernel,
+and includes buffering, checksum, and other features.
+The OS interface code need only provide definitions for these functions:
+
+@itemize @bullet
+
+@item
+@code{void open_remote_connection(char *methodname)}
+establishes a connection to another program, using information supplied
+in @code{methodname}.
+
+@item
+@code{void low_send(int id, char *buf)}
+sends the contents of buf to the program whose remote id is id.
+
+@item
+@code{int low_receive(int *idp, char *buf, int maxchars, int timeout)}
+waits for data from the given remote program, possibly timing out.
+Returns TRUE if data was received.
+
+@item
+@code{void close_remote_connection(void)}
+takes down and cleans up (which?) connection.
+
+@end itemize
+
+@node Miscellany
+
+@chapter Miscellany
+
+@menu
+* Versioning Standards::        
+* Coding Standards::
+* Testing::
+* Debugging::
+* Pitfalls::
+* Rationale and Future Directions::
+@end menu
+
+@node Versioning Standards
+
+@section Versioning Standards
+
+In version @var{7.x.y}, @var{x} should change only when some documented
+user-visible aspect of @i{Xconq} changes, whether in the interface or
+kernel.  In particular, any additions to GDL, such as a new table or
+property, require a new @var{x} version.  @var{y} is reserved for
+bug-fix releases, which can include the implementation of features that
+were documented but not working correctly or completely.
+
+The macro @code{VERSION} should also include a date in parentheses,
+formatted in ``military style'', as in ``8 Jul 1995''.  Be sure to set
+the date to some approximation of the date of your most recent change to
+the sources.
+
+@node Coding Standards
+
+@section Coding Standards
+
+The @i{Xconq} sources adhere to a number of coding standards that you
+should follow also.  While everyone has their individual style, it is
+important to the code's maintenance that the existing style be
+preserved.
+
+You should allocate by using @code{xmalloc}.  This routine checks for
+allocation validity and gives a useful error message if allocation
+fails, it zeroes the block so you can count on the newly allocated space
+being in a known state, and it collects statistical data, which is
+important to optimization.
+
+There is one exception to this allocation rule, which is that you may
+use @code{malloc} if you intend to free the memory shortly.  An example
+would be temporary working space needed by an interface.  However, you
+must then check the return result from @code{malloc} yourself and handle
+failures appropriately; remember that players can easily ask for very
+large games, so it's quite possible that any given call to @code{malloc}
+will be unable to allocate the desired memory.
+
+Always generate a random number by using @code{xrandom}.  This is a
+generator of known and consistent properties across all systems that
+@i{Xconq} runs on.  Consistency is especially critical for ensuring
+that networked games stay in sync.
+
+Indent by 4, with tabs at 8.  This is effectively what you get in Emacs
+if you set @code{c-indent-level} to 4.  System-specific interfaces need
+not adhere to this rule..
+
+@node Testing
+@section Testing
+
+There are a variety of tests, some more automated than others.
+Running @code{make check} gets you all of them.  Warning: some of them
+take a very long time to run.  Generally speaking most of the tests
+should be interpreted to fail if xconq dumps core, and succeed in most
+other cases (some error messages might be considered failures).
+
+Perhaps the most interesting tests are the autotests.  These are
+written in a unit test style, meaning that the test code links into
+the code under test, which is good for speed and makes it easy to test
+particular parts of the code rather than end-to-end behaviors.  They
+should run fast enough to run them every time you make a change to
+xconq.
+
+To run just the autotests:
+
+@example
+$ cd kernel
+$ make skelconq
+$ cd ../test
+$ make check-auto
+@end example
+
+@node Debugging
+
+@section Debugging
+
+@i{Xconq} is both complicated and evolving.  Therefore, it includes a
+debugging infrastructure.  The code is ifdef'ed with the flag
+@code{DEBUGGING} so as to allow removal for ``production'' versions,
+although in practice the size reduction seems minor.
+
+There are several builtin flags available for dynamic control of
+debugging output, and printf macros to go with them.
+
+@table @code
+
+@item Debug
+The global flag @code{Debug} is for generic debug output, primarily
+kernel-oriented.  The macro @code{Dprintf} tests it before printing, the
+command line flag @code{-D} sets it, and the command @code{DD} toggles
+it during the game.
+
+@item DebugM
+This flag controls the debugging output for AIs and planning.
+@code{DMprintf} is the printing macro, @code{-DM} sets from the command
+line, and the command @code{DM} toggles.
+
+@item DebugG
+This flag controls debugging output for interfaces.  @code{DGprintf} is
+the printing macros, @code{-DG} sets from the command line, and
+@code{DG} is the toggling command.
+
+@end table
+
+It may also be useful to change interface behavior when debugging is
+enabled.  For instance, you can display internal unit id in closeups,
+toplines, etc, in addition to the usual unit info (which may not
+identify a unit uniquely).  Or you can make the interface display
+additional guides or bounding boxes to show where drawing is
+happening or not happening.
+
+Although @i{Xconq} has been liberally sprinkled with debugging output,
+in this modern age of computing, powerful source-level debuggers are
+widely available, and there is no good reason to add debugging code to
+do a job that could be done by the debugger.  @i{Xconq} debugging output
+is mainly designed to be useful for understanding average behavior,
+changes over time, and ``high-level transients'' such as thrashing in
+plan or task execution; information that is difficult to collect using
+only a debugger.  When adding new debug output, you should keep this
+principle in mind.  Also, be aware that some of the automated testing
+scripts enable debug output, so if you add something that is uselessly
+voluminous, testing output may fill your disk prematurely!
+
+Another principle to use in designing debug output is to try to make
+each line self-contained.  The output may run to thousands of lines, and
+tools like grep can be very useful filters, if the output is correctly
+formatted.  For instance, the function @code{unit_desig} will produce a
+string that includes a unit's side, type, id, and position in a fixed
+format, which makes it easy to find the unit in debug output and then
+track its activities.
+
+@node Pitfalls
+
+@section Pitfalls
+
+This chapter would not be complete without some discussion of the traps
+awaiting the unwary hacker.  The Absolute Number One Hazard in hacking
+@i{Xconq} is to introduce code that does not work for @emph{all} game
+designs.  It is all too easy to assume that, for instance, unit speeds
+are always less than 20, or airbases can only be built by infantry, or
+that worlds are always randomly-generated.  These sorts of assumptions
+have caused no end of problems.  Code should test preconditions,
+especially for dynamically-allocated game-specified objects, and it
+should be tested using the various test scripts in the test directory.
+
+The number two pitfall is to not account for all the possible
+interfaces.  Not all interfaces have a single ``current unit'' or map
+window, and some communicate with multiple players or over a network
+connection.
+
+You should not assume that your hack is generally valid until you have
+tested it against everything in the library and test directories.  The
+@file{test} directory contains scripts that will be useful for this, at
+least to Unix hackers.  See the @file{README} in that directory for more
+information.
+
+Another pitfall is to be sloppy about performance.  An algorithm that
+works fine in a small world with two sides and 50 units may be painfully
+slow in a large game. Or, the algorithm may allocate too much working
+space and wind up exhausting memory (this has often happened).  You
+should familiarize yourself with the algorithms already used in
+@i{Xconq}, since they have already been debugged and tuned, and many
+have been written as generically useful code (see the area-scanning
+functions in @file{world.c} for instance).
+
+If your new feature is expensive, then define a global and compute its
+value only once, either at the start of the game or when it becomes
+relevant.  Such a global should be named @code{any_<feature>}.
+
+Similarly, complicated tests on unit types or sides should be calculated
+once and cached in a dynamically-allocated array.
+
+@node Rationale and Future Directions
+
+@section Rationale and Future Directions
+
+This is where I justify what I've done, and not done.
+
+Please note that although @i{Xconq} has considerable power, its design
+was expressly limited to a particular class of two-dimensional
+board-like strategy games, and that playability is emphasized over
+generality.  For instance, I avoided the temptation to include a
+general-purpose language, since it opens up many difficult issues and
+makes it much harder for game designers to produce a desired game (after
+all, if game designers wanted to use a general-purpose programming
+language, they could just write C code!).  Similarly, full 3D, realtime
+maneuvering, continuous terrain, and other such goodies must await the
+truly ultimate game system.
+
+The real problem with a general-purpose language is that although
+everything is possible, nothing is easy.  Many ``adventure game writing
+systems'' have fallen into this trap; they end up being poor
+reimplementations of standard programming languages, and the sole
+support for adventure gaming amounts to a small program skeleton and a
+few library functions.  It would have been easier just to start with a
+pre-existing language and just write the skeleton and libraries!
+
+@i{Xconq}, on the other hand, provides extensive optimized support for
+random game setup, large numbers of units, game save/restore, computer
+opponents, and many other facets of a game.  Game designers don't have
+to deal with the subleties of fractal terrain synthesis, or the ordering
+of terrain effects on units, or how to tell the computer opponents that
+airbases are sometimes good for refueling but never any good for
+transportation, or the myriad of other details that are wired into
+@i{Xconq}.  In fact, a complete working game can be set up with less
+than a half-page of GDL.
+
+Even so, the current @i{Xconq} design allows for several layers of
+extensibility, as was described earlier in this chapter.
+
+There are also several major areas in which @i{Xconq} could be improved.
+
+Tables should be supplemented with general formulae, although such
+formulae will complicate AIs' analyses considerably, since tables are
+much easier to scan.  Formula-based game definition would work much
+better with AIs that are coded specifically for the game and compiled
+in; this is more-or-less possible now, but there is not yet a good way
+to keep AIs from being used in games where they would be inappropriate
+(it might be amusing to have a panzer general AI attempting to play
+Gettysburg, but the coding would have to be careful not to try to index
+nonexistent unit types).
+
+Currently everything is based on a single area of a single world.  This
+could be extended to multiple areas in the world, perhaps at different
+scales, as well as to multiple worlds.  The coding implications are
+severe, since much of the code mentions x,y alone, with the area
+implicit.  One intermediate solution is to have one area be ``active''
+and shift areas as needed (multiple-level dungeon games work this way).
+
+Also see @ref{GDL Design Decisions}.
+
+However, even with its limitations, @i{Xconq} has provided, and will
+continue to provide, many years of enjoyable playing, designing, and
+hacking.  Go to it!
+
+@bye

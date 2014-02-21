@@ -1,0 +1,3867 @@
+@node Game Design
+
+@chapter Designing Games with Xconq
+
+This chapter is an introduction to the process of designing games
+for @i{Xconq}.  First we will build a simple but complete game,
+then we will go through the major parts of a design and see how it
+all works.  Sections on specific techniques and the use of online
+design tools follow.
+
+Note that this chapter does not formally define any of the GDL
+constructs mentioned.  You may find the complete formal definitions
+in the reference manual in the next chapter.
+
+@menu
+* A Tutorial Example::            
+* Types::                       
+* Setting up a Game::           
+* Designing the World::         
+* Designing the Sides::         
+* Setting up the Units::         
+* Setup Miscellany::            
+* Units and Actions::            
+* Unit Movement::            
+* Unit Construction::            
+* Unit Combat::            
+* Unit Manipulation::            
+* Material Manipulation::       
+* Terrain Manipulation::        
+* Vision Parameters::            
+* Designing Backdrop Weather::            
+* Designing Backdrop Economy::            
+* Adding Random Events::            
+* Designing the Interface::            
+* Designing the Text::              
+* Designing the Graphics::            
+* Game Module Organization::            
+* Building New Games::            
+* Debugging Designs::                   
+* Tricks and Techniques::            
+* Designing with the Common Interface::
+* Designing with the Mac Interface::
+@end menu
+
+@node A Tutorial Example
+@section A Tutorial Example
+
+Before delving into the depths of the language, let's look at an
+example.  Suppose you just finished watching a Godzilla movie, complete
+with roaring monsters, panic-stricken mobs, fire trucks putting out
+flames, and so forth, and were inspired to design a game around this
+theme.
+
+@menu
+* Basic Definitions::           
+* Adding Movement::             
+* Buildings and Rubble Piles::  
+* Human Units::                 
+* The Scenario::                
+@end menu
+
+@node Basic Definitions
+@subsection Basic Definitions
+
+Start by opening up a file, calling it something like @code{g-vs-t.g},
+or some other name appropriate for your type of machine, and then type
+this into it:
+@example
+(game-module "g-vs-t"
+  (title "Godzilla vs Tokyo")
+  (blurb "Godzilla stomps on Tokyo")
+)
+@end example
+
+This is a GDL @dfn{form}.  It declares the name of the game to be
+@code{"g-vs-t"}, gives it a title that prospective players will see in
+menus, plus a short description or @dfn{blurb}.  The blurb should tell
+prospective players what the game is all about, perhaps whether it is
+simple or complex, or whether it is one-player or multi-player.  Both
+title and blurb are examples of @dfn{properties}, which are like slots
+in structures.
+
+The @code{game-module} form is optional but recommended; some interfaces
+use it to add the game to a list of games that players can choose from.
+
+The general syntax of @code{game-module} form is similar to that used by
+nearly all GDL forms; it amounts to a definition of an ``object'' (such
+as a game module or a unit type) with @dfn{properties} (such as name,
+description, speed, etc).  Some properties are required, and appear at
+fixed positions, while others are optional and can be specified in any
+order, so they are introduced by name.  The general format, then, looks
+like
+@example
+(<object> ... <required properties> ...
+  ...
+  (<property name> <property value>)
+  ...
+  )
+@end example
+There are very few exceptions to this general syntax rule.
+
+(People often have trouble with parentheses in Lisp, but if you follow
+the same kinds of indentation rules that you always use in C or Pascal,
+then you will encounter no additional trouble.  Also, many editors such
+as Emacs are intelligent enough to indicate when parentheses match, and
+automatically do proper indentation.)
+
+Now the first thing you'll need is a monster.  In @i{Xconq}, each unit
+has a type, and you define the characteristics attached to the type.
+@example
+(unit-type monster)
+@end example
+This declares a new unit type named @code{monster}, but says nothing
+else about it.  Let's use this more interesting form instead:
+@example
+(unit-type monster
+  (image-name "monster")
+  (help "crushes, crumbles, and chomps")
+  (start-with 1)
+)
+@end example
+This shows the usual way of describing the monster.  In this case,
+@code{image-name} is a property that specifies the name of the icon that
+will be used to display a monster.  (@i{Xconq} comes with a library of
+over 700 icons, of which "monster"; it looks a little like Godzilla.)
+The property @code{start-with} says that each side should start out with
+one monster.  This isn't quite right, because there should only be one
+side with a monster, and this will give @i{each} side a monster to start
+out with, but we'll see how to fix that later on.
+
+We also need at least one type of terrain for the world:
+@example
+(terrain-type street (image-name "gray"))
+@end example
+
+These two forms are actually sufficient by themselves to start up a
+game.  (Go ahead and try it.)  However, you'll notice that the game is
+not very interesting.  Although each player gets a monster, and the
+world consists of all-street terrain, nobody can actually @emph{do}
+anything, and turns just whiz by, since the defaults basically turn off
+all possible actions.
+
+@node Adding Movement
+@subsection Adding Movement
+
+OK, let's give the monsters the ability to act by putting this form into
+the file:
+@example
+(add monster acp-per-turn 4)
+@end example
+
+The @code{add} form is very useful; it says to @i{modify} the existing
+type named @code{monster}, setting the property @code{acp-per-turn} to
+4, overwriting whatever value might have been there previously.  The
+@code{acp-per-turn} property gives the monster the ability to act, up to
+4 actions in each turn.  By default, the ability to act is 1-1 with the
+speed of the unit, so the monster can also move into a new cell 4 times
+each turn.  If you run the game now, you will find that your monster can
+now get around just fine.
+
+Why 4?  Actually, at this point the exact value doesn't matter, since
+nothing else is happening.  If the speed is 1, then the turns go faster;
+if the speed is 10, then they go slower and more action happens in a
+single turn.  In a complete design however, the exact speed of each unit
+can be a critical design parameter, and for this game, I figured that a
+speed of 4 allowed a monster to cover several cells in a hurry while not
+being able to get too far.  Also, I'm planning to make panic-stricken
+mobs have a speed of 1, which is the slowest possible.  Making actions
+1-1 with speed is usually the right thing to do, since then a player
+will get to move 4 times each turn (later on we will see reasons for
+other combinations of values).
+
+The @code{add} form works on most types of objects.  It has the general
+syntax
+@example
+(add <type(s)/object(s)> <property name> <value(s)>)
+@end example
+The type or object may be a list, in which the value is either given to
+all members of the list, or if it is a list itself, then the list of
+values is matched up with the list of types.
+
+@node Buildings and Rubble Piles
+@subsection Buildings and Rubble Piles
+
+To give the monster something to do besides walk around, add buildings
+as a new unit type:
+@example
+(unit-type building (image-name "city20"))
+
+(table independent-density (building street 500))
+@end example
+The @code{building} type uses an icon that is normally used for a
+20th-century city, but it has the right look.  The
+@code{independent-density} table says how many buildings will be
+scattered across in the world.  The @code{table} form consists of the
+name of the table followed by one or several three-part lists; the two
+indexes into the table, and a value.  In this case, one index is a unit
+type @code{building}, the other is a terrain type @code{street}, and the
+value is @code{500}, which means that we will get about 500 buildings
+placed on a 100x100 world (look up the definition of this table in the
+index).  You need some for testing purposes, otherwise you won't see any
+when you start up the game.
+
+@c In general,
+@c @i{Xconq} policy is not to do anything unless you've turned it on first,
+@c and then to give you ``reasonable'' defaults once things are turned on.
+
+We're going to let buildings default to not being able to do anything,
+since that seems like a reasonable behavior for buildings (although Baba
+Yaga's hut might be fun...).
+
+By default, buildings act strictly as obstacles; monsters cannot touch
+them, push them out of the way, or walk over them.  In real(?) life of
+course, monsters hit buildings, so we have to define a sort of combat.
+@example
+(table hit-chance
+  (monster building 90)
+  (building monster 10)
+  )
+
+(table damage
+  (monster building 1)
+  (building monster 3)
+  )
+
+(add (monster building) hp-max (100 3))
+@end example
+The @code{hit-chance} and @code{damage} tables are the two basic tables
+defining combat.  The hit chance is simply the percent chance that an
+attack will succeed, while the damage is the number of hit points that
+will be lost in a successful attack.  The unit property @code{hp-max} is
+the maximum number of hit points that a unit can have, and by default,
+that is also what units normally start with.
+
+Note that the @code{add} form allows lists in addition to single types
+and values, in which case it just matches up the two lists.  The
+@code{add} tries to be smart about this sort of thing; see its official
+definition for all the possibilities.
+
+The net effect of these three forms is to say that a monster has a 90%
+chance of hitting a building and causing 1 hp of damage; three such hits
+destroy the building.  A monster's knuckle might occasionally be skinned
+doing this; a 10% chance of 3/100 hp damage is not usually dangerous,
+and feels a little more realistic without complicating things for the
+player.
+
+Now you can start up a game, and have your monster go over and bash on
+buildings.  Simulated wanton destruction!
+
+By default, a destroyed building vanishes, leaving only empty terrain
+behind.  If you want to leave an obstacle, define a new unit type and
+let the destroyed building turn into it:
+@example
+(unit-type rubble-pile)
+
+(add building wrecked-type rubble-pile)
+@end example
+(Incidentally, you need to add the unit-type before any tables are
+defined, so that Xconq knows how big the tables need to be.)
+
+In practice, you have to be careful to define the behavior of rubble
+piles.  What happens when a monster hits a rubble pile?  Can the rubble
+pile be cleared away?  Does it affect movement?  Try these things in a
+game now and see what happens; sometimes the behavior will be sensible,
+and sometimes not.
+
+For instance, you will observe that the default behavior is for the
+rubble pile to be an impenetrable obstacle!  The monster can't hit it,
+and can't stand on it, and in fact can't do anything at all.  OK, let's
+fix it.  Monsters are agile enough to climb over all sorts of things, so
+the right thing is to let the monster co-occupy the cell that the rubble
+pile is in.  The default is to only allow one unit in a cell, but this
+can be changed:
+@example
+(table unit-size-in-terrain (rubble-pile t* 0))
+@end example
+This says that while all other units have a size of 1, rubble piles only
+have a size of 0.  By default, each terrain type has a capacity of 1, so
+this allows one unit and any number of rubble piles to stack together in
+a cell.
+
+One more table needs to be set to allow the monster to occupy the same cell 
+as a rubble-pile. 
+Xcong allows units to control a zone of terrain around them preventing an 
+enemy unit from entering. 
+This defaults to 0, which causes the rubble-pile to exert a zone-of-control 
+over the cell it is occupying and keeps the monster out of the cell.
+
+@example
+(table zoc-range (rubble-pile monster -1))
+@end example
+
+This removes the rubble-pile's zone-of-control over the monster unit allowing the monster to share the cell with the rubble-pile. 
+
+If you try this out, you'll find that the monster can now cross over
+rubble piles, but still has to bash buildings in order to get them out
+of the way. (Well, actually you probably need to play with zones of
+control as expressed in terms of mp-to-enter-zoc and others to get
+this example to work as-is.  Or put the monster and the rubble-pile on
+same side, or some such).
+@c Anyone want to try the tutorial on a modern xconq and see what else
+@c is broken?
+
+Incidentally, it can cause problems to set a unit size to zero, because
+it allows infinite stacking.  Since buildings and rubble piles don't
+move, there will never be more than one in a cell, but @i{Xconq} will
+happily let hundreds of units share the same cell, which works, but
+causes no end of headaches for players confronted with overloaded
+displays.
+
+@c A game is more playable if it has at least some limits
+@c on stacking.  For instance, this limits stacking of rubble piles,
+@c and also keeps the monster out of really full-up places:
+@c @example
+@c (table unit-size-in-terrain (u* t* 1))
+@c 
+@c (add t* unit-capacity 16)
+@c @end example
+
+@node Human Units
+@subsection Human Units
+
+Now you've got an ``interactive experience'' but no game; there's no
+challenge or goal.  You could maybe make a two-or-more-player game where
+the players race to see who can flatten the mostest the fastest, but
+that's still not too interesting to anyone past the age of 5.  Instead,
+we need to make some units for the people bravely (or not so bravely)
+resisting the monster's depredations:
+@example
+(unit-type mob (name "panic-stricken mob") (image-name "mob"))
+(unit-type |fire truck| (image-name "firetruck"))
+(unit-type |national guard| (image-name "soldiers"))
+@end example
+Note that a type's name may have an embedded space, but then you have to
+put vertical bars around the whole symbol.  Things are starting to get
+complicated, so let's define some shorter synonyms:
+@example
+(define f |fire truck|)
+(define g |national guard|)
+
+(define humans (mob f g))
+@end example
+You can use the newly defined symbols @code{f} and @code{g} anywhere in
+place of the original type names.  The symbol @code{humans} is a list of
+types, and will be useful in filling several propertys at once.
+
+As with monsters, all these new units should be able to move:
+@example
+(add humans acp-per-turn (1 6 2))
+@end example
+The speeds here are adjusted so that monsters can chase and run down
+(and presumably trample to smithereens) mobs and guards, but fire trucks
+will be able to race away.
+
+Also note the use of a three-element list that matches up with the three
+elements in the @code{humans} list.  This is a very useful features of
+GDL, and used heavily.  It can also be a problem, since if you add or
+remove elements from the list @code{humans}, every list that it is
+supposed to match up with also has to change.  Fortunately, @i{Xconq}
+will tell you if any lists do not match up because they are of different
+lengths.
+
+We still need to define some interaction, since monsters and humans can
+make faces at each other, and get in each other's way, but otherwise
+cannot interact.
+@example
+(table hit-chance add
+  (monster humans 50)
+  (humans monster (0 10 70))
+  )
+@end example
+This time we have to say ``add table'' because we've already defined the
+@code{hit-chance} table and now just want to augment it.  (Be sure to
+place this form after the first @code{hit-chance} table definition.)
+
+As with the addition of properties, we can use a list in place of a
+single type.
+
+Last but not least, we need a scorekeeper to say how winning and losing
+will happen.  This is a simple(-minded?) game, so a standard type will
+be sufficient:
+@example
+(scorekeeper (do last-side-wins))
+@end example
+The @code{do} property of a scorekeeper may include some rather
+elaborate tests, but all we want to is to say that the last side left
+standing should be the winner, and the symbol @code{last-side-wins} does
+just that.
+
+There might be a bit of a problem with this in practice, since in order
+to win, the monster has to stomp on all the humans, including fire
+trucks.  But fire trucks can always outrun the monster, and cannot
+attack it directly either, which leads to a stalemate.  You can fix this
+by zeroing the point value of fire trucks:
+@example
+(add f point-value 0)
+@end example
+Now, when all the mobs and guards have been stomped, the monster wins
+automatically, no matter how many fire trucks are left.
+
+@node The Scenario
+@subsection The Scenario
+
+As it now stands, your game design requires @i{Xconq} to generate all
+kinds of stuff randomly, such as the initial set of units, terrain, and
+so forth.  However, we @emph{are} doing a monster movie, so random
+combinations of monsters and people and terrain don't usually make
+sense.  Instead of trying to define a ``reasonable'' random setup, we
+should define a scenario, either by starting a random game, modifying,
+and saving it, or by text editing.  Since online scenario creation is
+hard to describe in the manual, let's do it with GDL instead.
+
+To define a scenario, we generally need three things: sides, units, and
+terrain.  Now the basic monster movie idea puts one monster up against a
+bunch of people acting together, so that suggests two sides:
+
+@example
+(side 1)
+
+(side 2 (name "Tokyo") (adjective "Japanese"))
+@end example
+
+The @code{1} and @code{2} identify the two sides uniquely, since we'll
+have to match units up with them in a moment.  The side that plays the
+monster is really a convenience; players should just be aware of the one
+monster unit, so we don't need any sort of names.  The other side has
+many units, which should be qualified as @code{"Japanese"}, and the side
+as a whole really represents the city of Tokyo, so use that for the
+side's name.
+
+Now for the units:
+
+@example
+(unit monster (s 1) (n "Godzilla"))
+
+(unit f (s 2))
+(unit f (s 2))
+
+(building 9 10 2)
+
+(define b building)  ; abbreviate for compactness' sake
+
+(b 10 10 2)
+(b 11 10 2 (n "K-Mart"))
+(b 12 12 2 (n "Tokyo Hilton"))
+(b 13 12 2 (n "Hideyoshi's Rice Farm"))
+(b 14 12 2 (n "Apple Japan"))
+;; ... need lots of buildings ...
+@end example
+
+This example shows two syntaxes for defining units: the first is
+introduced by the symbol @code{unit} and requires only a unit type (or
+an id, see the definition in xxx), while the second is introduced by the
+unit type name itself and requires a position and side.  The second form
+is more compact and thus suitable for setting up large numbers of units,
+while the first form is more flexible, and can be used to modify an
+already-created unit.  In both cases, the required data may be followed
+by optional properties in the usual way.
+
+Also, since the word ``building'' is a little longwinded, I defined the
+symbol ``b'' to evaluate to ``building''.  GDL has very few predefined
+variables, so you can use almost anything, including weird stuff like
+``&'' and ``=''.  Property names like @code{s} and @code{n} are NOT
+predefined variables, so you can use those too if you like.
+
+At this point, you should have a basic game scenario, with one player
+being Godzilla, and the other trying to keep it from running amuck and
+flattening all of Tokyo.  Have fun!
+
+You can enhance this scenario in all kinds of ways, depending on how
+ambitious you want to get.  Given the basic silliness of the premise,
+though, it would be more worthwhile to enhance the silliness and speed
+up the pace, rather than to add features and details.  For instance,
+name the buildings after all the laughingstock places you know of in
+your own town.
+
+To see where you could go with this, look at the library's
+@code{monster} game and its @code{tokyo} scenario, which include fires,
+different kinds of terrain, and other goodies.
+
+@node Types
+@section Types
+
+Types are the foundation of all @i{Xconq} game designs.  Types are like
+classes in object-oriented programming but simpler; each set of types is
+fixed and used only in a particular way by @i{Xconq}.  A game design
+defines types of units, materials, and terrain.  Only materials are
+optional; every game design must define at least one unit type and one
+terrain type.
+
+Types in GDL are simple compared to most other languages.  There is no
+inheritance, no subtyping, no coercions or conversions.  This is not a
+real limitation, since game designs are usually too small to make
+effective use of any sort of inheritance.  Also, game design is an
+exacting activity; inheritance is often difficult to control
+satisfactorily.  You can use lists of types to simulate inheritance as
+necessary; this is actually more flexible, because you can have any
+number of lists with any set of types in each.  It may not seem as
+efficient, but GDL is only used during startup, and is almost entirely
+array- and struct-based during the game.  (A few places, such as
+scorekeeping, examine GDL forms during play.)
+
+Types are defined one at a time in the game module file.  Each type gets
+an index from 0 on up, in order of the type's appearance in the file.
+Although this is not normally visible to you or to the player, some
+error messages and other places will make reference to raw type indices.
+Each category of type - unit, material, and terrain is indexed
+individually.
+ 
+@menu
+* Designing Unit Types::                  
+* Designing Terrain Types::               
+* Designing Material Types::              
+* Setting up Type Relationships::          
+* Stacking::                    
+* Defining Occupants and Transports::    
+* Hints on Types::              
+@end menu
+
+@node Designing Unit Types
+@subsection Designing Unit Types
+
+Unit types define what the players get to play with.  Unit types can
+include almost anything; people, buildings, airplanes, monsters, arrows,
+boulders, you name it.
+
+The basic form of a unit type definition is so:
+@example
+(unit-type @var{type-name} (@var{property-name} @var{property-value}) @dots{})
+@end example
+The appearance of this form in a file means you are adding a new and
+distinct type, which has no relation to any other types defined before
+and after this one.  The @var{type-name} must be a unique symbol, such
+as @code{building} or @code{|fire truck|}. (Note that you can set things
+up so that players never see the @var{type-name} anywhere, so don't
+worry if your preferred name conflicts with something else, just choose
+another name.)  The @var{property-name} and @var{property-value} pairs
+are entirely optional.  They can always be defined or changed later in
+the file.  There is little advantage one way or another.
+
+This particular syntax - keyword followed by name or other identifier
+followed by property/value pairs - will be used for most GDL definitions.
+
+The number of unit types is limited.  The exact limit depends on the
+implementation, but is guaranteed to be at least 127.  This is a huge
+number of types in practice; the only situations where this might be
+needed would be a fantasy-type game with many types of items and
+monsters.  For empire-building games, 8-16 unit types is far more
+reasonable.  Keep in mind that with lots of types, players have more to
+keep track of, internal data structures will be larger and take longer
+to work with, and designing the game will take more time and energy.
+Consider also that @i{Xconq} gives you a lot of properties that you can
+set individually for each unit type, so that when other game systems
+might require a distinct types, @i{Xconq} lets you use the same type
+with different propertys.  For instance, in a fantasy game you wouldn't
+need to define ``young dragons'' and ``old dragons'' as distinct types,
+instead you can vary the hit points or experience of a generic
+``dragon'' type.
+
+@node Designing Terrain Types
+@subsection Designing Terrain Types
+
+Each cell in the world has a terrain type.  This type should be thought
+of as the predominant contents of the cell, whether it be open ground,
+forest, city streets, or the vacuum of deep space.  The type can be
+anything you want, and should be adapted to fit the game you're
+designing.  Sure, the real world has swamps, but if you're designing a
+game set in the Sahara, don't bother defining a swamp terrain type.
+Also, the type doesn't carry any preconceptions about elevation or
+climate, so you can have swamps at 20,000 feet just as easily as at sea
+level.
+
+The limit on the number of terrain types is large (up to about 127,
+depending on the implementation), but in practice, 6-10 types offer
+variety without being confusing.  Ideally, several of those types will
+be uncommon in the world, so that map displays will consist mostly of
+3-4 types of terrain.
+
+Some game designs involve entities that are very large and do not move
+around.  Such entities could plausibly be represented either as
+non-moving units or as a distinct terrain type.  To make the right
+choice, you need to consider the special characteristics you want to
+implement.  Terrain cannot (usually) be changed during the game, nor can
+it be moved, but units can be damaged or belong to different sides.  A
+realistic example of this choice occurs in the monster game - should a
+destroyed building become a ``rubble-pile'' unit or should the building
+stand on rubble-pile terrain and vanish when it is destroyed?  Both
+choices are plausible; if the rubble-pile is a unit, then the original
+building is then on top of an empty city block, and after the building
+is destroyed, the rubble-pile unit can itself be cleaned off, exposing
+the empty city block again.  However, you have to decide whether the
+rubble-pile unit belongs to a side, how it interacts with other units,
+and so forth.  Rubble-pile terrain is simpler, but the players then get
+descriptions of brand-new buildings sitting in the midst of
+rubble-piles, which is confusing.  This is a case where there is no
+``right'' answer.
+
+@node Designing Material Types
+@subsection Designing Material Types
+
+Material types are the simplest to define.  They have only a few properties
+of their own; most of the time they just index tables along with the
+other types.
+Materials do not act on their own in any way; instead, players
+manipulate materials as part of doing other actions.
+For instance, you can specify that movement, combat, and even a
+unit's very survival depends on having a supply of some material,
+or that some material is ammo and consumed gradually when fighting.
+
+The use of materials is pretty much up to you.  You don't have to
+define any material types at all,
+and game designs with materials are usually more complicated.
+However, the increase in realism is often worth it;
+with materials you can limit player activity
+and/or make some actions more ``expensive'' than others.
+
+As with the other types, you can define up to about 127 material types,
+but that would be enough to model the entire global economy
+accurately! (and take all week to compute a single turn...)
+1-3 types is reasonable.
+
+@node Setting up Type Relationships
+@subsection Setting up Type Relationships
+
+The next sections describe the ``static'' relationships between types of
+objects, meaning those relations which must always hold, both in the
+initial setup and throughout a game.
+
+@node Stacking
+@subsection Stacking
+
+By default, @i{Xconq} allows only one unit in each cell at a time.
+This has the advantage of simplicity, but also makes some bizarre
+situations, such as the ability of a merchant ship to prevent an
+airplane from passing overhead or a submarine from passing underneath.
+
+To fix this, you can allow players to stack several units in the
+same cell.  This is governed by several tables, which give you control
+over which and how many of each type can stack together in which kinds
+of terrain.  The basic idea is that a cell has a certain amount of room
+for units, as specified by the terrain type property @code{capacity},
+and each unit has a certain size in the cell, according to the table
+@code{unit-size-in-terrain}.
+
+@example
+(add (plains canyons) capacity (10 2))
+
+(table unit-size-in-terrain
+  ((indians town) plains (1 5))
+  ((indians town) canyons (1 2))
+  )
+@end example
+
+In this example, a player can fit 10 indians or 2 towns into a plains cell,
+or else one town and 5 indians, while canyons allow only 2 indians or one town.
+
+In addition, some unit types may be able to count on a terrain type providing
+a guaranteed place; for this, you can use the unit/terrain table
+@code{terrain-capacity-x}.  This table (which defaults to 0) allows
+the specified number of units of each type to be in each type of
+terrain, irrespective of who else is there.  For instance,
+a space station could be given space via
+@example
+(table terrain-capacity-x (space-station t* 10000))
+@end example
+So while units on the ground are piling together and being constrained
+by capacity, space stations overhead can stack together freely (space
+is pretty big, after all).
+
+@node Defining Occupants and Transports
+@subsection Defining Occupants and Transports
+
+Occupants and transports work similarly to stacking in terrain;
+there is both a specialized capacity and a generic capacity that
+units' sizes count against.
+
+@example
+(add (transport carrier) capacity (8 4))
+
+(table unit-size-as-occupant
+  ((infantry armor) transport (1 2))
+  ((fighter bomber) carrier (1 4))
+  )
+
+(table unit-capacity-x
+  (carrier fighter 4)
+  )
+@end example
+
+It may be that all the different sizes interact so that you can't
+prevent huge numbers of small units being able to occupy a single
+transport.  To fix this, use @code{occupants-max}.
+
+Transport is a physical relationship, so for instance one cannot use
+transports to define a convoy whose acp-per-turn is determined by its
+slowest member.  (This doesn't mean you can't define a convoy
+type, but you will have to pick an arbitrary speed for it.)
+
+Watch out for unexpected side effects of setting the @code{capacity}
+but not the @code{unit-size-as-occupant}!  Since @code{unit-size-as-occupant}
+defaults to 1, then a unit with a nonzero capacity can by default
+take on @i{any} other type as an occupant!
+
+Also, don't let units carry others of their own type.
+Not only is this of doubtful meaning,
+@i{Xconq} is not guaranteed to cope well with this situation,
+since it allows infinite recursion in the occupant-transport relation.
+Ditto for loops; ``A can carry B which can carry C which can carry A''.
+
+@node Hints on Types
+@subsection Hints on Types
+
+It is tempting to try to define independent sets of types,
+each in a separate module, and glue them together somehow.
+However, this doesn't work well in practice, because in a game,
+the types interact in unexpected ways.
+Suppose, for example, that you define a set of airplane types that
+you want to be generic enough to use with several different games.
+The assessment of those types may vary drastically from game to game;
+in one, airplanes are 100 times faster than any other sort of unit,
+so that moving airplanes takes up 99% of game play, while in another,
+the same set of airplane types are too weak to be of any interest to
+players.
+
+There is a standard set of terrain types called @code{"stdterr"}.
+This set has a mix of the types found most useful for ``Empire-type'' games,
+and Earth-like percentages for random world generation.
+
+@node Setting up a Game
+@section Setting up a Game
+
+You have a spectrum of options for how @i{Xconq} will set up a game
+based on your design.  At the one end, you can build a scenario that
+specifies everything exactly, down to the last unit.  Lest you think
+this is too restrictive to be interesting, consider that this is
+how chess works...
+At the other end of the spectrum,
+you can let @i{Xconq} manufacture everything,
+starting only with a handful of numbers that you supply.
+
+The next several sections describe the alternatives available for
+game setup.  It is important to understand what is possible,
+because in general the character of an @i{Xconq} game will depend
+strongly on the initial setup, and players will be very angry
+(with you!) if they discover, several hours into a hard-fought game,
+that they've been given a grossly unfair starting position.
+
+@node Designing the World
+@section Designing the World
+
+The @i{Xconq} world/area is a two-dimensional grid of fixed shape and
+size.  You can treat it as representing part of a planet in space, and
+set up parameters simulating that, or just make it be itself and not
+address the question of the surrounding context.  The appropriate choice
+depends on how much realism and complexity you need.  Most computer
+games don't bother with this detail; for instance, a game set in an
+underground dungeon doesn't usually need to compute daylight, weather,
+or seasons.  However, these same details may be very useful for games
+set outdoors.
+
+@menu
+* World Shape and Size::        
+* World Terrain::               
+* Synthesizing World Terrain::  
+* Rivers::                      
+* Roads::                       
+* Independent Units::           
+* Altitudes and Elevations::
+* World Setup Miscellany::
+@end menu
+
+@node World Shape and Size
+@subsection World Shape and Size
+
+Once you've decided whether the area is to be part of a planet or not,
+you can address the question of size and shape.
+You have two choices for shape: hexagon and cylinder.
+(See the players chapter for pictures of these.)
+The important thing for you as a designer is that the cylinder
+wraps around, while the hexagon is bounded on all sides.
+One consequence is that games involving pursuit will be quite
+different; on a cylinder, the chase can go 'round and 'round forever,
+while on a hexagon, a fleeing unit could be cornered.
+Cylinders have a disadvantage in that there is no obvious ``starting place''
+for coordinates, scrolling, etc, so there is a navigation and orientation
+problem for players, especially if the world is randomly generated and not
+the familiar continents of the Earth.  In fact, players will often not
+even realize that a world is a cylinder and will assume that the edge
+of the display is the edge of the world!  To make a cylindrical area,
+set the circumference of the world equal
+to the width of the area.  Otherwise, the area will be handled as a hexagon.
+
+You can choose either to set a fixed size using the @code{area} form,
+or allow players to set the actual size via the @code{world-size} variant,
+in which case you can define the allowable range of sizes.
+
+Worlds need not be really large.  Larger worlds are harder for
+players to manage, they take longer to display, and can consume
+prodigious amounts of memory (since they are represented as arrays
+internally, for speed).  The ideal range of sizes depends primarily
+on the size and speed of units.  A 60x60 area in a game with units whose
+speed is 1 means that they will take 60 turns to cross, while units with
+a speed of 20 take only 3 turns, so they make the world ``feel smaller''.
+As another example, in the standard game,
+a 20x20 area allows player to come to grips quickly, but it also
+means that each player's units might be within attack range right
+from the outset, which has a drastic effect on strategy.
+For exploration-oriented games, larger worlds are more interesting.
+
+@node World Terrain
+@subsection World Terrain
+
+The best technique for designing the terrain of a world is to use the
+designer tools provided with @i{Xconq}.  The details of how these tools
+work depends on the interface, but in general they resemble the tools
+found in paint programs.  Some interfaces also give you the option of
+rescaling the map, so that you can fine-tune the size and positioning of
+the terrain.
+
+Another technique is to write a program that translates data from
+another source (such as NASA satellite data) into @i{Xconq} format.
+However, if you take a rectangular array of data and just wrap an
+@code{area (terrain ...))} form around it, then everything will appear
+to be tilting to the left.  To fix this, have your program map the cell
+at @code{x, y} in the rectangular array to @code{x - y / 2, y} before
+writing.  You must discard values whose new @code{x} coordinate is
+negative, or else wrap them around to the right side of the area,
+although that is usually only reasonable for cylindrical areas.
+
+The crudest technique is to try to build terrain by using a text editor.
+The coordinate system is Cartesian oblique, with the y axis tilted to
+form a 60-degree angle with the x axis, so it can be difficult to relate
+typed-in characters to the final appearance.  Landforms in the file
+should appear to be leaning to the left, if they are to appear upright
+during play.  However, sometimes text editing is necessary, for instance
+when you need to change every instance of a terrain type to something
+else.  (Incidentally, some of the large real-world maps in the library
+were produced by coding all the terrain types from an atlas onto graph
+paper, typing them in, then fixing the tilt as described above.)
+
+Incidentally, areas should have some distinguishing terrain around the
+edges; this prevents player confusion that sometimes happens when there
+is no other clue as to where the edge might be.  However, this is not
+enforced by @i{Xconq}, and you can put whatever you like along the
+edges.  Randomly generated worlds normally use the value of the global
+variable @code{edge-terrain}.
+
+@node Synthesizing World Terrain
+@subsection Synthesizing World Terrain
+
+The random way to get terrain for a world is to use one of several
+synthesis methods built into @i{Xconq}.
+
+Totally random terrain is available via the synthesis method
+@code{make-random-terrain}.  This just randomly chooses a terrain type
+for each cell, using the weights in the @code{occurrence} property of
+each type.  An @code{occurrence} of 0 means that the type will never be
+placed anywhere.  This method produces a sort of speckly-looking world,
+and is better for testing than for actual play.  Still, if you have two
+types @code{vacuum} and @code{solar-system}, then a form like
+@example
+(add (vacuum solar-system) occurrence (20 1))
+@end example
+will give you a nice starfield for a space game.
+
+The fractal world method @code{make-fractal-percentile-terrain} descends
+from the most venerable part of @i{Xconq} (it was once a piece of Atari
+Basic code).  It uses a fractal algorithm along with percentile-based
+terrain classification to make realistic-looking worlds with terrain and
+elevations.
+
+To use this method, you first specify how many, what size, and what
+height of blobs to splash onto the world, and how many times to average
+cells with their neighbors.  Then you specify the subdivision of all the
+possible altitudes and moisture levels into different kinds of terrain.
+For instance, desert in the standard terrain ranges from sea level
+(@code{alt-percentile-min} = 70%) to high elevations
+(@code{alt-percentile-max} = 93%) but only in the lowest percentiles of
+moisture (@code{wet-percentile-min} = 0%, @code{wet-percentile-max} =
+20%).  It is important that all percentiles be assigned to some terrain
+type, or the map generator will complain and subsitute terrain type 0
+(the first-defined type); when designing terrain percentiles, it is
+helpful to make a chart with altitude percentiles 0-100 on one axis and
+moisture percentiles on the other.  Note that overlapping on this chart
+is OK, and the terrain generator will pick the lowest-numbered terrain.
+Also note that you don't have to include every terrain type.
+
+The @code{alt} numbers are also used to compute elevations for games
+that need them, but the @code{wet} numbers need not have anything to do
+with water at all; they could just as easily represent smog levels or
+vegetation densities.  If you only want to use one of the two layers,
+just set the percentiles for the other to be 0 - 100 for all terrain
+types.
+
+[should have an example]
+
+The method @code{make-maze-terrain} produces a maze consisting of a mix
+of ``solid'', ``passageway'', and ``room'' terrain.  It uses the
+@code{maze-room-density} and @code{maze-passage-density} properties of
+each terrain type to decide how much of each to use for rooms and
+passages.  The method first does random terrain generation, using the
+@code{occurrence} property to decide how much of each terrain to put
+down (remember that @code{occurrence} defaults to 1 for all terrain
+types).  Then it carves out rooms, and passageways between them.  The
+passages and rooms are guaranteed to be completely connected.
+
+The method @code{make-earth-like-terrain} attempts to model the natural
+processes and generate terrain as similar as possible to what is
+observed on Earth today.
+
+You should note that at least one method for synthesizing terrain must
+be available, unless you can guarantee that terrain will be loaded from
+a file.  The following subsections describe optional additional
+synthesis methods that you can include.
+
+@node Rivers
+@subsection Rivers
+
+You can use the @code{make-rivers} method to add rivers to the world.
+Rivers are basically water features that depend on terrain elevations,
+so they won't be generated unless both a river terrain type (either
+border or connection) and elevation data is available.  You get them by
+specifying a nonzero chance for some type of terrain to be the location
+of a headwater (@code{river-chance}).
+
+@i{Xconq} doesn't have any intuition about the behavior of water; it
+will happily trace rivers all the the way down to the bottom of the sea.
+Use the @code{liquid} property to tell @code{make-rivers} what types
+that rivers cannot touch.  The method still traces the river's course,
+and resumes modifying terrain when possible, which means that the river
+can appear as both the inlet and outlet from a lake.
+
+@node Roads
+@subsection Roads
+
+The @code{make-roads} method is a fairly generic method.  It just picks
+pairs of units randomly and runs a road between them, attempting to
+share road segments and route through favorable terrain.  Although
+simplistic, the results look pretty good.
+
+You can make short bridges by tweaking the road density appropriately.
+Just allow roads from land to water, and water to land, but not from
+water to water.
+
+Note that this method is only useful if there are actually units for the
+roads to connect.
+
+@node Independent Units
+@subsection Independent Units
+
+For many games, it is useful to have independent units scattered randomly
+across the world.  For instance, gold mines and treasure hoards would be
+good for an exploration game, and independent castles for a medieval game.
+You can set this up with the @code{make-independent-units} method.
+
+@node Altitudes and Elevations
+@subsection Altitudes and Elevations
+
+@i{Xconq} is basically a 2-dimensional game, but you can emulate a third
+dimension by defining elevations for terrain and altitudes for units
+above and below the terrain.
+
+The main use of altitudes is to control interactions between certain
+kinds of units, particularly aircraft.  For instance, a high-altitude
+bomber should be able to pass over a ship and under a satellite with
+impunity.  In general, you define the ``operating altitudes'' of a unit,
+so in the example above, you could say that a ship is always at the
+surface, bombers operate at 1-10 km, and satellites at 100-10,000 km.
+If a unit has more than one operating level, then it can move up and
+down by normal movement actions.
+
+Also, most details such as speed and material consumption are the same
+for a unit at any altitude.  (Yes, such things vary in real life, but
+the effects are usually minor within the unit's normal operating range.)
+ 
+Altitudes have a significant effect on combat.  A unit at some altitude
+can only attack units at a specific range of altitudes up and down.
+Using the example again, you could define fighter aircraft to operate at
+0-20km and be able to attack up and down 5km, while bombers can attack
+up to 10km down (i.e. down to the ground), but not up.  Satellites
+remain invulnerable.
+
+All this applies equally to units underground and undersea.
+
+[need info about setting up other layers]
+
+@node World Setup Miscellany
+@subsection World Setup Miscellany
+
+For additional flavor, with no effect on game play, you can identify
+and name geographical features in the world.
+
+For predefined areas, just add the @code{features} layer and either fill
+in manually, or with a design tool.  I find that the most efficient
+approach is to make a list of all the features that I want to be in the
+world, set up the list manually along with layer data saying that all
+parts of the area are unnamed (all 0s), then read in the world + feature
+layer and use the online feature painting to define the shape of the
+feature.
+
+For random areas, the synthesis method @code{name-geographical-features}
+does the work.  You can use a side property @code{feature-namers} and a
+global variable, also called @code{feature-namers}.  Both of these map
+feature types to namers (for ``namers'', see below).  The list of types
+of features to try to identify is in the global @code{feature-types}.
+The basic idea is that the synthesizer looks for the types of features
+requested, then names them using the appropriate namer.
+
+Here is what the standard game does to generate funny names for lakes,
+but the more-anonymous "Peak 4532" for mountain tops:
+@example
+(set feature-types (("peak") ("lake")))
+
+(set feature-namers (("lake" "generic-lake-names")))
+
+(namer generic-lake-names (grammar root 10
+  (root (or 5 (foo "Lake " generic-names)
+            1 (generic-names " Lake")
+            ))
+  (foo "")  ; works around a bug
+  ))
+
+(include "ng-weird")
+@end example
+
+@node Designing the Sides
+@section Designing the Sides
+
+Sides represent the players in a game.  They also serve as a repository
+of information shared by units, such as technology and knowledge of the
+world.
+
+You should first decide how much about the sides will be predefined.  If
+you're doing Eastern Front scenarios, it's very easy; you have Russians
+and Germans and that's it.  If you're doing a science-fiction
+empire-building free-for-all, you may not have to specify anything more
+than a random side name generator.
+
+@menu
+* Predefined Sides::            
+* Side Library::                
+* Limits on Sides::             
+* Hints on Sides::              
+@end menu
+
+@node Predefined Sides
+@subsection Predefined Sides
+
+For scenarios and similarly-restrictive games, the game design should
+create the sides directly, as in this example:
+@example
+(side (name "Germany") ... (colors "black,gray") ...)
+
+(side (name "Russia") ... (colors "red") ...)
+@end example
+
+Since the initialization machinery allows matching any player with any
+side, you can get away with being really vague.  This will create four
+sides but not say anything about them:
+@example
+(side)
+(side)
+(side)
+(side)
+@end example
+
+If you're going to have predefined units on each side, then you should
+add an id to each side:
+@example
+(side 1 (name "Germany") ... (colors "black,gray") ...)
+
+(side 2 (name "Russia") ... (colors "red") ...)
+@end example
+Instead of @code{1} and @code{2}, you can also use, say, @code{ge} and
+@code{ru}; ids can be either symbols or numbers.
+
+@node Side Library
+@subsection Side Library
+
+If your game design does not predefine all the sides, you can define a
+@dfn{side library} using the @code{side-library} variable.  Basically
+the library is a weighted list of collections of side properties, each
+formatted as a side definition.  @i{Xconq} will use this library for any
+player that is allowed in the game but who does not have a side already,
+and select a side with a probability determined by the weights.  Each
+item in the library will be used up to a limit that can be specified
+with each item; if the library has been exhausted before all the sides
+have been created, then the extra sides will just be assigned general
+defaults for their properties.
+
+The side library here makes futuristic sides for players, making two of
+the sides most likely, but allowing others as well:
+@example
+(set side-library '(
+  (10 (name "Federation") (adjective "Federation") (class "fed"))
+  (10 (name "Klingon Empire") (noun "Klingon") (class "klingon"))
+  (5 (noun "Romulan") (class "romulan"))
+  ((noun "Ferengi") (class "fed"))
+  ((noun "Vulcan") (class "fed"))
+  ))
+@end example
+Note that if the game design limits certain unit types to certain sides,
+the choice of sides will be more than just a cosmetic issue.
+
+@node Limits on Sides
+@subsection Limits on Sides
+
+So that you can put upper and lower bounds on the number of sides in your
+game, GDL includes the variables @code{sides-min} and @code{sides-max}.
+As you might expect, every game design must allow at least one side.
+The upper limit on sides depends on the implementation, but is at least 7.
+Large numbers of sides can make a player's life very complicated,
+not to mention consuming vast quantities of memory, so you should
+try to limit the number of sides as much as possible.
+
+Another important limit is based on the notion of @dfn{side classes}.
+Each side can have a side class, and multiple sides can belong to the
+same class.
+For instance, sides named @code{"Hyperborean"} and @code{"Germanic"}
+could both have class @code{"barbarian"}.
+The value of side classes is that unit types have a property
+@code{possible-sides} that limits which side class(es)
+a type can belong to.  This is very important for any game
+in which different players should have fundamentally different
+sorts of units.  To continue the barbarians example, it is basically
+impossible for any barbarian side to have even one Roman legion,
+whether by construction, capture, or even surrender.
+So you can do something like
+@example
+(add legion possible-sides "roman")
+
+...
+
+(side 1 (name "Rome") (class "roman"))
+(side 2 (name "Germania") (class "barbarian"))
+(side 3 (name "Hyperborea") (class "barbarian"))
+@end example
+and ensure that Roman legions are always Roman.
+
+@node Hints on Sides
+@subsection Hints on Sides
+
+Note that players tend to identify with the sides they're playing,
+so a game should allow for as much personalization as possible.
+On the other hand, some scenarios derive part of their flavor from
+predefinitions.  For instance, a scenario with sides named
+``German'' and ``Russian'', with appropriate colors and emblems,
+doesn't have quite the same feel when players rename them to ``Subgenii''
+and ``Simpsons''.
+
+A side can have a huge amount of state data, such as the current view.
+This rarely needs to be included in its entirety; synthesis methods
+will usually suffice to set view data correctly.
+Since total security is impossible with a predefined world,
+setting a side to have only a partial view won't necessarily
+be useful to keep players from knowing what that world really looks like.
+
+@node Setting up the Units
+@section Setting up the Units
+
+Once you've decided how to handle sides in your game, you can move on to
+the initial unit setup.  Initial unit setup is very important, since it
+has a major bearing on how the rest of the game will go, and can be done
+in a number of different ways.
+
+@menu
+* Predefined Units::
+* Making Countries for Players::
+* Initial Supply::
+@end menu
+
+@node Predefined Units
+@subsection Predefined Units
+
+GDL allows you to define everything about every starting unit in the
+game.  This is a powerful approach, but requires much preparation.  An
+advantage of predefined units is that there are no unpleasant surprises.
+For instance, suppose you designed an empire game with ships and cities,
+but a random setup leaves some players entirely landlocked.  Not only
+will those players be @emph{very} unhappy, they might come looking for
+you @i{before} they've calmed down!
+
+Asking for initial units is pretty easy, you can either type them into
+a file or create them directly, using the appropriate designer tool in
+a game.
+@example
+(city)
+(city 11 12 1)
+(city (n "Brigadoon"))
+(city (@@ 10 10) (n "New York"))
+(city (@@ 20 10) (n "London") (hp 22))
+@end example
+The only info that you absolutely have to supply is the unit's type.  If
+the position is missing, the unit will be placed at a random location.
+If the side number/name is missing, the unit will be independent or on
+the first possible side.
+
+While the type, position, and side of units is important, exact values
+of the other properties are rarely important for a scenario.  Also, a
+unit with fewer filled-in properties can be used in different games.
+For instance, a list of the present-day major cities worldwide really
+needs only name and location for each; the game design can fill in
+everything else.  One way to do this would be to set up an appropriate
+@code{unit-defaults} just before including the module.
+
+To make units start inside transports, you need to specify the @code{t#}
+property for the occupant, and have its value be the id number or name
+of some other unit.  Your players may get an error message if the
+occupant is not of an allowed type for the transport to hold.
+
+@node Making Countries for Players
+@subsection Making Countries for Players
+
+Despite the advantages of predefining initial units, this doesn't help
+when you want variable groups of units to appear in a randomly-generated
+world.  Instead, you should use the @code{make-countries} synthesis
+method.  The basic idea is that the method picks a good location for
+each side's country, scatters an initial set of units around that
+location, then possibly grows the country outwards.  You can do anything
+from small widely-separated countries to an interlocking nightmare
+resembling pre-Bismarck Germany.  Because of this, and because of the
+requirement that this method generate random setups that are as fair as
+possible, you have a great many parameters to work with.  These
+parameters should be tuned carefully - you will probably need to
+generate and study lots of initial setups, especially if your parameters
+constrain the countries very tightly; the method cannot backtrack to fix
+a poor combination of placements.
+
+The first step in country generation is to select a location for each
+side's country.  The location is a point that is the ``center'' of the
+country (the exact value will be unimportant to players, and is not used
+outside this method).  The constraints are that the center of each
+country is farther than @code{country-separation-min} from the center of
+every other country, that the center is within
+@code{country-separation-max} of at least one other country, and that
+the given initial area of the country (as defined by
+@code{country-radius-min}) includes numbers of cells of each terrain
+type bounded by @code{country-terrain-min} and
+@code{country-terrain-max}.
+
+The reason for the separation constraints is that having countries too
+close together or too far apart can create serious problems.  Consider
+the poor soul who gets tightly sandwiched between two enemies, thus
+becoming lunchmeat, ha ha, or the not-quite-so-poor-but-still-unlucky
+player who ends up on the wrong side of a very large world.  (Keep in
+mind that your players may ask for a much larger world than you were
+thinking of when you designed the game.)
+
+The terrain constraints help you put the country in a reasonable mix of
+terrain.  For instance, if you want to ensure that your countries
+include some land, but be on the coast rather than inland, then you
+should say that the country must have a minimum of 1 sea cell and 1 land
+cell.  (In practice, the values should be higher, so you don't get small
+islands being used as entire countries and lakes being considered the
+ocean.)  Keep in mind that these constraints may be impossible to
+satisfy, for instance if a particular world does not have enough of the
+sort of terrain that is being required in a country.  If the basic
+placement constraints fail, @i{Xconq} will just pick a random location,
+warn about it, and then leave it up to the players to decide on whether
+to play the game ``as it lies''.
+@example
+;;; Keep countries close together, but not too close.
+
+(set country-separation-min 20)
+(set country-separation-max 25)
+@end example
+
+Once @i{Xconq} has decided on locations for each country, it then places
+the initial stock of units.  You define this initial stock via the unit
+properties @code{start-with} and @code{independent-near-start}.  The
+@code{start-with} units start out belonging to the side, while the
+@code{independent-near-start} units are independent.  The locations of
+these units are random within @code{country-radius-min} of the center,
+but are weighted according to the table @code{favored-terrain}.  This
+table is very important; it is the percent chance that a unit of a given
+type will be placed in terrain of the given type.  100 is guaranteed to
+work, and 0 is an absolute prohibition.  Since @code{make-countries}
+tries repeatedly to place each @code{start-with} unit until it succeeds,
+then even terrain with a @code{favored-terrain} value of only 10% will
+get used if there is no other choice, so the table affects the
+distribution of units rather than the number that get placed.  If a
+starting unit cannot be placed on any available terrain, but can be an
+occupant, then @i{Xconq} will attempt to put it inside some unit already
+present.  This is a good way to begin a game with aircraft at airports
+rather than in the air.
+
+The upshot is that all this will do a reasonable layout if the
+parameters are set reasonably.  If, however, @code{favored-terrain} is
+never > 0 for the @code{start-with} units and the country terrain, but
+there is some other terrain type for which this would work, @i{Xconq}
+will change the terrain.
+
+This example is from the ``classic'' @i{Xconq} game:
+@example
+(set country-radius-min 3)
+
+(add city start-with 1)
+(add town independent-near-start 5)
+
+(table favored-terrain 0
+  ((town city) plains 100)
+  (town (desert forest mountains) (20 30 20))
+  )
+@end example
+
+The net effect is to give each player one city outright and 5 towns
+nearby.  Although created independent, these towns can be easily taken
+over right at the beginning of a game, so they are a kind of ``warmup''
+(like the pushing of pawns at the beginning of a chess game).  The
+@code{favored-terrain} table allows cities to appear only in plains,
+while giving more options to towns, since they can appear in deserts,
+forests, and mountains.  Even so, towns are 5 times more likely to be in
+plains, which is reasonable.
+
+In addition to defining a country by placing units, you can also have
+the synthesizer add people to the country.  People in the country don't
+usually have a lot of effect on a game, but are useful for heightened
+realism.  You can have people on your side report on units passing
+through their cells by setting @code{people-see-chance}.  To set up
+people, use @code{country-people-chance} to define the probability
+of terrain in your country getting people.  For most games, you will
+want to set this to a high probability for land types, and to 0 for
+sea terrain types.
+
+The optional last step in country generation is to grow the countries
+outwards from the initial area.  This is basically a simple simulation
+of the historical forces that give countries their variety of shapes.
+You enable this by setting @code{country-radius-max} to a value greater
+than the minimum country radius.  The algorithm works by deciding
+whether to add to the country each cell at each distance from the
+country's center.  The chance depends on the terrain type (via the
+terrain property @code{country-growth-chance}) and whether the cell has
+already been given to another country.  If the cell belongs to another
+country already (as detected by looking at its people), the algorithm
+uses @code{country-takeover-chance} to get the probability of change.
+Once a cell has been given to the country, then the method decides
+whether to add a sided or independent unit to the cell
+(@code{unit-growth-chance} and @code{independent-growth-chance},
+respectively), or whether to change the side of an existing unit
+(@code{unit-takeover-chance} and @code{independent-takeover-chance}).
+Country growth stops when the absolute maximum radius has been reached.
+However, you can make it stop early if no cells are being added to the
+country, by setting @code{growth-stop-chance}.
+
+This example is from one of the variants of the standard game:
+
+@example
+(game-module "standard"
+  ...
+  (variants
+   ...
+    ("Large Countries" eval
+     (set country-radius-max 100)
+     )
+  ))
+@end example
+
+The resulting effect is to make all the countries border on each directly.
+
+@node Initial Supply
+@subsection Initial Supply
+
+In games involving materials, you have to decide how much will be in the
+game at the beginning.  If materials are at all significant (and if
+they're not, why include them in the game?), then you need to ensure
+that the initial amounts are set up correctly.
+
+The key table for this is @code{unit-initial-supply}.  By default, all
+units start out empty of all supplies.  This may not be a good default
+for materials that units consume, however; if the production process is
+too slow, then your initial units may starve at the beginning of the
+game.  This can be especially annoying if the initial units starve only
+because they ended up on less-favored terrain.  To avoid this, you can
+add a clause like @code{(u* m* 9999)}, which, if material capacities are
+all less than 9999, causes initial units to start out full.  Note that
+this applies to all units, irrespective of side.
+
+In addition, if you want your game to be based on resource extraction,
+you can also set @code{terrain-initial-supply} to give amounts of
+materials to each cell in the world. [mention exhausted-type here?]
+
+@node Setup Miscellany
+@section Setup Miscellany
+
+This section describes random things.
+
+@menu
+* Technology::
+* Setting up Self-Units::
+@end menu
+
+@node Technology
+@subsection Technology
+
+Technology, or tech for short, is useful when technological development
+is important to a game.  There are several ways to use it.
+
+One use of tech is to track the results of research.  You do this by
+setting the initial tech of a side to (say) 0, then requiring a certain
+tech (say 60) in order to build a desired type.  If a research action
+adds 1 to a side's tech, then it will take 60 research actions to gain
+the necessary level.  The number of turns, of course, depending on how
+many actions the researcher can do each turn, and how many researchers
+are available.  So for instance, 10 researching units results in the
+work being done in 6 turns instead.  You can limit this schedule
+acceleration by setting @code{tech-per-turn-max}.
+
+Another use of tech is to differentiate sides.  Suppose you want to do a
+game involving earthlings and space aliens.  The aliens can have
+satellites overhead that earthlings don't even know are there, they have
+equipment earthlings couldn't use even if they were able to capture it.
+However, earth scientists might learn something from it.  To do all
+this, use @code{tech-to-see} and friends.
+
+Tech is fundamentally tied to unit types.  However, many games have a
+number of unit types that share technology.  For instance, advances in
+bomber technology usually lead to advances in fighter and surveillance
+aircraft.  The @code{tech-crossover} table is available for this
+purpose.
+
+@node Setting up Self-Units
+@subsection Setting up Self-Units
+
+Normally a player runs the side as a whole, and all the units on that
+side are disposable and interchangeable.  However, you require one unit
+to represent the player personally among the units of the player's side;
+this unit is the @dfn{self-unit}.  What this means is that if that unit
+is captured or dies, the player loses the game instantly.  All the other
+units on the side will behave normally as for losing, either going over
+to the side that captured the player, becoming independent, or
+disbanding.
+
+The idea is to increase the player's motivation for self-preservation.
+This is useful to introduce a risk of capture, assassination, and so
+forth.  It also prevents bizarre and unrealistic strategies in some
+games.
+
+For instance, it sometimes happens in empire-building games that players
+end up switching countries, because each captured another's country and
+neglected to defend their own.  If each player got one capital city, and
+that city were to be a self-unit, then the owner would have to defend it
+at all costs!
+
+To make this happen, you could do something like this:
+@example
+(set self-unit-required true)
+
+(add capital-city can-be-self true)
+
+(add capital-city start-with 1)
+@end example
+
+@node Units and Actions
+@section Units and Actions
+
+Players can do all kinds of things with their units.  They can push
+the units around, they can make units build things, they can get into fights,
+or they can just let them sit around.
+You as the designer decide which kinds of things make sense in your
+game, then set up the action parameters appropriately.
+Is moving through swamps going to be slow?
+Can a small town build any kind of ship, or just small ones?
+How often can Godzilla breathe fire?
+
+Now, what the players work with is the interface, which can do all
+kinds of intelligent things -- whatever makes sense for that interface.
+However, no matter what the interface, no matter what kind of play
+automation, player input eventually breaks down into unit actions.
+The set of action types is predefined and can't be changed.
+They are also very primitive.  Each action takes a number of arguments,
+such as the type of unit to build or the location to move to,
+the action just happens and either succeeds or fails on the spot.
+There are no actions that take longer than one turn to complete,
+and a unit can perform only one action at a time.
+This may seem horribly restrictive, but actions are just
+the low-level building blocks;  players rarely see actions directly.
+You have to be aware of them because the game design specifies
+which unit types are capable of which actions.
+Each @i{Xconq} interface will adjust itself to disallow input that
+would result in types of actions that you have prohibited.
+
+The number of actions that a unit can do in one turn is limited
+by its action points.  A unit with zero action points cannot do anything
+at all.  A unit with lots of action points can do lots of actions,
+unless each action costs many action points.
+You can define the action point cost of each type of action for each
+unit type.  In some cases, the cost will also depend on the action's arguments.
+
+Acp is actually a little like a bank account,
+since by not doing anything for awhile,
+a unit can accumulate extra acp (up to @code{acp-max}),
+and it can go into debt temporarily, down to @code{acp-min}
+(which may be a negative value).
+A unit in ``action debt'' at the beginning of a turn cannot move
+or do anything else, and must wait for a turn
+when its acp goes positive again.  This can be a simple way to implement
+both fatigued units and units that can do more if they plan for it.
+
+Actions always include both an actor and an object.  The actor is
+the brains, and that is whose acp gets used up, but the object has the
+action actually happen to it.  This is so animate units (like humans)
+can manipulate inanimate units (like swords).  You enable this by setting
+the acp of the inanimate to zero, but requiring nonzero acp in the various
+@code{acp-to-} tables.
+
+In most cases, the actor and actee are the same unit.
+
+@node Unit Movement
+@section Unit Movement
+
+Movement is the most important action type.  There are actually two distinct
+types of actions; one to enter a cell, and one to enter a unit.
+
+Each unit has a speed which is determined at the beginning of the turn
+and determines how many cells it can enter during the turn.
+However, terrain, borders, and other obstacles can consume extra
+movement points.
+
+@menu
+* Unit Speed::
+* Movement Costs::
+* Entering Transports::
+* Border Slides::
+* Leaving the Area::
+* Free Moves::
+* Zone of Control::
+@end menu
+
+@node Unit Speed
+@subsection Unit Speed
+
+Units have a base speed @code{speed} which is the ratio of mp to acp.
+You can set damaged units to move more slowly.
+You can also allow occupants to add to the speed, up to the
+@code{speed-max} limit.
+
+You can define wind-affected units by defining speed in each direction
+(max-speed only, do others proportionally).  Would need 4 distinct mp costs
+plus a formula to relate to wind strength.  Wind speed defined as "how
+far a particle of air moves in a turn".  Unit examples include balloons,
+dirigibles, sailing ships, floating cities.
+
+@node Movement Costs
+@subsection Movement Costs
+
+Typically the cell entry cost will be the most useful to adjust,
+although the departure cost can be useful in representing units
+mired in jungle mud
+and taking a long time to escape onto clear terrain.
+
+Be aware that complicated entry/exit costs are confusing to players,
+and AIs may not take them into account very well either.
+Using @code{free-mp} helps players use up all their acp.
+
+@node Entering Transports
+@subsection Entering Transports
+
+Different kinds of transports have different ways for units
+to get on and off.  For instance,
+ships can dock, or use their boats to enable land units to get on and off.
+The tables @code{ferry-on-entry} and @code{ferry-on-departure}
+specify how much terrain units will have to cross on their own.
+
+[example]
+
+Observe that enter/leave costs can be used to make one-way trips.
+For instance, paratroops jumping out of a plane should be able
+to leave cheaply, but have an entry cost so high that they can
+only reboard in a later turn.
+
+@node Border Slides
+@subsection Border Slides
+
+One of the problems with @i{Xconq} borders and connections is that
+neither works exactly like a sea strait.  Consider the Straits of
+Gibraltar.  They are so narrow that one can see the other side,
+but nevertheless impose a formidable barrier to landlubbers.
+At the same time, ships can pass through readily, if
+not secretly.  If cells in the world are 60 miles across, then
+making an all-sea cell is a gross exaggeration.
+However, adding a water border only prevents both land and sea movement!
+To get around all this, @i{Xconq} allows a special kind of
+move called a ``border slide''.
+Basically, if both the destination cell and the border whose endpoints
+touch the start and end cells are allowable terrain for a unit,
+then the unit can move to the destination cell in one move.
+However, it incurs a special cost in addition to the normal entry
+and leave costs for the terrain in the two cells (but @i{not} the border
+crossing cost, since the border is not being crossed, exactly).
+This cost is in the table @code{mp-to-traverse}.
+Border sliding should usually be somewhat expensive, both because
+of the distance (the unit ends up two cells away after only one move),
+and because of the real-life difficulties of passing through a narrow
+strait.  Note that border sliding does not escape the units on either
+side of the border, since the unit doing the sliding will still be
+adjacent to the cells on each side of the border it slid through.
+
+@node Leaving the Area
+@subsection Leaving the Area
+
+This feature can be useful in allowing a non-disbandable unit type
+to escape capture or otherwise retire from action.
+
+@node Free Moves
+@subsection Free Moves
+
+This is most useful in emulating some board games,
+or to prevent clever players from exploiting a mess of move costs.
+The default of @code{-1} is the most playable,
+since player will always be able to use all of their mp.
+Otherwise, there may be situations in which a unit has
+a few acp left, but not enough to go anywhere,
+and so they end up being wasted.
+The free move does not actually get subtracted from the unit's acp,
+it just doesn't let lack of acp forbid the move.
+
+@node Zone of Control
+@subsection Zone of Control
+
+Sometimes a unit can by its presence alone affect the movement of unfriendly
+units in the vicinity, perhaps by requiring them to hide or to move
+carefully in order to pass by, or even to prevent entry altogether.
+This is called the ``zone of control'' or ZOC.
+
+Exerting a ZOC requires no action, nor any particular capability on
+on the part of the unit exerting the ZOC.  For instance, a toothless
+fort could still cause raiders to sneak by carefully (at least if they
+didn't know that it was toothless).
+
+@node Unit Construction
+@section Unit Construction
+
+Construction is very important to empire-building and similar strategic
+games.  The construction of a unit may involve as many as four different
+kinds of actions.  This is so you can make construction be an expensive
+long-term process.
+
+The basic construction is unit creation.  A player might have to do
+research and toolup actions in order to prepare for creation, and might
+also have to do completion actions, if the created unit is not ready to use.
+
+Normally the interface will just have a single "Build <type>" command,
+which then results in a task that issues appropriate actions, so players
+don't necessarily see all these different actions.
+ 
+@menu
+* Researching::
+* Tooling Up::
+* Creation::
+* Completion::
+* Repair::
+@end menu
+
+@node Researching
+@subsection Researching
+
+Some types of units may be relatively easy to build, once you know how,
+but at the same time that type totally changes the balance of the game.
+The atomic bomb in WWII is the classic example; once it became available,
+everything changed.
+
+To allow research, set @code{acp-to-research} to 1 or more.
+
+@node Tooling Up
+@subsection Tooling Up
+
+Toolup costs are what you use to represent the overhead of changing
+construction.  Quite often it does not need to be set.  Its primary
+use is to encourage players to commit to grand strategy once chosen,
+because the cost of changing would be prohibitive.
+
+@node Creation
+@subsection Creation
+
+You enable creation of new units by setting @code{acp-to-create}
+to 1 or more.
+The location of the newly created unit will depend on both the
+types involved and how the interface works, since both @code{create-in}
+and @code{create-at} actions are available.
+For instance, the new unit immediately takes up space,
+so if creating unit is already full, then the interface
+should have issued a @code{create-at} action to put the
+new unit outside the creator but still stacked in the same cell.
+If this is still too restrictive, and you want to allow players
+to create units in nearby cells, you can set @code{create-range}
+to values higher than the default of 0.
+
+In order to represent the material costs of creation,
+you can set a minimum requirement, via @code{material-to-create},
+and an amount to be consumed, via @code{consumption-on-creation}.
+You could think of @code{material-to-create} as representing
+catalysts or work force, while @code{consumption-on-creation}
+is the raw material that becomes part of the new unit.
+
+Finally, you can set the @code{supply-on-creation} to have
+@i{new} material created and given to the new unit.
+This is useful for abstract materials (such as ``enthusiasm'')
+that are somehow ubiquitous.  You should be careful with this
+one, because if the new material is transferrable between units,
+then players could collect a stockpile of the material by
+creating units, stealing their supply, and never finishing them.
+
+@node Completion
+@subsection Completion
+
+By default, newly created units are complete and ready-to-use.
+This is rarely a good idea in a game design,
+since even 1 acp-per-turn creators can then create
+another brand-new unit on each turn.
+If you're going to allow that, then you
+should include something else to keep players from being swamped by
+overpopulation.  You can set high accident or attrition rates,
+make creation require scarce materials,
+or make the creators be scarce.
+
+The best way to slow down unit creation is to create incomplete
+units and then require @code{build} actions to finish them.
+Completeness is defined
+in terms of completeness points (cp) that you can set for each
+type.  A build action then just adds to completeness points.
+Incomplete units do in fact exist as units, so for instance they
+can be captured and completed by another side.
+
+As with creation, you have to set @code{acp-to-build} to
+1 or more just to enable build actions.
+
+In order to regulate the rate of completion, you have to
+set the @code{cp} of the unit types being constructed,
+which defines the point at which the unit will be complete,
+and then fill in @code{cp-on-creation} and @code{cp-per-build}.
+The most straightforward approach is to set @code{cp}
+to be the number of turns you want to have between each unit
+being constructed, then let @code{cp-on-creation} and
+@code{cp-per-build} both be 1.
+
+You can set @code{build-range} so that several units can
+cooperate to accelerate construction of a unit.
+There are no maximum rate limits set on this, but it's
+unlikely that players will ever be able to achieve much
+acceleration, because of the limit on the distance between
+the builder and the unit.  For instance, the default range
+of 0 implies that multiple builders of a unit have to be in
+the same cell, which may in turn be constrained by stacking
+limits.
+
+As with creation, you can also set values in @code{material-to-build}
+and @code{consumption-per-build} to govern material requirements
+and usage.
+
+You can also allow units to complete themselves.  For instance,
+large ships often use part of their soon-to-be crew to help finish
+the last stages of fitting out.  You set this up via @code{cp-to-self-build}
+and @code{cp-per-self-build}.  Since incomplete units are incapable
+of doing any actions, this is a totally automatic process that happens
+at the beginning of each turn.  Self-building and normal building can
+proceed simultaneously, so you can use this to accelerate the final
+stages of construction.
+
+Finally, newly completed units can have materials created for them,
+as defined by @code{supply-on-creation}.
+
+@node Repair
+@subsection Repair
+
+Players' units will inevitably become damaged, whether in combat,
+from accidents, or from other causes.
+
+There are two ways that units recover hp; either automatically,
+as defined by @code{hp-recovery}, or by the explicit action @code{repair}.
+Automatic recovery is good for that part of damage that a unit can
+fix just by the passage of time.  It's always good for playability, since
+a player just needs to ``rest'' the unit in order for it to get better.
+
+On the other hand, the decision to repair may need to be a difficult
+one, and impact both tactical and strategic planning.  For instance,
+a badly damaged battleship can choose to go on fighting and risk being
+sunk, or withdraw for repairs and perhaps jeopardize the campaign it is
+supporting.
+
+In such cases, you can allow explicit repair actions, via the table
+@code{acp-to-repair}.  You can set the repair rate via
+@code{hp-per-repair}.
+You can also specify how healthy the
+repairer must be, via @code{hp-to-repair}.
+Units can repair themselves.
+
+@node Unit Combat
+@section Unit Combat
+
+Not all games require fighting.  Races and exploration
+can be lots of fun, and don't require players to be bashing each other.
+However, the excitement of most @i{Xconq} games derives
+from the chances of going up against an opponent directly.
+
+Combat includes five distinct action types that a player may choose
+from, not counting detonation, and you specify the characteristics
+of each.  ``Attack'' is hand-to-hand with another unit, ``capture''
+attempts to change the side without damaging, ``fire-at'' hits a unit
+without getting entangled, while ``fire-into'' hits everything
+in a targeted cell.
+Finally, ``overrun'' is an attempt to occupy a cell, doing whatever
+combination of attack, capture, and movement is necessary.
+
+To specify what kinds of battles are possible, you begin by setting
+the @code{hit-chance} of some unit vs another unit to any value
+greater than zero.  A hit probability of zero completely disallows
+attack.  A hit probability of 100 is a guaranteed hit.
+In practice, you will probably need to specify most hit probabilities
+individually.
+
+[describe mods to hit prob?]
+
+Next you need to set the damage done by a hit.
+The default value is 1 hp, which is a good starting place
+but not always particularly realistic.
+
+[describe variation parms]
+
+As usual, you can define the action point cost of combat,
+via @code{acp-to-attack} and @code{acp-to-defend}.
+The use of separate tables for attacker and defender allows for
+some extra flexibility.  This is important, because sometimes you
+want to allow combat to keep a defender busy and soak up its acp,
+while at other times attempts to engage in combat should be shrugged off.
+Consider battleships vs infantry; although combat between the two
+rarely causes much damage, an attack by a battleship will cause the
+infantry to keep their heads down, and preventing them from doing much else,
+while the return rifle fire is unlikely to disturb the battleship much!
+
+Describing simple hit probabilities and damage is oftentimes sufficient
+for a game.  It's simple; players can learn the numbers by heart.
+It's more efficient, because there's no need to manage lots of
+ongoing battles.  However, there are endless numbers of situations
+where this basic model is unsatisfactory, so let's move on to the
+available enhancements.
+
+The basic parameter for the firing actions is @code{range} of the unit,
+which is the greatest reach possible.
+You can also set a @code{range-min}, which is useful for ballistic
+missiles, certain kinds of artillery,
+and magic spells that can't be used for close-in fighting;
+you can't fire at a unit that is less than @code{range-min} cells away.
+
+Also, you can define how transports and occupants affect each other in
+combat.  The effects can be both positive and negative, and extend both
+from occupants to their transport and from the transport to its occupants.
+The table @code{transport-protection} defines the percentage of hit damage
+(by any unit type) that gets passed through to each occupant.
+If 0, then the transport is perfect protection. If 100, then each occupant
+gets the same hit as the transport did.
+[Ideally, protection is a prorating on a table value from occupant vs attacking
+unit.]
+Note that an occupant cannot be attacked directly from outside its transport.
+
+If you want to make combat dependent on having a supply of ammo, use the
+tables @code{hit-by}, @code{material-to-attack}, @code{material-to-fire}, 
+@code{consumption-per-attack}, and @code{consumption-per-fire}.
+The material type need not be explicitly designated as ammo,
+but both the hitting and hit units must agree that the same type
+is effectual (we assume that the attacking unit is smart enough not to
+use material types that have no effect on the target unit).
+
+[need a combat-supply usage in addition]
+
+@menu
+* Capture::
+* Detonation::
+@end menu
+
+@node Capture
+@subsection Capture
+
+Capture is both a distinct action type and a possible consequence of
+normal combat.  As an action, it is useful for both ``bloodless''
+captures and the collecting of objects from a dungeon floor.
+
+To allow explicit attempts to capture, set @code{acp-to-capture} to 1 or
+more.
+
+Whether the capture attempt is explicit or a consequence of combat, its
+basic probability of success is derived from the table
+@code{capture-chance}.  If the unit being captured is independent, there
+is a separate table @code{independent-capture-chance}; if its value is
+the default of -1, then the value of @code{capture-chance} will be used
+instead.
+
+For capture attempts that are going to succeed, you can allow the victim
+a chance to wreck itself first, by setting @code{scuttle-chance}.
+
+The main effect of capture is simply to change the side of the unit that
+was captured.  If the unit cannot be on the capturing side, then it will
+vanish instead.  In any case, the occupants will also be captured or
+vanish, although you give them a chance to escape first via
+@code{occupant-escape-chance}.  They will also attempt to scuttle
+themselves if possible.
+
+You can also require a sacrifice from the capturing unit, via the table
+@code{hp-to-garrison}.  This is the number of hp that will be taken from
+the capturing unit.  You can set it to the unit's @code{hp-max} to make
+it disappear entirely.  Although this table is inspired by realism, it
+can also serve a pragmatic purpose, namely to prevent a single unit from
+capturing an entire country without being affected at all!  You should
+set this table according to the ``feel'' you want for the game, since it
+can have a major effect on speed and pacing of the play.
+
+As with normal combat, the experience of both the capturing and captured
+unit may change.  For the capturing unit, this is a gain defined by
+@code{cxp-per-capture}, while the effect on the capturing unit is set by
+@code{cxp-on-capture-effect}, which is a multiplier (defaulting to 100)
+that may increase or decrease experience.  In practice, a decrease is
+more realistic, representing perhaps the replacement of ship or airplane
+crews, although a increase might be more appropriate for mercenaries
+whose response to capture is simply to go to work for the new bosses!
+
+@node Detonation
+@subsection Detonation
+
+Detonation is both a type of action @code{detonate} and an automatic
+behavior.
+
+Detonation can damage both the detonating unit (though it need not) and
+any units around its point of detonation, which may or may not be its
+location.  You set it up by defining @code{acp-to-detonate} to one or
+more, set @code{hp-per-detonation} to express the amount of damage done
+to the detonating unit, then fill in the detonation damage tables
+@code{detonation-damage-at} and @code{detonation-damage-adjacent} to say
+how badly each type of nearby unit will be hit.  You can define the
+exact radius of effect via @code{detonation-range}.  The effects on
+occupants of nearby units will be adjusted according to the same
+protection/ablation tables as for combat.
+
+You can also set detonation to trigger on various kinds of events, such
+as damage to the detonating unit (@code{detonate-on-hit}, death of the
+detonating units (@code{detonate-on-death}), impending capture
+(@code{detonate-on-capture}), and proximity of certain types of units
+(@code{detonate-on-approach}).  You can also set a chance that a unit
+will detonate spontaneously, via @code{detonation-accident-chance}.
+
+In order to model the catastrophic effects of the worst explosives, you
+can set @code{terrain-damage} to indicate how terrain types will change.
+
+A minefield could be implemented by defining a detonating unit that
+loses some small percentage of its hp every time a unit hits it, while
+hitting the other unit automatically.
+
+A simple trap would auto-detonate only once, then change to a ``sprung
+trap'' type.  Then the right kind of unit could come along and do a
+change type action to reset it.
+
+@node Unit Manipulation
+@section Unit Manipulation
+
+The actions in this group are a mixed bag of manipulations.
+If they need to be in your game, then the need will be obvious,
+otherwise they are pretty much optional.
+
+@menu
+* Transferring Unit Parts Action::
+* Changing Side::
+* Changing Type::
+* Disbanding::
+@end menu
+
+@node Transferring Unit Parts Action
+@subsection Transferring Unit Parts Action
+
+Any unit whose @code{parts-max} is greater than the default of 1 is a
+multi-part unit, and its hp denotes size rather than amount of damage.
+Armies and fleets are two kinds of units which can be usefully defined
+as multi-part.
+
+Players will very often want to merge or detach parts of a multi-part
+unit, and there is an action @code{transfer-part} provided for that.
+You can control the cost of the action by setting
+@code{acp-to-transfer-part}.
+
+@node Changing Side
+@subsection Changing Side
+
+Side changing is like capturing, but players can only do it to units
+that they control.  The action is @code{change-side}, and you enable by
+setting @code{acp-to-change-side} to 1 or more.  This will also enable
+side changing for units that cannot normally act.
+
+Side changing is especially useful for alliances in multi-player games,
+so it should usually be enabled.  On the other hand, it should not be
+too cheap; you should consider what side changing really means in the
+game's context.
+
+For instance, even in the close British/American alliance during WWII,
+armies never actually changed sides; British ground units were always
+British, and American ground units always American.  On the other hand,
+ships and bases could be traded back and forth with only a cost in time
+and expense.
+
+@node Changing Type
+@subsection Changing Type
+
+In some games, it will be useful to have a notion of promotion
+or upgrade for units.  You can implement this by allowing players
+to do a @code{change-type} action.
+
+You enable this via the @code{acp-to-change-type} table.
+
+@node Disbanding
+@subsection Disbanding
+
+Sometimes a player will want to get rid of a unit,
+perhaps because some type has been overproduced and is tying up
+valuable resources, or to prevent it from falling into enemy hands.
+
+You can allow this by setting @code{acp-to-disband} to 1 or more.
+
+You can control the rate of disbanding with @code{hp-per-disband}.
+You may, for instance, want to allow the deliberate destruction
+of large units, such as battleships, but you don't necessarily want
+disbanding to be a convenient way of preventing their capture.
+Setting @code{hp-to-disband} so as to require several turns to
+get rid of a unit will accomplish this.
+The table @code{supply-per-disband} will allow you to govern the
+rate of recovery of the unit's supplies during the disbanding process.
+
+It is also possible to make disbanding a way to recover materials
+that were consumed in the construction of the unit, by using the
+table @code{recycleable-material}.  Care should be taken that creation
+and disbanding of units is not a convenient way to manufacture lots
+of a material; players @i{will} use the loophole if it exists!
+
+It should usually not be possible to disband something large like a city,
+otherwise a clever player might try to eliminate it as a strategic target,
+but most mobile units should be easily disbanded.
+This is especially helpful in an ``construction spiral'' game, where
+the winning player(s) can accumulate large numbers of useless units.
+
+@node Material Manipulation
+@section Material Manipulation
+
+You can allow players to produce materials by explicit action,
+and you can control how they transfer materials between units.
+
+Note that you can usually have a reasonable game without requiring
+all the players to become shipping clerks.  The automated production
+and transfer parameters (see xxx) are almost always sufficient for
+a game.  Explicit action should be limited to games where material
+limitations are so severe that they impact strategy directly,
+and players have to make hard choices between producing materials
+and doing other actions, on a turn-by-turn basis.
+
+You can define ``stevedore'' units by setting both rate and acp such that
+the u1 -> stevedore -> u2 transfer is faster and cheaper
+than the basic u1 -> u2 rate.
+Then players can use the stevedores to speed up transfers.
+
+@node Terrain Manipulation
+@section Terrain Manipulation
+
+In a few games, you will want to let players alter the terrain.
+This needs to be done judiciously,
+since a cell of terrain generally represents a vast area,
+and the simulated time in @i{Xconq} is generally too short
+for major terraforming operations.
+However, building bridges and digging moats can be reasonable
+additions to a game.
+
+Since actions are always completed quickly,
+and there is no concept of ``partly modified terrain'',
+you will probably have to come up with a trick to make terrain modification
+be slow.  One way is make the acp (or material?) cost very high.
+Another way is to make the alteration happen by removing a material,
+such as clearcutting a forest, then letting the action make the
+actual change to clear terrain.
+
+@node Vision Parameters
+@section Vision Parameters
+
+Vision is an important part of @i{Xconq}.  Information need not come for
+free in your game design, and you can design the parameters to control
+how much players can get.  The possibilities range from total knowledge
+as in board games, where nothing is secret except the enemy's heart, to
+games where much of the play hinges on who knows what, and when.
+
+When deciding what visibility model to use, keep in mind that one of the
+hallmarks of games in the @i{Xconq} genre is the exploration of the
+world during the initial phase of a game.  Not only do many players
+enjoy the adventure of exploring a new world, but the progress of
+exploration servers as a handy note-taking device for players searching
+for other players.  If all the terrain starts out visible, but the
+location of the enemy is unknown, it can be difficult to keep track of
+what's been examined!
+
+@menu
+* Seeing All::
+* Coverage::
+* Setting the Initial View::
+* Vision Range::
+@end menu
+
+@node Seeing All
+@subsection Seeing All
+
+The simplest thing to do is to set @code{see-all} to @code{true}.  Then
+every player sees all the terrain, everybody's units, everybody's
+occupants, the whole world and everything in it.  This makes @i{Xconq}
+like a conventional video or board game, which is sometimes just what
+you want.  Also, since the view matches the world, the game is simpler
+for players, who need not concern themselves with possibly out-of-date
+information.  Finally, @code{see-all} is more efficient in time and
+space, since the general visibility calculations need never be done or
+recorded.  Many games include @code{see-all} as one of their variants.
+
+You may also find @code{see-all} to be a useful game debugging aid,
+since you can watch what is happening everywhere in the world.  But,
+remember that any AIs will most likely adjust their strategy and not
+bother with patrolling or guesswork about the enemy, and you won't be
+able to debug the other viewing parameters either!
+
+@node Coverage
+@subsection Coverage
+
+Still, much of the fun in @i{Xconq} is the potential for surprise.  The
+theory of visibility in @i{Xconq} is that each side has a layer of
+coverage, which basically just counts the eyeballs looking at each cell.
+As your units move around, the coverage in each cell goes up and down.
+Any cell with a coverage of zero is not currently being viewed by any of
+the side's units.
+
+The unit property @code{see-always} is useful for units like towns,
+which are unlikely to disappear secretly.
+
+These two parameters apply recursively, so for instance a city could be
+@code{see-always} and @code{see-occupants},
+while a building in the city is @code{see-always} and not
+@code{see-occupants}, with the net effect that units
+inside a city can be seen by everybody,
+but not when they enter a building.
+
+@node Setting the Initial View
+@subsection Setting the Initial View
+
+The initial view represents the knowledge assumed to have been gathered
+over the period of time preceding the game.  By default, players start
+out knowing only the immediate vicinity of their initial units and
+people.
+
+One way to change this is to set @code{terrain-seen} to true, or
+to add it as an available variant for the game; in either case, all
+terrain in the world becomes known to all sides.  This is good for
+realism, especially for real-world games since about 1900, when
+very little of the Earth remained unexplored.  @code{terrain-seen}
+can radically change the dynamics of a game; for instance, the
+standard game changes from explore-and-conquer to all-out combat.
+
+If making everything visible is too much, @i{Xconq} lets you set a
+radius @code{initial-seen-radius} around each initial unit, within which
+the unit's side knows everything.  This is useful if your initial units
+are somewhat scattered, so as to avoid gaps of unknown terrain in
+between.  Also, any people on your side view both their cell and all the
+adjacent cells.
+
+Once you've chosen how much terrain is visible, you can control which
+units are visible.  The @code{see-always} property mentioned above
+affects initial visibility, but in addition there is @code{already-seen}
+and @code{already-seen-independent}, which apply to units on sides or on
+no side, respectively.  These properties are percentage chances, so you
+can randomize how many are known.  For example, in peacetime everybody
+typically knows the location of a navy's surface ships, but when the war
+starts they scatter to sea and operate more securely, so for those
+@code{see-always} should be 0 and @code{already-seen} should be 100.
+However, submarines are always more secretive, and perhaps only 1/4
+are known to other sides, so an @code{already-seen} of 25 makes sense.
+Another example might be monster's lairs, whose positions might be
+known by reputation, but if something happens to them, the news does
+not get flashed around the world!
+
+@node Vision Range
+@subsection Vision Range
+
+The default vision range (@code{vision-range}) is 1, which basically
+means that a unit can see into adjacent cells but no further.  You can
+set this to higher values, which is useful for tactical- and
+person-level games with line-of-sight (LOS) rules.
+
+You can also set the vision range of a unit to 0, which means that it
+can only see things in its own cell.  However, as a special case, when
+such a unit enters a new cell, @i{Xconq} will show the terrain of each
+adjacent cell, but not any units that might be present.  This is so
+players can decide which way to move without having to plunge blindly
+into unknown terrain or do some sort of awkward ``adjacent cell
+examination'' action before moving.  This only provides information
+about terrain and units that are seen if the terrain is seen.
+
+@node Designing Backdrop Weather
+@section Designing Backdrop Weather
+
+[The four temperature extremes are independent of each other,
+so you can make higher latitude temperatures vary drastically with the
+season, while equatorial temperatures are much more stable; or vice versa.
+
+Average temperature usually varies more slowly over some kinds of terrain
+than others.  For instance, oceanic circulation moderates temperature
+swings in terrain that is near open ocean.]
+
+@node Designing Backdrop Economy
+@section Designing Backdrop Economy
+
+Economy in @i{Xconq} means pushing materials around.  So if you want an
+economy in your game design, you have to define at least one type of
+material.  To define the economy, you have to decide where materials
+come from, how they get moved around, and how they get used up.
+
+@menu
+* Creating Materials::
+* Movement of Materials::
+* Consuming Materials::
+@end menu
+
+@node Creating Materials
+@subsection Creating Materials
+
+Materials come into existence by being placed in units or terrain
+during setup, by being produced by units or terrain, and by appearing
+in newly-created units.
+
+@node Movement of Materials
+@subsection Movement of Materials
+
+Once in existence, players can move materials around by explicit action.
+You can also define automated material movement that uses supply and demand.
+The tables @code{in-length} and @code{out-length} control the distance
+over which materials will move each turn.
+
+@node Consuming Materials
+@subsection Consuming Materials
+
+Materials exist to be consumed (unless they are relevant to a scorekeeper).
+You can set how much each kind of action uses, as well as how much is needed
+as a prerequisite, sort of like a catalyst.  You can also set consumption
+due to existence alone, plus what happens to a unit when its supply of a
+material runs out.
+
+@node Adding Random Events
+@section Adding Random Events
+
+What simulation game would be complete without random events?
+Random events are handled somewhat similarly to synthesis methods,
+in that you set the value of the variable @code{random-events}
+to a list of the methods that you want run.
+Note that you must still ensure that the probabilities for the
+events on your list are nonzero!
+
+Superficially, random events just introduce some unpredictability
+into a game.  However, adding it just for its own sake is not
+a good idea; in the worst case, the game becomes the infamous
+``dice-rolling contest'', where nothing matters except luck.
+Random events are more valuable when they introduce risk,
+and players have to balance that risk against their goals.
+As an example, random losses of cities in the standard game
+would be pointless, since players have to have them, and there
+would be a chance that all of a player's cities would disappear,
+causing the player to lose for no good reason at all.
+On the other hand, the chance of losing an expensive capital
+ship in shallow coastal waters is enough to motivate the player
+to keep them well out to sea.
+
+In the past, bugs or unexpected behavior in random event routines
+have resulted in hard-to-reproduce problems.
+For the sake of debugging, you should test the game with random
+event probabilities set very high, perhaps as a variant so it can
+still be played normally.
+
+@menu
+* Accident Parameters::
+* Attrition Parameters::
+* Revolt Parameters::
+* Surrender Parameters::
+@end menu
+
+@node Accident Parameters
+@subsection Accident Parameters
+
+The name of the accident method is @code{accidents-in-terrain}.
+Accidents should be restricted to definite hazardous situations, to go along
+with movement constraints - for instance, carriers and battleships
+in shallow water should have a small chance to hit a rock and sink.
+
+You can specify two kinds of accident; a damaging accident,
+which hits the unit as if it were in combat, or a vanishing
+accident, in which the unit disapppears instantly.
+
+Damaging accidents occur according to the @code{accident-hit-chance}
+table, and damage the unit according to @code{accident-damage}.
+The interpretation of these is similar to their combat counterparts.
+The @code{accident-vanish-chance} table sets the probability for
+the unit to simply vanish without a trace.
+
+@node Attrition Parameters
+@subsection Attrition Parameters
+
+Attrition is a sort of higher-probability/lower-damage type
+of accident.  It is useful for armies in hostile terrain,
+where deserters and casualties slowly reduce its strength.
+
+Attrition can be useful for ``aging''
+a unit, if you need to keep the unit from being around too long.
+
+@node Revolt Parameters
+@subsection Revolt Parameters
+
+Revolts are spontaneous changes of side, independent of any
+other consideration.  Since there is no way to protect against
+this, the chance should usually be very small, less than .01;
+even a small chance of will cause players to maintain reserves
+just in case.
+
+@node Surrender Parameters
+@subsection Surrender Parameters
+
+The method's name is @code{units-surrender}; when it runs, it
+checks each unit to see if it is within @code{surrender-range}
+of a unit on an unfriendly side, and if the @code{surrender-chance}
+occurs, then the unit will change to the side of the other unit.
+Occupants will also evaluate their surrender/scuttle/escape chances,
+and behave accordingly.
+
+@node Designing the Interface
+@section Designing the Interface
+
+So far, the game design machinery has been focused on semantics.
+The other part of the game design defines how it actually appears
+to the players.  This part of the design can be more loosely
+designed, which is good, because you cannot guarantee that your
+game design will only ever be run with a particular interface,
+and there is a wide variety of interfaces.  You could, for instance,
+define an elaborate set of color graphical icons and patterns,
+only to find that most of your players only have black-and-white
+displays.  @i{Xconq} itself will always be able to cope with
+your omissions, but it will be forced to synthesize
+inferior substitutes.
+
+Game designs have three general categories of interface elements
+that they can specify: text, graphics, and animations.
+Text elements are just strings describing objects and events
+in a readable form, while graphics consist of small icons
+and patterns primarily representing units and terrain.
+Animations are used to illustrate events as they happen,
+and may include sounds.
+
+@node Designing the Text
+@section Designing the Text
+
+Although @i{Xconq} is primarily a graphical game system,
+it is complex enough that the graphics alone are
+insufficient to describe what is going on.
+
+All text that players see is issued by @dfn{text generators},
+which are objects that, when given appropriate inputs,
+produce text fragments that can be used by the interface
+to produce a textual display.
+Each text generator has a number of parameters that
+may be used to select one of several rules [etc]
+
+@menu
+* Describing Objects::
+* Describing Events::
+* Generating Names::
+* Grammar Examples::            
+@end menu
+
+@node Describing Objects
+@subsection Describing Objects
+
+[fill in]
+
+@node Describing Events
+@subsection Describing Events
+
+[fill in]
+
+@node Generating Names
+@subsection Generating Names
+
+One of @i{Xconq}'s special features is its extensive machinery for
+generating names of things.  You can generate names for sides, units,
+and geographical features.  The possibilities range from a simple list
+of strings up to context-free grammars and arbitrary code modules.
+Naming happens throughout the game, as nameable objects are created, but
+is mostly done during initialization.
+
+@node Grammar Examples
+@subsection Grammar Examples
+
+Here is a very simple grammar:
+@example
+(namer (grammar root 40
+  (root (or 1 (the animal in the thing)))
+  (animal (or cat dog sheep))
+  (thing (or hat umbrella fold))
+  ))
+@end example
+It makes phrases like @code{"the cat in the hat"},
+@code{"the dog in the umbrella"}, and @code{"the sheep in the hat"}.
+
+This example is more realistic:
+@example
+;;; German-like place name generator.
+
+;;; Conventional combos most common, random syllables rare.
+;;; Needs more conventional words to combine?
+
+(namer german-place-names (grammar root 50
+  (root (or 95 (name)
+             5 ("Bad " name)
+             ))
+  (name (or 40 (prefix suffix)
+            20 (both suffix)
+            20 (prefix both)
+             5 (prefix both suffix)
+            10 (syll suffix)
+            10 (prefix syll suffix)
+        ))
+  (prefix (or
+        schwarz blau grun gelb rot roth braun weiss
+        wolf neu alt alten salz hoch uber nieder gross klein
+        west ost nord sud
+        ;; from real names
+        frank dussel chem stras mut
+        ))
+  (suffix (or
+        dorf torf heim holz hof burg stedt haus hausen
+        bruck brueck bach tal thal furt
+        ;; these aren't so great
+        ach ingen nitz
+        ))
+  (both (or
+        feld stadt stein see schwein schloss wasser eisen berg
+        ))
+  ;; Generate random syllables
+  (syll (or 40 (startsyll vowel endsyll) 5 (vowel endsyll)))
+  (startsyll (or 30 startcons 10 startdiph))
+  (startcons (or b k d f g l m n r 5 s 3 t))
+  (startdiph (or bl kl fl gl 5 sl 3 sch 2 schl
+                 br dr kr fr gr 2 schr 3 tr 2 th 2 thr))
+  (vowel (or 6 a ae 2 au 5 e 2 ei 2 ie 6 i 3 o oe 2 u ue))
+  (endsyll (or 4 b 5 l 3 n 4 r 4 t
+               bs ls ns rs ts 3 ch 3 ck
+               lb lck lch lk lz ln lt lth ltz
+               rb rck rch rn rt rth rtz
+               ss sz 2 th tz
+  	))
+  ))
+@end example
+This generator usually takes normal German words and glues a couple
+together, making names like @code{"Schwarzburg"}, @code{"Nordbruck"},
+and @code{"Bad Salzwasser"}, but it will occasionally make a completely
+random syllable using common German phonemes, then glue it into a name,
+resulting in names like @code{"Biefeld"} and @code{"Salzgloelthach"}.
+Yes, that last one is unpronounceable even for Germans, but the
+generator doesn't know that!
+
+Since there is no special handling to ensure non-garbled names, it
+generally does not work particularly well to try to build names from
+vowels and consonants.  Either random selection from a list or putting
+together syllables seems to do better, with perhaps a single totally
+random syllable thrown in.  Don't forget that this is a generator, not a
+recognizer or parser, so you don't have to be able to handle every
+possible name; just enough to make an interesting variety.
+
+Recursive rules, where a symbol expands into a sequence mentioning that
+same symbol, will work, but they are not recommended.  Although the
+generator has a builtin limiter to keep from looping forever,
+@c and the UGH list is available,  [this is to be changed?]
+in general there is no way to avoid getting awful names like
+@code{"Feldbruckbruckbruck"}.  Instead, you can just add extra rules,
+one for each desired length, so for instance you have a rule for
+2-syllable names, one for 3-syllable names, one for 4 syllables, etc.
+Another advantage is that you can set the probability of each length of
+name separately, and thus lower the probability of longer names, so that
+they only appear once in a while and you save the poor players from
+being continuously tongue-tangled!
+
+@node Designing the Graphics
+@section Designing the Graphics
+
+@i{Xconq} is fundamentally a graphical game; but fortunately, you don't
+have to do gnarly graphics hacking to get the pretty pictures!  The
+basic graphics handling is built into the interface subroutines of
+@i{Xconq}.  What you @i{do} have to do is to choose or design the basic
+images.
+
+@i{Xconq} will always attempt to generate some sort of default display
+for your new game design, but it's likely to be pretty ugly.  So your
+goal here is just to make the display look good.  First off you should
+decide about the overall appearance.  Do you want things to be generally
+light or dark?  Garish or subtle?  Conventional or exotic?  This is a
+good time to cruise the image libraries and to look at the graphics of
+other games.  Sometimes the theme decides a lot for you - how could you
+display anything other than a red star on a Soviet tank?  You also need
+to think about whether you want to concentrate on b/w or color displays,
+although again @i{Xconq} will try to do something reasonable for both.
+
+You have to choose three sets of images: terrain patterns or images,
+unit icons, and side emblems.  The terrain patterns have to tile
+properly, since they may be used to fill in large areas, while both unit
+icons and side emblems are single icons.  You can optionally choose
+solid colors for terrain, and to ``colorize'' unit icons and side
+emblems.
+
+Once you have chosen and specified a set of images, you have to try them
+out in various combinations in real games.  What you'll most likely
+discover is that they don't always mix like you imagined.  That
+cool-looking emblem for a side disappears against the background of
+space, or two unit icons are nearly indistinguishable on the map.  At
+this point, you have to start making some choices.  Either substitute
+some different images, or design new ones of your own.
+
+Color choices are tricky.  Again, the total effect can be quite
+different from what you imagined, plus you should be careful about the
+variety of displays that your game runs on, or you may be getting
+complaints about how your ``olive'' more closely resembles ``puke
+gray''!
+
+Here is an example of unit icons:
+@example
+(add (infantry town city) image-name ("soldiers" "town20" "city20"))
+@end example
+In general, an icon name should describe the literal appearance of the
+image, instead of the type that you want it to represent.  The
+@code{"soldiers"} icon, for instance, just shows a row of soldiers; in
+one game the icon can be used to represent infantry, in another, armies
+in general, and in another, the national guard.  There is an
+@code{"infantry"} image also, but it is the standard ``crossed
+bandoliers'' symbol, and is really only sensible for specialized
+military games.
+
+Here is an example of a terrain pattern:
+@example
+(terrain-type plains
+  (color "green") (image-name "plains") (char "+")
+  )
+@end example
+
+The @code{"plains"} is defined in @code{terrain.imf}, as basically
+a blank 8x8 tile with two pixels turned on, which textures things
+somewhat:
+@example
+(imf "plains" ((8 8 tile)
+  (color (pixel-size 1) (row-bytes 1)
+   (palette (0 7969 46995 5169) (1 0 25775 4528))
+   "00/40/00/00/00/04/00/00")
+  (mono "00/40/00/00/00/04/00/00")))
+@end example
+
+For extra fine control on color displays,
+you can also set the colors of unseen terrain
+and the grid separating cells, via the globals @code{grid-color}
+and @code{unseen-color}.
+
+Note that some display systems (such as the X Window System)
+allow users to customize
+most or all of their colors, so individuals may override your choices.
+Not much you can do about that though!
+
+@menu
+* Image Format::
+* Image Design Tools::
+* Image Design Hints::
+@end menu
+
+@node Image Format
+@subsection Image Format
+
+@example
+(imf "example" ((8 8) (mono "0011223344556677")))
+@end example
+
+[describe when fleshed out]
+
+It may happen that you will want to add an image that is similar to an
+existing image.  While you can replace the existing image, you may alter
+the appearance of some other game for the worse (perhaps its image
+colors have been designed to work together).
+
+The first rule of image naming is to choose the name to describe the
+image literally.  For instance, you may have designed an anchor image
+that is to represent a port.  However, you should name the image
+"anchor" and not "port", so that it may be used in other games.  Second,
+if the image should have a difference appearance in different eras or
+contexts, you should append that as a qualifier to the basic image name;
+so a soldier image from the American Civil War era (1861-1865) would be
+"soldier-acw".
+
+Some images are more symbolic than pictorial, such as standard military
+symbology.  In those cases the order should be function-size-individual,
+so as to get images with names like @code{inf-bn} for an infantry
+battalion or @code{armor-div-7th} for an image representing the 7th
+Armored Division specifically.
+
+If you want your image to be specific to a particular game, and not
+to share with any other games (or be affected by image changes to
+accommodate them), prefix your image with the name or abbreviation
+for the game.
+
+To summarize, here are the recommended name formats:
+@example
+[<game>-]<picture>[-<era>]
+[<game>-]<function>[-<size>][-<era>][-<side/individual>]
+@end example
+
+Finally, if your image has no obvious way to distinguish it, then you
+must append a distinguishing number.  So multiple generic dragon images
+are "dragon", "dragon-2", "dragon-3", and so forth.
+
+None of these naming rules are enforced by the software; they exist to
+bring some semblance of order to a large and complicated image library.
+
+@node Image Design Tools
+@subsection Image Design Tools
+
+Whether you use platform-specific paint/draw programs, or
+you collect images in other formats, you will need to translate these
+into imf format, and then integrate into the existing library.
+Typically, each platform includes a tools to help with this;
+for instance, the Unix program @code{x2imf} reads X11 bitmap files and
+produces imf files, while the Mac program @code{IMFApp} allows both
+previewing of images and translation between imf files and Mac resources.
+
+As an additional aid, the program @code{imf2imf} is a Unix program that
+transforms a single imf file with many images into a set of files each
+with one image, and vice versa.  This is useful when merging sets of images
+together:
+
+@example
+imf2imf foo.imf --explode -o tmp
+
+<copy other files into tmp dir>
+
+imf2imf tmp/*.imf >newfoo.imf
+@end example
+
+@node Image Design Hints
+@subsection Image Design Hints
+
+The design of each graphical image can and should be somewhat
+independent of the basic game design; this allows for reuse of pictures.
+
+The first thing you should do is to check the image library on your
+machine.  The image you're looking for may already be there, but perhaps
+under a different name.  Even if you don't find it, you may notice an
+image that is close enough to be a good starting point.  The @i{Xconq}
+image library presently includes hundreds of images, so the chances are
+pretty good that you'll find something useful.
+
+The second thing to do is to look around for images in some other
+format, and to massage them into a usable form. 
+
+Designing images from scratch should be your last resort.
+Designing good images and patterns is a specialized and demanding
+category of artwork that I'm not going to go into here.  My best advice
+is to learn from the pros, and don't be afraid to experiment.
+
+@node Game Module Organization
+@section Game Module Organization
+
+Each separate file is known as a @dfn{game module} or just @dfn{module}.
+A module has a name, displayed name, an advertising-style blurb, a version,
+and designer notes.
+
+This is an example of an elaborately-declared game module with no
+actual content:
+@example
+(game-module "foobar"
+  (title "Foo of Bar")
+  (blurb "An exciting game with lots of cliffhanging suspense")
+  (version "1.3")
+  (program-version (>= "7.0.3"))
+  ;; other properties?
+  (complete-game true)
+)
+
+;;; contents here
+
+(game-module (notes (
+  "This is just a sample game."
+  ""
+  "It's not really as interesting as the blurb makes out."
+  )))
+
+(game-module (design-notes (
+  "This is commentary addressed to other designers."
+  "Also a good place to mention things to work on."
+  )))
+@end example
+The @code{notes} and @code{design-notes} could have been supplied with
+the first @code{game-module} declaration, but in practice, putting the
+player and designer notes at the end of the file keeps them out of the
+way.  You can supply any number of @code{game-module} declarations in a
+file.  Only the first need include a name.
+
+The game module format is only loosely structured.  In general, anything
+that you might want to reuse or combine in different ways should be a
+separate module.  Good candidates include text generators and maps of
+real terrain.  Unfortunately, they don't always mix-and-match as well as
+you might like!
+
+The following are the generally preferred module names:
+
+Terrain-only modules should be named @code{t-}@i{xxx}.
+
+Lists of units should be named @code{u-}@i{xxx} or @code{ob-}@i{xxx}
+(for ``order of battle'').
+
+Name generators should be name @code{ng-}@i{xxx}.
+
+When supplying a year in the module name, use four digits,
+unless the rest of the name makes the
+century clear (WWII scenarios are pretty much guaranteed to
+be in the 20th century!).
+
+@node Building New Games
+@section Building New Games
+
+There are at least three ways to make a new game design: use @i{Xconq}
+commands to ``play'' a game and then save it, create and text-edit the
+text files defining a game, or write and run special-purpose programs
+that create games.  A combination of these techniques will likely prove
+the most useful, since each alone has both strengths and weaknesses.
+For instance, text editing may seem like a crude approach, but is the
+only way to produce certain types of scenarios, and text editors have
+many facilities (such as regular expression replacement) not directly
+available in @i{Xconq}.  On the other hand, maintenance of the correct
+transport/occupant relationships between units is hard to do while
+editing text, but comes for free when using @i{Xconq} itself.
+
+@menu
+* Building Scenarios::
+* Designer Mode::
+* Saving Scenarios::
+* Preparing a Game for Use::
+* Installing a Game::
+* Playtesting::
+* Safety::
+* Balance::
+* Complexity::
+* Combinations::
+@end menu
+
+@node Building Scenarios
+@subsection Building Scenarios
+
+The easiest way to customize @i{Xconq} is to build a scenario.  A
+scenario is basically a saved game from which irrelevant details, such
+as the list of players, has been omitted.  Typically this will include
+tweaking details, removing random irrelevant junk, and generally tuning
+things.
+
+One way to do this would just be to start a normal game, save it, and
+then dig through the saved game and edit it, since the saved game is
+itself a game module.  Sometimes this is easy, more likely it will be
+quite hard and error-prone.  A better way is available, in the form of
+``designer mode''.
+
+@node Designer Mode
+@subsection Designer Mode
+
+There are two ways to get into designer mode; one is to start up a game
+with the appropriate option (@code{-design} under Unix), which makes
+every player with a display a designer, the other is to switch on a flag
+after the game has started.  Being a designer is a property of a side,
+so in theory a game could have a designer and several other human
+players, or even multiple designers (this might be useful in having
+assistants to help with the construction of large scenarios, or just to
+have displays open to each side's view of the scenario).  AIs
+effectively sit out the game while designers are present.
+
+Designer mode enables an additional set of commands on the menu or map
+control panel, as well as removing some restrictions on the use of
+normal commands.  It also enables more elaborate game saving machinery,
+so you can save only the parts of a game that you want to make into a
+scenario.
+
+Modifications to normal commands include the permission to look at and
+do any command on any unit, including independents and units belonging
+to other sides.  For instance, any unit can be renamed at any time by
+any designer in the game.  The modications include the following:
+
+@itemize @bullet
+@item
+Move commands can put any unit at any destination instantly.
+
+@item
+Any unit can be put on any side.
+
+@item
+Any unit can be disbanded instantly.
+
+@item
+Any terrain can changed to any type.
+@end itemize
+
+Some interfaces may also provide additional tool palettes and the like.
+
+@node Saving Scenarios
+@subsection Saving Scenarios
+
+If you're not in designer mode, then saving the game will save
+absolutely everything.  In designer mode, the interface should ask you
+what parts of the game you want to save, and what to name the module.
+
+If you don't save everything, then you should start up another game just
+to confirm that you got what you wanted, @i{before} shutting down the
+@i{Xconq} that you're designing with.  Sometimes you won't have saved
+what you thought you did...  It's also a good idea to keep a backup copy
+of data, especially the indecipherable area layers; use the nesting
+comments @code{ #| |# } around the old stuff, only delete when you're
+sure it's no longer of interest.
+
+@node Preparing a Game for Use
+@subsection Preparing a Game for Use
+
+Once you've constructed a game, you should bring it to a state where it
+can be given to other @i{Xconq} players.  I recommend copying a standard
+software release strategy.  This means documenting how to play the game,
+documenting how it works internally, removing unused junk and dubious
+features, simplifying where possible, resolving open issues if possible,
+documenting them as known problems if not.  This gets you to the point
+of having an ``alpha'' or ``beta'' version (the terms are not precise!).
+These can be given to other people for testing, but should be clearly
+identified as test versions, because your testers may pass copies along
+to others without you knowing about it.  After some playtesting (see
+below), edit your game into its final form, call it 1.0 and release it
+to the world!
+
+After you release your game, you may get some feedback about
+unanticipated problems.  When you resolve these, and want to make a new
+release, be sure to give it a distinct version number.  This will be
+important to deciding whether subsequent complaints are about your new
+release or some older one.  If you always put the version number into
+the @code{version} property of the @code{game-module} form, then it will
+be displayed to players when they ask for help on the game.
+
+@node Installing a Game
+@subsection Installing a Game
+
+Once the scenario is constructed and saved, you can install it in the
+library and otherwise do as you like with it.  See the interface
+documents for platform-specific installation details; in general, just
+copying the files into the @code{lib} directory will suffice.
+
+@node Playtesting
+@subsection Playtesting
+
+Playtesting is extremely important, even for simple game!  You should
+try as many combinations of startup options as possible - for instance,
+the combo of two humans and one machine might reveal a peculiarity that
+is not observed in a two-person game.  You can solve many problems by
+adding more restrictions.  Since the scenario is your concept, you are
+free to make whatever decisions are necessary to realize that concept;
+if somebody complains, they are free to make their own designs.
+
+Playtesting is the time when you may have to sacrifice realism and
+favorite theories for playability.  Listen to and watch yourself and
+your testers as the game is played.  For instance, you might have
+included a city out in the boonies, but in the game it never does
+anybody much good, while still requiring some amount of attention
+regularly.  Lose it.
+
+Game startup can be confusing to players if they all start out with lots
+of units needing to be told what to do.  One solution is to put most
+units on automatic behaviors that expire in a turn or two, so that
+novices gradually hear from all the units, while experts can still
+override right from the outset.  Another approach is to make units
+independent and allow them to be captured early on.  Still another
+approach is to make units come in as reinforcements at preset times and
+locations.  Since players will form their strongest impressions of a
+game based on its appearance at startup, attention to this will pay off.
+
+@node Safety
+@subsection Safety
+
+While generally safe -- @i{Xconq} shouldn't crash while you are
+designing nor upon starting up your scenario -- you can do silly things,
+like loading a submarine with battleships as passengers.  @i{Xconq}
+won't complain, but it may behave very strangely.  For instance, a unit
+might be able to travel with a transport and leave it, but not be able
+to get back on again.
+
+One way to test a game is to remove all the scorekeepers and make all
+the players be AI-controlled.  The AI code will then act totally
+randomly, thus exercising parts of your design that you may not have
+thought much about.  A convenient way to try out various scorekeepers is
+to put them in variants, then select them upon startup.
+
+@node Balance
+@subsection Balance
+
+Game design often involves subtle questions of balance which
+will only be revealed by repeated play of the game.
+
+Although as many of the game parameters as possible are checked, there
+is plenty of room for subtle loopholes.  You should think carefully
+about the consequences of each parameter, being particularly sensitive
+to degenerate winning strategies.  Most common are units that are too
+powerful, too fast, or are built so quickly that they overwhelm any
+opposition.  Players should always be a little ``hungry''; not able to
+get quite as many units or as much material as they would really like.
+
+@node Complexity
+@subsection Complexity
+
+Although GDL is a powerful language, you should avoid designing a game
+that is too complex to be humanly playable.  A single game can literally
+define millions of different parameters, each with a range including 100
+to 10,000 distinct values.  It is clearly possible to spend many years
+exploring just a single set of these!  For more playable and enjoyable
+games, either pick a single thing to treat in detail, or else do
+everything in a simplified way.  For instance, if you want elaborate
+movement and combat rules, avoid or even eliminate materials and
+associated material handling rules.
+
+Another thing to keep in mind is that the introduction of a new type may
+have far-reaching consequences. For instance, an additional unit type
+will need its interactions with @i{all} other unit types defined, as
+well as with terrain and materials, and those new interactions may in
+turn affect others.  One approach is to introduce a new type as a slight
+modification of an existing type, then to share most of the definitions.
+Another thing you can do is to put complexity into the variants, so
+players with a taste for punishment can indulge themselves, while
+leaving the basic game as more of a fun thing.
+
+@node Combinations
+@subsection Combinations
+
+Many of the 700-plus game parameters were chosen for their ability to
+combine in interesting ways, rather than for obvious usefulness.  For
+instance, construction in a city can by default generate an infinite
+stream of units.  But suppose you want to put a limit on the numbers of
+that type of unit?  One way is to define a material that is essential
+for construction of that type, let the builder have an initial supply,
+but provide no way to get more of that material.  When it runs out, no
+more units!
+
+Another trick is to motivate an activity by making it a prerequisite to
+the basic builtin goal of defeating the other player.  The age of
+discovery worked this way.  The kings of that time weren't interested in
+new lands @i{per se}; they wanted exploitable possessions, that could be
+used to get gold, to buy armies big enough to defeat their neighbors.
+You could describe this situation almost exactly, by making gold a
+material, obtainable only by the discovery and capture of independent
+gold mine units, which are thinly scattered over the world and can be
+found only by careful exploration.
+
+Be inventive!  Studying the predefined games should suggest many tricks;
+the ``Tricks and Techniques'' section below describes even more.  Be
+sure to document the trick carefully, or the next time you work on the
+game, you might break it, resulting in unhappy players wondering why
+their usual strategies don't work anymore.
+
+@node Debugging Designs
+@section Debugging Designs
+
+Completely new game designs usually have a number of bugs.  There are
+several stages of trouble that you may encounter.  First, the @i{Xconq}
+may fail to read a game module completely.  It will try to report what
+happened, but if for instance you left out a closing parenthesis, you
+may get some strange error messages.  This is just plain old syntax
+error trouble.
+
+Once you've successfuly read in your new game, bring up the online help
+and scan through to see if the values present are what you thought.
+Sometimes the reader does not interpret a module in the way you thought
+it would.  The @code{print} form is useful for debugging at this point;
+it can show you whether a defined symbol has the value you thought it
+did.
+
+However, the most serious problems with games are play balance issues.
+Some can be found out by watching a machine player attached to a
+display, since its decisions are based on perceived values of the units.
+The most subtle bugs can only be uncovered by extensive play
+interspersed with judicious alteration of parameters.  I find it useful
+to play for a while, then review and adjust the game parameters all at
+once, thus avoiding tweaking one parameter only to find that it results
+in another being inconsistent.  Parameters interact in many ways - you
+should keep this in mind when experimenting.
+
+Something else to keep in mind at this point is that playability should
+outweigh realism.  For example, real-life airplanes can travel 1,000
+times faster than a person walking on the ground, but airplanes that
+could move 1,000 cells in a turn would be ridiculous (try it out,
+@i{Xconq} will let you do this!).
+
+@node Tricks and Techniques
+@section Tricks and Techniques
+
+This section discusses specific kinds of design problems and ways that
+you might solve them in @i{Xconq}.  These are merely suggestions; in the
+past, game designers have come up with all sorts of ingenious ideas.  If
+you come up with one yourself, please pass it along!
+
+@menu
+* Limiting Unit Quantities::
+* Handicapping::
+* Buying the Initial Setup::
+* Leaders::
+* Navigable Rivers::
+* What Ranges for Values?::
+* Fatigue::
+* Brainless Units and Scorekeeping::
+* Days and Years::
+* GDL Optimization::
+* Conversion from Xconq 5::
+* Xconq 5.x Setproduct::
+* Even More::
+@end menu
+
+@node Limiting Unit Quantities
+@subsection Limiting Unit Quantities
+
+In some cases you may want to constrain the total number of units in play,
+perhaps because of performance reasons, or because some type tends to
+proliferate more than is desirable, or because your game concept requires
+a hard limit on the number of units.  You have several ways to do this.
+
+@i{Xconq} does give you several parameters
+that put a simple cap on total numbers, either by unit type or for all
+units, and per side or for all sides together.
+You can also define a material type that is essential to the creation,
+completion, or operation of units, and make that material be hard to come by.
+Iron to make ships, gold to pay armies, or food to feed armies could all
+work this way.  If the only source of the limiting material is an initial
+supply in a starting unit, then this is a hard limit; if production of the
+limiting material is slow, then the limit is softer but still very real.
+
+Limits on unit quantities have some interesting uses beyond the obvious ones.
+For instance, a
+useful type that is limited to at most a single instance could be a sort of
+``football'' where the side that has the one unit finds itself being
+chased after by all the other sides trying to get it.
+You could make a WWII-era game with
+``Oppenheimer'' as the only scientist who knows how to make
+an atomic bomb (I know, it's not realistic), and have the different sides
+trying to kidnap him.
+
+@node Handicapping
+@subsection Handicapping
+
+Very rarely will the @i{Xconq} players in a game all be at the same skill
+level.  Sometimes this is OK, since weaker players really do learn more
+from their losses than their wins.  However, when the goal is to have fun,
+or when the difference in abilities is extreme, you can balance things out
+in several different ways.
+
+One simple approach is just to design an imbalanced scenario, document
+it as such, and let players choose the stronger and weaker sides as desired.
+In many cases this should be sufficient; for instance, accurate historical
+simulations.
+
+The next most simple solution is to set up sides or side classes and
+fill random properties differently.  Weaker players could choose a side with
+more technology or whose class allows more powerful units.  This isn't
+very adjustable, since all the sides and their property values
+have to be predefined.
+
+To enable the most precise match of player abilities, you can use the
+@code{initial-advantage} property of player objects.  This property is
+a relative value, defaulting to 1, and indicates how strong the initial
+unit setup should be relative to the other players.  For instance,
+if a three-player game includes advantages of 2/3/7, then the second player
+will have three units for each two of the first player while the third
+player (the weakest) will have seven.  The implementation of relative
+advantages is up to game synthesis, so for example the @code{make-countries}
+will adjust all the numbers of initial units to match the requested
+advantages.  Note that this affects only the initial setup, and only
+certain synthesis methods.
+Once a game has started, all sides are always on an equal footing.
+
+@node Buying the Initial Setup
+@subsection Buying the Initial Setup
+
+A common form of game setup is to give each player a quantity of
+``money'' of some sort, then give them a menu from which to buy things.
+The way you would implement this in @i{Xconq} is similar to the method
+for limiting unit quantities - make the money be an initial supply of a
+special material type not used for any other purpose.  This initial
+supply should be given to a first unit that each player starts with.
+This first unit could be something like the adventurer in a fantasy game
+who starts with a pot of money, so the first unit is also the most
+important one, or perhaps a little dummy unit that buys the other units
+and then is of little interest thereafter, sort of like the national
+bank for the player's country.
+
+Here's an example:
+@example
+(unit-type adventurer
+  (start-with 1)
+  )
+(unit-type shop
+  (start-with 1)
+  )
+
+(unit-type sword)
+(unit-type armor)
+(unit-type boat)
+
+(material-type money)
+
+(table initial-supply (adventurer money 200))
+
+(table acp-to-create (shop (sword armor boat) 1))
+
+(table material-to-create ((sword armor boat) money (20 100 1000)))
+@end example
+The shop can't do anything besides create items when given money.  The
+adventurer starts with the money and has to give it to his/her shop,
+then order the shop to create the items desired.  The shop will create
+completed items instantly, ready for the adventurer to use.  A slight
+simplification would be for the shop to start with the money itself.
+
+Note that this can't be extended to buy extra intrinsic qualities, such
+as hit points or action points.
+
+@node Leaders
+@subsection Leaders
+
+Some games, particularly wargames set in Napoleonic times or earlier,
+feature the concept of a ``leader'' as the sole individual who can make
+things happen.  Without a general or field marshal, the army won't move.
+Whether or not this is truly realistic, it does have the effect of
+focusing the game on key individuals!
+
+One way to do this is to make the leader be a self-unit and limit the
+distance of direct control over other unit types.
+Another way is give armies 0 acp and allow leaders to push them around,
+and still another way is to use leaders as occupants
+that add to an army's speed.
+
+@node Navigable Rivers
+@subsection Navigable Rivers
+
+The concept of a navigable unbridged river is a real problem for @i{Xconq}.
+Non-navigable rivers are easily done as border terrain,
+and navigable rivers with lots of bridges can be connections
+(since by their nature, connections can never prevent movement).
+But a navigable river that can't be crossed easily is more of a problem.
+One way is to make a chain of adjacent cells of a water terrain type.
+However, this can be quite unrealistic if cells represent large areas,
+say 10-100 km across; you can end up with continents consisting of more
+river than land.  In some cases, you can define a ``river valley''
+terrain type where both vessels and ground units can exist, with the
+river border terrain along just one edge of the valley.
+
+You can also allow border sliding.  Border sliding allows a ship to pass
+along the length of a border, but it does require the ship to be in
+compatible terrain at both ends of the border.  So define the river
+as a chain of alternating water cells and water borders connecting them
+together.  Then the river acts as a barrier to units wanting to cross,
+while allowing them to see over to the other side,
+and at the same time ships can pass up and down the river freely
+(modulo any ZOC exerted by units on either side).
+
+@node What Ranges for Values?
+@subsection What Ranges for Values?
+
+One of the problems that you encounter when defining a lot of interrelated
+units with lots of properties and tables
+is to decide where to start out with the numbers.
+There are a couple ways to get started.
+
+First, you can start from real-world numbers.  Let's say your game concept
+is based on turns that last about one day, and you want to use worlds
+with cells that are about 10 miles across.  Now a person in good shape
+can walk about 2 miles per hour, or 20 miles in a day, which comes out
+to 2 cells/turn as @code{acp-per-turn} for units on foot.  This allows
+a speed of 1 cell/turn for injured, tired, or overburdened persons, via
+the various speed modifiers.  However, if this same game includes
+automobiles and airplanes, then using the same calculation,
+we get automobiles that can move 60 cells/turn and airplanes that can
+move 600 cells/turn!  The massive disparity in speeds makes for poor
+playing; every turn each airplane will make 300 moves while the foot
+traveller makes 1.  To make the game work, you'd have to make airplanes
+slower (they have to refuel a lot perhaps) or make people faster (nobody
+walks anywhere anymore).  So the real-world numbers approach isn't
+foolproof.
+
+Another way to go is to start with the smallest values and work up.
+For instance, in the monster game above, you could assume that the mob moves
+the slowest, and give it a speed of 1.  Then you say that the national
+guard should be able to move twice as fast, and give it a speed of 2.
+Then the monster should be able to chase and catch mobs and guards
+that run away, so you give it a speed of 3 or more.  This approach
+is more painstaking, particularly when lots of numbers are involved.
+
+You can use both approaches together as well, working with real-world
+numbers until they get too weird, then adjust to make relative values
+sensible, then do some more real-world calculations.
+As always, only playtesting is the final arbiter.
+Once the numbers ``feel'' right in a game,
+only the obsessive-compulsives will care about their exact values.
+
+@node Fatigue
+@subsection Fatigue
+
+Players are often unmerciful to their units, moving them nonstop,
+going into battle after battle, never a thought for how tired the
+poor units might be.
+Although @i{Xconq} does not include fatigue as a basic concept, it does
+have several ways to implement the effects of fatigue.
+
+One way is to use acp debt.  If you allow the acp to go negative during a turn,
+then the player can work the unit really hard for one turn, then it has to
+rest until its acp builds up to positive levels again.  While acp is negative,
+the unit can take no action on its own.  Over a period of
+time, the effect is that of a unit that can only do so much,
+but can exert itself when needed.
+
+Another way to do fatigue is via a material type, perhaps called
+``energy'' or ``enthusiasm''.  As an abstract sort of material,
+don't let energy be passed around (unless you want to have ``infectious
+enthusiasm'', might be useful sometimes for leaders and morale builders).
+Units need energy in order to move, and can consume energy faster
+than they produce.  For instance, if a unit has a speed of 3 hexes/turn,
+consumes 2 units of energy per move, and only produces 4 units of energy
+each turn, then on the average the unit will only be able to move 2 hexes
+in each turn, although if it saves up energy, then it can move the full
+3 hexes.
+Since different kinds of terrain can have differing productivity,
+you can also make some kinds of terrain be more tiring than others.
+A resort hotel unit could also be allowed to transfer energy to its
+residents, restoring them faster than a Motel 6.
+
+@node Brainless Units and Scorekeeping
+@subsection Brainless Units and Scorekeeping
+
+One special case to watch out for occurs in games with ``unintelligent''
+units, that is, they have an acp of 0.  If a side loses all of its units
+except for the unintelligent ones, the player will not be able to do
+anything except wait for the game to end.
+This might be OK, for instance if the idea of the game allows
+for a side to own a particular unit, whether or not it can do anything
+with it (perhaps the unit is a fort, and a side can win if it owns the
+fort, even at the cost of all its other units).  Usually, however, the
+side ought to just lose, in which case you will need to define a special
+scorekeeper that requires each side to have at least one of some
+sort of unit with acp > 0, or else it loses.
+
+@node Days and Years
+@subsection Days and Years
+
+[should go elsewhere]
+
+The @i{Xconq} world can be made to revolve around its sun and to rotate
+on its axis. [etc]
+
+To get a realistic hour-by-hour simulation, say
+@example
+(world
+  (day-length 24)
+  (year-length 8766) ; this is 365.25 days
+  )
+@end example
+
+@node GDL Optimization
+@subsection GDL Optimization
+
+The @code{add} form is very powerful and very useful for making
+groups of objects share some data.  The grouping also helps the
+designer to see how sets of numbers compare to each other.
+In other words, instead of having multiple forms:
+@example
+(unit-type foo
+  ...
+  (acp-per-turn 3)
+  ...)
+(unit-type bar
+  ...
+  (acp-per-turn 49)
+  ...)
+(unit-type baz
+  ...
+  (acp-per-turn 2)
+  ...)
+@end example
+you can say
+@example
+(add (foo bar baz) acp-per-turn (3 49 2))
+@end example
+to get the same effect.
+
+To get an inheritance-like effect, you can append lists of types
+together, as in
+@example
+(define mammal (dog cat cow))
+(define bird (hawk eagle condor))
+(define animal (append mammal bird fishie))
+@end example
+which results in a list of seven types.  It is possible to append
+different kinds of objects together.
+
+@node Conversion from Xconq 5
+@subsection Conversion from Xconq 5
+
+There are many scenarios extant from the version 5 of @i{Xconq}.
+Many of them are good games despite some of the quirks of version 5
+that they had to work around.
+Converting these scenarios to the new GDL syntax should provide some great
+new modules and at any rate provide a goldmine of ideas for updated @i{Xconq}
+game modules.
+
+A set of conversion scripts are provided that will help to ease the
+transition from version 5 to version 7, but they won't save you from
+learning the new GDL syntax or features.
+These scripts will NOT generate working games modules, but they will
+generate valid GDL syntax, and thereby spare you much tedium in conversion.
+
+The first thing to consider is the naming of the files/modules.
+There are already some loose guidelines for naming version 7 game
+modules (@pxref{Game Module Organization}).
+Terrain or worlds should be in modules named @code{t-xxx.g}.
+These are roughly equivalent to version 5 @code{.map} files.  Collections
+of units, such as the cities to populate world maps, should be in
+files named @code{u-xxx.g}, where @code{xxx} generally identifies which
+map they go with in addition to a general identifier (e.g. @code{1942}).
+Name generators are in files of the form @code{ng-xxx.g}, but you probably
+don't know or care about these yet.  And finally, if you are building
+a set of scenarios based on a core set of rules, you should consider a
+naming scheme that will link them all together so that players can
+find them easily.
+
+Having said all that, let's get on to the conversion.  The conversion
+scripts go somewhat blindly on the assumption that you've split
+everything up in the ``standard'' way.  That is, assuming that you've
+got a spiffy big scenario, that it comes in three parts: a
+period definition, a map and a scenario file.  If not, if you've
+@emph{dared} to combine some of these files, you should split them
+manually before starting the automated part of the conversion.
+
+Convert the map using @code{map2g}.  You want to use the -o option and your
+new t-something name and the -b with a full pathname to the period
+file that has the terrain type definitions in it.  This allows @code{map2g}
+to set the default base module and the get the appropriate character
+list for creating the map file.  The generated world will have its
+circumference set to match the width of the generated area,
+i.e. it will wrap from side to side.
+This is because all maps are cylindrical in version 5.
+
+Next, do a pass over the @code{.scn} file with @code{scn2g}.
+Again you should use -o to get the naming the way you want it.
+This should leave you with
+a very pretty set of units and a very rough hack at a set of victory
+conditions (i.e. scorekeepers).  The scorekeepers will need to be
+completely reworked, since they work rather differently in version 7.
+
+Now the home stretch, convert the @code{.per} file with @code{per2g}.
+Keep an eye on the output.
+If it complains about ``unknown keywords'' then you've
+probably used one of the more obscure features of version 5.  Don't
+panic because your obscurity will be preserved--commented out--in the
+resulting game module.
+Now you have to edit the module and start sorting out the
+bits that @code{per2g} couldn't handle.  Search for occurances of FIX.
+These are lines inserted by @code{per2g} to note places that need
+your attention.
+@code{per2g} may have done nothing to the line except comment it out,
+or it may have done a partial (or partially correct) conversion,
+or it may have done a complete and valid conversion but wishes to call your
+attention to related forms that can be added.
+
+For this process you are going to need to have the documentation
+close at hand to make sure you get the syntax right.  The best thing
+to do is read thru this chapter of the manual and then have
+the Reference Manual chapter on hand while editing the module.
+
+Generally the place to start will be the @code{make} and @code{maker}
+lines from the old period definition.
+These are not converted at all by @code{per2g}
+(because the machinery has changed so radically in version 7),
+but are often essential to being able to start up a game.  From there you
+can work your way through the rest of the file with frequent references
+to the manual and occasional test runs.  Check out the debugging tips
+in this chapter.
+
+@node Xconq 5.x Setproduct
+@subsection Xconq 5.x Setproduct
+
+@i{Xconq} version 5 had a sometimes-useful flag called ``setproduct''
+that could be set to false, with the effect that any attempts to
+@i{change} construction were disabled.  So for instance, a city that
+was set by a scenario to build bombers would then build bombers
+throughout the game.  The advantages were both in realism (retooling
+a factory can be very time-consuming) and in playability (no construction
+planning required).
+
+To emulate this in version 7, you can set @code{acp-to-toolup}
+to be zero for cities, but at the same time require 1 tp for each
+type that the city can construct.  In the scenario, set the value
+of the city's tooling to be 1 for the one or more types that you
+want it to specialize in (maybe switching between fighters and
+bombers should be possible, but not to submarines).
+Players can then start and stop construction as desired,
+but are limited to only particular types.
+Even captured independent cities can be limited in what they
+can be used to construct.
+
+@node Even More
+@subsection Even More
+
+An unwanted unit in a shared library file
+could be gotten rid of by matching on id or
+name and then setting hp to 0;
+@code{(unit "Corinth" (hp 0))}, for instance, would eliminate
+Corinth from an ancient Greek game.
+
+Elevation data, while interesting to include, can take up a lot of space
+and be more detailed than necessary.  The parameters here allow you to
+restrict elevations to a smaller range of values, which will allow
+for more compact encoding and simpler games.
+For instance, a game set in rolling countryside doesn't need a huge
+range of elevations; you could set elevations to range from 0 to 300
+meters, in 30-meter increments.  Then only 4 bits will be needed to
+encode each value, and yet the player will still see reasonable values
+like "150 meters", and formulas for temperature and other elevation
+dependent data will be correct.
+
+Note that just because a player controls a side doesn't mean that the
+controlled side can be taken out of the game; for one thing, certain
+types of units will not change sides under any circumstances.
+
+People materials should usually not be directly movable
+between units.
+
+ZOC should be less than combat range usually,
+since it means that exerter should be able to
+control ground (but could attack further in multiple turns).
+ZOC levels should be only those reachable by the unit.
+
+With all the costs of moving around,
+it may be that a unit has movement points left, but
+not enough to meet the full cost of a desired move action.
+You can allow player extra movement points to complete the action
+by setting @code{free-mp} to effectively add the needed mp.
+
+@c [to refman?]
+A hit on a complete unit should reduce by whole cp/hp, otherwise
+it will appear to be incomplete.  @i{Xconq} will not fix this,
+you have to arrange all the numbers yourself, or run the risk
+of player confusion.
+
+Bases should "anti-protect" aircraft in games involving both, but
+fighters should protect the base.
+
+@node Designing with the Common Interface
+@section Designing with the Common Interface
+
+The common interface includes both the Unix/X11 and Windows versions;
+game design works the same for both.
+
+The common interface provides a @dfn{design mode} that allows you to
+do many game design tasks interactively.  At present, you can use it
+to lay out maps, specify the contents of the different area layers,
+and set up units.  You can then save chosen elements of the design
+into a file.
+
+@menu
+* Common Interface Design Mode::
+* Common Interface Design Palette::
+* Common Interface Design Save::
+* Common Interface Image Families::
+@end menu
+
+@node Common Interface Design Mode
+@subsection Common Interface Design Mode
+
+There are several ways to get into design mode; you can specify
+@samp{-design} on the command line, you can choose Design from the Edit
+menu, or you can type in the long command @samp{design}.  When you do
+any of these, several things will happen: the side list will mark your
+side as a designer, the Show All item in the View menu will appear, and
+you will get a popup window with a palette of designer's tools.  The
+popup applies to all maps equally.
+
+The identification in the side list is for the benefit of other players,
+since it is actually possible to enable designing in a multi-player game.
+@c but maybe should disable, or else enable for all players
+@c simultaneously??  Somebody could enable designing, hack a bit,
+@c then switch back before anybody else in the game noticed...
+
+The Show All view control allows you to see everything accurately.
+It is switchable so you can compare what things look like to the player
+vs what they are in reality.  This is also important for side view
+painting, which is useful for exploration-based scenarios.
+
+Note that the online design mode is powerful, with few restrictions.
+This means you can scramble things if you're not careful.  Frequent
+saves are a good idea.
+
+@node Common Interface Design Palette
+@subsection Common Interface Design Palette
+
+The design palette consists of a number of buttons next to a varying
+frame whose contents vary depending on the button pressed.  Each button
+corresponds to a different sort of painting/placement mode.
+
+@table @code
+
+@item Normal
+This mode corresponds to normal survey mode.  This mode is mainly for
+moving units around.  You can move a unit by left-clicking to select it,
+then right-clicking on the desired destination.  You can even
+right-click on another unit to have the selected unit become an
+occupant.
+
+@item Paint Terrain
+In this mode, clicking and dragging in any map paints terrain, just as
+if you were using a standard paint program.  The varying frame displays
+samples of the terrain, as well as two popups, one for @dfn{foreground}
+terrain and one for @dfn{background} terrain.  The foreground type is
+what normally gets painted.  However, if you click on a cell of the
+foreground type, you will paint the background type into the cell, and
+will continue to do so when you drag the mouse.  This makes it easy to
+toggle when you're fine-tuning a coastline and so forth.  (It's easier
+to use than to describe!)
+
+You can also select border and connection types to paint, in which case
+clicking toggles the existence of the border or connection.  The
+background terrain type is not used while painting borders and
+connections.
+
+Note that you don't need to follow terrain/terrain or unit/terrain
+compatibility rules while painting; you can paint sea underneath a city
+if you like, or rivers through icefields.  However, the city will
+quietly disappear from the game when you start up the modified module.
+
+@item Place Unit
+In this mode, clicking on a map creates and places a unit.  Popups in
+the varying frame let you specify type and side.
+
+As with terrain painting, compatibility rules are not enforced.
+
+@item Paint People
+This mode lets you specify the side of the people in each cell.  The
+varying frame's popup lets you choose the side, then clicking/dragging
+paints.  Clicking on a cell with people on a different side converts
+them to your selected side, while if the people are on your selected
+side, then the cell becomes empty (not independent!).
+
+@item Paint Control
+This mode is very similar to the people-painting mode, but applies to
+the control layer instead.
+
+@item Paint Feature
+This mode is for painting geographical features.  You choose the
+feature from a popup menu.  You can also create new features and
+edit the name of any feature.
+
+You should turn on the display of display feature boundaries.  The
+feature you're painting have its boundaries drawn red, while the
+other boundaries will be gray.
+
+@item Paint Material
+[not yet implemented]
+
+@item Paint Elevation
+Use this mode to set terrain elevations.
+
+@item Paint Temperature
+Use this mode to set temperatures.
+
+@item Paint Clouds
+Use this mode to set cloud cover.
+
+@item Paint Winds
+Use this mode to set winds.
+
+@item Paint View
+Use this mode to paint the side view.  At present, this only works on
+the designing side's view.  In his mode, the paintbrush toggles the
+view between unknown and an accurate view of the terrain and units
+in each cell.  Turn off the Show All option on the View menu to see
+the effect of this; unknown terrain will still be visible, but dimmed.
+You need to switch out of designer mode to see exactly what it will
+look like to a game player.
+
+@end table
+
+Below the buttons is a popup with a numeric label.  This sets the radius
+of the paint brush.  A radius 0 brush affects only a single cell, while
+radius 1 applies to the cell and all adjacent, and so forth.  The radius
+goes up to 9, which is spectacularly large for most maps, and always at
+risk of painting over something you wanted.  A brush size of 2-3 is more
+useful for roughing-in shapes.  There is currently no undo for painting,
+so be careful!
+
+@c the following would be nice to have, but they're not implemented anymore
+@c @subsection Shortcuts for X11 Xconq Designers
+
+@c @itemize @bullet
+
+@c @item
+@c Clicking on the ``sides'' subwindow will select the current side.
+
+@c @item
+@c Clicking on the ``unit types'' subwindow will select the current unit
+@c type.
+
+@c @item
+@c Clicking a cell with the right mouse button in terrain-drawing mode
+@c will select the current terrain.
+
+@c @item
+@c Clicking a unit with the right mouse button in unit-adding mode will
+@c select the current unit type.
+
+@c @item
+@c Clicking a unit with the right mouse button in people-drawing mode
+@c will select the current side.
+
+@c @item
+@c Clicking a cell with the right mouse button in feature-drawing mode
+@c will select the current feature.
+
+@c @end itemize
+
+@node Common Interface Design Save
+@subsection Common Interface Design Save
+
+If you go to save the game while designing, you will get a much more
+elaborate dialog than for normal saving.  Use the checkboxes to decide
+which elements of the design to save.
+
+@node Common Interface Image Families
+@subsection Common Interface Image Families
+
+@i{X11 Xconq} can use images in either its portable image family format,
+or as bitmaps.  However, since images in portable format will work with
+other interfaces, you should only use bitmaps while prototyping,
+and translate them into portable form using @samp{x2imf}.
+
+To translate image families into bitmaps, use the tool @samp{imf2x}.
+
+The program @samp{xshowimf} displays image families.
+
+Control the display of three-color images (mono+mask) with the resource
+@samp{maskColor} (see @samp{XShowimf-co.ad} or with the command-line
+argument @samp{-mc}.
+
+To edit the image families, do something like
+@example
+mkdir tmp
+xshowimf [imf/xbm/xpm files...] -o tmpdir &
+(cd tmpdir; xpaint) &
+@end example
+
+@node Designing with the Mac Interface
+@section Designing with the Mac Interface
+
+Designer's tools and capabilities are available via the Design item in
+the Edit menu, or by typing @samp{design} into the Command window.  The
+display changes to show you everything in the world, you get a number of
+special privileges (such as the ability to look at and move ANY unit),
+and you get a designer's tools palette.
+
+@menu
+* Using the Palette::
+* Mac Interface Images::
+* IMFApp::
+* Mac Interface Sounds::
+@end menu
+
+@node Using the Palette
+@subsection Using the Palette
+
+In general, palette items use Option-click and Option-Shift-click to
+cycle through possible values, and many also have a popup menu.  Also
+note that the selection can be changed without changing the tool; you
+have to click in the tool and get a heavy border around it before the
+tool is actually changed.  Each type of designer tool has a distinct
+cursor when over a map window, so look for that as well.
+
+@table @code
+
+@item Normal
+In this mode the mouse behaves just as in normal survey mode.
+
+@item Painting Terrain
+If you select the terrain item in the palette, then clicking/dragging in
+a map paints the current terrain type displayed in the palette
+(Option-clicking the terrain item cycles through all the types,
+Shift-Option-click does the same thing in reverse order).  The
+background terrain type can be cycled via Command-click and
+Command-Shift-click.
+
+@item Creating Units
+The unit item includes a popup of all unit types.  Use it to select the
+unit type you want to create, then clicking on a map window will place
+the unit at that location.  Unit placement ignores stacking limits,
+terrain compatibility, and other issues, so you may be able to place a
+unit but not have it successfully appear there when a player tries to
+use the game module.
+
+The side item includes a popup with all the sides listed, including the
+``independent'' side.  Use it to set the side with which a new unit will
+be created.  Not all units are allowed on all sides - @i{Xconq} marks
+the sides that are allowed with the current unit type, and the unit
+types that are allowed with the current side.
+
+@item Painting People
+If you select the side item in the palette, you can click/drag in a map
+to set the side of the people in the cells clicked or dragged over.
+
+Note that the chosen side affect either people painting or unit
+creation, depending on which item is selected as the painting tool.
+
+@c @item Painting Material
+@c You can create materials in the terrain by selecting the materials
+@c item in the palette, then painting in any map.
+
+@item Creating Named Features
+The features item in the palette includes several buttons and a popup
+menu that displays all the features currently defined.  You can click on
+the buttons to create, destroy, and rename a feature.  You can add or
+remove cells of a feature by painting in any map.
+
+@item Setting Brush Size
+The Brush item sets the area of effect of the painting tools.  A brush
+radius of 0 (the default) results in painting affecting only the cell
+in which the mouse is clicked or dragged, while a radius of 1 causes
+the adjacent cells to be affected also.  Adjust the brush size up and
+down by option-clicking and option-shift-clicking in the brush item.
+
+@item Painting Elevations
+You can set the elevations of terrain by selecting the elevations item
+in the palette, then painting in any map.
+
+@item Painting Views
+When you select this item, you get a tool that toggles the designing
+side's view of a cell.  The toggle goes between unknown terrain and
+an accurate view of the cell and any units in it.
+
+@c @item Painting Temperatures
+@c You can set the temperatures by selecting the temperatures item in the
+@c palette, then painting in any map.
+
+@c @item Painting Winds
+@c You can set the direction and force of winds by painting them.  The
+@c values of direction and force are controlled by Option-click
+@c (Option-Shift-click for reverse direction), and Command-click
+@c (Command-Shift-click for reverse direction), respectively.
+
+@c @item Painting Clouds
+@c If you select the clouds item of the palette, you can set the density of
+@c cloud cover by painting.
+
+@end table
+
+@node Mac Interface Images
+@subsection Mac Interface Images
+
+If you want to change the icons and pictures in an existing game,
+or if you want to define new ones, you can do this either with a
+resource editor such as ResEdit, or with a resource compiler such as Rez,
+or by editing the portable ``imf'' files.  @i{Xconq} can use PICTs, icons,
+and patterns to draw with; collectively these will be called ``images''.
+A group of images that all represent different views of the same thing
+is an ``image family''.  The concept is similar to the icon families used
+by Macintosh programs, but is much more general, since you can have any
+number of images of different sizes and depths, as well as images embedded
+in each other.
+
+@subsubsection Icons and Patterns
+
+The resource file @code{:lib-mac:Images} is the main repository of Mac imagery.
+You can resource-edit this file, close it, start up @i{Xconq}, and see
+the results.  For instance, if you want to improve the appearance of the
+``city20'' image, you will find a 32x32 @code{'cicn'} with that name as
+well as a 16x16 'sicn'.  You can modify these as you like.
+Note that the 'sicn' includes a mask sicn, as does the @code{'cicn'}.
+Masks are optional, but improve the appearance of the images.
+If you have a new type in a game and you want an image for it,
+just create a resource, such as a @code{'cicn'}, give it the name of
+the type or its @code{image-name} property, and you're done.
+
+The standard resource types for images are @code{'cicn'}, @code{'ICON'},
+@code{'PAT '}, @code{'ppat'}, @code{'SICN'}, and @code{'PICT'}.
+If a resource of one of these types has a name
+matching the @code{image-name} (or the type name if no image name is defined)
+of a type in a game, then @i{Xconq} will use that resource.
+There are two additional resource types: @code{'XCic'} and @code{'XCif'}.
+The @code{'XCic'} resources are named colors that can be referred to via
+@code{color} properties of types and sides.
+@code{'XCif'} resources are raw image family forms
+in GDL syntax.  If the contents of an image family can be totally defined
+by the standard resource types,
+then there need not be an @code{'XCif'} resource,
+but if an image has any embedded subimages, or a specific location for
+subimages, then this information will be in the @code{'XCif'} resource.
+You can edit by defining this resource type as @code{'TEXT'},
+which will give you a text editor for the resource, or by just
+opening the @code{'TEXT'} editor on the resource.
+For more details about the syntax of image families in GDL,
+see the reference manual.
+
+Warning: don't ever make a @code{'cicn'} with id 256!
+For some reason, if there is a @code{'cicn'} 256 in either the application
+or in any of the resource files that it has open,
+the small color icons in both the apple menu (far left)
+and the application menu (far right) become small unrecognizable blobs.
+This effect seems to be innocuous behaviorwise, but the appearance is poor,
+and users choose menu items by looking at those icons, so trashing them
+is a bad thing to do.
+
+@subsubsection Game Preview Pictures
+
+If the Resources file has a PICT whose name is ``<game-name> game'',
+then if a player selects <game-name> in the new game dialog, this PICT
+will be displayed in the dialog.  This is useful to give prospective
+players more of an idea of what the game might be like,
+plus it's a chance to show off your artistry!
+(If you're a lousy artist, just make a screen shot of the map and use that.)
+The area for the picture is about 200 pixels across and 100 high;
+pictures smaller than that will be centered, while larger
+pictures will be clipped to fit.
+
+@node IMFApp
+@subsection IMFApp
+
+IMFApp is a utility for examining and converting the image families
+used by Xconq.
+
+The general concept of image families is similar to that of the Finder icon
+families, where several depths and sizes of an icon are available for
+use in different situations.  Xconq adds extra complexity to the
+concept by including tiling patterns, by allowing icons to be embedded
+in each other, and by using the same image families on several different
+platforms.
+
+The platform-independent format would
+be hard to edit, so IMFApp includes functions to convert between the
+common format and Mac resources.
+These functions are available from the File Menu.
+
+In addition, IMFApp also allows you to look at the images.
+You can control the images' size, overlay, and use of color.
+The primary use for this is to test how an image works in various
+situations.  Also, if you design games, this is a good place to
+start when choosing images for your game.
+Since there are hundreds of images available already,
+the chances are good that the images you want have already been designed.
+
+The File menu has items to open and save imf and resource files.
+New clears any existing images.
+Opening multiple files merges their contents.
+
+The Edit menu is not used.
+
+The View menu includes all image appearance controls.
+Everything in this menu affects only the @emph{display} of the images,
+and does not, in any way, affect the image families themselves.
+Display options include size of images, color/mono, name, mask,
+background/emblem images, and more.
+
+@node Mac Interface Sounds
+@subsection Mac Interface Sounds
+
+Mac @i{Xconq} handles sounds in a very simple way.  The resource
+file @samp{:lib-mac:Sounds} includes a number of named @code{'snd '}
+resources.  If an event movie includes a form like @code{(sound "pop")},
+then the event occurs, Mac @i{Xconq} will look for a sound resource
+named @code{pop} and play it.

@@ -1,0 +1,70 @@
+sides
+units
+
+(debug on)
+(debugm on)
+(run 8)
+(quit if-end)
+(debug off)
+(debugm off)
+save
+(debug on)
+(debugm on)
+(run 2)
+(quit if-end)
+(debug off)
+(debugm off)
+save
+
+(run 8)
+(quit if-end)
+(debug on)
+(debugm on)
+(run 2)
+(quit if-end)
+(debug off)
+(debugm off)
+save
+
+(run 18)
+(quit if-end)
+(debug on)
+(debugm on)
+(run 2)
+(quit if-end)
+(debug off)
+(debugm off)
+save
+
+(run 38)
+(quit if-end)
+(debug on)
+(debugm on)
+(run 2)
+(quit if-end)
+(debug off)
+(debugm off)
+save
+
+(run 78)
+(quit if-end)
+(debug on)
+(debugm on)
+(run 2)
+(quit if-end)
+(debug off)
+(debugm off)
+save
+
+(run 158)
+(quit if-end)
+(debug on)
+(debugm on)
+(run 2)
+(quit if-end)
+(debug off)
+(debugm off)
+save
+
+quit
+

@@ -1,0 +1,94 @@
+
+RCS file: /cvs/xconq/xconq/kernel/help.h,v
+Working file: help.h
+head: 1.10
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.2
+	xconq-7_4-branch: 1.2.0.4
+	xconq-7_4-branchpoint: 1.2
+	xtconq-pre-removal: 1.2
+	xconq-7_3_3-release: 1.2
+	xconq-7_3_2-release: 1.2
+	xconq-7_3_1-release: 1.2
+	xconq-7_3-branch: 1.2.0.2
+	xconq-7_3-branchpoint: 1.2
+keyword substitution: kv
+total revisions: 10;	selected revisions: 10
+description:
+----------------------------
+revision 1.10
+date: 2004/07/26 02:03:37;  author: mcdonald;  state: Exp;  lines: +2 -0
+Convert entire help system to use format-indep indentation and newlines.
+New help output functions.
+Improve formatting of help system display.
+Improve help file output.
+----------------------------
+revision 1.9
+date: 2004/07/25 20:08:16;  author: mcdonald;  state: Exp;  lines: +10 -0
+New Xcscribe feature: write out game index.
+Xcscribe improvements.
+Fix bug in module includes processing.
+----------------------------
+revision 1.8
+date: 2004/07/24 04:20:22;  author: mcdonald;  state: Exp;  lines: +5 -2
+Improve help system. Complete help files directories for games.
+----------------------------
+revision 1.7
+date: 2004/07/22 03:42:52;  author: mcdonald;  state: Exp;  lines: +27 -0
+Improve help system.
+Add navbars to some help files.
+----------------------------
+revision 1.6
+date: 2004/07/16 00:35:42;  author: ronne;  state: Exp;  lines: +1 -0
+Improve the blurb code.
+----------------------------
+revision 1.5
+date: 2004/07/11 19:00:42;  author: mcdonald;  state: Exp;  lines: +1 -0
+More output functionality for help system.
+Make help system safer.
+----------------------------
+revision 1.4
+date: 2004/07/11 08:15:43;  author: mcdonald;  state: Exp;  lines: +35 -11
+New program! Xcscribe, an automatic documentation generator for Xconq games.
+----------------------------
+revision 1.3
+date: 2002/07/31 20:40:08;  author: ronne;  state: Exp;  lines: +29 -19
+Add Doxygen comments to kernel includes.
+----------------------------
+revision 1.2
+date: 1999/08/28 23:22:44;  author: shebs;  state: Exp;  lines: +20 -18
+        * configure.in: Add --enable-build-warnings to control extra
+        warnings, choose which subdirs to configure based on Unix vs
+        Windows.
+        * configure: Regenerate.
+        * Makefile.in: Eliminate refs to lib-x11.
+        * x11/Makefile.in: Ditto.
+        * curses/Makefile.in, kernel/Makefile.in, tcltk/Makefile.in,
+        x11/Makefile.in: Change UNIX_CFLAGS to autoconf-using HFLAGS,
+        remove WARNING_CFLAGS.
+        * actions.c, ai.c, ai.h, cmdline.c, cmdline.h, conq.h, generic.c,
+        help.h, imf.c, imf.h, imf2imf.c, lisp.c, lisp.h, misc.h, system.h,
+        imf2x.c, xcutil.h: Remove PARAMS usages.
+        * gif.c, help.c, imf.c, imf2imf.c, lisp.c, unix.c, tkmain.c,
+        wimfapp.c, imf2x.c, x2imf.c, xconq.c, xcutil.c: Remove unused
+        variables, add prototypes, etc.
+        * run2.c, side.c, macconq.c: Remove decl of update_area_display.
+        * skelconq.c: Declare _dialog functions.
+        * tkcmd.c: Remove exit_xconq decl.
+        * wconq.c (check_player_displays): Remove uses.
+        * xconq.c: Include tkconq.h.
+
+        * tkconq.h (IMFLIB): Remove.
+        (exit_xconq): Declare.
+        * tkimf.c, tkinit.c: Remove imflib uses.
+        * xconq.h, xcutil.c: Ditto.
+        * ximf.c, xinit.c: Ditto.
+        * PROJECTS: Remove lib-x11 item.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:25;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

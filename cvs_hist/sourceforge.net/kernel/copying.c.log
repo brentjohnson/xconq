@@ -1,0 +1,78 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/copying.c,v
+Working file: copying.c
+head: 1.1
+branch: 1.1.1
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.1.1.1
+	BPT_EMCDONALD_AI_15: 1.1.1.1
+	SS_7_5_0_0pre_0_20050612: 1.1.1.1
+	BPT_MSKALA_IMF_3: 1.1.1.1
+	BPT_MSKALA_SUPPLY_12: 1.1.1.1
+	BPT_EMCDONALD_AI_14: 1.1.1.1
+	MPT_EMCDONALD_AI_7: 1.1.1.1
+	BPT_EMCDONALD_AI_13: 1.1.1.1
+	SS_7_5_0_0pre_0_20050501: 1.1.1.1
+	BPT_EMCDONALD_AI_12: 1.1.1.1
+	MPT_EMCDONALD_AI_6: 1.1.1.1
+	BPT_EMCDONALD_AI_11: 1.1.1.1
+	SS_7_5_0_0pre_0_20050416: 1.1.1.1
+	BPT_EMCDONALD_AI_10: 1.1.1.1
+	MPT_EMCDONALD_AI_5: 1.1.1.1
+	BPT_EMCDONALD_AI_9: 1.1.1.1
+	BPT_EMCDONALD_AI_8: 1.1.1.1
+	MPT_EMCDONALD_AI_4: 1.1.1.1
+	BPT_EMCDONALD_AI_7: 1.1.1.1
+	MPT_EMCDONALD_AI_3: 1.1.1.1
+	BPT_EMCDONALD_AI_6: 1.1.1.1
+	BPT_MSKALA_SUPPLY_11: 1.1.1.1
+	BPT_EMCDONALD_AI_5: 1.1.1.1
+	MPT_EMCDONALD_AI_2: 1.1.1.1
+	SS_7_5_0_0pre_0_20050322: 1.1.1.1
+	BPT_MSKALA_SUPPLY_10: 1.1.1.1
+	BPT_EMCDONALD_AI_4: 1.1.1.1
+	MPT_EMCDONALD_AI_1: 1.1.1.1
+	BPT_EMCDONALD_AI_3: 1.1.1.1
+	BPT_MSKALA_SUPPLY_9: 1.1.1.1
+	MPT_MSKALA_SUPPLY_3: 1.1.1.1
+	BPT_EMCDONALD_AI_2: 1.1.1.1
+	BPT_MSKALA_SUPPLY_8: 1.1.1.1
+	MPT_MSKALA_SUPPLY_2: 1.1.1.1
+	BPT_MSKALA_SUPPLY_7: 1.1.1.1
+	BRANCH_EMCDONALD_AI: 1.1.1.1.0.6
+	BPT_EMCDONALD_AI_1: 1.1.1.1
+	BPT_MSKALA_SUPPLY_6: 1.1.1.1
+	SS_7_5_0_0pre_0_20050225: 1.1.1.1
+	BPT_MSKALA_SUPPLY_5: 1.1.1.1
+	MPT_MSKALA_SUPPLY_1: 1.1.1.1
+	BPT_MSKALA_SUPPLY_4: 1.1.1.1
+	BPT_MSKALA_SUPPLY_3: 1.1.1.1
+	BPT_MSKALA_SUPPLY_2: 1.1.1.1
+	SS_7_5_0_0pre_0_20050208: 1.1.1.1
+	BPT_MSKALA_IMF_2: 1.1.1.1
+	BRANCH_MSKALA_SUPPLY: 1.1.1.1.0.4
+	BPT_MSKALA_SUPPLY_1: 1.1.1.1
+	SS_7_5_0_0pre_0_20050117: 1.1.1.1
+	SS_7_5_0_0pre_0_20050108: 1.1.1.1
+	SS_7_5_0_0pre_0_20041228: 1.1.1.1
+	BRANCH_MSKALA_IMF: 1.1.1.1.0.2
+	BPT_MSKALA_IMF_1: 1.1.1.1
+	SS_7_5_0_0pre_0_20041211: 1.1.1.1
+	SS_7_5_0_0pre_0_20041126: 1.1.1.1
+	GENESIS: 1.1.1.1
+	PRIVATE_TREE_1: 1.1.1
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1.1
+date: 2004/11/21 03:01:05;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.1;
+Initial revision
+----------------------------
+revision 1.1.1.1
+date: 2004/11/21 03:01:05;  author: eric_mcdonald;  state: Exp;  lines: +0 -0
+Initial import from private repo into SF repo.
+=============================================================================

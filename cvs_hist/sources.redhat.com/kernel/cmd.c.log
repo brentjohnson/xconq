@@ -1,0 +1,530 @@
+
+RCS file: /cvs/xconq/xconq/kernel/cmd.c,v
+Working file: cmd.c
+head: 1.36
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.28
+	xconq-7_4-branch: 1.28.0.2
+	xconq-7_4-branchpoint: 1.28
+	xtconq-pre-removal: 1.21
+	xconq-7_3_3-release: 1.16
+	xconq-7_3_2-release: 1.16
+	xconq-7_3_1-release: 1.16
+	xconq-7_3-branch: 1.16.0.2
+	xconq-7_3-branchpoint: 1.16
+keyword substitution: kv
+total revisions: 36;	selected revisions: 36
+description:
+----------------------------
+revision 1.36
+date: 2003/06/21 23:02:28;  author: ronne;  state: Exp;  lines: +6 -5
+Fix bugs in connection code.
+----------------------------
+revision 1.35
+date: 2003/06/19 00:39:04;  author: ronne;  state: Exp;  lines: +2 -2
+Fix unit build volume checking.
+----------------------------
+revision 1.34
+date: 2003/02/25 23:25:14;  author: ronne;  state: Exp;  lines: +4 -0
+Comment out agreement code. Fix some bugs.
+----------------------------
+revision 1.33
+date: 2002/09/30 21:27:54;  author: ronne;  state: Exp;  lines: +2 -0
+Bug fixes in tcltk dialogs.
+----------------------------
+revision 1.32
+date: 2002/07/05 22:30:13;  author: ronne;  state: Exp;  lines: +2 -2
+Fixes to reserve and sleep code.
+----------------------------
+revision 1.31
+date: 2002/03/29 17:45:19;  author: ronne;  state: Exp;  lines: +2 -3
+Streamline network code.
+----------------------------
+revision 1.30
+date: 2001/01/13 18:27:05;  author: shebs;  state: Exp;  lines: +5 -1
+	Various additions to the SDL interface - mouseover text pane,
+	unit&feature names on map, isometric display, misc layers.
+	* sdlconq.h (ui curfid): New field.
+	(Map active): New field.
+	(small_font): New global.
+	* sdlmain.c (small_font): Define.
+	(initial_ui_init): Fill in from font.bmp, enable unicode
+	translation of keyboard events.
+	(autoscroll): Update focus.
+	(ui_mainloop): Only autoscroll when map is active window.
+	(handle_event): Get unicode from key event, filter out zeros,
+	grok activation	events.
+	(ask_position): Put out the prompt.
+	(place_legends): Implement.
+	* sdlcmd.c (do_refresh): Tweak place_legends call.
+	(do_set_view_angle): Implement.
+	* sdlmap.c (open_sdl_window): Get map viewport from surface size,
+	set an initial focus.
+	(update_map): Add isometric case, add more debugging draws,
+	add mouseover pane.
+	(random_color): New function.
+	(draw_map_isometric, draw_terrain_iso, draw_clouds_row,
+	draw_temperature_row, draw_winds_row, draw_feature_boundary,
+	draw_feature_name, draw_people, draw_string): New functions.
+	(draw_unit_name, draw_unit_size): Make work.
+
+	* tkconq.h, tkcmd.c, tkmain.c (place_legends): Don't pass
+	a side argument.
+
+	* images/font.bmp: Basic text font, borrowed from Randi
+	Relander's Regimental Command project.
+
+	* ui.c: Add a comment about 12x13 hex size.
+	* imf.c, imf.h (copy_from_file_image): Add actual-size arguments.
+	* imf.c (make_raw_palette): Add a little slop, for now at least.
+	(make_image_from_file_image): Add slop to subimage palette
+	allocation, use copy_from_file_image actual-size arguments.
+
+	* dir.h (dir_subtract): Move to here from tkmap.c.
+	* cmd.c (execute_command): Filter out zero chars.
+----------------------------
+revision 1.29
+date: 2000/12/18 16:50:48;  author: shebs;  state: Exp;  lines: +21 -8
+	Eliminate the macros MAXUTYPES, MAXTTYPES, MAXMTYPES, and
+	MAXATYPES, size all type handling dynamically.
+	* config.h (MAXUTYPES, MAXTTYPES, MAXMTYPES, MAXATYPES): Remove.
+	* game.h (NONUTYPE, NONTTYPE, NONMTYPE, NONATYPE): Define to be -1.
+	(count_terrain_subtypes, numcelltypes, numbordtypes, numconntypes,
+	numcoattypes): Declare here instead of in world.h.
+	(tmp_u_array, tmp_t_array): Declare.
+	* gvar.def (edge-terrain, river-sink-terrain): Don't use type
+	bounds.
+	* table.def (adjacent-terrain-effect, terrain-exhaustion-type): Ditto.
+	* utype.def (obsolete, wrecked-type): Ditto.
+	* generic.c (count_terrain_subtypes, numcelltypes, etc): Move here
+	from world.c.
+	(tmp_u_array, tmp_t_array): New globals.
+	(curmaxutypes, curmaxmtypes, curmaxttypes, curmaxatypes): Set to
+	defaults convenient for the first allocation.
+	(create_unit_type): New function.
+	(disallow_more_unit_types, disallow_more_terrain_types): New functions.
+	(allocate_table): Use them.
+	* help.c (tm_table_row_desc): Remove, never used.
+	* init.c (check_game_validity): Call disallow_* to make sure
+	some type arrays are computed and cached.
+	(calculate_globals): Ditto.
+	(make_initial_materials): Use tmp_t_array.
+	* mkrivers.c (make_up_river_borders): Ditto.
+	* mkterr.c (elev_range, elev_lo, elev_hi, raw_range, raw_lo,
+	raw_hi): New static globals.
+	(compose_area, compose_earthlike_area): Use them.
+	(make_random_terrain, fix_adjacent_terrain,
+	flatten_liquid_terrain): Use tmp_t_array.
+	* mkunits.c (make_countries): Dynalloc local arrays.
+	(country_is_complete, make_independent_units): Use tmp_u_array.
+	* nlang.c (ohd_nums, ohd_incomplete): New static globals.
+	(others_here_desc, occupants_desc): Use them.
+	* plan.c (plan_colonize_support): Use tmp_u_array.
+	(gctc_supply): New static global.
+	(good_cell_to_colonize): Use it.
+	* ps.c (summary_of_seen_units_at): Use tmp_u_array.
+	* read.c (default_supply): Remove, no longer to use.
+	(init_predefined_symbols): Remove its setup.
+	(interp_unit_default): Similarly.
+	(interp_unit): Don't use default_supply.
+	(interp_utype): Remove test for too many types, call
+	create_unit_type.
+	(interp_ttype, interp_mtype, interp_atype): Remove tests
+	for too many types.
+	(too_many_types): Remove, no longer needed.
+	(rd_u_arr): New static global.
+	(interp_standing_order, read_utype_doctrine): Use it.
+	* run.c (rau_incrs): New static global.
+	(run_advanced_units): Use it.
+	(apr_type): New static global.
+	(auto_pick_unit_research, auto_pick_side_research): Use it.
+	(auto_pick_new_build_task): Use tmp_u_array.
+	* run2.c (ttotals, uttotals): New static globals.
+	(run_economy): Use them.
+	* score.c (sum_property): Use tmp_u_array.
+	* side.c (new_doctrine): Call disallow_more_unit_types.
+	* supply.c (mad): New static global.
+	(init_supply_system): Set it up.
+	* unit.c (create_unit): Allocate numlivebytype and completenesses.
+	(oc_numtypes): New static global.
+	(can_occupy_unit): Use it.
+	(toc_numtypes, type_can_occupy_cell): Similarly.
+	(ocw_numtypes, can_occupy_cell_without): Similarly.
+	(tocw_numtypes, type_can_occupy_cell_without): Similarly.
+	(conn_num_types, can_occupy_conn_1): Similarly.
+	(can_carry, type_can_occupy): Use tmp_u_array.
+	(num_each_type, shared_each_type): New static globals.
+	(eject_excess_occupants): Use them.
+	(shortest_unique_name): Dynalloc firstuniq, use it as flag
+	instead of shortestdone.
+	(shortest_generic_name): Similarly.
+	* write.c (write_table): Increase histogram size.
+
+	* ai.c (atc_type): New static global.
+	(assign_to_colonize): Use it.
+	(pbt_prefs, pbt_fringe_terrain, pbt_enemy_types,
+	pbt_num_to_transport): New static globals.
+	(preferred_build_type): Use them.
+	* ai.h (Strategy): Declare strengths etc as arrays of pointers
+	instead of 2D arrays, unitlist and unitlistcount as pointers.
+	(Theater): Similarly for numassigned, numneeded, etc.
+	(strength_est, etc): New macros (not used yet).
+	* iplayer.c (iru_numoffensive, iru_numdefensive): New static globals.
+	(iplayer_review_units): Use them.
+	* mplayer.c (mplayer_create_strategy): Allocate strength arrays.
+	(create_theater): Dynalloc numassigned etc fields.
+	(estimate_strengths, mplayer_read_strengths, mplayer_save_state):
+	Change to pointer-to-pointer refs.
+	(mru_numoffensive, mru_numdefensive): New static globals.
+	(mplayer_review_units): Use them.
+	* oplayer.c: Similarly.
+
+	* cmd.c (gt_amts, gt_rslts): New static globals.
+	(do_one_give, do_one_take): Use them.
+	* ui.h (VP draw_materials): Make into a pointer.
+	* ui.c (new_vp): Allocate draw_materials field.
+
+	* maccmd.c (do_one_add_terrain): Use tmp_t_array.
+	* macwins.c (side_research_dialog): Make participants static global.
+
+	* tkconq.h (UI material_color, etc): Change from array to pointer.
+	(UI cell_color, cell_shades): Rename from cellcolor and cellshades.
+	(UI best_timages): Similarly.
+	(UI unitpics, unitmasks, bestmimages): Remove, not used.
+	(Map uvec, ustr, tvec, tstr): Change from array to pointer.
+	* tkcmd.c (do_add_terrain, do_remove_terrain): Use tmp_t_array.
+	(do_build): Use tmp_u_array.
+	* tkinit.c (utype_indexes, mtype_indexes): Change to pointers.
+	(init_display): Remove inits of unused fields, alloc space for
+	cell_shades and material_color.
+	(init_material_images): Remove setup of bestmimages.
+	(init_terrain_images): Allocate for best_timages and terrpics.
+	(init_shades): Use array-of-array refs to cell_shades.
+	* tkmain.c (last_num_units_in_play, last_num_units_incomplete):
+	Change from arrays to pointers.
+	(init_redraws, update_unit_type_list): Allocate them.
+	(create_map): Alloc map uvec, ustr, etc.
+	* tkmap.c: Update refs to renamed fields.
+	(MapW draw_aux_terrain, draw_materials): Make into pointers.
+
+	* ccmd.c (do_build): Use tmp_u_array.
+	* cconq.c (init_display): Use numutypes to size allocs.
+	(ask_unit_type, ask_terrain_type): Use array of int instead of short.
+	* cdraw.c (draw_type_list_entry): Init lasttypevisible from numutypes.
+
+	* cconq.c (do_dir_2): Fix a variable name.
+	* cconq.h: Use #else instead of #elif.
+----------------------------
+revision 1.28
+date: 2000/11/16 23:33:12;  author: ronne;  state: Exp;  lines: +0 -1
+General cleanup of kernel prototypes - part 2.
+----------------------------
+revision 1.27
+date: 2000/11/06 21:58:46;  author: ronne;  state: Exp;  lines: +3 -5
+Massive cleanup of prototypes.
+----------------------------
+revision 1.26
+date: 2000/11/05 19:58:07;  author: shebs;  state: Exp;  lines: +21 -8
+	* cmd.c (do_ai_side): Make the command toggle only if no args,
+	make resignation control subcommands separate, add a help option.
+----------------------------
+revision 1.25
+date: 2000/09/17 18:25:39;  author: ronne;  state: Exp;  lines: +1 -2
+Fix end-of-turn problems when switching ais.
+----------------------------
+revision 1.24
+date: 2000/09/16 12:54:28;  author: shebs;  state: Exp;  lines: +6 -1
+	* unit.h (unit_in_vector): New macro, access to unit vector.
+	* ai.c (run_ai_plan_adjust): Use it.
+	* cmd.c (apply_to_all_selected_units): Ditto.
+	* run.c (units_still_acting, side_move_some_units): Ditto.
+	* skelconq.c (list_actors): Ditto.
+	* ui.c (autonext_unit, autonext_unit_inbox): Ditto.
+	* maclist.c (draw_unit_list_entry, etc): Ditto.
+	* macwins.c (get_selected_construction_unit, etc): Ditto.
+	* cdraw.c (draw_unit_list_entry): Ditto.
+
+	* run.c (need_ai_plan_research): Remove.
+	(run_side_research): Don't set it.
+	* ai.c (run_local_ai): Test numatypes instead of
+	need_ai_plan_research.
+
+	* run.c (side_move_some_units): Add more comments, use local vars
+	for side->actionvector.
+	(run_construction): Test side_has_ai instead of side_has_local_ai,
+	fix occupant test.
+----------------------------
+revision 1.23
+date: 2000/09/12 13:58:42;  author: shebs;  state: Exp;  lines: +1 -1
+	* cmd.c (do_one_wake_all): Tell net_wake_unit to wake occupants.
+----------------------------
+revision 1.22
+date: 2000/09/10 05:45:40;  author: shebs;  state: Exp;  lines: +9 -9
+	Random rewrites and reorgs resolving remote networking bugs.
+	* ai.c (init_ai): Fill in side->rai for remote AIs.
+	(set_side_ai): Simplify, and add feedback on results.
+	(run_local_ais, run_ai_plan_adjust): Move here from run.c,
+	test taskexecs instead of need_ai_task_reaction.
+	* cmd.c (do_ai_side): Fix player feedback to reflect that
+	network roundup may be necessary before state changes.
+	* cmdline.c (option_width, option_height, option_circumference):
+	New globals.
+	(parse_world_option): Set these instead of pushing a variant.
+	(set_variants_from_options): Call net_set_variant_value instead
+	of pushing variant settings.
+	(find_variant_from_name): New function.
+	* init.c (start_player_pre_setup_stage): Call do_module_variants.
+	(final_init): Report more data structure sizes.
+	* kernel.h (set_variant_value): Declare.
+	* kpublic.h (net_set_variant_value): Declare.
+	* module.h (Variant newvalues): New field, array of new settings
+	for variant.
+	* module.c (create_game_module): Store a copy of the module name.
+	(set_variant_value): Move here from tkmain.c.
+	(do_one_variant): Fill from newvalues fields.
+	* read.c (interp_variant_defns, add_std_var): Fill in newvalues
+	fields.
+	* run.c (latest_action_x, latest_action_y): New globals.
+	(num_local_ais): Move to ai.c.
+	(need_ai_task_reaction): Remove, use taskexecs instead.
+	(save_run_state, clear_task_outcomes): New functions.
+	(run_game): Call them.
+	(move_one_unit_multiple): Replace need_ai_task_reaction test
+	with last_task_outcome and AI usage test.
+	(run_side_research, run_construction): Test local AI instead
+	of AI in general (dubious).
+	* side.h (Side rai): New field.
+	(side_has_ai): Test both local and remote AI.
+	(side_has_local_ai): New macro.
+	* task.c (execute_task): Rework recording of task outcome.
+	* tp.h (RAI): New struct, placeholder "remote AI".
+	* tp.c: Change run warnings into notices.
+	(net_set_variant_value): New function.
+	(receive_variant_settings): Allow at most three values.
+	* write.c (write_side_properties): Only write AI state for
+	local AIs (dubious).
+
+	* tkconq.tcl: Rewrite variant handling to do more work in
+	kernel.
+	(set_variant_value_cmd): New proc, replaces broadcast_variant_value.
+	(set_variants): Do less.
+	(add_world_size_dialog_items): Comment out lat/lon items.
+	(insert_chat_string): Test for existence of window before insert.
+	* tkmain.c: Rewrite for variants also.
+	(send_value_value, implement_variants): Remove tcl commands.
+	(tk_set_variant_value): Rewrite to pass along to kernel.
+	(interpret_variants): Rewrite.
+	(set_variant_world_size, set_variant_real_time): Remove,
+	handled uniformly in kernel.
+	(update_variant_setting): Rewrite.
+----------------------------
+revision 1.21
+date: 2000/08/20 20:25:05;  author: ronne;  state: Exp;  lines: +1 -1
+More changes to construction and research.
+----------------------------
+revision 1.20
+date: 2000/08/20 19:13:31;  author: shebs;  state: Exp;  lines: +0 -25
+	* ui.c, ui.h (get_material_type_images): Move to here from tkinit.c.
+	(add_default_material_image): New function.
+	(embarkation_unit): Move to here from cmd.c.
+----------------------------
+revision 1.19
+date: 2000/08/15 16:11:32;  author: shebs;  state: Exp;  lines: +149 -40
+	Make still more commands generic.
+	* cmd.c (do_reserve, do_one_reserve, do_return, do_one_return,
+	do_sleep, do_one_sleep, do_take, do_one_take): New functions,
+	adapted from interface-specific versions.
+	* ccmd.c, maccmd.c, macconq.h, tkcmd.c: Remove interface-specific
+	versions of these.
+
+	* cmd.c (do_give): Test for material types.
+	(do_one_give): Call report_give.
+	(do_release): Add more validity tests and more feedback.
+	* nlang.c, conq.h (make_text): Remove, no longer used.
+	(report_give): New function.
+	* ui.c, ui.h (give_supplies): Return recipient of supplies,
+	add more searching for units to give to.
+	(advance_into_cell): Simplify structure slightly.
+----------------------------
+revision 1.18
+date: 2000/08/14 00:24:12;  author: shebs;  state: Exp;  lines: +283 -1
+	Make more commands generic.
+	* cmd.c (do_auto, do_one_auto, do_clear_plan, do_one_clear_plan,
+	do_delay, do_one_delay, do_detach, do_one_detach, do_detonate,
+	do_one_detonate, do_disband, do_one_disband, do_disembark,
+	do_one_disembark, do_embark, do_one_embark, embarkation_unit,
+	do_give, do_one_give, do_idle, do_one_idle): New functons, adapted
+	from interface-specific versions.
+	* ccmd.c, maccmd.c, tkcmd.c: Remove interface-specific versions of
+	these.
+	* macmenus.c (do_detonate_mi): Call do_detonate.
+----------------------------
+revision 1.17
+date: 2000/08/13 15:02:43;  author: shebs;  state: Exp;  lines: +65 -0
+	Add ability to have generic commands that work on units.
+	* cmd.c (apply_to_all_selected_units): New function.
+	(do_wake, do_wake_all): Move here from interfaces.
+	(do_one_wake, do_one_wake_all): New functions.
+	* maccmd.c (get_selected_units): New function.
+	(do_wake, do_wake_all): Comment out.
+	* tkcmd.c (get_selected_units): New function.
+	(do_wake, do_wake_all): Remove.
+	* ccmd.c (get_selected_units): New function.
+	(do_wake, do_wake_all): Remove.
+	(do_fire): Use view objects.
+----------------------------
+revision 1.16
+date: 2000/05/01 15:29:48;  author: shebs;  state: Exp;  lines: +69 -13
+	* cmd.c (notify_relationships): New function.
+	(do_distrust, do_trust): Use, plus add more feedback.
+----------------------------
+revision 1.15
+date: 2000/04/24 12:48:21;  author: shebs;  state: Exp;  lines: +14 -9
+	* ai.c (set_side_ai): Reset num_local_ais, to force recalc.
+	* cmd.c (do_ai_side): Add feedback on which AI is running.
+----------------------------
+revision 1.14
+date: 2000/04/07 17:24:20;  author: shebs;  state: Exp;  lines: +0 -2
+forgotten in prev commit
+----------------------------
+revision 1.13
+date: 2000/03/05 15:41:53;  author: shebs;  state: Exp;  lines: +17 -10
+	* cmd.c (do_research): Let "research nothing" stop research.
+	* run.c (units_still_acting): Don't end turn if research topic
+	still needs to be chosen.
+	(run_population): Add a hack for effects of "Granary".
+	* run2.c (run_side_research): Skip if researchers resting.
+
+	* tkconq.tcl (popup_splash_screen): Improve button names.
+	(fill_in_side_list): Omit default scorekeeper text.
+	(popup_research_dialog): Add "Rest" button.
+	(rest_research): New proc.
+	* tkmain.c (update_side_display): Move research popup to here
+	from update_turn_display.
+	(tk_set_side_research): Handle resting case.
+----------------------------
+revision 1.12
+date: 1999/12/14 03:13:02;  author: shebs;  state: Exp;  lines: +48 -0
+	* side.h (Side c_rates): New field.
+	* cmd.def (c-rate): New command, sets material conversion rates.
+	* cmd.c (do_c_rate): New function.
+	* run.c (run_advanced_units): Rewrite conversion to use user
+	specified rates.
+----------------------------
+revision 1.11
+date: 1999/12/08 03:13:10;  author: shebs;  state: Exp;  lines: +29 -8
+	* gvar.def (side-can-research): New global.
+	* table.def (conversion): New material-material table.
+	* utype.def (advanced-auto-construct, advanced-auto-research,
+	use-own-cell): New properties.
+	* cmd.c (do_research): Use new global, test for more cases.
+	* iplayer.c (iplayer_save_state): Removed unneeded code.
+	* kpublic.h (net_set_side_research): Declare.
+	* nlang.c (UsualDateStepRange): New struct.
+	(date_step_ranges): New array, was datesteptype.
+	(init_calendar): Handle ranges of turns for date steps.
+	(parse_date_step_range): New function.
+	(parse_usual_date): Add arg, change all callers.
+	(usual_date_string): Search ranges to find right step type.
+	* plan.c (execute_plan): Comment out advanced unit escape.
+	* run.c (run_advanced_units): Add material conversion step.
+	(run_population): Use unit_handle.
+	(allocate_used_cells): Make extra cell usage optional, don't
+	handle inside search loop.
+	* run2.c (run_side_research): Use material consumption.
+	* tp.c (net_set_side_research): New function.
+	(receive_side_prop): Handle side research packet.
+----------------------------
+revision 1.10
+date: 1999/12/07 21:01:08;  author: ronne;  state: Exp;  lines: +4 -0
+Various bug fixes.
+----------------------------
+revision 1.9
+date: 1999/12/02 03:08:05;  author: shebs;  state: Exp;  lines: +22 -40
+	* cmd.c (do_debug, do_debugg, do_debugm): Add notification of
+	debug state.
+----------------------------
+revision 1.8
+date: 1999/12/01 04:02:01;  author: shebs;  state: Exp;  lines: +62 -5
+	* cmd.def (research): New command.
+	* cmd.c (do_research, parse_advance_spec): New functions.
+----------------------------
+revision 1.7
+date: 1999/10/30 14:41:46;  author: shebs;  state: Exp;  lines: +0 -2
+        * combat.c (mobile_enemy_thread): Use side_sees_image instead of
+        unit_actually_visible.
+        * run.c (auto_pick_new_build_task, etc): Ditto.
+        * task.c: Ditto.
+        * side.c (side_sees_unit): Add side->see_all case, remove
+        designer and debugging cases.
+        (side_sees_image): Error if NULL side, add view-matching case.
+        * ui.c (unit_actually_visible): Comment out.
+        (unit_visible, occupants_visible): New function.
+        (cell_terrain): Remove, fold code into oneliner.
+        (oneliner): Test vp->show_all.
+        * ui.h: Declare new functions.
+
+        * conq.h (gameinited, warnings_logged): Declare.
+        (add_remote_players, etc): Ditto.
+        * cmd.c, cmdline.h, init.c, read.c, read2.c, side.c, unit.c,
+        util.c: Remove unneeded decls.
+        * misc.h (log_warning): Declare.
+----------------------------
+revision 1.6
+date: 1999/10/28 23:19:49;  author: ronne;  state: Exp;  lines: +15 -7
+Add iplayer.
+----------------------------
+revision 1.5
+date: 1999/10/22 00:44:02;  author: shebs;  state: Exp;  lines: +29 -8
+	* cmd.c (DURING_GAME_ONLY): New macro, use to disable commands
+	at end of game.
+	* tkcmd.c: Similarly.
+----------------------------
+revision 1.4
+date: 1999/08/21 12:16:38;  author: shebs;  state: Exp;  lines: +3 -3
+        Eliminate still more warnings.
+        * cmd.c, help.c, history.c, mknames.c, mkterr.c, mkunits.c,
+        nlang.c, read.c, read2.c, score.c, side.c, supply.c, tp.c, ui.c,
+        unit.c, unit.h, world.c, write.c: Remove PARAMS usages, remove
+        unused variables, add missing function decls, comment out unused
+        functions, etc.
+        * obstack.h (obstack_begin): Add parameter types to fn pointer.
+        * mknames.c (propose_unit_name): Fix "junky" naming method.
+        * read.c (find_unit_spec_by_name, find_unit_spec_by_number):
+        Use PARSE_PROPERTY_RETURN instead of PARSE_PROPERTY.
+        * score.c (all_sides_draw): Assign result of add_side_to_set.
+        * side.c: Include ai.h.
+----------------------------
+revision 1.3
+date: 1999/06/04 17:22:58;  author: shebs;  state: Exp;  lines: +4 -7
+	* cmd.c (find_agreement): Declare.
+	* cmd.c, ui.h (DEF_CMD): Remove unused argtype argument.
+	* cmd.def: Update all command definitions.
+----------------------------
+revision 1.2
+date: 1999/05/11 19:53:51;  author: shebs;  state: Exp;  lines: +79 -0
+	* cmd.def (agreement-draft, agreement-drafter, agreement-propose,
+	agreement-proposer, agreement-sign, agreement-signer,
+	agreement-term): New commands.
+	* cmd.c (do_agreement_draft, do_agreement_drafter, etc): New
+	functions.
+	* cmdline.c (parse_command_line): Handle -h by creating player
+	specs immediately.
+	* side.h (agreement_list, etc): Rename from agreementlist etc.
+	* side.c (agreement_list, etc): Ditto.
+	(find_agreement): New function.
+	(create_agreement): Fix.
+	* ui.h (VP see_all): New slot.
+	* ui.c (find_unit_or_occ): Add side arg, account for occupant
+ 	visibility rules.
+	Change all callers.
+	(calc_view_misc): Comment out hexagon_adjust, seems unneeded.
+	* write.c (write_agreements): Use for_all_agreements.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:22;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

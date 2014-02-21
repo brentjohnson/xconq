@@ -1,0 +1,151 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/side.h,v
+Working file: side.h
+head: 1.8
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.8
+	BPT_EMCDONALD_AI_15: 1.8
+	SS_7_5_0_0pre_0_20050612: 1.6
+	BPT_MSKALA_IMF_3: 1.6
+	BPT_MSKALA_SUPPLY_12: 1.6
+	BPT_EMCDONALD_AI_14: 1.6
+	MPT_EMCDONALD_AI_7: 1.4.4.2
+	BPT_EMCDONALD_AI_13: 1.5
+	SS_7_5_0_0pre_0_20050501: 1.5
+	BPT_EMCDONALD_AI_12: 1.5
+	MPT_EMCDONALD_AI_6: 1.4.4.1
+	BPT_EMCDONALD_AI_11: 1.4
+	SS_7_5_0_0pre_0_20050416: 1.4
+	BPT_EMCDONALD_AI_10: 1.4
+	MPT_EMCDONALD_AI_5: 1.4
+	BPT_EMCDONALD_AI_9: 1.4
+	BPT_EMCDONALD_AI_8: 1.4
+	MPT_EMCDONALD_AI_4: 1.4
+	BPT_EMCDONALD_AI_7: 1.4
+	MPT_EMCDONALD_AI_3: 1.4
+	BPT_EMCDONALD_AI_6: 1.4
+	BPT_MSKALA_SUPPLY_11: 1.4
+	BPT_EMCDONALD_AI_5: 1.4
+	MPT_EMCDONALD_AI_2: 1.4
+	SS_7_5_0_0pre_0_20050322: 1.4
+	BPT_MSKALA_SUPPLY_10: 1.4
+	BPT_EMCDONALD_AI_4: 1.4
+	MPT_EMCDONALD_AI_1: 1.4
+	BPT_EMCDONALD_AI_3: 1.4
+	BPT_MSKALA_SUPPLY_9: 1.4
+	MPT_MSKALA_SUPPLY_3: 1.4
+	BPT_EMCDONALD_AI_2: 1.4
+	BPT_MSKALA_SUPPLY_8: 1.4
+	MPT_MSKALA_SUPPLY_2: 1.4
+	BPT_MSKALA_SUPPLY_7: 1.4
+	BRANCH_EMCDONALD_AI: 1.4.0.4
+	BPT_EMCDONALD_AI_1: 1.4
+	BPT_MSKALA_SUPPLY_6: 1.4
+	SS_7_5_0_0pre_0_20050225: 1.4
+	BPT_MSKALA_SUPPLY_5: 1.4
+	MPT_MSKALA_SUPPLY_1: 1.4
+	BPT_MSKALA_SUPPLY_4: 1.4
+	BPT_MSKALA_SUPPLY_3: 1.4
+	BPT_MSKALA_SUPPLY_2: 1.4
+	SS_7_5_0_0pre_0_20050208: 1.4
+	BPT_MSKALA_IMF_2: 1.4
+	BRANCH_MSKALA_SUPPLY: 1.4.0.2
+	BPT_MSKALA_SUPPLY_1: 1.4
+	SS_7_5_0_0pre_0_20050117: 1.3
+	SS_7_5_0_0pre_0_20050108: 1.2
+	SS_7_5_0_0pre_0_20041228: 1.2
+	BRANCH_MSKALA_IMF: 1.2.0.2
+	BPT_MSKALA_IMF_1: 1.2
+	SS_7_5_0_0pre_0_20041211: 1.2
+	SS_7_5_0_0pre_0_20041126: 1.1.1.1
+	GENESIS: 1.1.1.1
+	PRIVATE_TREE_1: 1.1.1
+keyword substitution: kv
+total revisions: 15;	selected revisions: 15
+description:
+----------------------------
+revision 1.8
+date: 2005/06/17 02:54:12;  author: eric_mcdonald;  state: Exp;  lines: +4 -4
+Implement per-side general action restrictions.
+Implement per-side construction restrictions.
+Decommision Iplayer.
+----------------------------
+revision 1.7
+date: 2005/06/15 03:18:46;  author: eric_mcdonald;  state: Exp;  lines: +8 -0
+Prepare for some new side-based action-restriction properties.
+Restrict damaged terrain outcomes based on detonator type.
+----------------------------
+revision 1.6
+date: 2005/06/06 03:03:46;  author: eric_mcdonald;  state: Exp;  lines: +7 -1
+Merge from 'MPT_EMCDONALD_AI_6' to 'MPT_EMCDONALD_AI_7'.
+----------------------------
+revision 1.5
+date: 2005/04/30 23:35:09;  author: eric_mcdonald;  state: Exp;  lines: +4 -0
+Merge from 'MPT_EMCDONALD_AI_5' to 'MPT_EMCDONALD_AI_6'.
+Many non-AI-related changes included in this merge.
+----------------------------
+revision 1.4
+date: 2005/01/23 02:40:47;  author: eric_mcdonald;  state: Exp;  lines: +32 -21
+branches:  1.4.2;  1.4.4;
+Unimplement 'last-regular-side-wins' as separate scorekeeper.
+Instead, just make the 'applies-to' property meaningful.
+Another implementation of Lisp boolean evaluator that uses parameter boxes.
+New parambox for sides.
+----------------------------
+revision 1.3
+date: 2005/01/15 23:02:43;  author: eric_mcdonald;  state: Exp;  lines: +9 -0
+New family of games, Valhalla, from Elijah Meeks.
+Fix bug with unit views in designer mode.
+Fix bug with overwatch in designer mode.
+Continue fixing uview lookups to match new uview code.
+----------------------------
+revision 1.2
+date: 2004/12/04 22:24:00;  author: eric_mcdonald;  state: Exp;  lines: +3 -1
+branches:  1.2.2;
+Fix building of KWIC pogram with C++ compiler.
+Refine and expand "parambox" system for search functions that take predicates.
+Two new versions of 'search_around' that use paramboxen.
+Begin a namespace for Xconq vars outside of function scope.
+Revise 'see_cell' code. (NOTE: This is not perfected yet.)
+Fix to 3rd Age game. (Thanks to Kevin O'Gorman for reporting the bug.)
+----------------------------
+revision 1.1
+date: 2004/11/21 03:01:20;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.1;
+Initial revision
+----------------------------
+revision 1.1.1.1
+date: 2004/11/21 03:01:20;  author: eric_mcdonald;  state: Exp;  lines: +0 -0
+Initial import from private repo into SF repo.
+----------------------------
+revision 1.2.2.2
+date: 2005/06/06 03:39:36;  author: eric_mcdonald;  state: Exp;  lines: +10 -0
+Merged in all trunk changes between BPT_MSKALA_IMF_2 and BPT_MSKALA_IMF_3.
+----------------------------
+revision 1.2.2.1
+date: 2005/01/28 03:35:59;  author: eric_mcdonald;  state: Exp;  lines: +41 -21
+Merge in trunk changes between BPT_MSKALA_IMF_1 and BPT_MSKALA_IMF_2.
+----------------------------
+revision 1.4.4.3
+date: 2005/07/10 15:42:53;  author: eric_mcdonald;  state: Exp;  lines: +8 -0
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_14' and 'BPT_EMCDONALD_AI_15'.
+----------------------------
+revision 1.4.4.2
+date: 2005/05/21 17:29:29;  author: eric_mcdonald;  state: Exp;  lines: +7 -1
+Archive or delete some unmaintained games that do not work well.
+Implement new construction and repair features.
+Improve support for operational roles.
+Add tatical-level calculations for AI.
+Enhance materials consumption code.
+----------------------------
+revision 1.4.4.1
+date: 2005/04/17 16:38:30;  author: eric_mcdonald;  state: Exp;  lines: +4 -0
+Continue laying foundation for more AI improvements.
+----------------------------
+revision 1.4.2.1
+date: 2005/06/06 03:18:21;  author: eric_mcdonald;  state: Exp;  lines: +10 -0
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_11' and 'BPT_MSKALA_SUPPLY_12'.
+=============================================================================

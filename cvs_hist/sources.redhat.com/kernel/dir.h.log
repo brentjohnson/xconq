@@ -1,0 +1,95 @@
+
+RCS file: /cvs/xconq/xconq/kernel/dir.h,v
+Working file: dir.h
+head: 1.7
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.1
+	xconq-7_4-branch: 1.1.0.4
+	xconq-7_4-branchpoint: 1.1
+	xtconq-pre-removal: 1.1
+	xconq-7_3_3-release: 1.1
+	xconq-7_3_2-release: 1.1
+	xconq-7_3_1-release: 1.1
+	xconq-7_3-branch: 1.1.0.2
+	xconq-7_3-branchpoint: 1.1
+keyword substitution: kv
+total revisions: 7;	selected revisions: 7
+description:
+----------------------------
+revision 1.7
+date: 2004/05/02 22:19:18;  author: mcdonald;  state: Exp;  lines: +5 -9
+Revert to the pathfinder in use prior to 2003/11/13.
+Add appropriate replacements for useful elements of post-2003/11/13 pathfinder.
+----------------------------
+revision 1.6
+date: 2003/12/04 02:02:47;  author: kingdon;  state: Exp;  lines: +1 -0
+	Fix uninitialized variable (flags in struct path_node_data).
+	Turns out not to be the bug I was chasing, but it can't be good.
+	* kernel/move.c (set_node_data): Clear flags.
+	* kernel/dir.h, kernel/move.c (NODIR): Constant as alternate way
+	of saying "-1".
+	* kernel/autotest.c: Add tests for set_node_data and for
+	path_get_next_move.
+----------------------------
+revision 1.5
+date: 2003/11/29 06:25:04;  author: mcdonald;  state: Exp;  lines: +8 -4
+Patch from Peter Garrone (modified) to better handle transports and b-slides.
+----------------------------
+revision 1.4
+date: 2003/01/18 16:41:15;  author: ronne;  state: Exp;  lines: +1 -1
+Update Doxygen comments.
+----------------------------
+revision 1.3
+date: 2002/07/31 20:40:08;  author: ronne;  state: Exp;  lines: +68 -28
+Add Doxygen comments to kernel includes.
+----------------------------
+revision 1.2
+date: 2001/01/13 18:27:05;  author: shebs;  state: Exp;  lines: +12 -2
+	Various additions to the SDL interface - mouseover text pane,
+	unit&feature names on map, isometric display, misc layers.
+	* sdlconq.h (ui curfid): New field.
+	(Map active): New field.
+	(small_font): New global.
+	* sdlmain.c (small_font): Define.
+	(initial_ui_init): Fill in from font.bmp, enable unicode
+	translation of keyboard events.
+	(autoscroll): Update focus.
+	(ui_mainloop): Only autoscroll when map is active window.
+	(handle_event): Get unicode from key event, filter out zeros,
+	grok activation	events.
+	(ask_position): Put out the prompt.
+	(place_legends): Implement.
+	* sdlcmd.c (do_refresh): Tweak place_legends call.
+	(do_set_view_angle): Implement.
+	* sdlmap.c (open_sdl_window): Get map viewport from surface size,
+	set an initial focus.
+	(update_map): Add isometric case, add more debugging draws,
+	add mouseover pane.
+	(random_color): New function.
+	(draw_map_isometric, draw_terrain_iso, draw_clouds_row,
+	draw_temperature_row, draw_winds_row, draw_feature_boundary,
+	draw_feature_name, draw_people, draw_string): New functions.
+	(draw_unit_name, draw_unit_size): Make work.
+
+	* tkconq.h, tkcmd.c, tkmain.c (place_legends): Don't pass
+	a side argument.
+
+	* images/font.bmp: Basic text font, borrowed from Randi
+	Relander's Regimental Command project.
+
+	* ui.c: Add a comment about 12x13 hex size.
+	* imf.c, imf.h (copy_from_file_image): Add actual-size arguments.
+	* imf.c (make_raw_palette): Add a little slop, for now at least.
+	(make_image_from_file_image): Add slop to subimage palette
+	allocation, use copy_from_file_image actual-size arguments.
+
+	* dir.h (dir_subtract): Move to here from tkmap.c.
+	* cmd.c (execute_command): Filter out zero chars.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:24;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

@@ -1,0 +1,154 @@
+/* The definitions of all the types of actions in Xconq.
+   Copyright (C) 1992, 1993, 1994, 1998, 1999 Stanley T. Shebs.
+
+Xconq is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.  See the file COPYING.  */
+
+/* (should alphabetize) */
+
+DEF_ACTION("none", ACTION_NONE, "",
+  prep_none_action, net_prep_none_action,
+  do_none_action, check_none_action,
+  (Unit *unit, Unit *unit2),
+  "The non-action (not used, but maybe a good placeholder)")
+
+DEF_ACTION("move", ACTION_MOVE, "xyz",
+  prep_move_action, net_prep_move_action,
+  do_move_action, check_move_action,
+  (Unit *unit, Unit *unit2, int x, int y, int z),
+  "Change position to the given cell and altitude")
+
+DEF_ACTION("enter", ACTION_ENTER, "U",
+  prep_enter_action, net_prep_enter_action,
+  do_enter_action, check_enter_action,
+  (Unit *unit, Unit *unit2, Unit *dest),
+  "Enter a transport")
+
+DEF_ACTION("attack", ACTION_ATTACK, "Un",
+  prep_attack_action, net_prep_attack_action,
+  do_attack_action, check_attack_action,
+  (Unit *unit, Unit *unit2, Unit *defender, int n),
+  "Attack a given unit")
+
+DEF_ACTION("overrun", ACTION_OVERRUN, "xyzn",
+  prep_overrun_action, net_prep_overrun_action,
+  do_overrun_action, check_overrun_action,
+  (Unit *unit, Unit *unit2, int x, int y, int z, int n),
+  "Attack everything in a cell and occupy if possible")
+
+DEF_ACTION("fire-at", ACTION_FIRE_AT, "Um",
+  prep_fire_at_action, net_prep_fire_at_action,
+  do_fire_at_action, check_fire_at_action,
+  (Unit *unit, Unit *unit2, Unit *defender, int m),
+  "Throw a given material at a given unit")
+
+DEF_ACTION("fire-into", ACTION_FIRE_INTO, "xyzm",
+  prep_fire_into_action, net_prep_fire_into_action,
+  do_fire_into_action, check_fire_into_action,
+  (Unit *unit, Unit *unit2, int x, int y, int z, int m),
+  "Throw a given material at a given cell")
+
+DEF_ACTION("capture", ACTION_CAPTURE, "U",
+  prep_capture_action, net_prep_capture_action,
+  do_capture_action, check_capture_action,
+  (Unit *unit, Unit *unit2, Unit *defender),
+  "Take a unit prisoner")
+
+DEF_ACTION("detonate", ACTION_DETONATE, "xyz",
+  prep_detonate_action, net_prep_detonate_action,
+  do_detonate_action, check_detonate_action,
+  (Unit *unit, Unit *unit2, int x, int y, int z),
+  "Damage or destroy self in a violent fashion")
+
+DEF_ACTION("produce", ACTION_PRODUCE, "mn",
+  prep_produce_action, net_prep_produce_action,
+  do_produce_action, check_produce_action,
+  (Unit *unit, Unit *unit2, int m, int n),
+  "Produce a quantity of a material")
+
+DEF_ACTION("extract", ACTION_EXTRACT, "xymn",
+  prep_extract_action, net_prep_extract_action,
+  do_extract_action, check_extract_action,
+  (Unit *unit, Unit *unit2, int x, int y, int m, int n),
+  "Extract a quantity of a material from a given location")
+
+DEF_ACTION("transfer", ACTION_TRANSFER, "mnU",
+  prep_transfer_action, net_prep_transfer_action,
+  do_transfer_action, check_transfer_action,
+  (Unit *unit, Unit *unit2, int m, int n, Unit *unit3),
+  "Transfer a quantity of a material between two units")
+
+DEF_ACTION("develop", ACTION_DEVELOP, "u",
+  prep_develop_action, net_prep_develop_action,
+  do_develop_action, check_develop_action,
+  (Unit *unit, Unit *unit2, int u3),
+  "Study how to build the given type")
+
+DEF_ACTION("toolup", ACTION_TOOL_UP, "u",
+  prep_toolup_action, net_prep_toolup_action,
+  do_toolup_action, check_toolup_action,
+  (Unit *unit, Unit *unit2, int u3),
+  "Prepare tools to build the given type")
+
+DEF_ACTION("create-in", ACTION_CREATE_IN, "uU",
+  prep_create_in_action, net_prep_create_in_action,
+  do_create_in_action, check_create_in_action,
+  (Unit *actor, Unit *creator, int u3, Unit *dest),
+  "Start construction of a unit inside (or outside?) another unit")
+
+DEF_ACTION("create-at", ACTION_CREATE_AT, "uxyz",
+  prep_create_at_action, net_prep_create_at_action,
+  do_create_at_action, check_create_at_action,
+  (Unit *actor, Unit *creator, int u3, int x, int y, int z),
+  "Start construction of a unit at a given location")
+
+DEF_ACTION("build", ACTION_BUILD, "U",
+  prep_build_action, net_prep_build_action,
+  do_build_action, check_build_action,
+  (Unit *actor, Unit *builder, Unit *newunit),
+  "Make progress on the given unit")
+
+DEF_ACTION("repair", ACTION_REPAIR, "U",
+  prep_repair_action, net_prep_repair_action,
+  do_repair_action, check_repair_action,
+  (Unit *actor, Unit *repairer, Unit *repairee),
+  "Repair a given unit")
+
+DEF_ACTION("disband", ACTION_DISBAND, "",
+  prep_disband_action, net_prep_disband_action,
+  do_disband_action, check_disband_action,
+  (Unit *unit, Unit *unit2),
+  "Dismantle the given unit completely")
+
+DEF_ACTION("change-type", ACTION_CHANGE_TYPE, "u",
+  prep_change_type_action, net_prep_change_type_action,
+  do_change_type_action, check_change_type_action,
+  (Unit *unit, Unit *unit2, int u3),
+  "Change self to a different unit type")
+
+DEF_ACTION("change-side", ACTION_CHANGE_SIDE, "S",
+  prep_change_side_action, net_prep_change_side_action,
+  do_change_side_action, check_change_side_action,
+  (Unit *unit, Unit *unit2, Side *side),
+  "Change to a given side")
+
+DEF_ACTION("alter-terrain", ACTION_ALTER_TERRAIN, "xyt",
+  prep_alter_cell_action, net_prep_alter_cell_action,
+  do_alter_cell_action, check_alter_cell_action,
+  (Unit *unit, Unit *unit2, int x, int y, int t),
+  "Alter cell terrain")
+
+DEF_ACTION("add-terrain", ACTION_ADD_TERRAIN, "xydt",
+  prep_add_terrain_action, net_prep_add_terrain_action,
+  do_add_terrain_action, check_add_terrain_action,
+  (Unit *unit, Unit *unit2, int x, int y, int dir, int t),
+  "Add border/connection/coating terrain")
+
+DEF_ACTION("remove-terrain", ACTION_REMOVE_TERRAIN, "xydt",
+  prep_remove_terrain_action, net_prep_remove_terrain_action,
+  do_remove_terrain_action, check_remove_terrain_action,
+  (Unit *unit, Unit *unit2, int x, int y, int dir, int t),
+  "Remove border/connection/coating terrain")
+

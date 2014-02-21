@@ -1,0 +1,90 @@
+(imf "kb-st-ship-enterprise" ((64 64) (file "kobayashi.gif" std 0 0)))
+(imf "kb-st-ship-reliant" ((64 64) (file "kobayashi.gif" std 0 1)))
+(imf "kb-st-ship-excelsior" ((64 64) (file "kobayashi.gif" std 0 3)))
+(imf "kb-kling-ship-ktinga" ((64 64) (file "kobayashi.gif" std 3 0)))
+(imf "kb-kling-ship-d7" ((64 64) (file "kobayashi.gif" std 2 0)))
+(imf "kb-kling-cloak-d7" ((64 64) (file "kobayashi.gif" std 8 1)))
+(imf "kb-kling-cloak-ktinga" ((64 64) (file "kobayashi.gif" std 4 4)))
+(imf "kb-st-station-research" ((64 64) (file "kobayashi.gif" std 1 5)))
+
+(imf "kb-explosion-orange" ((64 64) (file "kobayashi.gif" std 1 8)))
+
+(imf "kb-st-wreck-enterprise" ((64 64) (file "kob-wreck.gif" std 0 0)))
+(imf "kb-st-wreck-enterprise1" ((64 64) (file "kob-wreck.gif" std 1 0)))
+(imf "kb-st-wreck-enterprise2" ((64 64) (file "kob-wreck.gif" std 2 0)))
+(imf "kb-st-smold-enterprise" ((64 64) (file "kob-wreck.gif" std 3 0)))
+
+(imf "kb-st-wreck-reliant" ((64 64) (file "kob-wreck.gif" std 0 1)))
+(imf "kb-st-wreck-reliant1" ((64 64) (file "kob-wreck.gif" std 1 1)))
+(imf "kb-st-wreck-reliant2" ((64 64) (file "kob-wreck.gif" std 2 1)))
+(imf "kb-st-smold-reliant" ((64 64) (file "kob-wreck.gif" std 3 1)))
+
+(imf "kb-st-wreck-excelsior" ((64 64) (file "kob-wreck.gif" std 0 4)))
+(imf "kb-st-smold-excelsior" ((64 64) (file "kob-wreck.gif" std 3 4)))
+
+(imf "kb-st-wreck-research" ((64 64) (file "kob-wreck.gif" std 1 5)))
+(imf "kb-st-smold-research" ((64 64) (file "kob-wreck.gif" std 3 5)))
+
+(imf "kb-kling-wreck-d7" ((64 64) (file "kob-wreck.gif" std 0 2)))
+
+(imf "kb-kling-wreck-ktinga" ((64 64) (file "kob-wreck.gif" std 0 3)))
+(imf "kb-kling-wreck-ktinga2" ((64 64) (file "kob-wreck.gif" std 1 3)))
+
+
+(imf "ba-sensors-green" ((32 32) (file "battles1.gif" std 0 0)))
+(imf "ba-sensors-yellow" ((32 32) (file "battles1.gif" std 0 1)))
+(imf "ba-sensors-red" ((32 32) (file "battles1.gif" std 0 2)))
+(imf "ba-sensors-black" ((32 32) (file "battles1.gif" std 0 3)))
+(imf "ba-sensors-tan" ((32 32) (file "battles1.gif" std 0 4)))
+(imf "ba-ray-green" ((32 32) (file "battles1.gif" std 0 5)))
+(imf "ba-ray-yellow" ((32 32) (file "battles1.gif" std 0 6)))
+(imf "ba-ray-red" ((32 32) (file "battles1.gif" std 0 7)))
+(imf "ba-ray-black" ((32 32) (file "battles1.gif" std 0 8)))
+(imf "ba-ray-tan" ((32 32) (file "battles1.gif" std 0 9)))
+
+(imf "ba-wrench-green" ((32 32) (file "battles1.gif" std 1 0)))
+(imf "ba-wrench-yellow" ((32 32) (file "battles1.gif" std 1 1)))
+(imf "ba-wrench-red" ((32 32) (file "battles1.gif" std 1 2)))
+(imf "ba-wrench-black" ((32 32) (file "battles1.gif" std 1 3)))
+(imf "ba-wrench-tan" ((32 32) (file "battles1.gif" std 1 4)))
+(imf "ba-oval-green" ((32 32) (file "battles1.gif" std 1 5)))
+(imf "ba-oval-yellow" ((32 32) (file "battles1.gif" std 1 6)))
+(imf "ba-oval-red" ((32 32) (file "battles1.gif" std 1 7)))
+(imf "ba-oval-black" ((32 32) (file "battles1.gif" std 1 8)))
+(imf "ba-oval-tan" ((32 32) (file "battles1.gif" std 1 9)))
+
+(imf "ba-cross-green" ((32 32) (file "battles1.gif" std 2 0)))
+(imf "ba-cross-yellow" ((32 32) (file "battles1.gif" std 2 1)))
+(imf "ba-cross-red" ((32 32) (file "battles1.gif" std 2 2)))
+(imf "ba-cross-black" ((32 32) (file "battles1.gif" std 2 3)))
+(imf "ba-cross-tan" ((32 32) (file "battles1.gif" std 2 4)))
+(imf "ba-star-green" ((32 32) (file "battles1.gif" std 2 5)))
+(imf "ba-star-yellow" ((32 32) (file "battles1.gif" std 2 6)))
+(imf "ba-star-red" ((32 32) (file "battles1.gif" std 2 7)))
+(imf "ba-star-black" ((32 32) (file "battles1.gif" std 2 8)))
+(imf "ba-star-tan" ((32 32) (file "battles1.gif" std 2 9)))
+
+(imf "ba-3dash-green" ((32 32) (file "battles1.gif" std 3 0)))
+(imf "ba-3dash-yellow" ((32 32) (file "battles1.gif" std 3 1)))
+(imf "ba-3dash-red" ((32 32) (file "battles1.gif" std 3 2)))
+(imf "ba-3dash-black" ((32 32) (file "battles1.gif" std 3 3)))
+(imf "ba-3dash-tan" ((32 32) (file "battles1.gif" std 3 4)))
+(imf "ba-2dash-green" ((32 32) (file "battles1.gif" std 3 5)))
+(imf "ba-2dash-yellow" ((32 32) (file "battles1.gif" std 3 6)))
+(imf "ba-2dash-red" ((32 32) (file "battles1.gif" std 3 7)))
+(imf "ba-2dash-black" ((32 32) (file "battles1.gif" std 3 8)))
+(imf "ba-2dash-tan" ((32 32) (file "battles1.gif" std 3 9)))
+
+(imf "ba-commands-tan" ((32 32) (file "battles1.gif" std 9 0)))
+
+(imf "ba-neb" ((1 1) 26214 13107 0))
+
+(imf "ba-space" ((24 26 terrain) (x 8 26 0) (file "scifit24x26.gif" std 0 0)))
+(imf "ba-neb" ((24 26 terrain) (x 8 26 0) (file "scifit24x26.gif" std 0 1)))
+
+(imf "ba-space" ((44 48 terrain) (x 8 46 0) (file "scifit44x48.gif" std 0 0)))
+(imf "ba-neb" ((44 48 terrain) (x 8 46 0) (file "scifit44x48.gif" std 0 1)))
+
+(imf "ba-space" ((32 32 tile) (file "scifit32x32.gif" 0 0)))
+(imf "ba-neb" ((32 32 tile) (file "scifit32x32.gif" 0 1)))
+

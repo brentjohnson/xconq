@@ -1,0 +1,277 @@
+# Makefile for interface-independent code in Xconq.
+# Copyright (C) 1992-1995, 1997, 1999, 2000 Stanley T. Shebs.
+# Copyright (C) 2003-2005 Eric A. McDonald.
+
+# Xconq is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+prefix = @prefix@
+
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+datadir = @xconq_data_dir@
+mandir = @mandir@
+man6dir = $(mandir)/man6
+infodir = @infodir@
+docdir = $(datadir)/doc
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+SHELL = /bin/sh
+
+INSTALL = install -c
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL)
+
+CC = @CXX@
+CXX = @CXX@
+
+CFLAGS = @CXXFLAGS@
+CXXFLAGS = @CXXFLAGS@
+
+AR = @AR@
+
+AR_FLAGS = rcu
+
+RANLIB = @RANLIB@
+
+# Host and target-dependent makefile fragments come in here.
+####
+# End of host and target-dependent makefile fragments.
+
+NEEDED_H = snprintf.h timestuff.h
+
+LISP_H = lisp.h keyword.def
+
+GAME_H = game.h utype.def mtype.def ttype.def gvar.def table.def
+
+UNIT_H = unit.h action.def plan.def task.def goal.def
+
+HISTORY_H = history.h history.def
+
+KPUBLIC_H = kpublic.h
+
+KERNEL_H = kernel.h
+
+AI_H = aiscore.h aiunit.h aiunit2.h aitact.h aioprt.h
+
+ALL_H = conq.h config.h parambox.h misc.h dir.h $(LISP_H) module.h \
+	$(GAME_H) player.h side.h $(UNIT_H) world.h $(HISTORY_H) score.h \
+	help.h aiutil.h ai.h system.h $(NEEDED_H)
+
+# Non-interface-specific object files.
+
+NEEDED_OBJS = \
+	snprintf.o \
+	timestuff.o
+
+OBJS = \
+	init.o \
+	cmdline.o \
+	aiutil.o \
+	ai.o \
+	aiscore.o \
+	aiunit.o \
+	aiunit2.o \
+	aitact.o \
+	aioprt.o \
+	mplayer.o \
+	actions.o \
+	move.o \
+	combat.o \
+	run.o \
+	run2.o \
+	economy.o \
+	supply.o \
+	score.o \
+	world.o \
+	history.o \
+	module.o \
+	write.o \
+	read.o \
+	mkterr.o \
+	mkunits.o \
+	mkrivers.o \
+	mkroads.o \
+	mknames.o \
+	side.o \
+	unit.o \
+	plan.o \
+	task.o \
+	nlang.o \
+	ui.o \
+	cmd.o \
+	ps.o \
+	tp.o \
+	obstack.o \
+	help.o \
+	copying.o \
+	generic.o \
+	types.o \
+	tables.o
+
+LOBJS = \
+	imf.o \
+	gif.o \
+	lisp.o \
+	util.o \
+	$(NEEDED_OBJS)
+
+HOBJS = @HOBJS@
+
+# Various C++ compiler flags.
+
+HFLAGS = @HFLAGS@
+KDEFS = -DXCONQDATA=\"$(datadir)\" \
+	-DXCONQSCORES=\"$(scoresdir)\"
+ALL_CFLAGS = $(CFLAGS) $(HFLAGS) -I$(srcdir) $(KDEFS)
+
+.c.o:
+	$(CC) -c $(ALL_CFLAGS) $<
+
+.cc.o:
+	$(CC) -c $(ALL_CFLAGS) $<
+
+# Do it all.
+# (We used to build skelconq always, but between it and the .a files and
+# all the debugging info, a lot of space is chewed up; so if you want to
+# run tests or whatever, build it explicitly.)
+
+all: libconq.a libconqlow.a
+
+# The kernel library.  This is linked with interface code.
+
+libconq.a: $(OBJS)
+	rm -f libconq.a
+	$(AR) $(AR_FLAGS) libconq.a $(OBJS)
+	$(RANLIB) libconq.a
+
+# The low-level kernel library.  This is linked with both complete games
+# and with GDL-using tools.
+
+libconqlow.a: $(LOBJS) $(HOBJS)
+	rm -f libconqlow.a
+	$(AR) $(AR_FLAGS) libconqlow.a $(LOBJS) $(HOBJS) 
+	$(RANLIB) libconqlow.a
+
+# Test version of xconq.
+
+skelconq: skelconq.o autotest.o libconq.a libconqlow.a
+	rm -f skelconq
+	$(CC) -o skelconq $(ALL_CFLAGS) \
+	  skelconq.o autotest.o libconq.a libconqlow.a -lm
+
+# IMF to IMF converter program.
+
+imf2imf: imf2imf.o libconqlow.a
+	rm -f imf2imf
+	$(CC) -o imf2imf $(ALL_CFLAGS) imf2imf.o libconqlow.a
+
+# Documentation writer.
+
+xcscribe: xcscribe.o libconq.a libconqlow.a
+	rm -f xcscribe
+	$(CC) -o xcscribe $(ALL_CFLAGS) xcscribe.o libconq.a libconqlow.a -lm
+
+# Support things.
+
+skelconq.6:	skelconq.6in ../kernel/cmdline.6in
+	sed -e '/.so ...kernel.cmdline.6in/r $(srcdir)/../kernel/cmdline.6in' -e '/.so ...kernel.cmdline.6in/d' $(srcdir)/skelconq.6in >skelconq.6.new
+	$(srcdir)/../move-if-change skelconq.6.new skelconq.6
+
+install: all install-only
+
+# Note that skelconq is not really something that we want to install
+# anywhere.
+
+install-only:
+
+# Usual cleaning, and flushing of anything junk-like.
+
+clean:
+	rm -f *.o lint.out core
+	rm -f *.a *conq *.log
+	rm -f skelconq skelconq.exe
+
+distclean: clean
+	rm -f Makefile config.status acdefs.h
+
+realclean: distclean
+
+Makefile: Makefile.in $(host_makefile_frag) $(target_makefile_frag)
+        cd .. \
+	  && CONFIG_FILES=kernel/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+# All the .h dependencies.
+
+snprintf.o:	snprintf.h
+timestuff.o:	timestuff.h
+
+actions.o:	$(ALL_H) $(KERNEL_H) $(KPUBLIC_H)
+ai.o:		$(ALL_H) $(KERNEL_H) $(KPUBLIC_H) $(AI_H)
+aiscore.o:	$(ALL_H) $(KERNEL_H) $(AI_H)
+aiunit.o:	$(ALL_H) $(KERNEL_H) $(AI_H)
+aiunit2.o:	$(ALL_H) $(KERNEL_H) $(AI_H)
+aitact.o:	$(ALL_H) $(KERNEL_H) $(AI_H)
+aioprt.o:	$(ALL_H) $(KERNEL_H) $(AI_H)
+aiutil.o:	$(ALL_H) $(KERNEL_H) $(KPUBLIC_H)
+cmdline.o:	$(ALL_H)
+combat.o:	$(ALL_H) $(KERNEL_H) $(KPUBLIC_H)
+copying.o:	$(ALL_H)
+economy.o:	$(ALL_H) $(KERNEL_H)
+help.o:		$(ALL_H)
+history.o:	$(ALL_H)
+init.o:		$(ALL_H) $(KERNEL_H) version.h
+mknames.o:	$(ALL_H)
+mkrivers.o:	$(ALL_H) $(KERNEL_H)
+mkroads.o:	$(ALL_H)
+mkterr.o:	$(ALL_H) $(KERNEL_H)
+mkunits.o:	$(ALL_H) $(KERNEL_H)
+module.o:	$(ALL_H)
+move.o:		$(ALL_H) $(KERNEL_H) $(KPUBLIC_H)
+nlang.o:	$(ALL_H) $(KERNEL_H)
+plan.o:		$(ALL_H) $(KERNEL_H)
+read.o:		$(ALL_H) $(KERNEL_H) keyword.def imf.h
+run.o:		$(ALL_H) $(KERNEL_H) $(KPUBLIC_H)
+run2.o:		$(ALL_H) $(KERNEL_H)
+score.o:	$(ALL_H) $(KERNEL_H)
+side.o:		$(ALL_H) $(KERNEL_H)
+supply.o:	$(ALL_H)
+task.o:		$(ALL_H) $(KERNEL_H)
+tp.o:		$(ALL_H) $(KERNEL_H) $(KPUBLIC_H)
+unit.o:		$(ALL_H) $(KERNEL_H)
+util.o:		$(ALL_H)
+world.o:	$(ALL_H) $(KERNEL_H)
+write.o:	$(ALL_H) imf.h
+
+mplayer.o:	$(ALL_H) $(KPUBLIC_H) $(AI_H)
+
+generic.o:	config.h misc.h $(LISP_H) $(GAME_H)
+types.o:	config.h misc.h $(LISP_H) $(GAME_H)
+tables.o:	config.h misc.h $(LISP_H) $(GAME_H)
+
+imf.o:		config.h misc.h $(LISP_H) imf.h
+gif.o:		config.h misc.h $(LISP_H) imf.h
+
+lisp.o:		config.h misc.h $(LISP_H)
+
+unix.o:		config.h misc.h dir.h $(LISP_H) module.h system.h
+win32.o:	config.h misc.h dir.h $(LISP_H) module.h system.h
+socket.o:	config.h misc.h dir.h $(LISP_H) module.h system.h
+
+ui.o:		$(ALL_H) $(KPUBLIC_H) ui.h imf.h $(AI_H)
+
+cmd.o:		$(ALL_H) $(KPUBLIC_H) ui.h
+
+ps.o:		$(ALL_H) print.h imf.h
+
+skelconq.o:	$(ALL_H) $(KPUBLIC_H) print.h
+autotest.o:     $(ALL_H) $(KERNEL_H) imf.h ui.h
+
+imf2imf.o:	config.h misc.h $(LISP_H) imf.h
+
+xcscribe.o:	$(ALL_H) $(KPUBLIC_H) print.h

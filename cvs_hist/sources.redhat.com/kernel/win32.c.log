@@ -1,0 +1,276 @@
+
+RCS file: /cvs/xconq/xconq/kernel/win32.c,v
+Working file: win32.c
+head: 1.29
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.10
+	xconq-7_4-branch: 1.10.0.4
+	xconq-7_4-branchpoint: 1.10
+	xtconq-pre-removal: 1.10
+	xconq-7_3_3-release: 1.10
+	xconq-7_3_2-release: 1.10
+	xconq-7_3_1-release: 1.10
+	xconq-7_3-branch: 1.10.0.2
+	xconq-7_3-branchpoint: 1.10
+keyword substitution: kv
+total revisions: 29;	selected revisions: 29
+description:
+----------------------------
+revision 1.29
+date: 2004/05/08 20:57:17;  author: ronne;  state: Exp;  lines: +2 -2
+Various fixes to the tcltk interface.
+----------------------------
+revision 1.28
+date: 2003/12/15 04:13:46;  author: mcdonald;  state: Exp;  lines: +53 -7
+Enhance the configuration system to support strict ANSI compliance.
+Fix various problems related to non-home working dirs on Windows.
+Gain finer control over the linkage of Tkconq.
+Cosmetic and ANSI compliance fixes.
+Update and enhance Windows installer script.
+----------------------------
+revision 1.27
+date: 2003/12/14 03:37:47;  author: ronne;  state: Exp;  lines: +36 -184
+Add support for network games in file saving code.
+----------------------------
+revision 1.26
+date: 2003/12/01 01:20:25;  author: ronne;  state: Exp;  lines: +42 -10
+Make it possible to save/restore network games.
+----------------------------
+revision 1.25
+date: 2003/11/22 12:34:28;  author: ronne;  state: Exp;  lines: +0 -52
+More timestuff fixes.
+----------------------------
+revision 1.24
+date: 2003/11/22 02:44:35;  author: ronne;  state: Exp;  lines: +5 -5
+Fix various problems.
+----------------------------
+revision 1.23
+date: 2003/11/19 05:00:07;  author: mcdonald;  state: Exp;  lines: +5 -3
+Move time-related missing implementations to new 'missing/util' dir.
+Miscellaneous improvements to the configure system.
+Minor tweak to Bellum Aeternum.
+----------------------------
+revision 1.22
+date: 2003/10/06 03:32:02;  author: mcdonald;  state: Exp;  lines: +20 -0
+Simplify and enhance configury and build system.
+Improve chances of building for Windows apps.
+New Windows build/install documentation.
+----------------------------
+revision 1.21
+date: 2003/06/16 23:07:47;  author: ronne;  state: Exp;  lines: +28 -43
+Fix network code for Mac OSX.
+----------------------------
+revision 1.20
+date: 2003/05/24 11:39:34;  author: ronne;  state: Exp;  lines: +1 -1
+Fixes and improvements to imfapp.
+----------------------------
+revision 1.19
+date: 2002/11/10 00:42:02;  author: ronne;  state: Exp;  lines: +9 -0
+Win32 patches from Stanley Sutton.
+----------------------------
+revision 1.18
+date: 2002/10/10 21:29:31;  author: ronne;  state: Exp;  lines: +2 -1
+Fix Windows path bug.
+----------------------------
+revision 1.17
+date: 2002/07/31 20:40:08;  author: ronne;  state: Exp;  lines: +3 -0
+Add Doxygen comments to kernel includes.
+----------------------------
+revision 1.16
+date: 2002/05/20 05:45:19;  author: ronne;  state: Exp;  lines: +11 -3
+Fix Windows compile problems.
+----------------------------
+revision 1.15
+date: 2002/05/10 19:26:23;  author: kingdon;  state: Exp;  lines: +1 -1
+	* x11/ximf.c (x11_load_bitmap):
+	tcltk/tkmain.c (initial_ui_init),
+	tcltk/tkimf.c (tk_load_bitmap),
+	kernel/unix.c (open_library_file),
+	kernel/win32.c (open_library_file),
+	kernel/mac.c (open_library_file): Make the buffer we pass to
+	make_pathname BUFSIZE bytes in length (as it turned out, all the
+	old buffers were big enough, but it was just an accident waiting
+	to happen).
+----------------------------
+revision 1.14
+date: 2002/05/08 23:51:18;  author: ronne;  state: Exp;  lines: +25 -9
+Make sources C++ compatible.
+----------------------------
+revision 1.13
+date: 2002/04/16 22:58:50;  author: ronne;  state: Exp;  lines: +9 -0
+Fixes to WIN32 code.
+----------------------------
+revision 1.12
+date: 2002/04/07 08:48:12;  author: ronne;  state: Exp;  lines: +68 -14
+Make SDL code build under Windows.
+----------------------------
+revision 1.11
+date: 2001/01/08 16:24:40;  author: shebs;  state: Exp;  lines: +6 -4
+	Add an SDL-based user interface.
+	* sdl/: New directory.
+	* sdl/Makefile.in, sdl/sdlconq.h, sdl/sdlcmd.c, sdl/sdlimf.c,
+	sdl/sdlinit.c, sdl/sdlmain.c, sdl/sdlmap.c: New files.
+	* images/cursor.bmp: New file, color cursor.
+	* Makefile.in (SUBDIRS): Add sdl.
+	(all-sdlconq): New target.
+	* configure.in: Add option --enable-sdl.
+	* configure: Regenerate.
+	* x11/Makefile.in (sdlconq): New target.
+
+	* system.h, mac.c, unix.c, win32.c (default_images_pathname): Add
+	argument, use instead of compiled-in pathname.
+	* init.c (init_library_path): Change caller.
+
+	* imf.h (Image r, g, b): Solid color for an image.
+	* imf.c (blacken_masked_area, blacken_mono_masked_area) Move to
+	here from tkimf.c, add rgb args.
+	(make_raw_palette): Move to here from tkimf.c.
+
+	* ui.c. ui.h (dside): Define here instead of in each interface.
+	(generic_transition): Similarly.
+	(compute_x1_len): Move to here from tkmap.c.
+	* macconq.c, macconq.h (dside): Remove.
+	* macinit.c (generic_transition): Remove.
+	* tkmain.c, tkconq.h (dside): Remove.
+	* tkinit.c, tkmap.c (generic_transition): Remove.
+	* cconq.c, cconq.h (dside): Remove.
+
+	* tkcmd.c (require_unit): Test for NULL map.
+	(get_selected_units): Similarly.
+	(do_follow_action, do_message, do_quit, do_set_view_angle,
+	do_survey, do_design): Similarly.
+	* tkimg.c (tk_interp_image_1): Fill in generic image rgb,
+	* tkmap.c (draw_current): Fix test for health bar color change.
+	(draw_side_emblem): Draw black border around solid-color emblem.
+
+	* ui.c (favored_type): Use unit_can_build_type.
+
+	* read.c (interp_unit_defaults): Fix setup of default tooling.
+----------------------------
+revision 1.10
+date: 1999/11/18 03:36:40;  author: shebs;  state: Exp;  lines: +0 -19
+	* config.h (SCOREFILE): Now default to scores.xcq.
+	(STATSFILE): Now default to stats.txt.
+	(SAVEFILE): Now default to save.xcq.
+	(CHECKPOINTFILE): Now default to check.xcq.
+	(ERRORFILE): Now default to ERRsave.xcq.
+	(PREFERENCESFILE): Define here instead of in unix.c and win32.c.
+	* unix.c (PREFERENCESFILE): Remove defn.
+	* win32.c (PREFERENCESFILE, SCOREFILE): Remove defns.
+----------------------------
+revision 1.9
+date: 1999/11/16 02:46:01;  author: shebs;  state: Exp;  lines: +16 -4
+	* win32.c: Use more 8.3 names for things.
+----------------------------
+revision 1.8
+date: 1999/10/22 00:25:22;  author: shebs;  state: Exp;  lines: +18 -10
+	* win32.c (open_scorefile_for_reading): Remove setuid call, add
+	warning and retry if failure.
+	(open_scorefile_for_writing): Similarly.
+	(close_scorefile_for_writing): Remove setuid call.
+	(score_file_pathname): Use XCONQ_SCORES as env var, and backslash
+	as file separator.
+----------------------------
+revision 1.7
+date: 1999/10/15 02:55:31;  author: shebs;  state: Exp;  lines: +21 -14
+	* system.h (checkpoint_filename): Add argument.
+	(remove_saved_game): Remove decl, no longer used.
+	(remove_file): Declare.
+	* mac.c, unix.c, win32.c: Similarly.
+	* run2.c (save_checkpoint): New function, handles deletion of
+	previous checkpoint file.
+	(run_turn_start): Call it.
+	* win32.c (stop_handler, crash_handler, hup_handler): Fix decls.
+----------------------------
+revision 1.6
+date: 1999/09/29 03:05:21;  author: shebs;  state: Exp;  lines: +5 -2
+	* tp.c (online, quitter): New globals.
+	(for_all_remotes): Only do rids for programs still connected.
+	(add_remote_program): Mark new program as online.
+	(send_quit): Send rid, ensure packet is sent.
+	(receive_quit): Signal that program is not online.
+	* unix.c (crash_handler, hup_handler): Use error_save_filename.
+	* win32.c: Ditto.
+	(ERRORFILE): Define.
+
+	* tkcmd.c (save_the_game): Call exit_xconq.
+	* tkconq.tcl: Call exit_xconq to leave.
+	* tkmain.c (tk_exit_xconq): New tcl command.
+	(check_network): Close connection if quitter nonzero.
+	(host_the_game): Mark host as online.
+	(exit_xconq): Send a quit message.
+
+	* tp.c (net_run_game): Detect if checksum changes but run_game
+ 	doesn't do anything.
+	(receive_game_checksum): Test for before-run-game checksum.
+	* tkmain.c (tk_run_game): Only compare run_local_ai checksum
+	if not master.
+----------------------------
+revision 1.5
+date: 1999/09/18 00:06:28;  author: shebs;  state: Exp;  lines: +3 -247
+	* kernel/socket.c: New file, networking code common to Unix and
+	Windows (Cygwin).
+	* kernel/Makefile.in (socket.o): Add dependencies.
+	* configure.in (HOBJS): Add socket.o.
+	* configure: Regenerate.
+	* unix.c, win32.c: Remove networking code.
+----------------------------
+revision 1.4
+date: 1999/09/16 02:47:45;  author: shebs;  state: Exp;  lines: +0 -1
+	* conq.h, init.c, module.c, tp.c (typesdefined): Remove, never
+ 	actually used.
+
+	* conq.h (enum setup_stage): New enum.
+	(current_stage): New global.
+
+	* imf.c, imf.h (get_img): Remove unused argument.
+	* imf.c, ui.c, xcutil.c, ximf.c, maccolors.c, macimf.c, macinit.c,
+ 	tkimf.c: Fix all callers.
+
+	* init.c, mac.c, mkrivers.c, mkroads.c, module.c. ps.c, score.c,
+ 	task.c: Remove PARAMS usages.
+
+	* mac.c, win32.c (tmprid): Remove decl, never used.
+	* cconq.c (hosting): Remove decl, never used.
+
+	* tp.c (download_game_module): New function, split out from
+	download_to_player.
+	(broadcast_game_module): New function.
+	(broadcast_variants_chosen, broadcast_players_assigned): New
+ 	functions.
+	(receive_packet): Don't do trial assignments here, interpret
+	'a' and 'v' packets.
+
+	* tkconq.tcl (selected_game_title): Init to a default value.
+	* tkmain.c (tk_start_new_game): Broadcast game module to other
+	programs.
+	(tk_launch_game): Broadcast that variants have been chosen.
+	(tk_launch_game_2): Broadcast that players have been assigned.
+	(last_stage): New global.
+	(check_network): Call tcl commands to move dialogs through
+	stages of game setup.
+----------------------------
+revision 1.3
+date: 1999/08/28 00:28:30;  author: shebs;  state: Exp;  lines: +4 -1
+	* win32.c (XCONQDATA): Suppress incoming definitions.
+----------------------------
+revision 1.2
+date: 1999/08/17 02:27:24;  author: shebs;  state: Exp;  lines: +3 -3
+	* win32.c (make_pathname, stop_handler, crash_handler): Fix
+	argument lists.
+----------------------------
+revision 1.1
+date: 1999/08/10 11:05:27;  author: shebs;  state: Exp;
+        * aclocal.m4: New file, custom autoconf macros.
+        * configure.in: Call autoconf macros to find tcl/tk libraries,
+        add substs for host-specific flags and kernel files.
+        * configure: Regenerate.
+        * kernel/Makefile.in (HOBJS): New var, list of host-specific
+        files, use instead of unix.o.
+        * kernel/win32.c: New file, Windows-specific kernel functions.
+        * x11/Makefile.in (TCLTK_LIB): Build from autoconf vars.
+        (xconq): Link in -lm -ldl explicitly for now.
+=============================================================================

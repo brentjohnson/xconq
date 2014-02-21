@@ -1,0 +1,1227 @@
+Mon Dec 29 17:34:07 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* cmd.def (^P): New command, unit repair.
+	* mkunits.c (make_countries): Add some error checking, fix removal
+	of isolated populations.
+	* mplayer.c (estimate_strengths): Fix to know initial strengths
+	accurately, prevents premature resignation.
+
+	* macconq.h (ATTACK_MODAL): New mode.
+	* macconq.c (adjust_cursor): Use it.
+	* maccmd.c (do_attack): Move code here.
+	(do_detonate, do_fire, do_fire_into): Use common code.
+	(do_repair): New function.
+	* macmap2.c: Include cmd.def and maccmd.def.
+	(do_mouse_down_map_content): Add ATTACK_MODAL case, share mode
+ 	exit code.
+	* macmenus.c: Enable Find Next Occupant only when unit selected.
+	(do_move_mi, etc): Remove.
+
+	* gazala.g: Add some help strings, fine-tune supply sources.
+	* monster.g: Let fire departments repair buildings.
+	* earth-50km.g, t-e50-river.g, u-e50-1996.g: Various adjustments.
+
+	* PROJECTS: Remove/merge some items, reflect above changes.
+
+Wed Sep 17 19:15:55 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* cmd.def (idle): New command.
+	* tp.c (net_set_sentry_task): New function.
+	* utype.def (generic-char): New unit type property.
+	* unit.c (shortest_generic_name): New function.
+	* nlang.c (others_here_desc, occupants_desc): Use it.
+	* ui.c (get_generic_images): Only load imf dir once.
+	* world.c (paint_border, paint_connection): Fix display update.
+
+	* maccmd.c, xcmd.c, ccmd.c (do_idle, etc): New functions.
+	* macmenus.c: Remove prototypes for nonexistent functions.
+
+	* modern.g: Add city hp, steel consumption.
+	* mod-usa.g: Set lat/long, adjust roads.
+	* napoleon.g: Let leaders redistribute supply.
+	* panzer.g: Define generic names for unit types.
+	* u-e50-1996.g: Adjust Texas city locations.
+
+	* PROJECTS: Reflect above changes, remove pointless library tasks.
+
+Mon Aug 11 20:16:23 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* table.def (mp-to-enter-own): New table.
+	* help.c (uu_table_row_desc): Add connective argument.
+	* history.c (get_nth_history_line): Rewrite.
+	(update_total_hist_lines, build_hist_contents): New functions,
+	taken from Mac interface.
+	* init.c: Remove warning about ZOC range.
+	* mkunits.c (expand_country): Account for advantage when adding
+	units.
+	* move.c (in_blocking_zoc, zoc_move_cost): Handle ZOC range > 1.
+	(test_blocking_zoc, zoc_cost_fn): New functions.
+	* nlang.c (usual_date_string): Fix bug.
+	* run2.c (run_attrition): Don't do attrition on incompletes.
+
+	* macdefs.h (miMorePlanTypes, miMoreAIControl, miSideSendMessage,
+	miPlanTypeNone, etc): New menu items.
+	(miWeatherStorms): Remove.
+	* maccmd.c (message_dialog): Add editable side-to field.
+	* maclist.c (list_vscroll_fn): Fix rect size.
+	* macmenus.c (init_menus, etc): Add unit plan type submenu, AI
+ 	control message send menu items.
+	(do_plan_type_mi, do_one_plan_type): New functions.
+	(enable_commands_for_unit): Filter out dead units.
+	* macwins.c (set_history_scrollbar, etc): Rewrite history list
+ 	handling, move some code to history.c.
+	(draw_historical): Merge from event and date drawing.
+	
+	* gettysburg.g: Increase infantry ZOC range to 2.
+	* greek.g: Increase a and c hp, add attrition and accidents.
+	* insects.g: Restore commented-out attrition table.
+	* standard.g: Add unit growth to large country variant.
+
+	* PROJECTS: Reflect above changes, remove some mystifying items.
+
+Sun Jul 27 16:43:58 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* mac.c (close_scorefile_for_writing): New function.
+	* system.h (close_scorefile_for_writing): Add decl.
+	* score.c (get_scores): Don't list total playings if same as
+	count for the one player.
+	* nlang.c (rel_short_side_title, etc): Remove, never used.
+	(parse_usual_date): Add more cases.
+	
+	* africa.g: Add more types of animals, food and food effects.
+	* animals.imf: Images for new types of animals.
+	* misc.imf (crown): Move here from people.imf.
+	* people.imf (explorer): New image.
+	* imf.dir: Update to reflect changes.
+	
+	* mac-sect.texi: Add more info.
+
+	* PROJECTS: Update to reflect above changes.
+
+Wed Jul  9 19:37:20 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* imf.c (color_matches_mono): Fix test.
+	(emblem_position): New function.
+	* imfapp.c (draw_one_image): Call it.
+	* macdraw.c (draw_unit_image): Ditto.
+
+	* */Makefile.in (datadir): Default to $(prefix)/lib/xconqdir,
+	fix installation ownership tweaking.
+	* unix.c (default_library_filename): Use new pathname.
+	(open_scorefile_for_writing): Set uid.
+	(close_scorefile_for_writing): New function, resets uid.
+	* score.c (write_scorefile): Call it.
+	* xconq.c (main): Set uid.
+
+	Split manual into player and designer manuals.
+	* xcdesign.texi: New file.
+	* xconq.texi: Restrict to only player info.
+	* design.texi: Reword introductory section.
+	* curses-sect.texi: Update nodes and menus.
+	* doc/Makefile.in: Reorganize lists of files and actions.
+
+	* kwic.c: Sort more thoroughly.
+
+	* coral-sea.g, fred.g, etc: Improve the blurbs.
+	* greek.g (cp-on-creation, cp-per-build): Redundant, remove.
+	* normandy.g: Use symbols for units, add British airborne.
+	* sf.imf (asteroid-belt, etc): New images.
+	* imf.dir: Update.
+
+	* PROJECTS: Reflect changes.
+
+Thu Jul  3 18:31:15 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* metz-1944.g, ob-nor-alld.g, ob-nor-axis.g: Use symbols instead
+	of numbers to identify each unit.
+	* ob-nor-axis.g: Fill in more German divisions.
+
+Thu Jun 26 20:20:45 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	From Keir Novik <ken21@cam.ac.uk>:
+	* ng-ships.g: Add many more ship names, including destroyers
+	and Soviet battleships.
+
+Thu Jun 26 19:22:34 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* mtype.def (description-format): Remove, was useless.
+	* ttype.def (description-format): Ditto.
+	* help.c (describe_mtype, describe_ttype): Remove refs.
+	* utype.def (type-in-game-max, type-per-side-max): Fix bounds.
+	* lisp.c (eval_number): Move here from read.c.
+	* nlang.c (unit_handle): Add handling of description-format.
+	(plan_desc): Make normal descriptions more succinct, describe
+	formation.
+	(goal_desc): Describe formation goal better.
+	* plan.c (plan_desig): Make info relate to struct better.
+	* read.c (fill_in_features): Robustify feature list parsing.
+	* run2.c (unit_revolt): Don't let units revolts to sides that
+	have never seen them.
+
+	* macdraw.c (draw_unit_image): Use improved algorithm for emblem
+	placement.
+	* macmap.c (draw_unit_info): Remove formation description.
+	* macwins.c (calc_construction_rects): Increase width of type
+	subarea.
+
+	* beirut.g: Adjust imagery and vision.
+	* gettysburg.g: Add description formats, tweak names of multi-part
+	units.
+	* space.g: Add gas giants, several types of stars, workable
+	construction and occupancy rules, and star name generation.
+	* wizard.g: Use type names instead of letters, fix occupancy
+	rules, add stacking.
+
+	* refman.texi: Fix doc of features and description format.
+	* mac-sect.texi: Document preferences, more menu items, and
+	construction window.
+
+	* INSTALL: Mention CFLAGS and LDFLAGS.
+	* PROJECTS: Reflect above changes, add some ideas.
+
+	From Michael Firnau <mfi@techfak.uni-kiel.de>:
+	* xutil.c (parse_xpm_colors): Fix misuse of strcmp.
+
+Wed Jun 11 20:49:46 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* actions.c (check_research_action): Test um_to_research.
+	* combat.c (capture_unit): Add argument.
+	(one_attack): Record attacks.
+	* run2.c: Fix callers of capture_unit.
+	* gvar.def (zz-run-serial-number): Add internal name indication.
+	* history.c (record_unit_side_change): Record surrenders also.
+	* imf.c (interp_image): Handle embed-size property.
+	* move.c (move_unit): Add disabled code to record movement.
+	* nlang.c (historical_event_desc): Add surrender description.
+	
+	* xcmd.def (pattern, solid): New commands.
+	* xcmd.c (do_build): Fix test of building while an occupant.
+	(do_x_prefer_pattern, do_x_prefer_solid_color): New functions.
+	* xconq.h (UI pref_solid_color_terrain): New slot.
+	* xconq.c (main): Move possible game collection into
+ 	popup_game_dialog.
+	* xdesign.c (update_curutype): Fix.
+	* xdraw.c (draw_units): Adjust position of stack indicator.
+	(draw_unit_image): Add argument to alter appearance of image.
+	(draw_side_info): Draw score info.
+	(draw_side_progress): Adjust sizes, draw amount in reserve.
+	* xcloseup.c, xmap.c: Fix callers of draw_unit_image.
+	* xinit.c (init_terrain_images): Fix search for color data.
+
+	* macconq.c (interp_mac_ui_data, ui_update_state): Remember font
+ 	sizes.
+	* macdraw.c (draw_hex_region): Improve solid color drawing test.
+	* macinit.c (init_terrain_images): Find solid color directly,
+	not by looking for "best" image at 1x1.
+	* macmap.c (draw_unit_info): Describe formation.
+
+	* macwins.c (seed_side_rename_string, get_side_rename_string): New
+ 	functions.
+	(side_rename_dialog): Call them.
+	(preferred_closeup_size): Space closeup text more closely.
+	(draw_unit_closeup): Format more like to map unit info.
+
+	* emblems.imf: Improve some backgrounds.
+	* terrain.imf: Pick some better solid colors, simplify desert,
+	remove soggy terrain (same as flooded).
+	* midearth.g (see-occupants): Remove, only sets to default.
+	
+	* commands.texi: Remove T command.
+	* mac-sect.texi: Move doc of @ to here from commands.texi, fix
+	definitions of zoom-in/out.
+	* x11-sect.texi: Describe "pattern" and "solid" commands.
+	* refman.texi: Describe recent GDL changes.
+
+	* PROJECTS: Reflect some changes above, remove a couple excessive
+ 	ideas.
+
+	* all.g: Update for recent GDL changes.
+	* cmd-diff.sh: Add info about the interface defining each command.
+
+Fri May 30 17:43:59 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* imf.h (find_color_name): Make visible to all.
+	* imf.c (write_imf): Handle more solid color possibilities.
+	(parse_lisp_palette_entry): Recognize more color names.
+
+	* macimf.c (mac_add_ppat): Improve heuristics for solid color
+	vs mono patterns.
+	(interp_ctab): Recognize more color names.
+	(make_generic_image_data): Handle colors correctly.
+
+	* imfapp.c (draw_as_terrain_image): Draw solid colors correctly.
+	(draw_as_unit_image): Draw colors as terrain.
+
+	* terrain.imf: Tweak "straw", plus use more symbolic color names.
+
+Wed May 28 19:22:16 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* side.c (cover_area): Add argument for unit's transport.
+	(cover_area_1): Move initial tests into cover_area, update
+	display if any coverage change when debugging is on.
+	* actions.c (make_unit_complete), side.c, unit.c: Update calls
+ 	to cover_area.
+	* unit.c (leave_cell_aux): Add argument for old transport.
+
+	* mknames.c (assign_unit_number): Don't overwrite existing
+	number if unit is a numbered type.
+
+	* ui.c (get_unit_type_images): Add argument for preferred style.
+
+	* macdefs.h (diPrefsColorUnitImages): New dialog item.
+	* macconq.c (color-unit-images): New preference property.
+	(ui_update_state, set_preferences, etc): Handle it.
+	* macdraw.c (pref_solid_color_terrain): Rename from
+	solid_color_terrain.
+	(draw_coverage): Don't draw alt coverage if no LOS.
+	* macinit.c (init_unit_images): Choose silhouette vs full color
+	based on preference.
+	* imfapp.c: Define UPP-related macros.
+	(make_imf_resources): Append size to non-8x8 patterns and colors.
+	* macimf.c (mac_add_ppat): New function.
+	(mac_load_imf): Call it, also look for 1x1 and 32x32 images.
+	(mac_create_cicn): Detect memory exhaustion.
+
+	* gazala.g: Add supply effects, numbers for numbered units.
+	* std-c.imf: New file, color versions of standard unit images.
+	* imf.dir: Add new images.
+	* terrain.imf: Various cleanups.
+
+	* PROJECTS: Remove item about standard unit images.
+
+Wed May 21 19:39:50 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* gvar.def: Set default advantage bounds to 0.
+	* init.c (init_side_advantage): Adjust side's maxadvantage up if
+	country synthesis will be performed.
+	* write.c (write_side_properties): Tweak maxadvantage default.
+
+	* nlang.c (generic_oneliner): Improve description of control and
+	people.
+
+	* ui.c (special_strcmp): New function, sorts standard-game-based
+	games to front to list.
+	(module_name_compare): Call it.
+
+	* macinit.c (display_selected_game): Simplify blurb default.
+	* macdesign.c (draw_design_window_tool): Indicate control drawing
+	more clearly.
+	(paint_on_drag): Fix mistake in control/people painting.
+
+	* game.dir: Add beirut, midway, postmodern, steppes, time;
+	remove planets.
+	* cherbourg.g: Add a blurb.
+	* magnusvew.g, ww2-div-pac.g, ww2s-42.g, ww2s-pac-41.g: Remove
+ 	advantage-max settings.
+	* postmodern.g: More cleanup.
+	* steppes.g: Tweak for addition to game list.
+	* p-e1-1938.g: Adjust to match earth-1deg.g changes.
+	* u-e1-1938.g: Sort into new standard unit order.
+	* ww2-e38.g, ww2-39.g: Add control layer.
+	* ww2-42.g: Adjust control layer to match earth-1deg.g changes,
+	remove towns already in u-e1-1938.g.
+
+	* PROJECTS: Remove useless mention of possible doctrine slots,
+	remove implemented item about advantage adjustment.
+
+Wed May 14 19:38:32 1997  Massimo Campostrini <campo@ipifidpt.difi.unipi.it>
+
+	* x11/Imakefile, curses/Imakefile: Added -lm flag to link.
+	* doc/Imakefile: Fix.
+
+	* imf.c (parse_lisp_palette_entry): New function, use everywhere.
+
+	* ximf.c (x11_interp_imf): Make a color pixel for a 1x1 image.
+	(x11_make_color_pixmap): Use parse_lisp_palette_entry.
+	* xutil.c (write_xpm_file): Ditto.
+	* xmap.c (USEIMAGE): Enable.
+
+	* terrain.imf: Add solid color images for all terrain types.
+
+Wed May 14 18:38:35 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* utype.def (courage-max, courage-min, opinion-max, opinion-min,
+	revolt-at-opinion-min):	New properties.
+	(has-opinions): Remove.
+	* table.def (opinions-on-creation): New table.
+	* run2.c (run_revolts, unit_revolt): Use unit opinions if defined.
+	* unit.c (init_unit_opinions): Use new unit type properties.
+	* unit.h (unit_opinion, unit_courage, etc): New macros.
+	* nlang.c (parse_date): Remove, never used.
+	(monthdays): New global.
+	(usual_date_string): Use to make accurate dates.
+	(relative_date_string): Add cases for calendar types.
+	* tp.c (remove_chars): Work on any buffer.
+	* write.c (shortest_escaped_name): Always use internal name.
+
+	* mormon.g: Add some documentation.
+
+	* refman.texi: Reflect above GDL changes.
+	* PROJECTS: Remove implemented parts of opinion/morale project.
+
+Tue Apr 29 20:54:39 1997  Jay Schuster <jay@pcc.com>
+
+	* task.c (parse_location): Fix conditional nesting.
+
+Tue Apr 29 05:14:57 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* nlang.c (notify_combat): Don't assume units non-null.
+	(destination_desc): Handle out-of-area destinations.
+
+	* xutil.c (write_xpm_file): Handle named colors correctly.
+
+	* cmdline.c (default_player_spec): New global.
+	(set_players_from_options): Fill it in when joining a game.
+	(parse_command_line): Set initially_no_ai instead of option_no_ai.
+	* init.c (initially_no_ai): New global.
+ 	(make_trial_assignments): Use it.
+	* tp.c (receive_data): Handle crossbuf upon entry to function,
+	warn when crossbuf packet overwritten.
+	(receive_packet): Make trial assignments when download complete,
+	don't retransmit join requests.
+	(receive_player_prop): Interpret "Passign" packets.
+	* tp.h (receive_action): Remove decl, now static.
+
+	* xconq.c (main): Send default player spec when joining a game,
+	call launch_game when hosting.
+	(launch_game): Move late-stage init code here.
+	(set_you_player): Fill in more rids.
+
+Thu Apr 24 19:07:38 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* cmdline.c (set_variants_from_options, set_players_from_options):
+	Handle case of joining game.
+	* tp.c (remove_chars): New function.
+	(receive_data): Use it, also process cross packet if one present
+	after ack received.
+
+	* xconq.c (main): Set up master_rid, parse variant and player
+	options even if joining an existing game.
+	* cconq.c (main): Set up master_rid.
+
+Tue Apr 22 19:26:25 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	TCP-based networking support for Unix Xconq.
+	* cmdline.c (general_usage_info): Document -host.
+	* cmdline.h: Add decls.
+	* unix.c (open_remote_connection, etc): Add socket-making
+	and -connecting code, plus reading and writing.
+	* xconq.c (main): Add interpretation of hosting and joining
+	options.
+	(run_game_proc): Poll for data from remote programs.
+	* xconq.h (side_has_local_display): New macro.
+	* xinit.c (init_all_displays): Use it, make numdisplays local.
+	* x2imf.c, imf2x.c, xshowimf.c (numremotes, my_rid): Define.
+	* cconq.c (main): Call net_run_game.
+
+	* cmdline.c (parse_command_line): Add -noai option.
+	(player_usage_info): Document it.
+	(set_players_from_options): Use it.
+	* conq.h: Move decls from other places.
+	* init.c, run.c, skelconq.c: Fix up some comments.
+	* mkroads.c (terrs): Make array of shorts.
+	* read.c (eval_number): New function.
+	(fill_in_side, interp_unit_plan): Use it.
+	(interp_variant_defns): Fix details of syntax handling.
+	* run2.c (compute_moves): Do for indep units also.
+	* task.c (do_produce_task): Check validity of material type.
+	* unit.c (enter_cell): Check that unit can be on connection.
+	* util.c (init_error, etc): Add debugging print of message.
+	* write.c (write_variants): New function.
+	(write_game_module): Use it.
+	
+	* duel.g: Fix syntax of variant.
+	* mod-usa.g: Update positions of oil platforms.
+	* omaha.g: Put infantry inside landing ships.
+	* pearl.g: Use symbol for Honolulu.
+	* red-october.g: Put sailors inside fleet.
+	* rising-sun.g: Let base module set up first two sides.
+	* russian-rev.g: Rely on more defaults in unit type defns.
+
+	* test-save.sh: Add ability to test one module.
+	* savetst1.inp: Do a little more movement.
+
+Tue Apr 15 20:20:20 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* actions.c (lookup_action_type): Fix typo.
+	* plan.c (any_auto_repair): Fix extern decl.
+	* read.c (interp_action): Fix parsing details.
+
+Mon Apr 14 19:12:40 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* actions.c (check_create_common): Test u_tech_to_own.
+	* combat.c (do_attack_action): Don't surrender to a low-tech side.
+	(attempt_to_capture_unit): Similarly for capturing.
+	* help.c (describe_utype): Detect and report when materials in
+	game never handled by unit.
+	* move.c (do_move_action): Handle disembarkation correctly.
+	* nlang.c (constructible_desc): Fix spacing.
+	(others_here_desc, occupants_desc): Report incomplete units
+	separately.
+	* run2.c (run_surrenders): Don't surrender to indep units.
+	(unit_surrender): Use correct location.
+	* side.c (cover_area_1): Renamed from cover_area.
+	(cover_area): Iterate over all trusted sides.
+	* unit.c (change_unit_type): Let everybody see the change.
+	(set_unit_side): Use u_tech_from_ownership.
+
+	* maccmd.c (do_one_disembark): Fix test.
+	(do_trust): Add trust display option.
+	* macdefs.h (diPrefsIncrText, diPrefsIncr): New dialog items.
+	* macconq.c (default_latlong_incr): New global.
+	(set_preferences): Set it from preferences dialog.
+	* macconq.h (Map latlongincr): New slot.
+	* macmap.c (create_map): Set it.
+	(draw_map_content): Fix calculation of visible region,
+	use latlongincr to space lines.
+	* macmap2.c: Draw unit info when unit deselected.
+	* macmenus.c (enable_commands_for_unit): Disable build item
+	if occupant and can't build.
+	* macwins.c (adjust_construction_items): Adjust list element size.
+	(draw_unit_closeup): Use standard description functions.
+	
+	* 1805.g: Use side symbols.
+	* napoleon.g: Remove redundant cp-* tables.
+	* africa.g: Add help strings, new material type "water",
+	set up see-chance-adjacent table.
+	* beirut.g: Add LOS and firing for tanks, wrecked building type,
+	surrenders.
+	* earth-50km.g, t-e50-river.g: More adjustments.
+	* u-e50-1996.g: Add more bases in western hemisphere.
+	* mormon.g: Allow more construction of places, allow forts to
+	construct armies, and Indians to reproduce.
+	* stdunit.g: Don't let nukes carry fuel.
+	* game.dir: Add "mormon".
+
+	* play.texi (Unit Info): New section/node.
+	* mac-sect.texi: Update description of menus.
+
+	* PROJECTS: Merge general and kernel categories, remove some
+	more undesirable items, add some generic user interface ideas.
+
+Mon Apr  7 20:08:49 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* move.c (check_move_action): Detect whether unit could ever
+	have enough mp to do the move.
+	* task.c: Call set_unit_reserve to put units into reserve.
+	(do_move_to_task, do_approach_subtask): If not enough mp this
+ 	turn, go into reserve.
+
+	* cmd.def (take-unit): Remove, can't decide what it should do.
+	* help.c (uu_table_row_desc, etc): Add argument for connective
+	word to use.
+	(describe_concepts): Improve on text.
+	(describe_game_design): Don't display temperature range if no
+	variation possible.
+	(describe_utype): Add/enhance various descriptions.
+	(describe_world): Don't describe year/day if not defined.
+	* nlang.c (occupants_desc, etc): Use shortest unique name.
+	(plan_desc): Don't describe supply flags if no materials.
+	(goal_desc, report_take): New functions.
+	* ui.c (take_supplies): Report need rather than transfer.
+
+	* macdefs.h (miFindNextOccupant, miFindDistance, miMoreGive,
+	miMoreTake, miMoreEmbark, miMoreDisembark): New menu items.
+	(dFindLocation, dFindUnit): New dialogs.
+	* macmenus.c: Handle new menu items.
+	(do_find_location_mi, do_find_unit_by_name_mi, etc): New functions.
+	(adjust_menus): Fix handling of more menu.
+	(any_transport_here): New function.
+	(enable_commands_for_unit): Call it.
+	* maccmd.c (do_detonate_command): Replace with code from
+	macmenus.c.
+	(do_dir, etc): Flag to scroll to unit.
+	(do_give_unit): Interpret prefix arg.
+	(do_take): Implement.
+	* macconq.c (recalc_spacing): Calculate tophgt and topunithgt.
+	* macmap.c (create_map): Remove calcs of tophgt etc.
+	(draw_map): Reset values of map->toph etc each time.
+	(toggle_map_topline, toggle_map_topunit): Ditto.
+	(draw_unit_info): Add occupant and stack info.
+
+	* intro.g: Add help strings, change how armor uses movement
+	in mountains, remove redundant cp-* tables.
+	* third-age.g: Add help strings, side symbols.
+
+	* play.texi: Make list of games consistent with game.dir.
+
+	* PROJECTS: Remove do_take_unit items, add some things to do
+	for the Mac interface.
+
+Wed Mar 26 19:42:03 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* ccmd.c (do_dir): Make it work.
+	(do_doctrine): Handle case of empty argument.
+	* xcmd.c (do_doctrine): Ditto.
+	* xinit.c (init_terrain_images): Add case for solid colors.
+	* xmap.c (draw_view_in_panner): Start using pixmap instead of
+	image for rendering.
+
+	* terrain.imf (plains, mountains, sea): Add solid colors.
+
+Tue Mar 25 20:18:20 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* config.host: Restore Linux case, fix syntax of variable set.
+	* configure.in: Fix use of config.host.
+	* config/mh-linux: Restore.
+	* kernel/Makefile.in, curses/Makefile.in: Link with -lm.
+	* curses/Makefile.in, x11/Makefile.in: Make executables setuid.
+
+	* unit.c (utype_name_n): Fix tipo.
+	* world.c (xy_to_latlon): Compute center line differently
+	depending on projection.
+	* write.c (write_units): Always write unit symbol.
+
+	* earth-1deg.g: Adjust terrain and features, especially in polar
+	regions.
+	* earth-50km.g: General cleanup of terrain bogosity.
+	* u-e50-1996.g: Move/add towns to match.
+	* midway.g: Use restriction of t-pacific, add more units.
+	* t-pacific.g: Adjust terrain correctly for projection.
+	* ww2-pac-41.g: Move/add units to match.
+
+	* xconq.texi: Tweak formatting.
+	* PROJECTS: Reflect library projects.
+
+Sun Mar 16 16:03:59 1997  Massimo Campostrini <campo@ipifidpt.difi.unipi.it>
+
+	* xutil.c (write_xbm_file): Init a local correctly.
+
+Sun Mar 16 15:35:39 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* keyword.def (projection): New keyword.
+	* world.h (Area projection, halfheight): New slots.
+	* read.c (interp_area): Recognize projection.
+	* write.c (write_area): Write projection.
+	* world.c (set_area_shape): Compute halfheight.
+	(xy_to_latlon, latlon_to_xy): New functions.
+	* nlang.c (latlon_desc): Call xy_to_latlon.
+
+	* macmap.c (draw_map_contents): Draw lat/long lines if requested.
+
+	* t-africa.g: Fix latitude and longitude.
+	* t-pacific.g: Ditto, also use projection 1, adjust terrain to
+	match.
+	* ww2-pac-41.g: Adjust unit positions to match terrain changes.
+
+Thu Mar 13 19:17:55 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* keyword.def (always, near): New keywords.
+	* conq.h (any_people_side_changes): Fix decl.
+	* combat.c (capture_unit_2): Notify when any info received as
+	a side effect of capture.
+	* lisp.c (read_form_aux): Fix handling of punctuation in numbers.
+	(escaped_symbol, escaped_string): Move to here from write.c.
+	(interp_short_array, interp_long_array): Move to here from read.c.
+	* move.c (carryable, accelerable, etc): Move here from mplayer.c.
+	(accelerator): New function.
+	* mplayer.c (review_theaters): Recalc units waiting for transport.
+	(mplayer_finish_movement): Remove redundant test of waiting units.
+	(search_for_available_transport): Add argument for purpose of
+	search, push an occupy task on the would-be occupant's agenda.
+	* read.c (interp_table): Load default game if necessary.
+	(interp_standing_order): Rewrite to interpret new syntax.
+	* run2.c (any_tooling_attrition, etc): Make into shorts.
+	(can_satisfy_need): Account for doctrine when computing.
+	* score.c (record_into_scorefile): Record more types of variants,
+	record advantage as 'a' instead of '+'.
+	(get_scores): Display more types of variants.
+	* tp.c (net_push_occupy_task): New function.
+	* unit.c (interp_utype_list): Move to here from read.c.
+	* unit.h (is_task_type): New macro.
+	* world.c (num_people_at): Move to here.
+	* write.c (write_units): Write side symbol if defined.
+
+	* side.h (sordercond): New enum.
+	* plan.c: Update standing order code.
+	* side.c (add_standing_order): Provide better feedback.
+	(parse_standing_order): Add listing for orders.
+	* task.c (parse_task): Add case to help with order cancel.
+	* read.c (interp_standing_order): Rewrite to interpret new syntax.
+	* write.c (write_standing_orders): Write using a new syntax.
+
+	* imfapp.c: Add support for MW; UPPs, QD access macros, console
+	stubs.
+	* mac.c: If __MWERKS__, comment out AppleTalk code.
+	
+	* macconq.h, macinit.c, macmap.c: Fix decls.
+	
+	* neurope.g: Remove now-unneeded include.
+	* ww2-sides.g: Add a symbol to each side form.
+
+Mon Mar 10 19:23:33 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* imf2imf.c (syntax_error, prealloc_debug): Define.
+
+	* Imakefile (SUBDIRS): Add doc.
+	* Local.config (GLIBDIR, IMFLIBDIR): Default to system places.
+
+	* curses/Imakefile (DEFINES, etc): Use common set.
+	* x11/Imakefile: Ditto.
+	* kernel/Imakefile: Ditto, also build skelconq and imf2imf.
+	* doc/Imakefile: Add actions for building doc things.
+	* SelFile/Imakefile: Don't install library by default.
+
+Thu Mar  6 19:05:18 1997  Massimo Campostrini <campo@mail.difi.unipi.it>
+
+	* Local.config (EXTRA_DEFINES): Move Xconq lib dir here from
+	curses/Imakefile.
+	* xshowimf.c: Test for a missing image.
+	* u-midearth.g: Set default-base-module.
+
+Thu Mar  6 18:39:31 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* texinfo.tex: Update to version 2.185.
+
+	* misc.h, ui.c (limitn): Rename from limit, avoids Sun C bug.
+
+	* fantasy.g: More cleanups.
+	* neurope.g: Add variants, convert cities in old format.
+	* t-africa.g: Remove commented-out junk.
+	* ww2-pac-41.g: Update positions of units in Hawaii.
+
+Wed Mar  5 20:04:49 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	From Larry Schwimmer <rosebud@cyclone.Stanford.EDU>:
+	* config.h (SAVEFILE, CHECKPOINTFILE, ERRORFILE, INTRO_GAME):
+	New definitions.
+	* unix.c (game_homedir, game_filename): New functions.
+	(saved_game_filename, etc): Use them.
+	(score_file_pathname): New function.
+
+	* keyword.def (stop): Remove.
+	* ai.c (set_side_ai): Handle empty names better.
+	* init.c (patch_object_references): Only init actorstate if
+	does not already exist.
+	* mkrivers.c, mkterr.c, run.c, run2.c, tp.c, unit.c: Fix some
+ 	indentation.
+	* plan.c (decide_plan): Use INTRO_GAME.
+	* read.c (interp_unit): Use init_unit_actorstate.
+	* score.c (ScoreRecord numturns): New slot.
+	(eval_sk_form): Remove K_STOP case.
+	(basic_player_name): New function.
+	(record_into_scorefile, get_scores): Rearrange record format,
+	fix advantage recording.
+
+	* xconq.h (STANDARD): Delete, never used.
+	(controltypeenum): Add SHOW_CONTROL, SHOW_CLOUDS, SHOW_WINDS.
+	(Map drawcontrol, etc): New slots.
+	* xconq.c (add_default_player): Change name of env var.
+	* xdraw.c (draw_clouds_row, draw_temperature_row, draw_winds_row):
+	New functions.
+	(draw_row): Call them.
+	(draw_unit_info): Use more nlang.c functions.
+	* xmap.c: Add flags and buttons for weather drawing.
+
+	* mac.c: Various cosmetic improvements.
+	* macmap.c (draw_row): Move weather drawing to here from terrain
+	row drawing.
+
+	* SelFile/Dir.c: Fix compilation on Alpha.
+
+	* t-pacific.g: Remove alignment markings, adjust some positions.
+
+	* xconq.texi: Add some contributor names.
+	* refman.texi (stop): Remove description.
+
+	* PROJECTS: Reflect above changes, remove some pointless items.
+
+Thu Feb 27 19:23:18 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* combat.c (will_report_damage): New function.
+	(reckon_damage): Call it.
+	* nlang.c (report_combat): Report misses.
+	* help.c, help.h: Make almost all functions static.
+	* side.c (paint_view_1): Don't call see_exact.
+	* unit.c (designer_create_unit): Ditto.
+	* world.c (paint_cell_1, etc): Ditto.
+
+	* ui.h (LineSegment): New struct.
+	* ui.c (draw_temperature_here, draw_winds_here): Move here from
+ 	macdraw.c.
+	(init_contour_lines, contour_lines_at): New functions.
+
+	* util.c (error_is_bug): New global.
+	(case_panic): Ditto.
+	* ui.c (xform): Ditto.
+	
+	* macconq.h (draw_temperature_here): Remove decls.
+	* macdesign.c (designer_overlay): Remove, no longer used.
+	(disable_designing): Reset maps' see_all state.
+	(do_mouse_down_design): Remove map redrawing code.
+	(apply_designer_tool): Fix view painting.
+	* macmap.c (cell_overlay, cell_terrain): Fix designer case, add
+	map argument.
+	(draw_contours): Use contour_lines_at.
+
+Mon Feb 24 19:57:22 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* cmd.def (+, -): New commands.
+	* keyword.def (act): Remove.
+	* actions.c (lookup_action_type): New function.
+	* read.c (interp_unit_act): Remove.
+	(interp_unit): Interpret action-related slots directly.
+	(interp_action): New function.
+	(interp_unit_plan): Use temp var for plan.
+	* write.c (write_unit_act): Write flatter output.
+	(write_action): New function.
+	* unit.c (flush_dead_units): Detect case where all units in
+	unitlist are flushed.
+
+	* maccmd.c (do_down, do_up): New functions.
+	* macmenus.c (do_down_command, do_up_command): New functions.
+	* macwins.c: Remove unnecessary test of construction_run.
+
+	* xconq.h (Map vx, vy, vw, vh, vw2, vh2): Remove slots, unneeded.
+	* xdraw.c (xform, etc): Return void instead of int.
+	(draw_area_background): Fix calculation for cylinder.
+	(draw_map_view): Use local vars instead of map slots for temps.
+	(draw_terrain_row): Fix wrapping for cylinder drawing.
+	(draw_units): Similarly.
+	* xmap.c (help_terrain_type): Fix formatting of help string.
+	(grok_position): Add unit result argument.
+	* xcloseup.c, xcmd.c: Change callers.
+	* xcmd.c (aux_add_terrain_2, etc): Make help work correctly
+	while in modal loop.
+	(aux_attack): New function.
+	(do_attack): Call it.
+	(aux_remove_terrain, do_remove_terrain_2, aux_remove_terrain_2):
+ 	New functions.
+	(do_remove_terrain): Call.
+	(do_down, do_up): New functions.
+
+	* ccmd.c (do_down, do_up): New functions.
+
+	* nat-names.g: Add Sierra Leoneans, Tongans, also more unit
+	names.
+	* pearl.g: Flatten out action properties.
+	* u-e1-1996.g: Make Guayaquil Ecuadorean.
+
+	* commands.texi: Use @kbd instead of @code, document ^E instead
+	of ^D as disembark command.
+	(+, -): Document new commands.
+	* curses-sect.texi, x11-sect.texi, x11-dsect.texi: Use @kbd
+	in tables.
+	* hacking.texi: Add @bullet to @itemize usages.
+	* refman.texi: Similarly, also document new symbols, fix node
+	references.
+
+	* test/Makefile.in (all): Add help info.
+	(imf.uses): New target.
+	* all.g: Update to reflect current GDL.
+	* cmd-diff.sh: Reflect new format of commands in .texi files.
+	* imf-uses.sh, game-uses.sh: New files.
+	* lib-uses.sh: Rewrite to not expand wildcard-resembling names
+ 	like "m*".
+	* src-uses.h: Add comments.
+
+	* PROJECTS: Reflect above changes.
+
+Mon Feb 17 12:46:32 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* misc.h (limit): New macro.
+	* ui.c: Use it.
+	* nlang.c (notify_doctrine_1): New function.
+	(notify_doctrine): Use it, list all doctrines if no match on name
+	or id.
+	* plan.c (repair_if_damaged): Use doctrine to decide when damage
+	warrants repair.
+	(capture_indep_if_nearby, capture_useful_if_nearby): Don't
+	do anything if already heading towards captureable unit.
+	* read.c (fill_in_doctrine): Assume construction run array exists.
+	* side.c (new_doctrine): Move slot defaulting to here from
+	init_doctrine, improve default values.
+	(clone_doctrine): Always allocate construction run.
+	* write.c: Reflect improved defaults.
+
+	* ui.h (VP sxmin, symin, sxmax, symax): New slots.
+	(VP sx, sy): Make int-sized.
+	* ui.c (xform_cell): Decide wrapping in cylindrical area based on
+ 	which wrapping will cause the cell to appear in the viewport.
+	(calc_view_misc): New function.
+	(set_view_size, set_view_power): Use it.
+	(center_on_focus): Use set_view_position.
+	* macmap.c (create_map, set_map_scrollbars, draw_terrain_row):
+	Update to reflect ui.c changes.
+
+Mon Feb 10 19:19:04 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* ai.c (bhw_max): New global.
+	(basic_capture_worth): Fix test of acp.
+	* mplayer.c (preferred_build_type): Use bhw_max to scale type
+	preferences.
+	* util.c (select_by_weight): Handle zero values better.
+
+	* plan.c (repair_if_damaged, repair_here): New function, use in
+ 	plan_offense etc to decide to get repairs.
+	* task.c (do_capture_task): Fix approach calculation.
+	(do_repair_task): Fill in usefully.
+	(create_repair_task, set_repair_task): New functions.
+
+	* table.def (body-height, weapon-height): New tables.
+	* utype.def (fire-angle-max): New property.
+	(fire-velocity-max, fire-velocity-min): Remove.
+	* combat.c (found_blocking_elevation, elevation_blocks): Compute
+ 	parabolic instead of flat trajectory.
+
+	* history.def (unit-gone): New historical event type.
+	* move.c (do_move_action, etc): Use it if unit disappears while
+ 	moving.
+	(over_nothing, etc): New enum values, use everything
+	to test ferrying by transport.
+
+	* keyword.def (row-bytes): Remove.
+	* imf.c (K_ROW_BYTES): Remove reference.
+	* ttype.def (color): Remove, no longer used.
+	* help.c (describe_ttype): Remove use of t_color.
+	* macimf.c: Tweak image size test.
+	* macinit.c (t_color_defined): Remove, no longer used.
+
+	* gettysburg.g: Adjust colors of terrain, add withdraw chance,
+	weapon height.
+	* nat-names.g: Update to reflect new flag names.
+	* panzer.g: Add fire-angle-max, weapon-height, body-height.
+	* ww2-div-pac.g: Adjust some image names.
+	* colors.imf (dark-gray, light-gray): Add.
+	* flags.imf (flag-kazakhstan, etc): Add.
+	* milsym.imf (army-hq, marine-bn, etc): Add.
+
+	* PROJECTS: Add item about follow-action, remove item about
+	sabotage.
+
+Thu Feb  6 20:06:14 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* skelconq.c (main): Call run_local_ai.
+
+	* test/Makefile.in (check-actions): Rename from check-acts.
+	* test-acts.h, test-save.sh: Convert to Bourne syntax.
+
+Wed Feb  5 19:52:39 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* cconq.c (ask_unit): Rewrite so no statements unreachable.
+
+	* history.c (record_event): Just flag that post-event scores
+	should be checked, don't do it just yet.
+	* run.c (run_game): Do it here.
+	(test_for_game_end): Call all_sides_draw.
+	* score.c (side_wins, side_loses, all_sides_draw): Record event
+	after side status changes.
+	(check_post_action_scores, check_post_event_scores): Remove unused
+ 	arguments.
+
+	* actions.c (execute_action): Fix caller.
+
+	* xcloseup.c: Standardize argument orders for various functions,
+	clean up some string handling, simplify some code.
+	* xcmd.c: Reflect argument order changes.
+	* xconq.c (raise_widget): Rename from RaiseWidget and move here
+	from xcloseup.c.
+	* xdesign.c: Call net_create_feature instead of create_feature.
+	* xdraw.c: Init more colors to default values.
+	* xhelp.c: Conditionalize designer help info properly.
+	* xshowimf.c: Prototype properly.
+
+	* wizard.g: Add toolup and research times, remove redundant
+	char properties, fix starvation table.
+
+Mon Feb  3 20:03:28 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* imf.c (load_image_families): Parse line without using scanf.
+	* ui.c (hws, etc): Make hexes at "8x8" mag be 10x10, adjust
+	all numbers correspondingly.
+	* util.c (debugging_string): New function.
+
+	* macdraw.c (draw_country_borders): Make gray borders thinner.
+	(draw_winds): Scale wind force correctly.
+	* macinit.c (filter_splash): Give feedback on debug flags.
+	(add_default_terrain_image): Always flag as ersatz.
+
+	* x11/Makefile.in (LDFLAGS): Define.
+	* imf2x.c (main): Add argument -match.
+	* x2imf.c (main): Call init_lisp.
+	* xcmd.c (aux_build): Fix handling of '?'.
+	* xconq.c (main): Add name of program to first notification.
+	* xconq.h (UI dots): New slot.
+	* bitmaps/dots.b: New file.
+	* xinit.c: Include it.
+	(report_missing_images): New function.
+	(set_optional_colors): New function, broken out of set_colors.
+	(CLOSE_ENOUGH): Make more lenient on matches.
+	(get_default_terrain_image): Make default image like Mac version.
+	* xdraw.c (draw_contours): New function.
+	(draw_row): Call it, draw less on edges.
+	(draw_units): Draw ellipsis dots if multiple units stacked.
+	(draw_border_line_mult, etc): Rename from ..._multiple,
+	use black as foreground color if none given.
+	(draw_unit_image): Draw plain boxes at small scales, don't
+	draw emblem if embedded in image already.
+	(draw_side_info): Draw willingness to declare draw, highlight
+	winning sides.
+	* xmap.c: Improve default size for top left area.
+	(help_unit_type): Fix so it is actually helpful.
+	* xutil.c (read_xbm_file, read_xpm_file): Fix various details.
+	(write_xbm_file, write_xpm_file): Fix structure names written.
+
+	* 1757.g, africa.g, empire.g, ww2-adv.g, ww2-div-pac.g: Eliminate
+ 	commented-out image names.
+	* ww2-div-eur.g: Make org material have effect, add more bomber
+	parameters.
+	* nw-europe.g: Make default see-all variant be false, add
+	bombers inside airbases.
+	* ww2-eur-42.g: Add cliff and salt-marsh border layers.
+
+	* PROJECTS: Remove done or useless X11 items, add a couple.
+
+Wed Jan 29 19:08:10 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* keyword.def: Sort keywords alphabetically.
+	(sun): New area property.
+	* world.h (Area sunx, suny): New slots.
+	* world.c (init_area, calculate_world_globals): Set values.
+	* read.c (interp_area): Read the property.
+	* run2.c (compute_sun): Use the property.
+	* write.c (write_areas): Write the property.
+
+	* history.def (unit-merged): New event type.
+	* actions.c (do_transfer_part_action): Use it.
+	* nlang.c (historical_event_desc): Describe it.
+
+	* actions.c, combat.c, move.c: Compactify testing in
+ 	prep_*_action.
+	
+	* actions.c (do_produce_action, do_alter_cell_action,
+ 	do_remove_terrain_action): Call distribute_material.
+	(notify_tech): New function.
+	(do_research_action): Call it.
+	(adjust_tech_crossover): Fix calculation.
+	(notify_tp): New function.
+	(do_toolup_action): Call it.
+	(adjust_tooling_crossover): Fix calculation.
+	(check_create_common): New function.
+	(check_create_in_action, check_create_at_action): Call it.
+	(distribute_material): Distribute to more units nearby.
+	(give_away): New function.
+
+	* ai.c (lookup_goal_type): Move here from read.c.
+	* nlang.c (report_combat, notify_combat): Move here from combat.c.
+	* plan.c (lookup_plan_type): Move here from read.c.
+
+	* lisp.c, lisp.h (cdddr): New function.
+	* read.c: Use it, use more temp vars and fewer redundant calls.
+	
+	* mplayer.c (mplayer_adjust_plan): Go into reserve if unit
+	plan being executed too many times in a single turn.
+	* run.c (move_one_unit_multiple): Remove play rate control code.
+
+	* run2.c (compute_acp, etc): Add some warnings.
+
+	* PROJECTS: Add item about material consumption when changing
+	type.
+
+Mon Jan 27 18:54:58 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* imf.c: Call syntax_error for most syntax errors.
+	(write_color): New function.
+	(find_color_name): Detect red, green, and blue.
+
+	* side.c, side.h (calc_vision): Remove.
+	* macdesign.c: Remove calc_vision calls.
+
+	* xconq.h (UI told_outcome): New slot.
+	* xconq.c (update_side_display): Remove end-of-game code.
+	(update_turn_display): Add better end-of-game handling.
+	* xinit.c: Stub out cellcolor setting.
+	* ximf.c (x11_make_color_pixmap): Work on any color screen
+	depth, various optimizations.
+
+	* macconq.h (Map see_all): New slot.
+	* macconq.c (update_turn_display): Set it for all maps if
+	the game has ended.
+	* macmap.c (cell_terrain, etc): Use map->see_all.
+	* macmap2.c: Tweak map->see_all flag instead of side flag.
+	
+	* imfapp.c: Read/write notes in xcif resource correctly,
+	don't make xcif for colors.
+	(syntax_error): New function.
+
+	* fred.g: Remove hills terrain type, make supplies matter,
+	let armies and leaders escape combat.
+	* 1756.g: Fix module instructions, start armies and leaders in
+	fortresses.
+	* t-cent-eur.g (area terrain): Reflect removal of hills type.
+	* hill.g: Comment out action-messages.
+	* mod-usa.g: Remove Birmingham (it's not the one in Alabama),
+	include u-e50-1996.g instead of earth-50km.g.
+	* normandy.g: Remove bogus coastal artillery.
+	* t-normandy.g: Add railroad spur to end of Cotentin peninsula.
+	* ww2-bn.g: Let railroad artillery live but be immobile away
+	from tracks.
+	* sf.imf, ships.imf, standard.imf: Clean up some images, add more
+ 	colors/masks.
+	
+	* PROJECTS: Remove some X11 items either done or useless.
+
+Thu Jan 23 18:50:19 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* macimf.c (mac_create_cicn): Fix computation of mono images.
+
+	* imf.c (get_img): Add new images in order of size.
+
+	Eliminate image colors as a distinct type of object.
+	* imf.h (ImageColor): Remove.
+	* imf.c (interp_color, etc): Remove.
+	(write_imf): Detect colors and write specially.
+	* read.c (interp_form): Remove K_COLOR case.
+	* macimf.h (MacImage colordefined, color): New slots.
+	* macimf.c: Detect constant-color patterns and make into
+	1x1 images.
+	(interp_ctab): Don't look for color names.
+	(mac_load_image_color): Remove.
+	* macconq.h (tcolors): Make into array of MacImage *.
+	* macinit.c (init_terrain_colors): Merge into init_terrain_images.
+	* macdraw.c, macmap.c: Change all uses of tcolors.
+	* imfapp.c (collect_all_colors, make_imc_resources, etc): Remove.
+	
+	* imfapp.c: Add submenu to set window background color.
+	
+	* colors.imf: Make colors into 1x1 images.
+	* imf.dir: Add color names.
+
+	* All game designs: Eliminate terrain color properties or
+	change into image-name properties.
+
+	* PROJECTS: Reflect above changes.
+
+Mon Jan 20 19:29:55 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* config.guess, config.sub: Update to current FSF versions.
+	* config.host: Update from top-level FSF configure.in.
+	* config: Update contents to current FSF version.
+
+	* imf.h (Image rowbytes): Remove slot.
+	(computed_rowbytes): New macros.
+	* imf.c (write_pixmap, etc): Always compute the rowbytes.
+	(interp_bytes): Detect more syntax errors.
+	* macimf.c: Use computed rowbytes everywhere.
+
+	* aircraft.imf, ancient.imf, dwellings.imf, emblems.imf,
+ 	fantasy.imf, milsym.imf, misc.imf, people.imf, places.imf, sf.imf,
+ 	ships.imf, tanks.imf, vehicles.imf, wizard.imf: Clean up many
+	images, add color, masks, multiple sizes, remove some unused
+	images, add others.
+	* weapons.imf: New file.
+	* colors.imf: Remove xxx[1234] colors, never used.
+	* imf.dir: Update.
+
+	* empire.g, flattop.g, midearth.g, modern.g, monster.g, panzer.g,
+ 	postmodern.g, sc4.g, third-age.g, ww2-div-pac.g: Fix image
+ 	references.
+	* postmodern.g: Fix production/consumption oddities, add tech
+	development parameters.
+	* wizard.g: Fix construction tables.
+
+	* test/buildtransp.g: Fix to use standard game.
+
+Thu Jan 16 19:05:01 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* table.def (consumption-per-fire, material-to-attack): New tables.
+	(material-to-fight): Remove.
+	* combat.c: Use new tables when testing action validity and
+	material consumption.
+	* move.c (move_unit): Change control of unit's new location.
+
+	* ai.c, ai.h (AI_ops): Change preferred_build_type slot to
+	adjust_plan slot.
+	(ai_preferred_build_type): Remove.
+	(ai_adjust_plan): New function.
+	(try_to_draw, give_up): Move here from mplayer.c.
+	* mplayer.c (mplayer_adjust_plan): New function.
+	(mplayer_finish_movement): Reduce redundant scanning.
+	* run.c (move_one_unit_multiple): Return if unit has a task
+	outcome that the AI should examine.
+	(run_ai_plan_adjust): Call ai_adjust_plan.
+	* task.c (execute_task): Return if task outcome to look at.
+
+	* side.c (update_side_display_all_sides): New function.
+	* actions.c, run2.c, side.c: Call it instead of looping over sides.
+
+	* init.c (init_view): Check area shape, only allocate material
+	views if any terrain storage possible.
+	* side.c (people_always_see): New global.
+	(see_cell): Use it.
+
+	* macconq.c (default_draw_latlong): New global, preference for
+	drawing lat/long of locations.
+	* macdefs.h (diPrefsLatLong): New dialog item.
+	* macmap.c: Pass value to generic_oneliner.
+	* nlang.c (generic_oneliner): Add argument to control addition
+	of lat/long position to line.
+
+	* ww2-div-eur.g: Don't allow metro divisions to initiate attacks,
+	increase V-2 range and only allow hits on places.
+	(bomber): New unit type.
+	(air): Remove material type.
+	(missile): New material type.
+	(estuary): New terrain type.
+	* t-nw-eur.g: Add estuaries.
+	* nw-europe.g: Add bombers, original sides to French towns.
+	* stdterr.g (alt-blob-size): Reduce to 100.
+	* ww2-adv.g (control-range, keep-control-range, hp-min): Define.
+	* empire.g, insects.g, ww2-div-pac.g: Rename to material-to-attack
+ 	from material-to-fight.
+	* ww2-adv.g: Rename to material-to-fire from material-to-fight.
+	* ww2-eur-42.g: Add base Kalinin.
+
+	* animals.imf (frog): Move to here from misc.imf.
+	* insects.imf: Add masks to all images.
+	* objects.imf, people.imf, places.imf, vehicles.imf: New files,
+ 	move appropriate images to here from misc.imf.
+	* terrain.imf (flagstone, floor, mists, rock): Add color images.
+	* imf.dir: Rebuild.
+
+	* PROJECTS: Reclassify some general items as kernel items,
+	add some ideas.
+
+Thu Jan  9 17:58:19 1997  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* combat.c (report_combat): New function, call instead of
+	notify_combat everywhere.
+	* help.c (tt_table_row_not_default, tm_table_row_not_default,
+	tt_table_row_desc, tm_table_row_desc): New functions.
+	(describe_ttype): Call them.
+	(tb_dice_desc): New function.
+	(describe_utype): Call it, describe more combat tables.
+	* init.c (kill_excess_units): New function.
+	(final_init): Call it.
+	* nlang.c (oneliner): Describe control of cell.
+	* run2.c (run_unit_starvation): New function, call at every
+	turn end.
+
+	* game.dir: Add gazala, ww2s-pac-41, remove duel, napoleon.
+
+	* africa-1850.g: Improve terrain view.
+	* africa.g: Add animals, ship, cities, capacities.
+	* t-africa.g: Add European cities and access to African towns.
+
+	* animals.imf: New file, move elephant from ancient.imf.
+	* insects.g: Fix various table, add bee stings.
+	* modern.g: Add more material handling.
+	
+	* emblems.imf: Add axis/allies combo emblems.
+	* ww2-stdunit.g: Define emblems for each side.
+	* ww2s-42.g: Add Pacific theater units.
+	* ww2s-eur-42.g: Add original sides to various towns.
+	* ww2s-42.g, ww2s-eur-42.g: Add instructions.
+	* ww22-pac-41.g: Rename from ww2s-pac-42.g, add many more
+	starting units.
+
+	* ww2-eur-42.g: Make Ireland neutral terrain, make Vichy France
+	exist but still be inactive side.
+	* ww2-div-pac.g: Define the sides, remove side library.
+	* coral-sea.g, midway.g, pearl.g, ww2-pac-41.g: Remove side
+	declarations.
+
+	* imf.dir: Reflect above changes.
+
+	* PROJECTS: Add various ideas prompted by library work,
+	remove a couple library items.

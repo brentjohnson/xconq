@@ -1,0 +1,77 @@
+# Makefile for Xconq images.
+# Copyright (C) 1999, 2000 Stanley T. Shebs.
+
+# Xconq is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+prefix = @prefix@
+
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+datadir = @xconq_data_dir@
+mandir = @mandir@
+man6dir = $(mandir)/man6
+infodir = @infodir@
+docdir = $(datadir)/doc
+
+imagesdir = $(datadir)/images
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+GAMEUID = @gameuser@
+GAMEGRP = @gamegrp@
+
+DIRPERM  = 0755
+FILEPERM = 0644
+
+SHELL = /bin/sh
+
+INSTALL = install -c
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL)
+
+# Host and target-dependent makefile fragments come in here.
+####
+# End of host and target-dependent makefile fragments.
+
+all:
+
+imf.dir:
+	$(srcdir)/makedir.sh $srcdir/*.imf | sed -e s,$(srcdir)/,, >>imf.tmp
+	$(srcdir)/../move-if-change imf.tmp imf.dir
+
+install: all install-only
+
+# Build a copy of the images directory at the install place.
+
+install-only:
+	for i in `ls $(srcdir)/*.gif `; do \
+		echo $$i; \
+		$(INSTALL_DATA) $(srcdir)/$$i $(imagesdir); \
+	done
+	for i in `ls $(srcdir)/*.bmp `; do \
+		echo $$i; \
+		$(INSTALL_DATA) $(srcdir)/$$i $(imagesdir); \
+	done
+	chown $(GAMEUID) $(imagesdir) $(imagesdir)/*
+	chgrp $(GAMEGRP) $(imagesdir) $(imagesdir)/*
+	chmod $(DIRPERM) $(imagesdir)
+	chmod $(FILEPERM) $(imagesdir)/*
+
+clean:
+
+distclean: clean
+	rm -f Makefile config.status
+
+extraclean: distclean
+	rm -f *~* .*~*
+
+realclean: distclean
+
+Makefile: Makefile.in $(host_makefile_frag) $(target_makefile_frag)
+        cd .. \
+          && CONFIG_FILES=lib/$@ CONFIG_HEADERS= $(SHELL) ./config.status

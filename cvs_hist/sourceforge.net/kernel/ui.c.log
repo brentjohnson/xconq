@@ -1,0 +1,247 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/ui.c,v
+Working file: ui.c
+head: 1.20
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.19
+	BPT_EMCDONALD_AI_15: 1.18
+	SS_7_5_0_0pre_0_20050612: 1.15
+	BPT_MSKALA_IMF_3: 1.15
+	BPT_MSKALA_SUPPLY_12: 1.15
+	BPT_EMCDONALD_AI_14: 1.15
+	MPT_EMCDONALD_AI_7: 1.13.2.3
+	BPT_EMCDONALD_AI_13: 1.14
+	SS_7_5_0_0pre_0_20050501: 1.14
+	BPT_EMCDONALD_AI_12: 1.14
+	MPT_EMCDONALD_AI_6: 1.13.2.1
+	BPT_EMCDONALD_AI_11: 1.14
+	SS_7_5_0_0pre_0_20050416: 1.14
+	BPT_EMCDONALD_AI_10: 1.14
+	MPT_EMCDONALD_AI_5: 1.13.2.1
+	BPT_EMCDONALD_AI_9: 1.14
+	BPT_EMCDONALD_AI_8: 1.14
+	MPT_EMCDONALD_AI_4: 1.13.2.1
+	BPT_EMCDONALD_AI_7: 1.14
+	MPT_EMCDONALD_AI_3: 1.13.2.1
+	BPT_EMCDONALD_AI_6: 1.14
+	BPT_MSKALA_SUPPLY_11: 1.14
+	BPT_EMCDONALD_AI_5: 1.14
+	MPT_EMCDONALD_AI_2: 1.13.2.1
+	SS_7_5_0_0pre_0_20050322: 1.14
+	BPT_MSKALA_SUPPLY_10: 1.14
+	BPT_EMCDONALD_AI_4: 1.14
+	MPT_EMCDONALD_AI_1: 1.13.2.1
+	BPT_EMCDONALD_AI_3: 1.14
+	BPT_MSKALA_SUPPLY_9: 1.14
+	MPT_MSKALA_SUPPLY_3: 1.12.2.1
+	BPT_EMCDONALD_AI_2: 1.14
+	BPT_MSKALA_SUPPLY_8: 1.14
+	MPT_MSKALA_SUPPLY_2: 1.12.2.1
+	BPT_MSKALA_SUPPLY_7: 1.14
+	BRANCH_EMCDONALD_AI: 1.13.0.2
+	BPT_EMCDONALD_AI_1: 1.13
+	BPT_MSKALA_SUPPLY_6: 1.12
+	SS_7_5_0_0pre_0_20050225: 1.12
+	BPT_MSKALA_SUPPLY_5: 1.12
+	MPT_MSKALA_SUPPLY_1: 1.12
+	BPT_MSKALA_SUPPLY_4: 1.12
+	BPT_MSKALA_SUPPLY_3: 1.12
+	BPT_MSKALA_SUPPLY_2: 1.12
+	SS_7_5_0_0pre_0_20050208: 1.12
+	BPT_MSKALA_IMF_2: 1.12
+	BRANCH_MSKALA_SUPPLY: 1.12.0.2
+	BPT_MSKALA_SUPPLY_1: 1.12
+	SS_7_5_0_0pre_0_20050117: 1.12
+	SS_7_5_0_0pre_0_20050108: 1.10
+	SS_7_5_0_0pre_0_20041228: 1.8
+	BRANCH_MSKALA_IMF: 1.3.0.2
+	BPT_MSKALA_IMF_1: 1.3
+	SS_7_5_0_0pre_0_20041211: 1.3
+	SS_7_5_0_0pre_0_20041126: 1.2
+	GENESIS: 1.1.1.1
+	PRIVATE_TREE_1: 1.1.1
+keyword substitution: kv
+total revisions: 30;	selected revisions: 30
+description:
+----------------------------
+revision 1.20
+date: 2005/09/17 15:43:43;  author: eric_mcdonald;  state: Exp;  lines: +4 -0
+Fix construction bug in UI.
+----------------------------
+revision 1.19
+date: 2005/08/06 15:34:18;  author: eric_mcdonald;  state: Exp;  lines: +37 -4
+Fix UI bug that caused new units to be prefered over incomplete ones.
+Update to terrain images.
+----------------------------
+revision 1.18
+date: 2005/06/25 21:45:38;  author: eric_mcdonald;  state: Exp;  lines: +4 -4
+Fix bug introduced by previous bug fix.
+----------------------------
+revision 1.17
+date: 2005/06/25 21:17:08;  author: eric_mcdonald;  state: Exp;  lines: +18 -11
+Fix bug in offsets of oversized unit images on isometric maps.
+Archive another game in 'bitrot'.
+Prepare for the removal of multi-part unit functionality.
+----------------------------
+revision 1.16
+date: 2005/06/21 01:30:41;  author: eric_mcdonald;  state: Exp;  lines: +1 -7
+Fix typos in reference manual.
+Remove outdated comment.
+Fix bug in dice scaling.
+Remove 'transfer-part' action.
+----------------------------
+revision 1.15
+date: 2005/06/06 03:03:47;  author: eric_mcdonald;  state: Exp;  lines: +19 -6
+Merge from 'MPT_EMCDONALD_AI_6' to 'MPT_EMCDONALD_AI_7'.
+----------------------------
+revision 1.14
+date: 2005/03/12 03:12:20;  author: eric_mcdonald;  state: Exp;  lines: +2 -0
+Fix crashing bug with restored games that have only one side.
+Partially fix a bug with the scaling of connections.
+Fix crashing bugs with uviews that have no associated images.
+----------------------------
+revision 1.13
+date: 2005/03/04 04:15:37;  author: eric_mcdonald;  state: Exp;  lines: +68 -0
+branches:  1.13.2;
+Fix bug in the reporting of the nearest unit under mouse cursor.
+----------------------------
+revision 1.12
+date: 2005/01/16 02:23:11;  author: eric_mcdonald;  state: Exp;  lines: +6 -2
+branches:  1.12.2;
+Fix bug with unit views in "see all" mode.
+Fix viewport "show all" bug in SDL interface.
+Fix designer mode "show all" bug in SDL interface.
+----------------------------
+revision 1.11
+date: 2005/01/15 23:02:44;  author: eric_mcdonald;  state: Exp;  lines: +14 -10
+New family of games, Valhalla, from Elijah Meeks.
+Fix bug with unit views in designer mode.
+Fix bug with overwatch in designer mode.
+Continue fixing uview lookups to match new uview code.
+----------------------------
+revision 1.10
+date: 2005/01/08 22:14:19;  author: eric_mcdonald;  state: Exp;  lines: +3 -0
+Improve AI handling of transports.
+Do not apply hex masks to borders.
+Networking fixes/improvements.
+Attempt to make the AI better at building things with mobile units.
+Stabilize unit views so that they updated on a per-turn basis again.
+Fix occupant/transport display glitches.
+Improve transport and occupant indicators.
+----------------------------
+revision 1.9
+date: 2005/01/01 02:40:37;  author: eric_mcdonald;  state: Exp;  lines: +5 -2
+Fix date bug in configure scripts.
+Fix bug in overrun action that would attempt a bad fire action.
+----------------------------
+revision 1.8
+date: 2004/12/27 23:19:24;  author: eric_mcdonald;  state: Exp;  lines: +1 -1
+Fix 'see-mistake-chance' bug. (Reported by Elijah Meeks.)
+Also document 'see-mistake-range-min' now that the stuff works.
+----------------------------
+revision 1.7
+date: 2004/12/27 21:53:25;  author: eric_mcdonald;  state: Exp;  lines: +81 -70
+Fix a unit view initialization bug. (Reported by Elijah Meeks.)
+Clean out some more junk from Sdlconq drawing code.
+Tweak Sdlconq unit display.
+Fix bug in Tcl/Tk and SDL selection rectangle for oversized images.
+Fix bug in Tcl/Tk and SDL health bar with oversized images.
+Slightly increase efficiency of unit view code.
+----------------------------
+revision 1.6
+date: 2004/12/27 01:05:07;  author: eric_mcdonald;  state: Exp;  lines: +0 -13
+Major simplification/improvement to the Sdlconq unit drawing code.
+New Sdlconq feature: unit grouping boxes with customizable colors.
+Cleanup of unused functions in Tkconq and Sdlconq.
+Lookup colors by name from large color database in SDL interface.
+New documentation regarding colors available in Sdlconq and Tkconq.
+----------------------------
+revision 1.5
+date: 2004/12/25 19:25:20;  author: eric_mcdonald;  state: Exp;  lines: +497 -67
+Major changes to the UI API.
+Major cleanup and refactoring of the Tkconq unit display code.
+Improvements to my little local-build script.
+----------------------------
+revision 1.4
+date: 2004/12/13 01:49:39;  author: eric_mcdonald;  state: Exp;  lines: +3 -1
+Start to fix problems with unit image scaling.
+----------------------------
+revision 1.3
+date: 2004/12/04 22:24:00;  author: eric_mcdonald;  state: Exp;  lines: +2 -2
+branches:  1.3.2;
+Fix building of KWIC pogram with C++ compiler.
+Refine and expand "parambox" system for search functions that take predicates.
+Two new versions of 'search_around' that use paramboxen.
+Begin a namespace for Xconq vars outside of function scope.
+Revise 'see_cell' code. (NOTE: This is not perfected yet.)
+Fix to 3rd Age game. (Thanks to Kevin O'Gorman for reporting the bug.)
+----------------------------
+revision 1.2
+date: 2004/11/22 01:06:55;  author: eric_mcdonald;  state: Exp;  lines: +20 -4
+Fix UI next unit bug which was triggered by using the delay command.
+Make use of the unused flag for the 'delay_unit' function.
+----------------------------
+revision 1.1
+date: 2004/11/21 03:01:24;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.1;
+Initial revision
+----------------------------
+revision 1.1.1.1
+date: 2004/11/21 03:01:24;  author: eric_mcdonald;  state: Exp;  lines: +0 -0
+Initial import from private repo into SF repo.
+----------------------------
+revision 1.3.2.2
+date: 2005/06/06 03:39:36;  author: eric_mcdonald;  state: Exp;  lines: +89 -6
+Merged in all trunk changes between BPT_MSKALA_IMF_2 and BPT_MSKALA_IMF_3.
+----------------------------
+revision 1.3.2.1
+date: 2005/01/28 03:35:59;  author: eric_mcdonald;  state: Exp;  lines: +582 -138
+Merge in trunk changes between BPT_MSKALA_IMF_1 and BPT_MSKALA_IMF_2.
+----------------------------
+revision 1.12.2.2
+date: 2005/06/06 03:18:21;  author: eric_mcdonald;  state: Exp;  lines: +19 -6
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_11' and 'BPT_MSKALA_SUPPLY_12'.
+----------------------------
+revision 1.12.2.1
+date: 2005/03/14 01:12:29;  author: eric_mcdonald;  state: Exp;  lines: +70 -0
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_6' and 'BPT_MSKALA_SUPPLY_7'.
+----------------------------
+revision 1.13.2.5
+date: 2005/07/23 22:21:55;  author: eric_mcdonald;  state: Exp;  lines: +14 -7
+Start improvement of AI tactical handler.
+Fix combat awards bugs.
+Fix crashing bugs.
+Fix change type bug.
+----------------------------
+revision 1.13.2.4
+date: 2005/07/10 15:42:53;  author: eric_mcdonald;  state: Exp;  lines: +19 -18
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_14' and 'BPT_EMCDONALD_AI_15'.
+----------------------------
+revision 1.13.2.3
+date: 2005/06/05 21:30:38;  author: eric_mcdonald;  state: Exp;  lines: +10 -1
+Bring documentation up-to-date wrt recent changes.
+Finish cleaning out the rest of the colonization logic.
+Fix bug in UI code.
+----------------------------
+revision 1.13.2.2
+date: 2005/06/03 02:32:43;  author: eric_mcdonald;  state: Exp;  lines: +10 -6
+Make creation and building ACP-less.
+Rework build task.
+Some more repair-related tests.
+Improvement task management. Include support for enqueuing ops.
+Fix crashing bug in SDL interface.
+Fix apparent bug in net receive code.
+Cleanup code.
+----------------------------
+revision 1.13.2.1
+date: 2005/03/21 03:19:40;  author: eric_mcdonald;  state: Exp;  lines: +2 -0
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_1' and 'BPT_EMCDONALD_AI_3'.
+Add new unit analysis capabilities to AI.
+Implement a plan-decision lottery. (Still needs work.)
+Break out common, useful parts of kernel action-checking code.
+Provide a normalization macro.
+Fix bug with quoted encounter lists.
+=============================================================================

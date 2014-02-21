@@ -1,0 +1,405 @@
+
+RCS file: /cvs/xconq/xconq/kernel/cmdline.c,v
+Working file: cmdline.c
+head: 1.23
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.18
+	xconq-7_4-branch: 1.18.0.2
+	xconq-7_4-branchpoint: 1.18
+	xtconq-pre-removal: 1.12
+	xconq-7_3_3-release: 1.10
+	xconq-7_3_2-release: 1.10
+	xconq-7_3_1-release: 1.10
+	xconq-7_3-branch: 1.10.0.2
+	xconq-7_3-branchpoint: 1.10
+keyword substitution: kv
+total revisions: 23;	selected revisions: 23
+description:
+----------------------------
+revision 1.23
+date: 2004/07/16 00:35:42;  author: ronne;  state: Exp;  lines: +8 -3
+Improve the blurb code.
+----------------------------
+revision 1.22
+date: 2003/11/24 02:40:36;  author: mcdonald;  state: Exp;  lines: +3 -5
+Fix exploitable buffer overflow in Tcl/Tk lib path processing.
+Rename a command line argument size define.
+----------------------------
+revision 1.21
+date: 2003/11/16 05:36:29;  author: mcdonald;  state: Exp;  lines: +13 -5
+Long overdue security fixes. Close up buffer overflow exploits.
+----------------------------
+revision 1.20
+date: 2002/05/08 23:51:16;  author: ronne;  state: Exp;  lines: +1 -1
+Make sources C++ compatible.
+----------------------------
+revision 1.19
+date: 2000/12/22 22:19:04;  author: ronne;  state: Exp;  lines: +0 -2
+Move shared network code to kernel.
+----------------------------
+revision 1.18
+date: 2000/12/07 17:43:31;  author: shebs;  state: Exp;  lines: +17 -5
+	* cmdline.c (find_variant_from_name): Handle empty variant list,
+	make static.
+	(set_variants_from_options): Add error messages.
+----------------------------
+revision 1.17
+date: 2000/11/27 15:36:07;  author: shebs;  state: Exp;  lines: +1 -1
+	* cmdline.c (parse_command_line): Use default AI type instead
+	of ",mplayer".
+----------------------------
+revision 1.16
+date: 2000/11/12 00:39:53;  author: ronne;  state: Exp;  lines: +0 -1
+General cleanup of kernel prototypes - part 1.
+----------------------------
+revision 1.15
+date: 2000/09/10 05:45:40;  author: shebs;  state: Exp;  lines: +59 -40
+	Random rewrites and reorgs resolving remote networking bugs.
+	* ai.c (init_ai): Fill in side->rai for remote AIs.
+	(set_side_ai): Simplify, and add feedback on results.
+	(run_local_ais, run_ai_plan_adjust): Move here from run.c,
+	test taskexecs instead of need_ai_task_reaction.
+	* cmd.c (do_ai_side): Fix player feedback to reflect that
+	network roundup may be necessary before state changes.
+	* cmdline.c (option_width, option_height, option_circumference):
+	New globals.
+	(parse_world_option): Set these instead of pushing a variant.
+	(set_variants_from_options): Call net_set_variant_value instead
+	of pushing variant settings.
+	(find_variant_from_name): New function.
+	* init.c (start_player_pre_setup_stage): Call do_module_variants.
+	(final_init): Report more data structure sizes.
+	* kernel.h (set_variant_value): Declare.
+	* kpublic.h (net_set_variant_value): Declare.
+	* module.h (Variant newvalues): New field, array of new settings
+	for variant.
+	* module.c (create_game_module): Store a copy of the module name.
+	(set_variant_value): Move here from tkmain.c.
+	(do_one_variant): Fill from newvalues fields.
+	* read.c (interp_variant_defns, add_std_var): Fill in newvalues
+	fields.
+	* run.c (latest_action_x, latest_action_y): New globals.
+	(num_local_ais): Move to ai.c.
+	(need_ai_task_reaction): Remove, use taskexecs instead.
+	(save_run_state, clear_task_outcomes): New functions.
+	(run_game): Call them.
+	(move_one_unit_multiple): Replace need_ai_task_reaction test
+	with last_task_outcome and AI usage test.
+	(run_side_research, run_construction): Test local AI instead
+	of AI in general (dubious).
+	* side.h (Side rai): New field.
+	(side_has_ai): Test both local and remote AI.
+	(side_has_local_ai): New macro.
+	* task.c (execute_task): Rework recording of task outcome.
+	* tp.h (RAI): New struct, placeholder "remote AI".
+	* tp.c: Change run warnings into notices.
+	(net_set_variant_value): New function.
+	(receive_variant_settings): Allow at most three values.
+	* write.c (write_side_properties): Only write AI state for
+	local AIs (dubious).
+
+	* tkconq.tcl: Rewrite variant handling to do more work in
+	kernel.
+	(set_variant_value_cmd): New proc, replaces broadcast_variant_value.
+	(set_variants): Do less.
+	(add_world_size_dialog_items): Comment out lat/lon items.
+	(insert_chat_string): Test for existence of window before insert.
+	* tkmain.c: Rewrite for variants also.
+	(send_value_value, implement_variants): Remove tcl commands.
+	(tk_set_variant_value): Rewrite to pass along to kernel.
+	(interpret_variants): Rewrite.
+	(set_variant_world_size, set_variant_real_time): Remove,
+	handled uniformly in kernel.
+	(update_variant_setting): Rewrite.
+----------------------------
+revision 1.14
+date: 2000/09/05 05:19:25;  author: shebs;  state: Exp;  lines: +10 -73
+	Remove unused -pre and -post command-line options, only allow
+	one module on the command line.
+	* cmdline.c (struct module_spec, struct gdl_spec): Remove.
+	(parse_command_line): Remove -pre and -post.
+	(add_a_module): Don't add multiple modules.
+	(add_a_gdl_spec): Remove.
+	(load_all_modules): Simplify.
+	* cmdline.6in: Remove doc of options.
+----------------------------
+revision 1.13
+date: 2000/09/03 22:46:01;  author: shebs;  state: Exp;  lines: +10 -10
+	General overhaul and cleanup of networking support, including
+	fixed command-line -host/-join handling and ability to load
+	a module directly instead of sending across the net.
+	* cmdline.c (game_chosen): Remove, no longer used.
+	(parse_command_line): Name -h <n> players as "?@" instead of "x@",
+	remove warning messages.
+	(set_players_from_options): Update remote programs with info
+	about players.
+	* init.c, conq.h (start_game_load_stage,
+	start_variant_setup_stage, start_player_pre_setup_stage,
+	start_player_setup_stage, start_game_ready_stage): New functions,
+	control over game setup stages.
+	* side.c: Add a couple comments.
+	* socket.c (wait_for): Comment out excessive output.
+	* tp.c (add_remote_players): Fill in existing players named "?"
+	before creating new players.
+	(net_update_player): New function.
+	(download_game_module): Add case to download module name only.
+	(broadcast_start_variant_setup, broadcast_start_player_setup):
+	New functions.
+	(send_packet): Change timeout warning to a notice.
+	(receive_data): Dump no-op loop counts once/second only.
+	(receive_packet): Handle new stage start packets.
+	(receive_game_checksum): Notify instead of warn about checksum
+	failures.
+	(receive_assignment_setting): Handle player spec packet.
+	* tp.h: Declare new functions.
+
+	* tkconq.tcl (master_rid): New global, use everywhere instead
+	of assuming master's rid is 1.
+	(set_variant): Change stage only if master.
+	(update_player_entry, update_allplayer_buttons): Don't run if
+	no dialog.
+	(popup_chat): Handle mid-game first-time popup correctly.
+	* tkinit.c: (init_ui): Handle repeated calls.
+	* tkmain.c (TclCmdFn): New function typedef, use for all
+	tcl commands.
+	(tcl_cmd): New function.
+	(initial_ui_init): Use to set up all generic tcl commands.
+	(tk_start_player_setup_stage): New tcl command.
+	(add_remote_locally): Set master_rid.
+	(launch_game_2): Merge into launch_game.
+
+	* xconq.c (main): Reorganize to handle command-line and
+	interactive setup more uniformly.
+----------------------------
+revision 1.12
+date: 2000/08/08 16:58:43;  author: shebs;  state: Exp;  lines: +2 -1
+	* cmdline.c (set_players_from_options): Add indepside player
+	only if needed for game.
+	* init.c (indepside_needed): Make extern.
+----------------------------
+revision 1.11
+date: 2000/07/03 16:43:37;  author: shebs;  state: Exp;  lines: +0 -1
+	Change unit viewing to use view objects instead of a layer.
+	* unit.h (UnitView): New struct.
+	* side.h (Side unitview, unitviewdate): Remove.
+	(Side unit_views): New field.
+	(for_all_view_stack): New macro.
+	(unit_view, set_unit_view, builduview, vside, vtype, vhp, EMPTY,
+	appears_empty, vside_indep, unit_view_date, set_unit_view_date):
+	Remove, no longer used.
+	* config.h (MAXVIEWHISTORY): Remove, no longer used.
+	* side.c (init_view): Remove unit view layer init.
+	(unit_view_at, unit_view_next, add_unit_view, remove_unit_view,
+	mistake_view): New functions.
+	(fn_set_unit_view, fn_set_unit_view_date): Remove.
+	(side_sees_image, all_see_leave, reset_all_views,
+	react_to_seen_unit, see_cell, see_exact, paint_view_1): Rewrite to
+	use view objects.
+	* ai.c (enemies_present): Ditto.
+	* iplayer.c (preferred_build_type): Ditto.
+	* mkroads.c (unit_sees_other_unit): Ditto.
+	* mplayer.c (review_theaters, estimate_strengths,
+	preferred_build_type): Ditto.
+	* plan.c (alternate_target_here, victim_here, target_here,
+	indep_captureable_here, useful_captureable_here,
+	can_capture_neighbor): Ditto.
+	* ps.c (sideno_of_seen_unit_at): Ditto.
+	* run2.c (unit_revolt, visible_to): Ditto.
+	* task.c (target_visible): Ditto.
+	* ui.c (oneliner, dump_text_view
+	* cdraw.c (draw_units, draw_legend, show_closeup): Ditto.
+	* xdraw.c (draw_map_info, etc): Ditto.
+	* macdesign.c (apply_designer_tool): Ditto.
+	* macrow.c (draw_units): Ditto.
+	* tkmain.c (update_mouseover): Ditto.
+	* tkmap.c (draw_units, handle_designer_mouse_down): Ditto.
+	(x_xform_unit_view): New function.
+
+	* init.c (init_all_views): Fold in init_view_2, comment out
+	unit view clearing.
+	* plan.c (threat, usable_cell): Comment out, not used apparently.
+	* read.c (fill_in_side): Comment out unit view reading.
+	* ui.c, ui.h (xform_unit_view_: New function.
+	(utype_seen_at): Comment out unit view case.
+	* write.c (fn_unit_view, fn_unit_view_date): Remove.
+	(write_side_view): Write unit view list instead of layer.
+
+	* cmdline.h (make_default_player_spec): Move decl to here
+	from cmdline.c.
+	* skelconq.c, wconq.c, xconq.c, xtconq.c, xtmain.c: Remove decls
+	that are in cmdline.h.
+	* tkmain.c: Ditto, and include cmdline.h.
+	* cconq.c (make_default_player_spec): New function.
+
+	* tkmain.c (tk_reset_popup_flag): New tcl command.
+
+	* nlang.c (medium_long_unit_handle): Remove unused local.
+----------------------------
+revision 1.10
+date: 2000/06/04 16:19:03;  author: shebs;  state: Exp;  lines: +5 -28
+	More rewriting of variant handling and player setup.
+	* keyword.def (indepside-has-ai, indepside-can-build,
+	indepside-can-research, indepside-has-treasury): Comment out,
+	will no longer define as variants.
+	* ai.c, ai.h (next_ai_type_name): Rename from next_ai_type.
+	(find_ai_type): New function.
+	* cmdline.c (unixify_variant_name): Remove.
+	(game_usage_info): Use variant ids as argument names.
+	* kernel.h (set_ai_for_player, etc): Move here from conq.h.
+	* init.c (make_up_a_side): Remove set of ingame, redundant.
+	(set_ai_for_player): Warn about invalid AI types.
+	* iplayer.c, mplayer.c: Remove decls now in ai.h.
+	* kpublic.h: Rearrange some decls.
+	* module.c (do_one_variant): Remove indepside variants.
+	* read.c (force_all_variants): New global.
+	(add_std_var): New function.
+	(interp_variant_defns): Rewrite to use it for all variant
+	setup.
+	(add_more_variants): Remove, no longer needed.
+	(interp_game_module): Call interp_variant_defns.
+	* run.c (init_movement): Simplify code.
+	* score.c (eval_sk_last_side_wins, eval_sk_last_alliance_wins):
+	Don't require indepside to lose.
+	(record_into_scorefile): Use a switch statement for variants.
+	(score_variant_desc): Remove indepside variants.
+
+	* macinit.c (interpret_variants, implement_variants): Remove
+	indepside variants.
+	(hit_player_setup_dialog): Use net_exchange_players.
+
+	* tkconq.tcl (add_variants_dialog_items): Wrap help text by
+	words.
+	(add_player_dialog_items): Always create indepside entry but
+	conditionalize packing, add indepside button, improve test of
+	random/sidelib name button enabling.
+	(popup_indepside, ok_indepside): New procs.
+	* tkinit.c (init_display): Seed indepside globals.
+	* tkmain.c (tk_set_indepside_options): New tcl command.
+	(tk_set_ai_for_player): Interpret AI name passed directly.
+	(interpret_variants): Remove indepside variants.
+----------------------------
+revision 1.9
+date: 2000/05/30 15:44:37;  author: shebs;  state: Exp;  lines: +8 -5
+	Add help strings for variants.
+	* module.h (Variant help): New field.
+	* read.c (interp_variant_defns): Fill it in, supply default
+	help strings for standard variants.
+	(add_more_variants): Comment out people and supply system
+	variants, they don't work.
+	* cmdline.c (game_usage_info): Use help strings.
+
+	* tkconq.tcl: Say "config" instead of "configure" consistently.
+	(show_variant_help): Use varianthelp global.
+	* tkmain.c (interpret_variants, interpret_checkbox): Set up
+	tcl global varianthelp.
+
+	* magellan.g, panzer.g, standard.g, ww2-eur-42.g: Add help
+	strings to variants.
+
+	* refman.texi: Update reference manual.
+
+	* tkmain.c (play_movies): Slow down nuke movie.
+----------------------------
+revision 1.8
+date: 2000/04/24 12:56:58;  author: shebs;  state: Exp;  lines: +62 -48
+	* cmdline.c (parse_command_line): Make -host a general option,
+	display info about game module, put variant info after it.
+	(general_usage_info): Mention -x, flush refs to options that have
+	been removed.
+	(player_usage_info): Similarly.
+	(set_players_from_options): Fix location of indepside player
+	creation, use make_default_player_spec.
+	* skelconq.c, wconq.c, xconq.c, xtconq.c (make_default_player_spec):
+	Define.
+	* xconq.c (main): Make version/usage info appear without welcome
+	message.
+----------------------------
+revision 1.7
+date: 2000/04/02 23:00:38;  author: shebs;  state: Exp;  lines: +3 -1
+	* cmdline.c (set_players_from_options): Don't create a
+	player for the indepside if one already exists.
+----------------------------
+revision 1.6
+date: 2000/03/23 16:57:26;  author: shebs;  state: Exp;  lines: +22 -28
+	* cmdline.c (parse_command_line): Warn about using -host, -join.
+
+	* tkconq.tcl (add_program): Don't mess with chat window if not
+	open.
+	* tkmain.c (tk_set_remote_for_player): Remove, no longer used.
+	(host_the_game): Return a result, remove unused code that
+	sets up players.
+	(try_join_game): Remove commented-out code.
+
+	* wconq.c: Remove unneeded decls.
+	* xconq.c: (main): Rewrite -host, -join startup sequences.
+	(accept_all_remotes): New function.
+----------------------------
+revision 1.5
+date: 1999/10/30 14:36:17;  author: shebs;  state: Exp;  lines: +1 -0
+        * cmdline.c (set_players_from_options): Add an extra player that
+        will be assigned to indepside later.
+----------------------------
+revision 1.4
+date: 1999/08/28 23:22:44;  author: shebs;  state: Exp;  lines: +12 -12
+        * configure.in: Add --enable-build-warnings to control extra
+        warnings, choose which subdirs to configure based on Unix vs
+        Windows.
+        * configure: Regenerate.
+        * Makefile.in: Eliminate refs to lib-x11.
+        * x11/Makefile.in: Ditto.
+        * curses/Makefile.in, kernel/Makefile.in, tcltk/Makefile.in,
+        x11/Makefile.in: Change UNIX_CFLAGS to autoconf-using HFLAGS,
+        remove WARNING_CFLAGS.
+        * actions.c, ai.c, ai.h, cmdline.c, cmdline.h, conq.h, generic.c,
+        help.h, imf.c, imf.h, imf2imf.c, lisp.c, lisp.h, misc.h, system.h,
+        imf2x.c, xcutil.h: Remove PARAMS usages.
+        * gif.c, help.c, imf.c, imf2imf.c, lisp.c, unix.c, tkmain.c,
+        wimfapp.c, imf2x.c, x2imf.c, xconq.c, xcutil.c: Remove unused
+        variables, add prototypes, etc.
+        * run2.c, side.c, macconq.c: Remove decl of update_area_display.
+        * skelconq.c: Declare _dialog functions.
+        * tkcmd.c: Remove exit_xconq decl.
+        * wconq.c (check_player_displays): Remove uses.
+        * xconq.c: Include tkconq.h.
+
+        * tkconq.h (IMFLIB): Remove.
+        (exit_xconq): Declare.
+        * tkimf.c, tkinit.c: Remove imflib uses.
+        * xconq.h, xcutil.c: Ditto.
+        * ximf.c, xinit.c: Ditto.
+        * PROJECTS: Remove lib-x11 item.
+----------------------------
+revision 1.3
+date: 1999/06/22 20:00:54;  author: shebs;  state: Exp;  lines: +3 -2
+	* cmdline.c (print_instructions): Handle empty mainmodule.
+	* tkmain.c (tk_game_info): Handle empty game list.
+	* tkconq.tcl (add_new_game_dialog_items): Disable OK button
+	if no games found.
+----------------------------
+revision 1.2
+date: 1999/05/11 19:53:53;  author: shebs;  state: Exp;  lines: +3 -1
+	* cmd.def (agreement-draft, agreement-drafter, agreement-propose,
+	agreement-proposer, agreement-sign, agreement-signer,
+	agreement-term): New commands.
+	* cmd.c (do_agreement_draft, do_agreement_drafter, etc): New
+	functions.
+	* cmdline.c (parse_command_line): Handle -h by creating player
+	specs immediately.
+	* side.h (agreement_list, etc): Rename from agreementlist etc.
+	* side.c (agreement_list, etc): Ditto.
+	(find_agreement): New function.
+	(create_agreement): Fix.
+	* ui.h (VP see_all): New slot.
+	* ui.c (find_unit_or_occ): Add side arg, account for occupant
+ 	visibility rules.
+	Change all callers.
+	(calc_view_misc): Comment out hexagon_adjust, seems unneeded.
+	* write.c (write_agreements): Use for_all_agreements.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:23;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

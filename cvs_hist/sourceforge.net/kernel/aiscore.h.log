@@ -1,0 +1,114 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/aiscore.h,v
+Working file: aiscore.h
+head: 1.4
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.4
+	BPT_EMCDONALD_AI_15: 1.4
+	SS_7_5_0_0pre_0_20050612: 1.4
+	BRANCH_MSKALA_IMF: 1.4.0.2
+	BPT_MSKALA_IMF_3: 1.4
+	BPT_MSKALA_SUPPLY_12: 1.4
+	BPT_EMCDONALD_AI_14: 1.4
+	MPT_EMCDONALD_AI_7: 1.3.2.3
+	BPT_EMCDONALD_AI_13: 1.4
+	SS_7_5_0_0pre_0_20050501: 1.4
+	BPT_EMCDONALD_AI_12: 1.4
+	MPT_EMCDONALD_AI_6: 1.3.2.3
+	BPT_EMCDONALD_AI_11: 1.4
+	SS_7_5_0_0pre_0_20050416: 1.4
+	BPT_EMCDONALD_AI_10: 1.4
+	MPT_EMCDONALD_AI_5: 1.3.2.3
+	BPT_EMCDONALD_AI_9: 1.4
+	BPT_EMCDONALD_AI_8: 1.4
+	MPT_EMCDONALD_AI_4: 1.3.2.3
+	BPT_EMCDONALD_AI_7: 1.4
+	MPT_EMCDONALD_AI_3: 1.3.2.3
+	BPT_EMCDONALD_AI_6: 1.4
+	BPT_MSKALA_SUPPLY_11: 1.4
+	BPT_EMCDONALD_AI_5: 1.4
+	MPT_EMCDONALD_AI_2: 1.3.2.3
+	SS_7_5_0_0pre_0_20050322: 1.4
+	BPT_MSKALA_SUPPLY_10: 1.4
+	BPT_EMCDONALD_AI_4: 1.4
+	MPT_EMCDONALD_AI_1: 1.3.2.3
+	BPT_EMCDONALD_AI_3: 1.3
+	BPT_MSKALA_SUPPLY_9: 1.3
+	MPT_MSKALA_SUPPLY_3: 1.1.2.3
+	BPT_EMCDONALD_AI_2: 1.3
+	BPT_MSKALA_SUPPLY_8: 1.3
+	MPT_MSKALA_SUPPLY_2: 1.1.2.3
+	BPT_MSKALA_SUPPLY_7: 1.3
+	BRANCH_EMCDONALD_AI: 1.3.0.2
+	BPT_EMCDONALD_AI_1: 1.3
+	BPT_MSKALA_SUPPLY_6: 1.2
+	SS_7_5_0_0pre_0_20050225: 1.1
+	BPT_MSKALA_SUPPLY_5: 1.1
+	MPT_MSKALA_SUPPLY_1: 1.1.2.1
+	BRANCH_MSKALA_SUPPLY: 1.1.0.2
+	BPT_MSKALA_SUPPLY_4: 1.1
+keyword substitution: kv
+total revisions: 13;	selected revisions: 13
+description:
+----------------------------
+revision 1.4
+date: 2005/03/21 03:42:06;  author: eric_mcdonald;  state: Exp;  lines: +22 -16
+branches:  1.4.2;
+Merge from root of 'BRANCH_EMCDONALD_AI' to 'MPT_EMCDONALD_AI_1'.
+----------------------------
+revision 1.3
+date: 2005/03/05 23:00:17;  author: eric_mcdonald;  state: Exp;  lines: +37 -8
+branches:  1.3.2;
+Continue building up AI analysis of scorekeepers.
+----------------------------
+revision 1.2
+date: 2005/02/28 02:46:15;  author: eric_mcdonald;  state: Exp;  lines: +101 -9
+Continue building the AI's scorekeeper analysis.
+----------------------------
+revision 1.1
+date: 2005/02/22 04:31:51;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.2;
+Continue building up the AI's scorekeeper analysis.
+----------------------------
+revision 1.1.2.4
+date: 2005/03/21 03:58:08;  author: eric_mcdonald;  state: Exp;  lines: +22 -16
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_9' and 'BPT_MSKALA_SUPPLY_10'.
+----------------------------
+revision 1.1.2.3
+date: 2005/03/14 01:12:28;  author: eric_mcdonald;  state: Exp;  lines: +37 -8
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_6' and 'BPT_MSKALA_SUPPLY_7'.
+----------------------------
+revision 1.1.2.2
+date: 2005/03/09 21:25:00;  author: matthewskala;  state: Exp;  lines: +101 -9
+Merge in changes from CVS trunk.
+----------------------------
+revision 1.1.2.1
+date: 2005/02/23 03:40:21;  author: eric_mcdonald;  state: Exp;  lines: +0 -0
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_3' and 'BPT_MSKALA_SUPPLY_4'.
+----------------------------
+revision 1.3.2.3
+date: 2005/03/08 02:23:12;  author: eric_mcdonald;  state: Exp;  lines: +5 -0
+Fix crashing bug in unit creation code.
+Remove another worthless side goal.
+* aiscore.h (for_all_ai_sk_analyses): New macro.
+----------------------------
+revision 1.3.2.2
+date: 2005/03/06 20:46:00;  author: eric_mcdonald;  state: Exp;  lines: +5 -4
+Hook scorekeeper analysis code into mplayer logic.
+Fix a couple of minor bugs.
+----------------------------
+revision 1.3.2.1
+date: 2005/03/06 02:09:45;  author: eric_mcdonald;  state: Exp;  lines: +13 -13
+Make AI scorekeeper analysis stuff compile and link.
+----------------------------
+revision 1.4.2.2
+date: 2005/06/06 03:39:34;  author: eric_mcdonald;  state: Exp;  lines: +352 -0
+Merged in all trunk changes between BPT_MSKALA_IMF_2 and BPT_MSKALA_IMF_3.
+----------------------------
+revision 1.4.2.1
+date: 2005/03/21 03:42:06;  author: eric_mcdonald;  state: dead;  lines: +0 -352
+file aiscore.h was added on branch BRANCH_MSKALA_IMF on 2005-06-06 03:39:34 +0000
+=============================================================================

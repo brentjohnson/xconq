@@ -1,0 +1,147 @@
+
+RCS file: /cvs/xconq/xconq/kernel/cmdline.h,v
+Working file: cmdline.h
+head: 1.7
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.4
+	xconq-7_4-branch: 1.4.0.2
+	xconq-7_4-branchpoint: 1.4
+	xtconq-pre-removal: 1.4
+	xconq-7_3_3-release: 1.3
+	xconq-7_3_2-release: 1.3
+	xconq-7_3_1-release: 1.3
+	xconq-7_3-branch: 1.3.0.2
+	xconq-7_3-branchpoint: 1.3
+keyword substitution: kv
+total revisions: 7;	selected revisions: 7
+description:
+----------------------------
+revision 1.7
+date: 2003/11/24 02:40:36;  author: mcdonald;  state: Exp;  lines: +2 -0
+Fix exploitable buffer overflow in Tcl/Tk lib path processing.
+Rename a command line argument size define.
+----------------------------
+revision 1.6
+date: 2003/01/18 16:41:15;  author: ronne;  state: Exp;  lines: +6 -0
+Update Doxygen comments.
+----------------------------
+revision 1.5
+date: 2000/12/22 22:19:04;  author: ronne;  state: Exp;  lines: +0 -2
+Move shared network code to kernel.
+----------------------------
+revision 1.4
+date: 2000/07/03 16:43:37;  author: shebs;  state: Exp;  lines: +6 -2
+	Change unit viewing to use view objects instead of a layer.
+	* unit.h (UnitView): New struct.
+	* side.h (Side unitview, unitviewdate): Remove.
+	(Side unit_views): New field.
+	(for_all_view_stack): New macro.
+	(unit_view, set_unit_view, builduview, vside, vtype, vhp, EMPTY,
+	appears_empty, vside_indep, unit_view_date, set_unit_view_date):
+	Remove, no longer used.
+	* config.h (MAXVIEWHISTORY): Remove, no longer used.
+	* side.c (init_view): Remove unit view layer init.
+	(unit_view_at, unit_view_next, add_unit_view, remove_unit_view,
+	mistake_view): New functions.
+	(fn_set_unit_view, fn_set_unit_view_date): Remove.
+	(side_sees_image, all_see_leave, reset_all_views,
+	react_to_seen_unit, see_cell, see_exact, paint_view_1): Rewrite to
+	use view objects.
+	* ai.c (enemies_present): Ditto.
+	* iplayer.c (preferred_build_type): Ditto.
+	* mkroads.c (unit_sees_other_unit): Ditto.
+	* mplayer.c (review_theaters, estimate_strengths,
+	preferred_build_type): Ditto.
+	* plan.c (alternate_target_here, victim_here, target_here,
+	indep_captureable_here, useful_captureable_here,
+	can_capture_neighbor): Ditto.
+	* ps.c (sideno_of_seen_unit_at): Ditto.
+	* run2.c (unit_revolt, visible_to): Ditto.
+	* task.c (target_visible): Ditto.
+	* ui.c (oneliner, dump_text_view
+	* cdraw.c (draw_units, draw_legend, show_closeup): Ditto.
+	* xdraw.c (draw_map_info, etc): Ditto.
+	* macdesign.c (apply_designer_tool): Ditto.
+	* macrow.c (draw_units): Ditto.
+	* tkmain.c (update_mouseover): Ditto.
+	* tkmap.c (draw_units, handle_designer_mouse_down): Ditto.
+	(x_xform_unit_view): New function.
+
+	* init.c (init_all_views): Fold in init_view_2, comment out
+	unit view clearing.
+	* plan.c (threat, usable_cell): Comment out, not used apparently.
+	* read.c (fill_in_side): Comment out unit view reading.
+	* ui.c, ui.h (xform_unit_view_: New function.
+	(utype_seen_at): Comment out unit view case.
+	* write.c (fn_unit_view, fn_unit_view_date): Remove.
+	(write_side_view): Write unit view list instead of layer.
+
+	* cmdline.h (make_default_player_spec): Move decl to here
+	from cmdline.c.
+	* skelconq.c, wconq.c, xconq.c, xtconq.c, xtmain.c: Remove decls
+	that are in cmdline.h.
+	* tkmain.c: Ditto, and include cmdline.h.
+	* cconq.c (make_default_player_spec): New function.
+
+	* tkmain.c (tk_reset_popup_flag): New tcl command.
+
+	* nlang.c (medium_long_unit_handle): Remove unused local.
+----------------------------
+revision 1.3
+date: 1999/10/30 14:41:46;  author: shebs;  state: Exp;  lines: +0 -1
+        * combat.c (mobile_enemy_thread): Use side_sees_image instead of
+        unit_actually_visible.
+        * run.c (auto_pick_new_build_task, etc): Ditto.
+        * task.c: Ditto.
+        * side.c (side_sees_unit): Add side->see_all case, remove
+        designer and debugging cases.
+        (side_sees_image): Error if NULL side, add view-matching case.
+        * ui.c (unit_actually_visible): Comment out.
+        (unit_visible, occupants_visible): New function.
+        (cell_terrain): Remove, fold code into oneliner.
+        (oneliner): Test vp->show_all.
+        * ui.h: Declare new functions.
+
+        * conq.h (gameinited, warnings_logged): Declare.
+        (add_remote_players, etc): Ditto.
+        * cmd.c, cmdline.h, init.c, read.c, read2.c, side.c, unit.c,
+        util.c: Remove unneeded decls.
+        * misc.h (log_warning): Declare.
+----------------------------
+revision 1.2
+date: 1999/08/28 23:22:44;  author: shebs;  state: Exp;  lines: +8 -8
+        * configure.in: Add --enable-build-warnings to control extra
+        warnings, choose which subdirs to configure based on Unix vs
+        Windows.
+        * configure: Regenerate.
+        * Makefile.in: Eliminate refs to lib-x11.
+        * x11/Makefile.in: Ditto.
+        * curses/Makefile.in, kernel/Makefile.in, tcltk/Makefile.in,
+        x11/Makefile.in: Change UNIX_CFLAGS to autoconf-using HFLAGS,
+        remove WARNING_CFLAGS.
+        * actions.c, ai.c, ai.h, cmdline.c, cmdline.h, conq.h, generic.c,
+        help.h, imf.c, imf.h, imf2imf.c, lisp.c, lisp.h, misc.h, system.h,
+        imf2x.c, xcutil.h: Remove PARAMS usages.
+        * gif.c, help.c, imf.c, imf2imf.c, lisp.c, unix.c, tkmain.c,
+        wimfapp.c, imf2x.c, x2imf.c, xconq.c, xcutil.c: Remove unused
+        variables, add prototypes, etc.
+        * run2.c, side.c, macconq.c: Remove decl of update_area_display.
+        * skelconq.c: Declare _dialog functions.
+        * tkcmd.c: Remove exit_xconq decl.
+        * wconq.c (check_player_displays): Remove uses.
+        * xconq.c: Include tkconq.h.
+
+        * tkconq.h (IMFLIB): Remove.
+        (exit_xconq): Declare.
+        * tkimf.c, tkinit.c: Remove imflib uses.
+        * xconq.h, xcutil.c: Ditto.
+        * ximf.c, xinit.c: Ditto.
+        * PROJECTS: Remove lib-x11 item.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:23;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

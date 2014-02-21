@@ -1,0 +1,242 @@
+
+RCS file: /cvs/xconq/xconq/kernel/socket.c,v
+Working file: socket.c
+head: 1.21
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.5
+	xconq-7_4-branch: 1.5.0.2
+	xconq-7_4-branchpoint: 1.5
+	xtconq-pre-removal: 1.4
+	xconq-7_3_3-release: 1.4
+	xconq-7_3_2-release: 1.4
+	xconq-7_3_1-release: 1.4
+	xconq-7_3-branch: 1.4.0.2
+	xconq-7_3-branchpoint: 1.4
+keyword substitution: kv
+total revisions: 21;	selected revisions: 21
+description:
+----------------------------
+revision 1.21
+date: 2003/12/15 04:13:46;  author: mcdonald;  state: Exp;  lines: +11 -0
+Enhance the configuration system to support strict ANSI compliance.
+Fix various problems related to non-home working dirs on Windows.
+Gain finer control over the linkage of Tkconq.
+Cosmetic and ANSI compliance fixes.
+Update and enhance Windows installer script.
+----------------------------
+revision 1.20
+date: 2003/11/22 18:32:08;  author: mcdonald;  state: Exp;  lines: +5 -1
+Pure MinGW32 Xconq should now compile and link very readily.
+New documentation from Stanley Sutton (modified).
+----------------------------
+revision 1.19
+date: 2003/11/22 12:34:28;  author: ronne;  state: Exp;  lines: +0 -1
+More timestuff fixes.
+----------------------------
+revision 1.18
+date: 2003/11/19 05:00:07;  author: mcdonald;  state: Exp;  lines: +1 -1
+Move time-related missing implementations to new 'missing/util' dir.
+Miscellaneous improvements to the configure system.
+Minor tweak to Bellum Aeternum.
+----------------------------
+revision 1.17
+date: 2003/06/17 23:15:05;  author: ronne;  state: Exp;  lines: +1 -1
+Fixes to resource files and time code.
+----------------------------
+revision 1.16
+date: 2002/11/10 00:42:02;  author: ronne;  state: Exp;  lines: +4 -0
+Win32 patches from Stanley Sutton.
+----------------------------
+revision 1.15
+date: 2002/06/13 22:30:08;  author: ronne;  state: Exp;  lines: +9 -0
+Add Juergen Ruehle´s Win32 fixes.
+----------------------------
+revision 1.14
+date: 2002/05/23 17:56:47;  author: ronne;  state: Exp;  lines: +9 -0
+Further MSVC compatibility patches.
+----------------------------
+revision 1.13
+date: 2002/05/20 05:45:19;  author: ronne;  state: Exp;  lines: +4 -1
+Fix Windows compile problems.
+----------------------------
+revision 1.12
+date: 2002/04/16 22:58:50;  author: ronne;  state: Exp;  lines: +1 -1
+Fixes to WIN32 code.
+----------------------------
+revision 1.11
+date: 2002/04/09 20:10:01;  author: kingdon;  state: Exp;  lines: +0 -12
+	* kernel/socket.c (wait_for): Don't print debugging output (such
+	as "waiting %d secs for input").  In some error cases, it just
+	writes to the log at a rate of megabytes per second.
+----------------------------
+revision 1.10
+date: 2002/04/07 08:48:12;  author: ronne;  state: Exp;  lines: +67 -13
+Make SDL code build under Windows.
+----------------------------
+revision 1.9
+date: 2002/02/25 23:16:50;  author: ronne;  state: Exp;  lines: +1 -1
+Fixes to the network join and quit code.
+----------------------------
+revision 1.8
+date: 2001/01/06 13:30:04;  author: ronne;  state: Exp;  lines: +7 -1
+Fix startup delay when a mac is hosting.
+----------------------------
+revision 1.7
+date: 2001/01/04 20:14:37;  author: ronne;  state: Exp;  lines: +17 -13
+More mac network fixes.
+----------------------------
+revision 1.6
+date: 2000/12/14 19:27:28;  author: ronne;  state: Exp;  lines: +7 -3
+Fix so that socket.c compiles with GUSI on the mac.
+----------------------------
+revision 1.5
+date: 2000/09/03 22:46:02;  author: shebs;  state: Exp;  lines: +2 -0
+	General overhaul and cleanup of networking support, including
+	fixed command-line -host/-join handling and ability to load
+	a module directly instead of sending across the net.
+	* cmdline.c (game_chosen): Remove, no longer used.
+	(parse_command_line): Name -h <n> players as "?@" instead of "x@",
+	remove warning messages.
+	(set_players_from_options): Update remote programs with info
+	about players.
+	* init.c, conq.h (start_game_load_stage,
+	start_variant_setup_stage, start_player_pre_setup_stage,
+	start_player_setup_stage, start_game_ready_stage): New functions,
+	control over game setup stages.
+	* side.c: Add a couple comments.
+	* socket.c (wait_for): Comment out excessive output.
+	* tp.c (add_remote_players): Fill in existing players named "?"
+	before creating new players.
+	(net_update_player): New function.
+	(download_game_module): Add case to download module name only.
+	(broadcast_start_variant_setup, broadcast_start_player_setup):
+	New functions.
+	(send_packet): Change timeout warning to a notice.
+	(receive_data): Dump no-op loop counts once/second only.
+	(receive_packet): Handle new stage start packets.
+	(receive_game_checksum): Notify instead of warn about checksum
+	failures.
+	(receive_assignment_setting): Handle player spec packet.
+	* tp.h: Declare new functions.
+
+	* tkconq.tcl (master_rid): New global, use everywhere instead
+	of assuming master's rid is 1.
+	(set_variant): Change stage only if master.
+	(update_player_entry, update_allplayer_buttons): Don't run if
+	no dialog.
+	(popup_chat): Handle mid-game first-time popup correctly.
+	* tkinit.c: (init_ui): Handle repeated calls.
+	* tkmain.c (TclCmdFn): New function typedef, use for all
+	tcl commands.
+	(tcl_cmd): New function.
+	(initial_ui_init): Use to set up all generic tcl commands.
+	(tk_start_player_setup_stage): New tcl command.
+	(add_remote_locally): Set master_rid.
+	(launch_game_2): Merge into launch_game.
+
+	* xconq.c (main): Reorganize to handle command-line and
+	interactive setup more uniformly.
+----------------------------
+revision 1.4
+date: 1999/09/24 23:52:47;  author: shebs;  state: Exp;  lines: +38 -49
+	* side.h (Side rid): Remove slot, not needed.
+	* ai.c: Add some comments.
+	(init_ai): Handle networked case correctly.
+	* init.c (set_player_advantage, rename_side_for_player,
+	set_ai_for_player): New functions.
+	(assign_players_to_sides): Remove setting of side->rid, test
+	player->rid instead, improve warning message.
+	* socket.c: Add some comments.
+	(open_remote_connection): Remove dead code in hosting case,
+	retry 5 instead of 15 times in joining case.
+	(close_remote_connection): Handle arg of 0 usefully.
+	* tp.c (init_remote_ui): Set rui->rid from player->rid.
+	(net_set_player_advantage): Call set_player_advantage.
+	(net_add_side_and_player, net_rename_side_for_player,
+ 	net_set_ai_for_player): New function.
+	(receive_assignment_setting): Add rest of messages, share
+	assignment callback use.
+
+	* tkconq.tcl (update_allplayer_buttons): New proc, code to
+	adjust buttons that affect all players.
+	(add_player_dialog_items, add_player_cmd, select_player): Use it.
+	(exchange_players_cmd): Only update if valid return from exchange.
+	(join_game): Inform player about result of join attempt.
+	* tkmain.c (tk_add_side_and_player, tk_rename_side_for_player,
+	tk_set_ai_for_player): Use net_ functions.
+	(tk_try_join_game): Return result of try_join_game.
+	(try_join_game): Move here from xconq.c & wconq.c, also return
+	success or failure.
+	(update_assignment): Call update_allplayer_buttons.
+
+	* wconq.c, xconq.c (try_join_game): Remove.
+	* xconq.c (host_the_game): Warn about connection failure.
+----------------------------
+revision 1.3
+date: 1999/09/23 02:22:07;  author: shebs;  state: Exp;  lines: +6 -5
+	* socket.c (open_remote_connection): Always return something.
+	(accept_remote_connection): Use Dprintf for debug output.
+	* tp.c (update_variant_callback, update_assignment_callback):
+	New globals.
+	(net_set_player_advantage, net_exchange_players): New functions.
+	(broadcast_variants_chosen): Send vOK instead of just v.
+	(broadcast_players_assigned): Similarly.
+	(receive_variant_setting, receive_assignment_setting): New.
+	(receive_packet): Call them.
+
+	* tkconq.tcl (popup_game_dialog): Make second button disappear.
+	(add_variants_dialog_items): Make buttons broadcast variant
+ 	change.
+	(broadcast_variant_value): New proc.
+	(world_size_ok_cmd, real_time_ok_cmd): Call it.
+	* tkmain.c (tk_send_variant_value): New tcl command.
+	(tk_adjust_advantage): Call net_set_player_advantage.
+	(tk_exchange_players): Call net_exchange_players.
+	(update_variant_setting, update_assignment): New functions.
+	(initial_ui_init): Set the callbacks with them.
+	(tk_player_remote_status): Remove, no longer needed.
+----------------------------
+revision 1.2
+date: 1999/09/21 02:25:17;  author: shebs;  state: Exp;  lines: +7 -11
+	General cleanup of networking support.
+	* side.h (side_has_local_display): Move to here from various
+	files.
+	* tp.h (add_remote_program, etc): Move decls here from tp.c.
+	* tp.c (hosting): Define here.
+	(download_game_module): Copy over more module properties.
+	(receive_packet): Remove L packet.
+	(receive_player_prop): Remove "Pyou" packet.
+	* mac.c (hosting, connection_method_name): Remove, comment out
+	code that uses.
+	(open_remote_connection): Add hosting arg, return result.
+	(close_remote_connection): Add argument.
+	* socket.c: Similarly.
+	* macconq.c, macconq.h, macinit.c, tkmain.c, wconq.c, xconq.c,
+ 	xtconq.c, xtmain.c, cconq.c: Update references.
+	* system.h (open_remote_connection): Update decl.
+	* skelconq.c, macinit.c, wconq.c, xconq.c, xtconq.c, cconq.c
+ 	(you_player, set_you_player, add_remote_player, launch_game):
+ 	Remove, no longer used.
+	* wimfapp.c, imf2x.c, x2imf.c, ximfapp.c, xshowimf.c (my_rid,
+ 	numremotes): Remove, no longer needed.
+
+	* tkmain.c (tk_start_new_game): New tcl command.
+	(check_network): Call popup_game_dialog instead of only removing
+	splash screen items.
+
+	* wconq.c (host_the_game): Register self as first remote program
+	(try_join_game): Send a player spec to host.
+	(launch_game_2): New function.
+----------------------------
+revision 1.1
+date: 1999/09/18 00:06:28;  author: shebs;  state: Exp;
+	* kernel/socket.c: New file, networking code common to Unix and
+	Windows (Cygwin).
+	* kernel/Makefile.in (socket.o): Add dependencies.
+	* configure.in (HOBJS): Add socket.o.
+	* configure: Regenerate.
+	* unix.c, win32.c: Remove networking code.
+=============================================================================

@@ -1,0 +1,188 @@
+
+RCS file: /cvs/xconq/xconq/kernel/lisp.c,v
+Working file: lisp.c
+head: 1.23
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.9
+	xconq-7_4-branch: 1.9.0.2
+	xconq-7_4-branchpoint: 1.9
+	xtconq-pre-removal: 1.7
+	xconq-7_3_3-release: 1.7
+	xconq-7_3_2-release: 1.7
+	xconq-7_3_1-release: 1.7
+	xconq-7_3-branch: 1.7.0.2
+	xconq-7_3-branchpoint: 1.7
+keyword substitution: kv
+total revisions: 23;	selected revisions: 23
+description:
+----------------------------
+revision 1.23
+date: 2004/07/18 18:49:48;  author: ronne;  state: Exp;  lines: +17 -0
+Add support for multiple and unique unit images.
+----------------------------
+revision 1.22
+date: 2004/07/06 02:43:59;  author: mcdonald;  state: Exp;  lines: +8 -4
+Disable another compiler warning.
+Clean up a horde of warnings.
+----------------------------
+revision 1.21
+date: 2004/06/26 15:45:37;  author: ronne;  state: Exp;  lines: +5 -68
+Various bug fixes and improvements to the kernel.
+----------------------------
+revision 1.20
+date: 2004/06/25 03:38:48;  author: mcdonald;  state: Exp;  lines: +22 -0
+Add 'remove-list' GDL function and an autotest for it.
+Improve formatting of parts of the autotester.
+----------------------------
+revision 1.19
+date: 2004/06/23 04:07:47;  author: mcdonald;  state: Exp;  lines: +30 -17
+Fix serious bug in the tokenization of negative numbers.
+Remove increment/decrement functionality for now. (Need new operators.)
+Add reflection and negation for "+" and "-" respectively.
+Add identity results for "+" and "*" respectively.
+Demonstrate new functionality in Wreckreation.
+----------------------------
+revision 1.18
+date: 2004/06/22 19:14:15;  author: ronne;  state: Exp;  lines: +1 -1
+Fix build problems.
+----------------------------
+revision 1.17
+date: 2004/06/22 02:57:50;  author: mcdonald;  state: Exp;  lines: +22 -16
+Fix commutativity problem with GDL arithmetic expression evaluation.
+Add increment and decrement behaviors when "+" and "-" are unary.
+Add more examples of arithmetic expressions to Wreckreation.
+----------------------------
+revision 1.16
+date: 2004/06/21 06:16:57;  author: mcdonald;  state: Exp;  lines: +187 -3
+Add the four basic arithmetic operators to the GDL interpreter.
+Update games library to remove any potential conflicts with new operators.
+Provide some unsophisticated illustrations of new operators in Wreckreation.
+----------------------------
+revision 1.15
+date: 2003/08/17 18:50:36;  author: mcdonald;  state: Exp;  lines: +2 -2
+Properly escape strings during write out.
+Update GDL refman.
+Update RPM spec file.
+----------------------------
+revision 1.14
+date: 2003/07/08 00:54:37;  author: mcdonald;  state: Exp;  lines: +7 -1
+Handle failure of a malloc.
+----------------------------
+revision 1.13
+date: 2003/07/07 02:31:44;  author: mcdonald;  state: Exp;  lines: +32 -0
+Fix segfault due to writing past end of buffer. Fix comment.
+----------------------------
+revision 1.12
+date: 2002/07/31 20:40:08;  author: ronne;  state: Exp;  lines: +2 -1
+Add Doxygen comments to kernel includes.
+----------------------------
+revision 1.11
+date: 2002/07/09 00:42:34;  author: ronne;  state: Exp;  lines: +43 -1
+Improvements to the tcltk interface.
+----------------------------
+revision 1.10
+date: 2002/05/08 23:51:17;  author: ronne;  state: Exp;  lines: +45 -45
+Make sources C++ compatible.
+----------------------------
+revision 1.9
+date: 2000/11/08 19:20:15;  author: ronne;  state: Exp;  lines: +28 -0
+Handle unix special characters on the mac.
+----------------------------
+revision 1.8
+date: 2000/10/01 17:49:46;  author: shebs;  state: Exp;  lines: +21 -31
+	* keyword.def (any): Remove keyword, redundant with "or" in namers.
+	(text): Remove, never used.
+	* lisp.c (hash_name): Hash on whole string, handle 8-bit chars
+	correctly.
+	* mknames.c (gen_name): Add comments.
+	(gen_from_rule): Rewrite to handle reject form, issue better
+	warnings.
+	* read.c (init_predefined_symbols): Don't make K_REJECT eval to
+	self.
+	(interp_text_generator): Remove, never used.
+	(interp_form): Remove call to it.
+
+	* refman.texi: Update documentation of name grammars to reflect
+	the actual code.
+
+	* warn.g: Add tests for new grammar warnings.
+----------------------------
+revision 1.7
+date: 2000/04/18 11:57:39;  author: shebs;  state: Exp;  lines: +38 -14
+	* lisp.c, lisp.h (choose_from_weighted_list): Add argument to
+	allow "flat" lists of weights and values.
+	* mknames.c (gen_from_rule): Use it.
+	* combat.c, mknames.c, mkunits.c: Update callers.
+
+	* warn.g: Add tests for namer warnings.
+----------------------------
+revision 1.6
+date: 2000/04/17 15:43:30;  author: shebs;  state: Exp;  lines: +20 -32
+	* keyword.def (vanish): New keyword.
+	* utype.def (encounter-result): New property.
+	* combat.c (model_1_attack): Use it.
+	* lisp.c (choose_from_weighted_list): Add a warning.
+	* unit.c (change_unit_type): Make work for changing to
+	an advanced unit.
+
+	* civ2.g: Add village encounter results.
+----------------------------
+revision 1.5
+date: 2000/04/07 17:25:27;  author: shebs;  state: Exp;  lines: +31 -51
+	* lisp.c (read_form_aux): Make dice spec warning more useful.
+----------------------------
+revision 1.4
+date: 2000/03/16 17:04:13;  author: shebs;  state: Exp;  lines: +33 -3
+	* gvar.def (side-color-library): Rename from side-colors.
+	* lisp.c, lisp.h (choose_from_weighted_list): Move to here
+	from mknames.c.
+	* mkunits.c: Remove decl of fn.
+	* mknames.c (total_color_weights): New global.
+	(make_up_side_name): Add choice of random color scheme.
+	(name_in_use): Test for color scheme in use.
+	* ui.c (get_emblem_images): Allow use of color scheme as emblem.
+	(contour_lines_at): Handle elevation range changes.
+----------------------------
+revision 1.3
+date: 1999/09/15 02:22:54;  author: shebs;  state: Exp;  lines: +69 -87
+	* lisp.c (read_form_aux): Warn about bad dice.
+	(internal_type_error): New function.
+	(car, cdr, cons, setq): Use it instead of warning.
+----------------------------
+revision 1.2
+date: 1999/08/28 23:22:44;  author: shebs;  state: Exp;  lines: +20 -27
+        * configure.in: Add --enable-build-warnings to control extra
+        warnings, choose which subdirs to configure based on Unix vs
+        Windows.
+        * configure: Regenerate.
+        * Makefile.in: Eliminate refs to lib-x11.
+        * x11/Makefile.in: Ditto.
+        * curses/Makefile.in, kernel/Makefile.in, tcltk/Makefile.in,
+        x11/Makefile.in: Change UNIX_CFLAGS to autoconf-using HFLAGS,
+        remove WARNING_CFLAGS.
+        * actions.c, ai.c, ai.h, cmdline.c, cmdline.h, conq.h, generic.c,
+        help.h, imf.c, imf.h, imf2imf.c, lisp.c, lisp.h, misc.h, system.h,
+        imf2x.c, xcutil.h: Remove PARAMS usages.
+        * gif.c, help.c, imf.c, imf2imf.c, lisp.c, unix.c, tkmain.c,
+        wimfapp.c, imf2x.c, x2imf.c, xconq.c, xcutil.c: Remove unused
+        variables, add prototypes, etc.
+        * run2.c, side.c, macconq.c: Remove decl of update_area_display.
+        * skelconq.c: Declare _dialog functions.
+        * tkcmd.c: Remove exit_xconq decl.
+        * wconq.c (check_player_displays): Remove uses.
+        * xconq.c: Include tkconq.h.
+
+        * tkconq.h (IMFLIB): Remove.
+        (exit_xconq): Declare.
+        * tkimf.c, tkinit.c: Remove imflib uses.
+        * xconq.h, xcutil.c: Ditto.
+        * ximf.c, xinit.c: Ditto.
+        * PROJECTS: Remove lib-x11 item.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:27;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

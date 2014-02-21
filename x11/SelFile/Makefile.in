@@ -1,0 +1,82 @@
+# Makefile for SelFile.
+
+prefix = @prefix@
+
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+datadir = $(prefix)/share/xconq
+mandir = @mandir@
+man6dir = $(mandir)/man6
+infodir = @infodir@
+docdir = $(datadir)/doc
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+SHELL = /bin/sh
+
+INSTALL = install -c
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL)
+
+CC = @CC@
+
+CFLAGS = @CFLAGS@
+
+AR = @AR@
+
+AR_FLAGS = rcu
+
+RANLIB = @RANLIB@
+
+# Host and target-dependent makefile fragments come in here.
+####
+# End of host and target-dependent makefile fragments.
+
+OBJ =	SelFile.o \
+	Path.o \
+	Dir.o \
+	Draw.o
+
+UNIX_CFLAGS = -DSELFILE -DHOME_ON_DEMAND @DEFS@
+
+X11_INCLUDE_FLAGS = @XINCLUDES@
+
+ALL_CFLAGS = $(CFLAGS) $(REQD_CFLAGS) $(UNIX_CFLAGS) -I$(srcdir) $(X11_INCLUDE_FLAGS)
+
+.c.o:
+	$(CC) -c $(ALL_CFLAGS) $<
+
+# Do it all.
+
+all:	libXgnu.a
+
+libXgnu.a: $(OBJ)
+	rm -f libXgnu.a
+	$(AR) $(AR_FLAGS) libXgnu.a $(OBJ)
+	$(RANLIB) libXgnu.a
+
+install: all install-only
+
+install-only:
+
+# Cleanliness support.
+
+clean:
+	rm -f *.o lint.out core
+	rm -f *.a
+
+distclean: clean
+	rm -f Makefile config.status
+
+extraclean: distclean
+	rm -f *~* .*~*
+
+realclean: distclean
+
+Makefile: Makefile.in $(host_makefile_frag) $(target_makefile_frag)
+        cd .. \
+          && CONFIG_FILES=SelFile/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+# Dependencies.

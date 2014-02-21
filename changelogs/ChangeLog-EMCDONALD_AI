@@ -1,0 +1,1763 @@
+2005-06-06  02:33  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+	
+	Merge in CVS trunk between 'BPT_EMCDONALD_AI_12' and
+        'BPT_EMCDONALD_AI_13'.
+
+2005-06-06  02:22  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Update documentation.
+	* refman.texi (create-as-build): New entry.
+
+	Let standard set of units use 'create-as-build'.
+	* stdunit.g: Comment out create-specific tables.
+	  (create-as-build): Enable for all utype pairs.
+
+2005-06-06  01:08  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Allow create action to act as a build action.
+	* table.def (uu_create_as_build): New TableUU, 'create-as-build'.
+	* actions.c (materials_req_for_build): New static function.
+	Materials requirement for build or create-as-build action.
+	  (could_create): Fix bugs, and handle 'uu_create_as_build'.
+	  (can_create_common): Use build-related values instead of 
+	create-related values, if 'uu_create_as_build' is set.
+	  (can_build): Call 'materials_req_for_build' instead of directly 
+	computing consumption.
+	  (consume_materials_for_build): New static function.
+	Consume materials needed by a build or create-as-build action.
+	  (do_create_action_common_1): Use build-related values instead of 
+	create-related values, if 'uu_create_as_build' is set.
+	  (set_created_unit_props): Likewise.
+	  (do_build_action): Call 'consume_materials_for_build' instead of 
+	directly computing consumption.
+	* 3rd-age.g (unit-consumption-per-cp): Rename table, and make sure 
+	that places do not charge materials for being colonized.
+	* advances.g: Likewise.
+	* civ2.g: Likewise.
+	* solar.g (unit-consumption-per-cp): Rename table.
+
+	Possibly fix "repair of healthy units" bug.
+	* aioprt.cc (handle_construction_or_repair): Only score repair, 
+	if the unit is completed.
+
+	Rename 'unit-consumption-per-cp' for consistency.
+	Make consumption per CP apply to creation as well as building.
+	* table.def (um_consumption_per_cp): Rename GDL to 
+	'consumption-per-cp'.
+
+	More cleanup and archival of the games library.
+	* colonizer.g: Move to 'bitrot' archive.
+	* game.dir: Remove 'colonizer' entry.
+	* bitrot/colonizer.g: New game.
+	* bitrot/game.dir: Add 'colonizer' entry.
+
+2005-06-05  21:22  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Bring documentation up-to-date wrt recent changes.
+	* refman.texi (can-create): New entry.
+	  (can-build): New entry.
+	  (minimal-size-goal): Rename to 'ai-minimal-size-goal' and reword 
+	to be more generic.
+
+	Finish cleaning out the rest of the colonization logic.
+	* plan.def (PLAN_COLONIZE): Delete.
+	* ai.c (assign_to_colonize): Delete.
+	* mplayer.c (mplayer_decide_plan): Remove colonization plan 
+	lottery chance slot and associated logic.
+	* plan.c (plan_colonize): Cut out everything but a few snippets.
+
+	Fix bug in UI code.
+	* ui.c (impl_build): Only assign "construct" in task, if it would 
+	succeed. Sometimes when curunit occupies entire cell, it is 
+	returned as the transport to create in, but in reality, the cell 
+	is to be created in, not the transport.
+
+2005-06-05  20:21  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Ensure that Tkconq and the generic UI code rebuild 
+	when the AI files are changed.
+	* kernel/Makefile.in (ui.o): Depend on 'AI_H' headers.
+	* tcltk/Makefile.in (AI_H): New variable. AI headers.
+	  (ALL_H): Include 'AI_H'.
+
+	Add support for autoconf assignment of "sizeof" macros.
+	Start to add support for making primitve integer types of known size.
+	* acdefs.h.in: Undef 'SIZEOF_INT', 'SIZEOF_LONG', and 
+	'SIZEOF_LONG_LONG'.
+	* config.h: Add typedefs to 'Xconq' namespace.
+	  (Byte): Typedef of 'unsigned char'.
+	  (Z16): Typedef of 'signed short int'.
+	  (Z16u): Typedef of 'unsigned short int'.
+	  (Z32): Typedef of 'signed int' or 'signed long int'.
+	  (Z32u): Typedef of 'unsigned int' or 'unsigned long int'.
+	  (Z64): Typedef of 'signed long' or 'signed long long'.
+	  (Z64u): Typedef of 'unsigned long' or 'unsigned long long'.
+
+	Remove or disable more code associated with the colonization plan.
+	Improve colonization support in constructor oprole.
+	* utype.def (u_ai_minimal_size_goal): Renamed from 
+	'u_minimal_size_goal'. New GDL name is 'ai-minimal-size-goal'.
+	* ai.c: Ifdef out colonization plan assignment, and other colonizer-
+	related support.
+	* aioprt.cc (generate_construction_task): Check if the cell would 
+	allow the advanced utype to meet its size goal.
+	* aiunit2.h (could_meet_size_goal): New function decl.
+	Could u meet its size goal, if located at the given position?
+	* aiunit2.cc (could_meet_size_goal): New function.
+	* iplayer.c (iplayer_decide_plan): Remove assignments to colonization 
+	and colonization support.
+	  (iplayer_adjust_plan): Remove logic pertaining to colonization.
+	* plan.c (execute_plan): Likewise.
+	  (good_cell_to_colonize): Delete.
+	* run.c (auto_pick_new_build_task): Remove logic pertaining to 
+	colonization.
+	* 3rd-age.g: Change 'minimal-size-goal' to 'ai-minimal-size-goal'.
+	* advances.g: Likewise.
+	* civ2.g: Likewise.
+	* colonizer.g: Likewise.
+
+	Prepare support for action masks.
+	Remove now-unused 'buildingdone' flag.
+	Delete remnants of special ACP-indep construction code.
+	* conq.h (ActionMask): Typedef of 'Xconq::Z64u'.
+	An action mask can hold 64 types of actions.
+	  (ACTM_CANNOT_TOOLUP): New data macro.
+	Cannot toolup for any?
+	  (ACTM_CANNOT_CREATE): New data macro.
+	Cannot create any?
+	  (ACTM_CANNOT_BUILD): New data macro.
+	Cannot build any?
+	  (ACTM_CANNOT_REPAIR): New data macro.
+	Cannot repair any?
+	* kernel.h (set_unit_buildingdone): Delete.
+	* kpublic.h (net_set_unit_buildingdone): Delete.
+	* plan.c (set_unit_buildingdone): Delete.
+	* run.c (unit_still_acting): Remove logic specific to ACP-indep 
+	builders.
+	  (unit_still_acting_without_plan): Likewise.
+	  (move_one_unit_multiple): Delete ACP-indep construction code.
+	  (run_construction): Delete much of the code. Leave a few useful 
+	snippets.
+	* run2.c (reset_all_reserves): Remove reset of 'buildingdone' flag.
+	* task.c (set_build_task): Remove set of 'buildingdone' flag.
+	  (push_build_task): Likewise.
+	* tp.c (net_set_building_done): Delete.
+	  (receive_unit_prop): Remove 'buildingdone' logic.
+	* unit.c (create_unit): Likewise.
+	* unit.h (struct a_unit): Remove 'buildingdone' flag.
+	  (has_acp_left): Remove logic specific to ACP-indep builders.
+
+2005-06-05  02:46  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bugs in building and self-improvement.
+	Fix bug with Tkconq action-enablement in UI.
+	Make ACP-indep construction work correctly again.
+	Fix some (but not all) end-of-turn pauses.
+	* utype.def (u_base_construction_worth): New (but temporary) AI worth 
+	property.
+	* actions.c (check_build_action): Call 'can_build' with buildee 
+	instead of buildee utype, so that materials checks are performed.
+	* ai.c (set_u_base_construction_worth): New function.
+	  (ai_init_shared): Calculate and set the base construction 
+	worth for each utype.
+	* aioprt.cc (generate_construction_task): Consider location's 
+	popularity as a construction spot, and consider resource 
+	contention when rejecting possible locations.
+	  (choose_construction_or_repair): Consider the return value 
+	of 'generate_construction_task' to determine what to return to 
+	caller.
+	* aitact.h (n_plan_to_construct_at): New function decl.
+	How many friendly units plan to construct at given location?
+	  (resource_contention_with_any): New function decl.
+	Would any units be in contention with an utype at a given location?
+	* aitact.cc (n_plan_to_construct_at): New function.
+	  (resource_contention_with_any): New function.
+	* aiunit2.cc (total_worth): Sum more worths into the total.
+	* mplayer.c (mplayer_review_units): Properly set the construct task 
+	for units using the Time game upgrade mechanism.
+	  (mplayer_decide_plan): Cut out all of the support plan chance slots 
+	and logic, and replace with unified construction chance slot and logic.
+	Ifdef out colonization chance slot and logic, since colonization is 
+	now handled through construction.
+	* plan.c (plan_defense): Remove ifedeffed out construction-related 
+	logic.
+	  (plan_improve): Fix bug with 'tmp_u_array' being used by both the 
+	function and a function that it calls. Also, make sure that 
+	construct tasks are being setup in transports or in cells correctly.
+	* run.c: Finish ifdeffing out the acp-indep construction logic.
+	* task.c (do_build_task): Call 'can_build' with buildee instead of 
+	buildee utype.
+	* tkinit.c (update_action_controls_info): Check to make sure that 
+	the unit is active before calling 'can_repair_any' and 
+	'can_construct_any', and make sure that the 'valid' macro is 
+	used to check those function's results.
+
+2005-06-02  01:43  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Make creation and building ACP-less.
+	Rework build task.
+	Some more repair-related tests.
+	Improvement task management. Include support for enqueuing ops.
+	* table.def (uu_build): New TableUU, 'can-build'.
+	  (uu_create): New TableUU, 'can-create'.
+	* task.def (TASK_BUILD): Alter parameter list.
+	* conq.h (ADD_TO_AGENDA_AS_LIFO): New data macro.
+	Push onto the top of the task agenda.
+	  (ADD_TO_AGENDA_AS_FIFO): New data macro.
+	Enqueue at the end of the task agenda.
+	  (CLEAR_AGENDA): New data macro. Moved from disparate files.
+	Clear task agenda, and set as new agenda item.
+	  (could_create): New function decl.
+	Could u create u2?
+	  (could_create_any): New function decl.
+	Could u create any utype?
+	  (could_build): New function decl.
+	Could u build u2?
+	  (could_build_any): New function decl.
+	Could u build any utype?
+	  (can_build): New function decl.
+	Can given actor-builder pair build on a given utype?
+	  (can_build): New function decl.
+	Can given actor-builder pair build on a given unit?
+	  (can_repair): New function decl.
+	Can given actor-repairer pair explicitly repair given utype?
+	* game.h (could_create): Delete.
+	  (could_build): Delete.
+	* actions.c (could_create): New function.
+	  (could_create_any): New function.
+	  (could_build): New function.
+	  (could_build_any): New function.
+	  (can_build): New function.
+	  (can_build): Refactored.
+	  (can_repair): New function.
+	  (can_repair): Refactored.
+	* ai.c (build_depot_for_self): Set construct task instead of build 
+	task.
+	* aioprt.cc (choose_construction_or_repair): Set build task with new 
+	args.
+	* aiunit.h (can_repair_any): New function decl.
+	Can given actor-repairer pair repair any utype?
+	* aiunit.cc (can_repair_any): New function.
+	* help.c (describe_utype): Change calls from "type_can_*" to 
+	"could_*_any" form.
+	* iplayer.c (iplayer_adjust_plan): Replace now-obsolete 
+	'net_resume_build' can with 'net_set_build' call. Replace build call 
+	with construct call.
+	* kpublic.h (net_resume_build_task): Delete.
+	* mplayer.c (mplayer_review_units): Replace call to build task with 
+	call to construct task.
+	* plan.c (CLEAR_AGENDA): Delete.
+	  (plan_passive): Use call to construct task rather than build task 
+	for intro game hack.
+	  (plan_colonize): Use call to construct task rather than build task.
+	  (plan_improve): Likewise.
+	* run.c (run_construction): Replace build task resume with build 
+	task set.
+	  (auto_pick_new_build_task): Use call to construct task rather than 
+	build task.
+	* task.c (CLEAR_AGENDA): Delete.
+	  (do_build_task): Rewrite.
+	  (do_construct_task): Call build task with new arg list.
+	  (add_task): Use new task management macros in management cases.
+	New case, 'ADD_TO_AGENDA_AS_FIFO, enqueues a task at end of list, 
+	rather than pushes at front of list.
+	  (create_build_task): Rewrite.
+	  (set_build_task): Rewrite.
+	  (push_build_task): Rewrite.
+	  (resume_build_task): Delete.
+	* tp.c (CLEAR_AGENDA): Delete.
+	  (net_set_build_task): Call set and create functions with 
+	new argument list.
+	  (net_push_build_task): Likewise.
+	  (net_resume_build_task): Delete.
+	* ui.h (impl_build): Add new parameter to parameter list.
+	* ui.c (impl_build): Call construct instead of build task.
+	Handle construct-in case. Add transport unit to parameter list.
+	* ccmd.c: Include 'aiunit.h' and 'aiunit2.h'.
+	  (do_build): Call 'impl_build' with proper args depending on 
+	whether we are creating in cell or transport.
+	* sdlcmd.cc: Include 'aiunit.h' and 'aiunit2.h'.
+	  (do_build): Call 'impl_build' with proper args depending on 
+	whether we are creating in cell or transport.
+	  (aux_build): Likewise.
+	  (aux_build2): Likewise.
+	* tkcmd.c: Include 'aiunit.h' and 'aiunit2.h'.
+	  (do_build): Call 'impl_build' with proper args depending on
+        whether we are creating in cell or transport.
+          (aux_build): Likewise.
+          (aux_build2): Likewise.
+	* tkinit.c: Include 'aiunit.h'. 
+	  (update_action_controls_info): Call 'can_construct_any' instead of 
+	a combination of 'can_repair' and 'can_build'. Call 
+	'can_repair_any' instead of 'can_repair'.
+	* 1805.g: Remove unneeded setting of 'acp-to-create', 'acp-to-build', 
+	and 'acp-to-repair' tables.
+	* 3rd-age.g: Add 'can-create' and 'can-build' tables based on the 
+	'acp-to-create' and 'acp-to-build' tables.
+	* advances.g: Likewise.
+	* ancient-days.g: Likewise.
+	* awls-rules.g: Likewise.
+	* awls-testbed.g: Likewise.
+	* battles.g: Likewise.
+	* bolodd2.g: Likewise.
+	* bolodd3.g: Likewise.
+	* cave.g: Likewise.
+	* cave2.g: Likewise.
+	* cil-rules.g: Likewise.
+	* civ2.g: Likewise.
+	* classic.g: Likewise.
+	* colonizer.g: Likewise.
+	* fantasy.g: Likewise.
+	* fred.g: Likewise.
+	* future.g: Likewise.
+	* galaxy.g: Likewise.
+	* galaxy2.g: Likewise.
+	* insects.g: Likewise.
+	* lhsunit.g: Likewise.
+	* logunit.g: Likewise.
+	* mars.g: Likewise.
+	* modern.g: Likewise.
+	* mormon.g: Likewise.
+	* old-empire.g: Likewise.
+	* opal-rules.g: Likewise.
+	* postmodern.g: Likewise.
+	* quest.g: Likewise.
+	* roman.g: Likewise.
+	* russian-rev.g: Likewise.
+	* solar.g: Likewise.
+	* space.g: Likewise.
+	* spec-rules.g: Likewise.
+	* stdunit.g: Likewise.
+	* time.g: Likewise.
+	* voyages.g: Likewise.
+	* wizard.g: Likewise.
+	* ww2-adv.g: Likewise.
+
+	Fix crashing bug in SDL interface.
+	(Reported by Lincoln Peters.)
+	* sdlmain.cc (update_side_display): Watch out for NULL module titles.
+	Also be more cautious about concatenating text to buffers.
+
+	Fix apparent bug in net receive code.
+	* tp.c (receive_uprop): Call appropriate setters upon receipt of 
+	the 'buildingdone' and 'researchdone' flags. Do this, instead of 
+	calling the setter for the 'autobuild' flag.
+
+	Cleanup code.
+	* keyword.def (K_AUTOBUILD): Delete. It is unused.
+	  (K_AUTOPLAN): Delete.
+	* kernel.h (set_unit_autoplan): Delete. It is unused.
+	  (set_unit_autobuild): Delete.
+	  (set_unit_autoresearch): Delete.
+	* kpublic.h (net_set_unit_autoplan): Delete.
+	  (net_set_unit_autobuild): Delete.
+	  (net_set_unit_autoresearch): Delete.
+	* ai.c (goal_truth): Cleanup unused vars and code.
+	  (ai_pick_side_research_goal): Cleanup unused vars.
+	* mplayer.c (determine_subgoals): Cleanup unused vars and code.
+	  (mplayer_adjust_plan): Cleanup unused vars.
+	* plan.c (set_unit_autoplan): Delete.
+	  (set_unit_autoresearch): Delete.
+	  (set_unit_autobuild): Delete.
+	* read.c (interp_unit): Remove 'K_AUTOBUILD', 'K_AUOTPLAN', and 
+	'K_AUTORESEARCH' cases.
+	* run.c (move_one_unit_multiple): Remove check against unit's 
+	'autobuild' flag. Remove weird piece of what is presumably leftover 
+	debugging code.
+	  (run_construction): Remove checks against unit's 'autobuild' flag.
+	  (run_research): Remove check against unit's 'autoresearch' flag.
+	* tp.c (net_set_unit_autoplan): Delete.
+	  (net_set_unit_autoresearch): Delete.
+	  (net_set_unit_autobuild): Delete.
+	  (receive_unit_prop): Remove cases for unit's 'autobuild', 
+	'autoresearch', and 'autoplan' flags.
+	* unit.h (struct a_unit): Remove 'autobuild', 'autoresearch', 
+	and 'autoplan' flags.
+	  (can_toolup): Delete.
+	  (type_can_toolup): Delete.
+	  (can_create): Delete.
+	  (type_can_create): Delete.
+	  (can_complete): Delete.
+	  (type_can_complete): Delete.
+	  (can_repair): Delete.
+	  (type_can_repair): Delete.
+	* unit.c (create_unit): Remove setting of 'autobuild', 'autoresearch', 
+	and 'autoplan' flags for a new unit.
+	  (change_unit_type): Likewise.
+	  (type_can_toolup): Delete.
+	  (can_create): Delete.
+	  (type_can_create): Delete.
+	  (can_complete): Delete.
+	  (type_can_complete): Delete.
+	  (can_repair): Delete.
+	  (type_can_repair): Delete.
+	* write.c (write_unit_properties): Remove writing of 'autobuild', 
+	'autoresearch', and 'autoplan' flags.
+
+2005-05-30  19:11  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Separate out AI header make dependencies.
+	kernel/Makefile.in: Change deps.
+	  (AI_H): New variable. List of AI headers.
+
+	Fix bugs in tooling checks.
+	New action result type.
+	* history.def (A_CONSTRUCT_NO_TOOLING): New action result.
+	* actions.c (can_create_common): Return 'A_CONSTRUCT_NO_TOOLING' 
+	as appropriate.
+	  (can_build): Likewise.
+	* aioprt.cc (choose_utype_to_construct): Consider a 
+	'A_CONSTRUCT_NO_TOOLING' result to be valid. Do not choose utypes 
+	that would not have access to enough of their operating terrain to 
+	make them worthwhile.
+	  (generate_construction_task): Perform primitive scoring based on 
+	distance from constructor. (Needs enhancement.)
+	* aiunit.cc (can_create_completed): Consider a 
+	'A_CONSTRUCT_NO_TOOLING' result to be valid.
+	  (can_construct): Likewise.
+	* nlang.c (action_result_desc): Handle 'A_CONSTRUCT_NO_TOOLING' case.
+	* bolodd2.g (can-toolup-for): New table, because toolup is now 
+	allowed to be ACP-less.
+	* bolodd3.g: Likewise.
+	* classic.g: Likewise.
+	* future.g: Likewise.
+	* old-empire.g: Likewise.
+	* postmodern.g: Likewise.
+	* wizard.g: Likewise.
+	* ww2-adv.g: Likewise.
+
+	Remove random plan, support plans, and other cruft from plan code.
+	* plan.def (PLAN_RANDOM): Delete.
+	* plan.c (plan_offense_support): Delete.
+	  (plan_explorer_support): Delete.
+	  (plan_colonize_support): Reduce, and leave small part ifdeffed out.
+	  (plan_random): Delete.
+	  (execute_plan): Remove 'PLAN_RANDOM' case.
+	  (plan_offense): Remove ifdeffed out call to support plan.
+	  (plan_colonize): Likewise.
+	  (plan_exploration): Likewise.
+	  (do_for_occupants): Remove unused variables.
+	  (plan_defense): Remove support part of plan. Failover to construtor 
+	oprol, if necessary.
+	* run.c (auto_pick_new_build_task): Remove 'PLAN_RANDOM' case. 
+	Do not set a random plan if no other plan can be set; instead 
+	become passive and go into reserve.
+
+	Shuffle some more unmaintained games into bitrot archive.
+	* greek.g: Likewise.
+	* pelops.g: Move to 'bitrot' directory.
+	* game.dir: Remove 'pelops' from list.
+	* bitrot/game.dir: Add 'pelops' to list.
+
+	Fix bug in Classic Xconq game and its children.
+	* classic.g (unit-size-as-occupant): Make sure that bases cannot 
+	fit inside of bases. This prevents construction of bases inside of 
+	bases inside of bases....
+
+2005-05-29  21:37  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Implement new construction features.
+	Fix bugs in operational roles.
+	Fix bug in hp-recovery mechanism.
+	Improve construction AI.
+	* table.def: Properly alphabetize some of the tables. 
+	  (uu_can_occupy_incomplete): New TableUU, 'can-occupy-incomplete'.
+	  (uu_toolup_for): New TableUU, 'can-toolup-for'.
+	  (um_consumption_per_tooledup): New TableUM, 
+	'consumption-per-tooledup'.
+	  (um_consumption_per_toolup): New TableUM, 'consumption-per-toolup'.
+	  (um_consumption_per_tp): New TableUM, 'consumption-per-tp'.
+	  (um_to_toolup): New TableUM, 'material-to-toolup'.
+	* refman.texi (can-occupy-incomplete): New.
+	  (can-toolup-for): New.
+	  (material-to-toolup): New.
+	  (consumption-per-tooledup): New.
+	  (consumption-per-toolup): New.
+	  (consumption-per-tp): New.
+	* task.def (TASK_BUILD): Change verb from "Build" to "Construct".
+	  (TASK_CONSTRUCT): New task.
+	* conq.h (MReq_AGENT_TREASURY): New data macro.
+	Use agent's side's treasury rather than actor's side's treasury.
+	  (get_materials_availability): New function decl.
+	What are current and max materials availabilities for an actor-agent 
+	pair?
+	  (can_meet_materials_requirement): New function decl.
+	Is materials requirement satisfied by availabilities?
+	  (can_create): Replace with 'can_create_common'.
+	  (can_create_common): Replace 'can_create'.
+	  (has_enough_tooling): New function decl.
+	Does the constructor have enough tooling to construct u2?
+	  (could_toolup_for): New function decl.
+	Could u toolup for u2?
+	  (could_toolup_for_any): New function decl.
+	Could u toolup for any utype?
+	  (can_toolup_for): New function decl.
+	Can given actor-constructor pair toolup for given utype?
+	* actions.c (get_materials_availability): New function.
+	  (can_meet_materials_requirement): New function.
+	  (has_enough_tooling): New function.
+	  (could_toolup_for): New function.
+	  (could_toolup_for_any): New function.
+	  (can_toolup_for): New function.
+	  (can_create_common): Changes.
+	  (prep_toolup_action): Changes.
+	  (do_toolup_action): Refactor.
+	  (check_toolup_action): Refactor.
+	  (adjust_tooling_crossover): Make sure that all toolings are 
+	reset, so that it is fair to toolings reset by crossover.
+	  (do_create_action_common_1): New function.
+	  (do_create_action_common_2): New function.
+	  (do_create_in_action): Refactor.
+	  (check_create_in_action): Refactor.
+	  (check_create_common): Delete.
+	  (do_create_at_action): Refactor.
+	  (check_create_at_action): Refactor.
+	* aioprt.h (enum OpRole_Outcome): Operational role outcomes.
+	  (for_all_oproles): Deal with NULL master AI for side.
+	  (for_all_oproles_of_type): Likewise.
+	  (choose_transport_to_construct_in): Change parameter list.
+	  (handle_constructor_oprole): Change return type.
+	* aioprt.cc: Include 'ai.h' for now, so that we can use theaters.
+	  (choose_utype_to_construct): Changes to calls. Consider how 
+	toolup affects turns to complete an utype.
+	  (choose_transport_to_construct_in): Implement.
+	  (generate_construction_task): Fix bugs. Add support for theater-wide 
+	location searches for mobile units with construction ranges >= 0. 
+	Push move tasks as appropriate.
+	  (choose_construction_or_repair): Fix bug in debugging output for 
+	new construction.
+	  (handle_constructor_oprole): Return oprole outcome as appropriate.
+	  (handle_oprole): Deal with oproles depending on oprole outcomes.
+	* aiunit.h (can_be_on): Add optional parameter.
+	  (can_be_on_known): Add optional parameter.
+	  (can_survive_on_known): Add optional parameter to all signatures.
+	  (can_be_in): New function decl.
+	Can a given utype be in the given transport?
+	* aiunit.cc (can_be_on): Add parameter. Handle list of volume
+	cancellations.
+	  (can_be_on_known): Likewise.
+	  (can_survive_on_known): Likewise, for all signatures.
+	  (could_be_occupant_of): Handle occ limits.
+	  (can_be_in): New function.
+	  (can_create_completed_unit): Changes.
+	* aiunit2.h (can_create_in): New function decl.
+	Does a given side seem to be able to create u3 in a given transport?
+	  (can_create_at): New function decl.
+	Does a given side seem to be able to create u3 at a given location?
+	  (tp_per_turn_est): New function decl.
+	How many TP for a given utype can a given unit add to itself per turn?
+	* aiunit2.cc (seer_worth): Divide worth accumulator by 100, before 
+	proceeding with other worth modifications. This will hopefully 
+	prevent an overflow of 32-bit ints in some cases. (What should be 
+	done is to take the mean of the see chances across all utypes, and 
+	then calculate the worth with that.)
+	  (can_create_in): New function.
+	  (can_create_at): New function.
+	  (tp_per_turn_est): New function.
+	  (cp_per_turn_est): Changes.
+	  (hp_per_turn_est): Changes.
+	* help.c (describe_utype): Use 'could_toolup_for_any' instead of 
+	'type_could_toolup'.
+	* kernel.h (any_hp_recovery): Add variable to namespace 'Xconq'.
+	* init.c (calculate_globals): Properly consider the hp-recovery 
+	mechanism.
+	* mplayer.c (mplayer_decide_plan): Boost the worth of base 
+	constructors to increase their chance of being able to construct 
+	bases.
+	* nlang.c (task_desc): Store value for 5th argument to a task.
+	Handle new case for 'TASK_CONSTRUCT'.
+	* run.c (move_one_unit_multiple): Ignore ACP-indep special junk. 
+	This is in preparation for getting rid of it.
+	* run2.c (any_hp_recovery): Initialize to FALSE.
+	  (run_auto_repair): Fix bugs which preventing hp-recovery mechanism 
+	from functioning correctly.
+	* task.c (do_toolup_subtask): New static function. 
+	Perform a toolup subtask on behalf of a construct/build task.
+	  (do_construct_task): New function. Create new units, or, if 
+	created, then push/set build tasks to complete.
+	  (create_construct_task): New function.
+	  (set_construct_task): New function.
+	  (push_construct_task): New function.
+	* tp.c (net_set_construct_task): New function.
+	  (net_push_construct_task): New function.
+	* unit.c (can_toolup): Delete.
+
+	Fix bugs related to change-type action.
+	* unit.c (change_unit_type): Only consume materials of in-play 
+	units.
+	  (enter_cell): Suppress overcorwded cell warnings for now. 
+	(This is not an ideal fix, but the change-type code assumes that 
+	this will be allowed. Need to rethink the change-type code.)
+
+2005-05-21  16:09  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Archive or delete some unmaintained games that do not work well.
+	* lib/bitrot: New directory.
+	* ChangeLog-bellum: Delete file.
+	* bellum.g: Likewise.
+	* t-bellum.g: Likewise.
+	* u-bellum.g: Likewise.
+	* uu-bellum.g: Likewise.
+	* wreckr-t.g: Likewise.
+	* wreckreation.g: Likewise.
+	* empire.g: Move to 'bitrot' directory.
+	* napoleon.g: Likewise.
+	* space-civ.g: Likewise.
+	* game.dir: Remove 'bellum', 'empire', 'space-civ', and 'wreckreation'.
+
+	Implement new construction and repair features.
+	Improve support for operational roles.
+	Add tatical-level calculations for AI.
+	Enhance materials consumption code.
+	* kernel/Makefile.in: Add 'aitact.o' and 'aitact.h' as appropriate.
+	* table.def (uu_repair): New TableUU, 'can-repair'.
+	  (um_consumption_per_built): New TableUM, 'consumption-per-built'.
+	  (um_consumption_per_create): New TableUM, 'consumption-per-create'.
+	  (um_consumption_per_repaired): New TableUM, 
+	'consumption-per-repaired'.
+	  (uu_hp_per_repair): Rename from 'uu_repair'.
+	  (uu_hp_to_repair): Delete.
+	  (uu_repair_range): New TableUU, 'repair-range'.
+	  (um_consumption_per_cp): Allow negative consumption.
+	* conq.h (can_meet_materials_requirement): Modify.
+	  (consume_materials): Likewise.
+	  (can_build): Likewise.
+	  (could_auto_repair): New function decl.
+	Could u auto-repair u2?
+	  (can_auto_repair): New function decl.
+	Can given repairer auto-repair given repairee?
+	  (could_repair): New function decl.
+	Could u explicitly repair u2?
+	  (can_repair): New function decl.
+	Can given repairer explicitly repair given repairee?
+	* game.h (u_mobile): New function macro. Is utype mobile?
+	  (could_repair): Delete.
+	* refman.texi (hp-recovery): Move to section on repair action.
+	  (hp-to-reover): Likewise.
+	  (consumption-per-build): Reword.
+	  (consumption-per-built): New.
+	  (can-repair): New.
+	  (material-to-repair): Update.
+	  (consumption-per-repair): Update.
+	  (hp-to-repair): Delete.
+	* actions.c (can_any_repair_common): New function.
+	  (can_meet_materials_requirement): New parameters to control 
+	utype used in lookup, and multiplier on requirement.
+	  (consume_materials): Likewise.
+	  (can_create): Move.
+	  (can_build); Move.
+	  (could_auto_repair): New function.
+	  (can_auto_repair): New function.
+	  (could_repair): New function.
+	  (can_repair): New function.
+	  (do_create_in_action): Rewrite.
+	  (do_create_at_action): Rewrite.
+	  (build_step_consumption): Delete.
+	  (prep_repair_action): Rewrite.
+	  (do_repair_action): Rewrite.
+	  (check_repair_action): Rewrite.
+	* ai.c (run_local_ai): Call 'handle_oproles' instead of 
+	'evaluate_oproles'.
+	* aioprt.h: Wrap in 'Xconq::AI' namespace. Rename 'AI_OpRole' to 
+	'OpRole' everywhere.
+	  (struct OpRole): Add 'execs_this_turn' and 'fails_this_turn' 
+	fields.
+	  (choose_utype_to_construct): New function decl.
+	Choose utype to construct, and optionally return its relative worth.
+	  (choose_transport_to_construct_in): New function decl.
+	Choose transport to construct given utype in.
+	  (generate_construction_task): New function decl.
+	Generate an appropriate construction task given constructor and utype.
+	  (choose_construction_or_repair): New function decl.
+	Choose a construction or repair task to perform.
+	  (handle_constructor_oprole): New function decl.
+	Handle constructor operational role.
+	* aioprt.cc: Include 'aitact.h'. Wrap in 'Xconq::AI' namespace.
+	Rename 'AI_OpRole' to 'OpRole' everywhere.
+	  (acquire_oprole): Fix bugs.
+	  (release_oprole): Fix bugs.
+	  (choose_utype_to_construct): New function.
+	  (choose_transport_to_construct_in): New function.
+	  (generate_construction_task): New function.
+	  (choose_construction_or_repair): New function.
+	  (handle_constructor_oprole): New function.
+	  (handle_oprole): Release oprole and return if unit is no longer 
+	valid. Increment execution counter on each pass.
+	* aiunit.cc (can_construct): Modify call to 'can_build'.
+	* aiunit2.h (cp_per_turn_est): New function decl.
+	How many CP can a given unit add to a given utype per turn?
+	  (cp_gained_per_turn_est): New function decl.
+	How many CP can a given side add to a given unit per turn?
+	  (hp_per_turn_est): New function decl.
+	How many HP can a given unit add to a given utype per turn?
+	  (hp_gained_per_turn_est): New function decl.
+	How many HP can a given side add to a given unit per turn?
+	  (total_worth): New function decl.
+	Sum of all the basic worths.
+	* aiunit2.cc (cp_per_turn_est): New function.
+	  (cp_gained_per_turn_est): New function.
+	  (hp_per_turn_est): New function.
+	  (hp_gained_per_turn_est): New function.
+	  (total_worth): New function.
+	* help.c (describe_utype): Modify construction and repair 
+	descriptions.
+	* kernel.h (any_auto_repair): Add to namespace 'Xconq'.
+	  (will_be_auto_repaired): Rename to 'cv__could_be_auto_repaired' and 
+	add to namespace 'Xconq'.
+	  (auto_repair_range_max): Rename to 'cv__auto_repaired_range_max' and 
+	add to namespace 'Xconq'.
+	* init.c (calculate_globals): Use namespace 'Xconq'. Place some 
+	globals in that namespace.
+	* mplayer.c (mplayer_init): Initialize new side master struct for 
+	AI.
+	  (mplayer_init_turn): Reset all oprole per-turn exec counters.
+	  (mplayer_decide_plan): Replace assignments to support plans with 
+	assignment to new constructor/repairer oprole.
+	  (mplayer_adjust_plan): Honor any oprole that is in effect.
+	* nlang.c: Include the various new AI-related headers.
+	  (oprole_desc): Describe an operational role.
+	  (plan_desc): Alternatively describe an oprole instead of plan, 
+	if an oprole is in effect.
+	  (task_desc): Alter description of repair task.
+	* plan.c: Ifdef out all invocations of support plans. The constructor 
+	oprole supercedes them.
+	  (repair_if_damaged): Rewrite to call revised repair task.
+	  (maybe_set_materials_goal): Take into consideration the new 
+	'um_consumption_per_built' table.
+	* run2.c (run_hp_recovery): Delete.
+	  (auto_repair_unit): Delete.
+	  (auto_repair_from_in): New static function. 
+	Auto-repair from within given transport.
+	  (any_auto_repair): Add to namespace 'Xconq'.
+	  (will_be_auto_repaired): Rename to 'cv__could_be_auto_repaired' and 
+	add to namespace 'Xconq'.
+	  (auto_repair_range_max): Rename to 'cv__auto_repaired_range_max' and 
+	add to namespace 'Xconq'.
+	  (auto_repair_from_here): Revise to use action checking and execution 
+	code.
+	* side.h (struct AI_Side): Forward declare inside 'Xconq::AI' 
+	namespace.
+	  (query_unit_from_uview): New function decl.
+	* side.c (query_unit_from_uview): New function in preparation of 
+	eventual client-server separation of code. Returns pointer to an 
+	unit from a given uview.
+	* task.def (TASK_REPAIR): Modify arg encoding and parameter list.
+	* task.c: Include some of the new AI headers.
+	  (repair_here): Ifdef out.
+	  (do_build_task): Get rid of extraneous decls.
+	  (do_hit_unit_task): Get rid of weird debugging hack.
+	  (do_pickup_task): Get rid of extraneous decls.
+	  (do_repair_self_subtask): New function.
+	  (do_repair_task): Rewrite.
+	  (create_repair_task): Modify.
+	  (set_repair_task): Modify.
+	  (push_repair_task): Modify.
+	* tp.c (net_set_repair_task): New function.
+	  (net_push_repair_task): New function.
+	* 1805.g: Add 'can-repair' table.
+	* gettysburg.g: Likewise.
+	* lhsunit.g: Likewise.
+	* logunit.g: Likewise.
+	* monster.g: Likewise.
+	* opal-rules.g: Likewise.
+	* russian-rev.g: Likewise.
+	* spec-rules.g: Likewise.
+	* stdunit.g: Likewise.
+	* bolodd2.g: Change 'consumtpion-per-build' to 'consumption-per-built'.
+	* bolodd3.g: Likewise.
+	* fantasy.g: Likewise.
+	* modern.g: Likewise.
+	* greek.g: Change 'material-to-build' to 'consumption-per-built'.
+	* postmodern.g: Likewise.
+	* wizard.g: Likewise.
+	* tkmain.c (draw_unit_info): Do not show previous action description.
+
+2005-04-30  23:10  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Merge in CVS trunk between 'BPT_EMCDONALD_AI_10' and
+        'BPT_EMCDONALD_AI_11'.
+
+2005-04-30  22:37  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Change behavior of attack vision.
+	* combat.c (one_attack): Instead of calling 'see_exact' call 
+	'see_cell'.
+
+2005-04-30  20:39  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug in resupply.
+	(Bug reported by Elijah.)
+	* kernel.h (can_auto_resupply_self): Transplant from 'task.c'.
+	* task.c (can_auto_resupply_self); Transplant prototype to 
+	'kernel.h'.
+	* plan.c (plan_resupply): If unit can resupply from existing location, 
+	then let it do so rather move to another location.
+
+2005-04-30  16:20  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Try to improve indep city density in Default game.
+	(Thanks to Elijah.)
+	* standard.g (density1): New variant, "More Towns". Double number 
+	of indep towns in plains.
+	  (density2): New variant, "Even More Towns". Quintuple number of 
+	indep towns in plains.
+
+2005-04-30  15:46  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Nice new terrain images.
+	(Created by Tommy, yobbobandana at yahoo dot co dot nz.)
+	(Imported by Elijah.)
+	* kiwiterr.imf: New image family file.
+	* kiwiterr32x32.gif: New image collection.
+	* kiwiterr44x48.gif: New image collection.
+
+	Update to Opal.
+	* opal-rules.g: Use new Kiwi terrain set.
+
+2005-04-28  02:23  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix buffer overflow in side country grower code.
+	(Thanks to Elijah for bug report.)
+	* mkunits.c (make_countries): Use 'strncat' instead of 'strcat', 
+	and shrink remaining length available as buffer is filled.
+
+2005-04-27  02:51  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Couple of minor AI tweaks.
+	(AI tweaks on the AI development branch? Imagine that.)
+	* ai.c (ai_go_after_victim): If unit has no combat usefulness and 
+	cannot move, then return immediately.
+	* plan.c (plan_passive): If unit is AI-controlled, then make sure 
+	we check materials levels and act accordingly.
+	* task.c (resupply_here): Check all units in stack to see if any 
+	are a valid resupplier, instead of ducking out after encoutering 
+	first failure or success.
+
+2005-04-26  02:13  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Improve RPM spec file.
+	(Thanks to anonymous for pointing out lack of BuildRequires.)
+	* pkg/xconq.spec.in: Update.
+	  (BuildRequires): List build deps for building from source RPM.
+	  (URL): Change from Redhat to Sourceforge.
+	  (Packager): Change from Xconq team to me, since no one else is 
+	working on the spec file, and we do not have a team email address 
+	at Sourceforge.
+
+2005-04-24  21:25  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix some memory leaks in Tkconq.
+	(These would also be GDI resource leaks under Windows.)
+	* tkimf.c (tk_make_color_pixmap): Free temp bitmap after it is 
+	blitted to pixmap.
+	  (tk_make_mono_pixmap): Likewise.
+	  (tk_make_mask_pixmap): Likewise.
+
+2005-04-24  18:23  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix occs-in-dead-transport bug. (Reported by Elijah.)
+	* unit.c (kill_unit_aux): When recursing through occs, be sure to 
+	make occs leave the world (and therefore their transports as well).
+
+	Fix combat reporting.
+	* combat.c (maybe_hit_unit): Do not reckon damage prematurely. 
+	Caller will also reckon damage on attacker/defender.
+	  (reckon_damage): If there was a possibility of detonations, 
+	the reckon damage around the potential detonator.
+
+2005-04-24  16:47  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Add beautiful new terrain images. (Thanks Elijah.)
+	* images/isoph32x32.gif: New file.
+	* images/isoph44x48.gif: New file.
+
+	Updates to Starfleet Battles and Opal. (From Elijah.)
+	* lib/battles.g: Update.
+	* lib/opal-rules.g: Update.
+
+2005-04-24  16:27  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Add new armor images. (Thanks Elijah.)
+	* lib/dg_armor32.imf: New file.
+	* images/dg_armor32.gif: New file, including some nice shields.
+
+2005-04-23  21:14  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Shuffle around some configure-related files.
+	* config.sub: Update and move to 'pkg' directory.
+	* config.guess: Likewise.
+	* install: Move to 'pkg' directory.
+	* install.sh: Likewise.
+	* pkg/config.sub: Move from top-level directory.
+	* pkg/config.guess: Likewise.
+	* pkg/install: Likewise.
+	* pkg/install.sh: Likewise.
+	* configure.in: Tell 'configure' to find aux files in 'pkg' dir.
+	* configure: Regenerated.
+
+2005-04-23  04:34  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix some detonation bugs.
+	(Reported by Elijah Meeks.)
+	* combat.c (maybe_hit_unit): Call 'reckon_damage_around' to make 
+	sure damage is applied after a detonation-with-attack occurs.
+	  (reckon_damage_here): Do special iteration through ustack that 
+	avoids stopping short if current unit is pulled out from 
+	beneath iterator.
+	  (detonate_unit): Make sure that unit or terrain is actually 
+	within detonation range by checking appropriate table. It is 
+	erroneous to rely on the max range as check.
+	  (detonate_on_cell): Limit terrain damage to cells that are 
+	actually within range according to their terrain, not according to 
+	max detonation range over any terrain.
+
+2005-04-22  16:24  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Some experimental AI improvements.
+	Some proven-to-be-good AI improvements.
+	* ai.c (run_local_ai): Handle operational roles.
+	  (assign_to_offense): Be more aggressive in finding targets and 
+	less aggressive in assigning general goals.
+	* aioprt.h: Rename some functions and data structures.
+	* aioprt.cc: Rename some functions and data structures.
+	  (evaluate_shuttle_oprole): Start writing code for evaluating a 
+	shuttle operational role.
+	* mplayer.c (mplayer_decide_plan): Honor any existing oproles 
+	rather than deciding a new plan. Tweak exploration chances.
+	* plan.c: Remove use of 'real_operating_range_best' as a restriction 
+	on the range of the victim finder in most places.
+	* task.c (do_approach_subtask): If failure to find shortest path, 
+	then try finding other paths.
+	  (choose_move_direction): Likewise.
+	* unit.c (real_operating_range_best): Fix bug that would allow 
+	immobile transports to be considered in range calcs.
+
+2005-04-17  16:32  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Continue laying foundation for more AI improvements.
+	* aioprt.h: New header file. Dedicated to operational roles and 
+	decisions.
+	* aioprt.cc: New implementation file. Dedicated to operational 
+	roles and decisions.
+	* kernel/Makefile.in: Add support for new files.
+	* side.h (struct a_side): Add slot for new master AI struct.
+	* ai.c: Include 'aiscore.h' and 'aioprt.h'.
+	* mplayer.c: Include 'aioprt.h'.
+	  (mplayer_init): Create an instance of the new master AI struct, 
+	and bind it to the side.
+	  (determine_subgoals): Bind the list of scorekeeper analyses to 
+	the master AI struct.
+
+2005-04-16  16:17  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug in auto-upgrade of units.
+	(Reported by Elijah Meeks.)
+	* unit.h (could_auto_upgrade_to): Swap 'u' and 'u2'.
+
+2005-04-13  00:55  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	More treasury-checking functions.
+	* conq.h (could_take_from_treasury): New prototype.
+	  (could_take_from_treasury): Likewise.
+	  (could_take_directly_from_treasury): Likewise.
+	  (could_take_directly_from_treasury): Likewise.
+	  (could_give_to_treasury): Likewise.
+	  (could_give_to_treasury): Likewise.
+	  (could_give_directly_to_treasury): Likewise.
+	  (could_give_directly_to_treasury): Likewise.
+	* actions.c (could_take_from_treasury): New function. 
+	Could u take m from treasury, assuming side has treasury?
+	  (could_take_from_treasury): New function.
+	Could u on a given side take m from treasury?
+	  (could_take_direclty_from_treasury): New function.
+	Could u take m directly from treasury, assuming side has treasury?
+	  (could_take_directly_from_treasury): New function.
+	Could u on a given side take m directly from treasury?
+	  (could_give_to_treasury): New function.
+	Could u give m to treasury, assuming side has treasury?
+	  (could_give_to_treasury): New function.
+	Could u on a given side give m to treasury?
+	  (could_give_directly_to_treasury): New function.
+	Could u give m directly to treasury, assuming side has treasury?
+	  (could_give_directly_to_treasury): New function.
+	Could u on a given side give m directly to treasury?
+
+	Many AI tweaks, plus foundation for further enhancements.
+	* table.def (uu_ai_base_worth_for): New table, 'ai-base-worth-for'.
+	* utype.def (u_ai_base_worth): New uprop, 'ai-base-worth'.
+	* game.h (could_be_on): Delete function macro.
+	  (could_be_on): New prototype.
+	  (tmp_u2_array): New global variable.
+	  (tmp_uu_array): Likewise.
+	* ai.c (need_explorers): Make exploration a little bit less 
+	aggressive, when we have made contact with enough enemies.
+	  (ai_init_shared): Call 'maybe_set_base_worths_for' and 
+	'maybe_set_base_worths'.
+	  (exploring_worth): Remove some code from the ideffed out function.
+	* aiunit.h (can_be_on): New prototype.
+	  (can_be_on_known): Likewise.
+	  (longest_economic_input): Likewise.
+	  (longest_economic_input): Likewise.
+	  (longest_economic_input): Likewise.
+	  (productivity_on_known): Likewise.
+	  (can_survive_on_known): Likewise.
+	  (can_survive_on_known): Likewise.
+	* aiunit.cc (can_be_on): New function. Can u on a given side be on 
+	a given cell?
+	  (can_be_on_known): New function. Can u on a given side be on a 
+	given known cell?
+	  (longest_economic_input): New function. Longest direct economic 
+	input for a material from u2 to u.
+	  (longest_economic_input): New function. Longest direct economic 
+	input from u2 to u.
+	  (longest_economic_input): New function. Longest direct economic 
+	input from any utype to u.
+	  (productivity_on_known): New function. Materials productivity 
+	on given known cell for given utype and side.
+	  (can_survive_on_known): New function. Can u on a given side 
+	survive on a given known cell?
+	  (can_survive_on_known): New function. Can a given unit survive 
+	a given known cell?
+	* aiunit2.h (cv__acp_max_wo_effects): New extern variable declaration 
+	in namespace 'Xconq'.
+	  (cv__acp_per_turn_max_wo_effects): Likewise.
+	  (acp_max_wo_effects): New prototype.
+	  (acp_per_turn_max_wo_effects): New prototype.
+	  (cv__speed_max_wo_effects): New extern variable declaration in 
+	namespace 'Xconq'.
+	  (mp_per_turn_max): New prototype.
+	  (cv__moves_per_turn_max_on_t): New extern variable declaration in 
+	namespace 'Xconq'.
+	  (moves_per_turn_max): New prototype.
+	  (cv__move_range_max_on_t_with_m): New extern variable declaration 
+	in namespace 'Xconq'.
+	  (cv__move_range_max_on_t): Likewise.
+	  (move_range_max_on): New prototype.
+	  (move_range_max): Likewise.
+	  (move_range_best): Likewise.
+	  (move_range_worst): Likewise.
+	  (producer_worth_on_known): Likewise.
+	  (base_worth_for): Likewise.
+	  (set_base_worth_for): Likewise.
+	  (maybe_set_base_worths_for): Likewise.
+	  (base_worth): Likewise.
+	  (set_base_worth): Likewise.
+	  (maybe_set_base_worths): Likewise.
+	* combat.c: Various checks to make sure that the units we are 
+	dealing with are valid.
+	* aiunit2.cc (cv__acp_max_wo_effects): New global variable in 
+	namespace 'Xconq'. Cache for maximum ACP of utypes without 
+	enhancing effects.
+	  (cv__acp_per_turn_max_wo_effects): New global variable in 
+	namespace 'Xconq'. Cache for maximum ACP per turn of utypes 
+	without enhancing effects.
+	  (acp_max_wo_effects): New function. Maximum ACP u can have without 
+	enhancing effects.
+	  (acp_per_turn_max_wo_effects): New function. Maximum ACP per turn u 
+	can have without enhancing effects.
+	  (cv__speed_max_wo_effects): New global variable in namespace 
+	'Xconq'. Cache for maximum speed of utypes without enhancing effects.
+	  (speed_max_wo_effects): New function. Maximum speed u can have 
+	without enhancing effects.
+	  (cv__mp_per_turn_max): New global variable in namespace 'Xconq'. 
+	Cache for maximum MP per turn of utypes.
+	  (mp_per_turn_max): New function. Maximum MP u can get per turn.
+	  (cv__moves_per_turn_max_on_t): New global variable in namespace 
+	'Xconq'. Cache of maximum moves utypes can make per turn on t.
+	  (moves_per_turn_max): New function. Maximum moves u can make per 
+	turn on t.
+	  (cv__move_range_max_on_t_with_m): New global variable in 
+	namespace 'Xconq'. Cache of max movement range of u if producing m 
+	on t.
+	  (cv__move_range_max_on_t): New global variable in namespace 'Xconq'.
+	Cache of max movement range of u on t.
+	  (move_range_max_on): New function. Max movement range of u if 
+	producing m on t, and given an amount of m.
+	  (move_range_max): New function. Max movement range of u on t, and 
+	given amounts of mtypes.
+	  (move_range_best): New function. Best movement range of u, given 
+	amounts of mtypes.
+	  (move_range_worst): New function. Worst movement range of u, given 
+	amounts of mtypes.
+	  (producer_worth_on): New function. Given unit's worth as a producer 
+	on a given known cell.
+	  (base_worth_for): New function. Basic worth as a base for u2.
+	  (set_base_worth_for): New function. Set basic worth as a base for u2.
+	  (maybe_set_base_worths_for): New function. Set basic worths as 
+	bases for utypes, if necessary.
+	  (base_worth): New function. Basic worth as a base.
+	  (set_base_worth): New function. Set basic worth as a base.
+	  (maybe_set_base_worths): New function. Set basic worths as bases, 
+	if necessary.
+	* generic.c (tmp_u2_array): Declare new global variable.
+	  (tmp_uu_array): Declare new global variable.
+	  (disallow_more_unit_types): Allocate space for 'tmp_u2_array', 
+	and 'tmp_uu_array'.
+	* mplayer.c (mplayer_decide_plan): Try to help transports stay on 
+	task with what occs have in mind. Gather some useful info from the 
+	theater where the unit is located, if there is a theater. Weight 
+	explorer assignments by amount of unexplored cells in theater.
+	Don't assign occs of mobile transports to defense plans.
+	  (mplayer_adjust_plan): Remove ifdeffed out code.
+	  (mplayer_react_to_task_result): Have units hail transports, 
+	even if they are on an exploratory plan.
+	  (mplayer_finish_movement): Search for a transport even if a 
+	hit-unit task is not in the queue.
+	* plan.c (plan_offense): Be more aggressive about fishing for 
+	targets, even if we are in pursuit of a goal.
+	  (ai_score_potential_victim): Add in potential victim's worth as 
+	a supporter of various plans.
+	* task.c (do_approach_subtask): Try to help occs stay on 
+	transport.
+	  (do_sentry_task): If next task is to occupy, but we already 
+	occupy the unit we are supposed to, then cancel the sentry task 
+	so that we will be more alert.
+	* unit.c (could_be_on): New function. Could u be on t?
+	  (real_operating_range_best): If on mobile transport, then use 
+	mobile transport's operating range. Also, account for productivity 
+	of an adjacent cell.
+
+	Fix bug in my earlier bugfix in the economy code.
+	* economy.c (try_sharing_need): If to-unit is occ of from-unit, 
+	then share, even if in-length is -1.
+	  (try_transfer_aux): Likewise.
+
+2005-04-09  16:41  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Merge in CVS trunk between 'BPT_EMCDONALD_AI_8' and
+        'BPT_EMCDONALD_AI_9'.
+
+2005-04-04  02:17  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix crashing bug in unit creation code.
+	* actions.c (do_create_in_action): Only assign the creation ID 
+	to a task arg, if a task exists.
+
+	Various and sundry AI improvements.
+	* utype.def (u_ai_prod_enhancer_worth): New definition, 
+	'ai-prod-enhancer-worth'.
+	  (u_ai_producer_worth): New defintion, 'ai-producer-worth'.
+	* ai.c (ai_go_after_victim): Clip victim-seeking range to 
+	available fuel. This is intended to help reduce units from 
+	running out of fuel. Also, if unit is on a transport, then 
+	only go after a victim that is in striking range.
+	  (ai_init_shared): Call 'maybe_set_producer_worths' and 
+	'maybe_set_prod_enhancer_worths'.
+	* aiunit.h (could_be_occupant): New prototype.
+	  (can_refuel): New prototype.
+	* aiunit.cc (could_be_occupant): New function. Could u be an 
+	occupant of any utypes?
+	  (can_refuel): New function. Can a given unit refuel another 
+	given unit with a given fuel?
+	* aiunit.h (producer_worth): New prototype.
+	  (set_producer_worth): New prototype.
+	  (maybe_set_producer_worths): New prototype.
+	  (prod_enhancer_worth): New prototype.
+	  (set_prod_enhancer_worth): New prototype.
+	  (maybe_set_prod_enhancer_worth): New prototype.
+	* aiunit2.cc (producer_worth): New function. Basic worth as a 
+	producer.
+	  (set_producer_worth): New function. Set basic worth as a producer.
+	  (maybe_set_producer_worths): New function. Set basic worths as 
+	producers, if necessary.
+	  (prod_enhancer_worth): New function. Basic worth as a 
+	production enhancer.
+	  (set_prod_enhancer_worth): New function. Set basic worth as a 
+	production enhancer.
+	  (maybe_set_prod_enhancer_worths): New function. Set basic worths as 
+	production enhancers, if necessary.
+	* mplayer.c (mplayer_decide_plan): Make sure that chances in the 
+	chance slots are cumulative and do not clobber one another. Add 
+	support for boosting the chance of taking an improvement plan on 
+	account of being able to build production enhancers.
+	  (search_for_available_transport): If unit is already on a transport, 
+	then don't bother looking for another; this reduces unnecssary 
+	transport-hopping. If transport is moving away from unit and appears 
+	to be already dropping off one or more of its occs, then do not 
+	hijack it. If transport is full, then do not attempt to hijack it.
+	* plan.c (plan_offense): Do not tell transport where to go, if unit 
+	is on transport. The transport will decide later on, possibly taking 
+	into account the unit's desires. Clip victim-seeking range to the 
+	operating range.
+	  (do_for_occupants): If the transport is not AI-controlled, then 
+	don't mess with what its doing (or not doing); that is up to the 
+	non-AI player to decide. Make sure transport is mobile, before 
+	trying to alter its tasks.
+	  (plan_defense): Early on, check to see of occs want us to do 
+	anything. Clip victim-seeking range to the operating range.
+	  (plan_improve): Prevent negative values from entering the 
+	lottery. Add support for improvement by building production enhancers 
+	for self.
+	  (plan_exploration): Rearm if ammo is low. Listen to what occs 
+	want to do.
+	  (ai_score_potential_victim): Penalize the score if the uview is 
+	old in a non-see-all world and with a non-see-always unit.
+	  (ai_victim_here): Disregard units which cannot be reached and 
+	which can outrun us.
+	* task.c (do_move_to_task): Insert some ifdeffed out experimental 
+	code. Code still needs refinement to prevent heavy buzzing. Intent 
+	is to help ensure that AI-controlled units are not deliberately 
+	running out of fuel.
+	* unit.c (real_operating_range_best): Clip operating range if it 
+	appears that unit is operating from a mobile transport. Intent is 
+	to help ensure that AI-controlled units are not deliberately 
+	running out of fuel.
+
+2005-04-02  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix crashing bug in explorer worths.
+	(Reported by Elijah.)
+	* aiunit2.cc (explorer_worth): Do not call 'maybe_set_*' 
+	functions as they may have set values that mimic the default 
+	value, and thus force recalculation of entries in the temp 
+	utypes array.
+
+	Update for Opal Rules game. (From Elijah.)
+	* opal-rules.g: Various changes.
+
+2005-04-01  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Merge in CVS trunk between 'BPT_EMCDONALD_AI_5' and
+        'BPT_EMCDONALD_AI_6'.
+
+	Fix (?) crashing bug in improvement plan.
+	* plan.c (plan_improve): Make sure that totalchance is set to 0 
+	before summing.
+
+2005-03-31  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	New functions for handling materials checking and consumption for 
+	any actions.
+	Add support for tech restrictions and materials consumption 
+	associated with the change-type action.
+	* table.def (um_consumption_per_change_type): New TableUM. 
+	Consumption to change type from u to any other utype.
+	* utype.def (u_tech_to_change_type_to): New uprop. Tech needed to 
+	change type to u.
+	* conq.h (can_meet_materials_requirement): New prototype.
+	  (consume_materials): Likewise.
+	* actions.c (can_meet_materials_requirement): New function. 
+	Takes an actor unit, agent unit, and TableUM getter function, 
+	and evaluates whether the agent's supply, and possibly the actor's 
+	side's treasury, and checks if they can satisfy the materials 
+	requirements returned by the getter function.
+	  (consume_materials): New function. Possibly consumes an agent's 
+	supply, actor's side's treasury, or both, based on what the 
+	getter for a consumption (or any, actually) TableUM returns. Also, 
+	has support for getters that return negative consumption (production).
+	  (can_change_type_to): Check to make sure that tech requirements 
+	are met.
+	  (can_change_type_to): Check to make sure consumption requirements 
+	are met.
+	  (notify_tech): Add notification for when 'tech-to-change-type-to' 
+	is met.
+	* help.c (describe_utype): Add descritpion of tech needed to change 
+	type into utype being described.
+	* unit.c (change_unit_type): Call 'consume_materials' to handle 
+	materials consumption.
+
+2005-03-29  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Various and sundry improvements to the AI.
+	Specific focus on enabling AI use of manual change-type.
+	Also, allow ACP-less manual change-type.
+	* conq.h (can_change_type_to): New prototype.
+	  (can_change_type_to): Likewise.
+	* actions.c (can_change_type_to): New function. Can u on a given 
+	side change type to u2?
+	  (can_change_type_to): New function. Can given unit change into 
+	given utype?
+	  (check_change_type_action): Call 'can_change_type_to'.
+	* ai.h (assign_to_improve): Move function out of ifdeffed out 
+	section.
+	* ai.c (assign_to_improve): Fix prototype. As a hack, give an 
+	improving unit a maingoal of 'GOAL_COLONIZE', until we can 
+	disentangle the materials collection stuff out of it.
+	* mplayer.c (mplayer_decide_plan): Get rid of ifdeffed out 
+	section. The Time game does not need it. Fix defensive support 
+	case in plan lottery. Add a new lottery slot for 'PLAN_IMPROVEMENT'.
+	Fill in slot with a fixed chance (for now), if an unit can 
+	change type.
+	  (mplayer_adjust_plan): Put in crude hack with 'GOAL_COLONIZE' 
+	to prevent improvement plan from being clobbered, and causing an 
+	infinite loop between decide/assign and adjust/clobber.
+	* plan.c (plan_passive): If unit is AI-controlled, go ahead and 
+	execute tasks assigned to it. What can it hurt? If no tasks 
+	assigned to AI-controlled unit, then force replan as before.
+	  (plan_colonize): Check if colonizer is trying to reach an 
+	unreachable spot. If so, then don't let it set a move-to and 
+	build task combo.
+	  (plan_improve): Remove ifdeffed out stuff. Write anew. Handle 
+	case where a change-type can be immediately performed. (Still 
+	need to handle preparation for change-type.)
+	  (ai_score_potential_victim): Simplify. Use basic ratings instead 
+	of doing some calculation that partially mimics them. Bring back 
+	the notion of a potential target's popularity; I don't know why 
+	Hans was so insistent on having everyone go after the same target; 
+	it makes things WORSE. Ifdef out damage ratio stuff.
+	* side.c (choose_side_research_goal_from_weighted_list): Return 
+	lispnil instead of warning when weights sum to zero.
+	* unit.h (could_auto_upgrade_to): New macro.
+	* unit.c (can_change_type): Iterate over utypes, calling 
+	'can_change_type_to' for each one.
+	  (could_change_type_to): Remove ACP > 0 constraint.
+
+	Update games lib to account for the allowance of ACP-less 
+	manual change-type.
+	* advances.g: Add 'can-change-type-to' table.
+	* space-civ.g: Likewise.
+
+2005-03-28  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Various and sundry improvements to the AI.
+	* conq.h (should_play_movies): New prototype.
+	* actions.c (should_play_movies): New function. Determine if all 
+	sides are either playerless or have an AI. If so, then request that 
+	movies/animations not be played. This speeds up AI-testing quite 
+	a bit.
+	  (play_action_movies): Test 'should_play_movies' before 
+	proceeding.
+	* ai.c (ai_pick_side_research_goal): Fix bug that caused a 
+	weighted list of possible new advances to be one less than it 
+	should have been.
+	  (probably_explorable): Return FALSE if the cell in question is 
+	already seen. Fix bug: check each neighboring cell instead of 
+	same cell 6 times.
+	  (ai_init_shared): Properly calculate colonization, exploration, 
+	offensive, and defensive support worths. Normalize basic attack, 
+	fire, capture, and transport worths to their respective maxima 
+	on 10000 scale.
+	  (offensive_worth): Improve calc. Consider detonation damage.
+	  (basic_hit_worth): Improve calc. Consider estimated number of 
+	attacks per turn.
+	  (basic_fire_worth): Improve calc. Consider estiamted number of 
+	firings per turn.
+	* aiunit.cc (could_colonize): Return boolean instead of 
+	ActionResult.
+	* plan.c (plan_offense_support): Properly decide which new utypes 
+	can be constructed.
+	  (plan_defense): Likewise.
+	  (plan_explorer_support): Likewise.
+	  (plan_colonize_support): Choose support in manner similar to 
+	other plan support functions.
+	  (plan_colonize): Determine whether to invoke colonizer support 
+	early on. Proactively seek out new places to colonize instead of 
+	random walking. Also try exploring, if necessary.
+	  (plan_exploration): If explorer can also colonize, then keep an 
+	eye out for colonization opportunities.
+	* tkmain.c (play_movies): Check 'should_play_movies' before 
+	proceeding.
+
+	Improve the Advances game.
+	* advances.g: Revise the AI research hints. Make Swordmen able to 
+	be constructed once Bronze has been researched, rather than 
+	Military.
+
+2005-03-27  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Various and sundry improvements to the AI.
+	* utype.def (u_ai_depot_worth): New definition.
+	  (u_ai_distributor_worth): New definition.
+	* ai.h (add_goal): Transplant prototype from 'mplayer.c'.
+	  (has_goal): Likewise.
+	  (has_unsatisfied_goal): Likewise.
+	* ai.c (add_goal): Transplant function from 'mplayer.c'.
+	  (has_goal): Likewise.
+	  (has_unsatisfied_goal): Likewise.
+	  (build_base_for_self): Delete ifdeffed out function.
+	  (ai_init_shared): Call 'maybe_set_depot_worths' and 
+	'maybe_set_distributor_worths'.
+	* aiunit2.h (depot_worth): New prototype.
+	  (set_depot_worth): Likewise.
+	  (maybe_set_depot_worths): Likewise.
+	  (distributor_worth): Likewise.
+	  (set_distributor_worth): Likewise.
+	  (maybe_set_distributor_worths): Likewise.
+	* aiunit2.cc (depot_worth): New function. Basic worth as a depot.
+	  (set_depot_worth): New function. Set basic worth as a depot.
+	  (maybe_set_depot_worths): New function. Set basic worths as depots, 
+	if necessary.
+	  (distributor_worth): New function. Basic worth as a distributor.
+	  (set_distributor_worth): New function. Set basic worth as a 
+	distributor.
+	  (maybe_set_distributor_worths): New function. Set basic worths 
+	as distributors, if necessary.
+	* mplayer.c (add_goal): Transplant function to 'ai.c'.
+	  (has_goal): Likewise.
+	  (has_unsatisifed_goal): Likewise.
+	  (mplayer_adjust_plan): Don't try handling support tasks here. This 
+	is done in the plans (for now).
+	* plan.c (maybe_set_materials_goal): New function. Set a side goal 
+	to acquire materials if it looks like a certain construction task 
+	may need them to complete.
+	  (plan_offense_support, plan_defense, plan_explorer_support): 
+	Only skip construction of naval utypes when they are not air utypes. 
+	Call 'maybe_set_materials_goal' whenever a new construction is 
+	assigned.
+	  (plan_explorer_support): Delete ifdeffed out code.
+
+	Fix bug in backdrop model 0 scarce materials distribution.
+	(This appears to largely fix the problem with Fighters crashing 
+	 in the Default game.)
+	* economy.c (try_transfer_aux): Make sure that we are not trying 
+	to transfer from an unit with an out-length of -1 for the given 
+	material.
+	  (try_sharing_need): Ditto.
+
+2005-03-26  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Various and sundry improvements to the AI.
+	* kernel/Makefile.in: Incorporate 'aiunit2.h' and 'aiunit2.cc' 
+	into the build process.
+	* aiunit2.h: New header for AI utype/unit worth functions.
+	* aiunit2.cc: New implementation for AI utype/unit worth functions.
+	* conq.h (could_move): New prototype.
+	* utype.def (u_explorer_worth): Delete definition.
+	  (u_ai_explorer_worth): New definition.
+	  (u_ai_seer_worth): Likewise.
+	* ai.h (build_depot_for_self): Change prototype.
+	  (suitable_port): Transplant prototype from 'ai.c'.
+	  (need_more_transportation): Likewise.
+	  (need_explorers): Transplant prototype from 'mplayer.c'.
+	* ai.c: Include 'aiunit2.h'.
+	  (set_u_explorer_worth): Delete function.
+	  (need_more_transportation): Remove staticness.
+	  (suitable_port): Remove staticness.
+	  (need_explorers): Transplant from 'mplayer.c'.
+	  (build_depot_for_self): Use 'can_construct' test instead of 
+	some custom one. Change prototype.
+	  (ai_init_shared): Call 'maybe_set_mover_worths', 
+	'maybe_set_seer_worths', and 'maybe_set_explorer_worths'. Remove 
+	support for setting 'u_explorer_worth'.
+	* aiunit.h (could_see): New prototype.
+	* aiunit.cc (could_see): New function.
+	* iplayer.c (iplayer_decide_plan): Use 'u_ai_explorer_worth' instead 
+	of 'u_explorer_worth'.
+	  (iplayer_react_to_task_result): Alter arguments to call to 
+	'build_depot_for_self'.
+	* move.c (could_move): New function. Could uactor move umover?
+	  (can_move): Use 'could_move' function.
+	* mplayer.c (mplayer_decide_plan): Use 'u_ai_explorer_worth' instead 
+	of 'u_explorer_worth'. Remove ifdeffed out code.
+	  (need_explorers): Transplant to 'ai.c'.
+	* plan.c (self_build_base_for_self): Delete function.
+	  (plan_offense): Immediately try offensive support, if no pending 
+	tasks to run. Remove code to switch to exploration and to build 
+	bases. (We will handle this in other places and in other ways.)
+	  (plan_offense_support): Run an improved lottery to determine 
+	utype to construct.
+	  (plan_defense): Immediately try defensive support, if no pending 
+	tasks to run. Use a lottery similar to offensive support to 
+	determine utype to construct. Remove code to switch to exploration 
+	and to build bases.
+	  (plan_colonization_support): Use 'can_construct' instead of 
+	'unit_can_build_type'.
+	  (plan_exploration): Immediately try exploration support, if no 
+	pending tasks to run. Get rid of code that allowed the plan to 
+	become distracted offensively. Knock out goals that are not 
+	related to exploration. Remove ifdeffed out code.
+	  (plan_explorer_support): Run an improved lottery to determine 
+	utype to construct.
+	  (should_capture_maker): Delete ifdeffed out function.
+	  (no_possible_moves): Likewise.
+	* run.c (auto_pick_new_build_task): Use 'u_ai_explorer_worth' 
+	instead of 'u_explorer_worth'.
+	* table.def (uu_see_at): Swap description string with 'uu_see_adj'.
+	* unit.c (can_build_explorers): Use 'u_ai_explorer_worth' instead 
+	of 'u_explorer_worth'.
+
+2005-03-25  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Move some useful functions to a more common location.
+	* game.h (table_default): New prototype.
+	  (uprop_i_default): Likewise.
+	  (uprop_s_default): Likewise.
+	  (uprop_l_default): Likewise.
+	  (tprop_i_default): Likewise.
+	  (tprop_s_default): Likewise.
+	  (tprop_l_default): Likewise.
+	  (mprop_i_default): Likewise.
+	  (mprop_s_default): Likewise.
+	  (mprop_l_default): Likewise.
+	  (aprop_i_default): Likewise.
+	  (aprop_s_default): Likewise.
+	  (aprop_l_default): Likewise.
+	  (gvar_i_default): Likewise.
+	  (gvar_s_default): Likewise.
+	  (gvar_l_default): Likewise.
+	* generic.c (table_default): Transplant from 'help.c'.
+	  (uprop_i_default): Likewise.
+	  (uprop_s_default): Likewise.
+	  (uprop_l_default): Likewise.
+	  (tprop_i_default): Likewise.
+	  (tprop_s_default): Likewise.
+	  (tprop_l_default): Likewise.
+	  (mprop_i_default): New function.
+	  (mprop_s_default): Likewise.
+	  (mprop_l_default): Likewise.
+	  (aprop_i_default): Likewise.
+	  (aprop_s_default): Likewise.
+	  (aprop_l_default): Likewise.
+	  (gvar_i_default): Transplant from 'help.c'.
+	  (gvar_s_default): Likewise.
+	  (gvar_l_default): Likewise.
+	* help.c (table_default): Transplant to 'generic.c'.
+	  (uprop_i_default): Likewise.
+	  (uprop_s_default): Likewise.
+	  (uprop_l_default): Likewise.
+	  (tprop_i_default): Likewise.
+	  (tprop_s_default): Likewise.
+	  (tprop_l_default): Likewise.
+	  (gvar_i_default): Likewise.
+	  (gvar_s_default): Likewise.
+	  (gvar_l_default): Likewise.
+
+	Start laying groundwork for new set of designer-specifiable 
+	AI worth functions.
+	* utype.def (u_ai_mover_worth): New uprop, 'ai-mover-worth'.
+
+	Fix warning in Default and related games.
+	* stdunit.g: Do not quote 'notes' lists.
+
+2005-03-21  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Merge in CVS trunk between 'BPT_EMCDONALD_AI_1' and
+        'BPT_EMCDONALD_AI_3'.
+
+	Add new unit analysis capabilities to AI.
+	Implement a plan-decision lottery. (Still needs work.)
+	Break out common, useful parts of kernel action-checking code.
+	* kernel/Makefile.in: Add support for 'aiunit.h' and 'aiunit.cc'.
+	* utype.def (u_offensive_support_worth): New uprop for AI, 'zz-osw'.
+	  (u_defensive_support_worth): New uprop for AI, 'zz-dsw'.
+	  (u_coloinzation_support_worth): New uprop for AI, 'zz-csw'.
+	  (u_exploration_support_worth): New uprop for AI, 'zz-esw'.
+	* conq.h (can_act): New prototype.
+	  (can_move): Likewise.
+	  (can_create): Likewise.
+	  (can_build): Likewise.
+	  (could_fire_at_any): Likewise.
+	  (can_fire): Likewise.
+	  (can_fire_at): Likewise.
+	  (can_fire_at_any): Likewise.
+	  (could_attack): Likewise.
+	  (could_attack_any): Likewise.
+	  (can_attack): Likewise.
+	  (can_attack_any): Likewise.
+	  (could_hit): Likewise.
+	  (can_detonate): Likewise.
+	  (could_capture_any): Likewise.
+	  (can_capture): Likewise.
+	  (can_capture_directly): Delete prototype.
+	  (type_can_capture_directly): Likewise.
+	* aiunit.h: New file. MANY new prototypes related to unit status 
+	and analysis. See file for details.
+	* aiunit.cc: New file. MANY new functions related to unit status 
+	and analysis. See file for details.
+	* actions.c (has_supply_to_act): New location in file.
+	  (can_act): New function. Checks if the actor and agent are both 
+	in play, and if they have enough materials to act.
+	  (can_create): New function. Can a given unit create an unit of 
+	the given type?
+	  (check_create_common): Use 'can_create' for part of checks.
+	  (can_build): New function. Can a given unit build an unit of 
+	a given type?
+	  (check_build_action): Use 'can_build' for part of checks.
+	* ai.c: Include 'aiunit.h' for now; probably remove later.
+	  (set_u_colonization_support_worth): New setter function.
+	  (set_u_exploration_support_worth): Likewise.
+	  (set_u_offensive_support_worth): Likewise.
+	  (set_u_defensive_support_worth): Likewise.
+	  (offensive_reaction): Delete ifdeffed out code.
+	  (ai_go_after_victim): Change several calls to their new names.
+	  (ai_init_shared): Normalize the various worths on a +/-10000 scale.
+	Set colonization, exploration, offensive, and defensive support 
+	worths.
+	* aiutil.h (could_damage_by_attack): Delete prototype.
+	  (could_damage_by_fire): Likewise.
+	  (could_capture_any): Likewise.
+	* aiutil.c (could_damage_by_attack): Delete function.
+	  (could_damage_by_fire): Likewise.
+	  (could_damage): Likewise.
+	  (could_capture_any): Likewise.
+	* combat.c (capture_chance): Move to new location in file.
+	  (could_fire_at): New function. Could u fire at u2?
+	  (could_fire_at_any): New function. Could u fire at >= 1 utypes?
+	  (can_fire): New function. Can a given unit fire?
+	  (can_fire_at): New function. Can a given unit fire at a given utype?
+	  (can_fire_at_any): New function. Can a given unit fire at >= 1 
+	enemy utypes?
+	  (could_attack): New function. Could u hit u2 by attacks?
+	  (could_attack_any): New function. Could the given utype attack 
+	>= 1 utypes?
+	  (can_attack): New function. Can a given unit attack a given utype?
+	  (can_attack_any): New function. Can a given unit attack >= 1 
+	enemy utypes?
+	  (could_hit): New function. Could u hit u2 by attacks or fire?
+	  (can_detonate): New function. Can given unit detonate?
+	  (could_capture_by_fire): Revised function. Could u capture u2 by 
+	fire?
+	  (could_capture_by_attacks): Revised function. Could u capture u2 by 
+	attacks?
+	  (could_capture_by_capture): Revised function. Could u capture u2 by 
+	direct capture?
+	  (could_capture): Move to new location in file.
+	  (could_capture_any): New function. Could the given utype capture 
+	any utypes by any means?
+	  (can_capture): New function. Can a given unit capture a given utype 
+	on a given side?
+	  (check_attack_action): Call 'can_attack' for part of checks.
+	  (check_fire_at_action): Call 'can_fire_at' for part of checks.
+	  (check_fire_into_action): Call 'can_fire' for part of checks.
+	  (retreat_in_dir): Add ACP for rereating after movement check 
+	succeeds.
+	  (check_capture_action): Call 'can_capture' for part of checks.
+	  (check_detonate_action): Call 'can_detonate' for part of checks.
+	  (type_can_attack): Delete function.
+	  (type_can_fire): Likewise.
+	  (type_can_capture): Likewise.
+	  (can_capture_directly): Likewise.
+	  (type_can_capture_directly): Likewise.
+	* help.c (describe_utype): Call functions by their new names.
+	* move.c (can_move): New function. Can a given unit move?
+	  (check_move_action): Call 'can_move' for part of checks. Also, 
+	get rid of ACP-altering hack for retreating units.
+	* mplayer.c: Include 'aiunit.h'.
+	  (enum AI_PL_ChanceSlots): New enum. Lottery slots for reserve and 
+	the various plans.
+	  (mplayer_decide_plan): Total rewrite. Implement plan lottery 
+	system. Relies heavily on the new functions in 'aiunit.cc'.
+	* plan.c: Include 'aiunit.h' for now; perhaps on the longer term as 
+	well.
+	  (plan_offense): Delete ifdeffed out cruft.
+	  (plan_defense): Call functions by their new names.
+	* task.c (do_hit_unit_task): Call functions by their new names.
+	* tkinit.c (update_action_controls_info): Likewise.
+
+	Provide a normalization macro.
+	* misc.h (normalize_on_pmscale): Normalize a number against a max 
+	on a +/- scale of a given range.
+
+	Fix bug with quoted encounter lists.
+	* combat.c (model_1_attack): Unquote a quoted list.
+	* civ2.g (encounter-result): Fix list.
+
+2005-03-08  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix crashing bug in unit creation code.
+	* actions.c (do_create_at_action): Only assign the new unit's ID 
+	to the first task's first arg, if the unit has a plan and tasks.
+
+	Remove another worthless side goal.
+	* goal.def (GOAL_WORLD_KNOWN): Delete.
+	* ai.c (goal_truth): Ifdef out test for 'GOAL_WORLD_KNOWN'.
+	* mplayer.c (determine_subgoals): Do not create 'world-known' goal.
+	Set 'positions-known' goal for 'indepside' rather than legacy NULL 
+	side.
+	  (mplayer_decide_plan): Remove check for 'GOAL_WORLD_KNOWN'. 
+	It is sufficient to check if any theaters need explorers.
+	  (need_explorers): If the side can see everything, or at least all 
+	terrain, then there is no need to explore.
+	  (plan_exploration): Comment out case relating to 'GOAL_WORLD_KNOWN'. 
+	The case handling 'GOAL_VICINITY_KNOWN' and 'GOAL_VICINITY_HELD' 
+	is sufficient.
+	  
+	* aiscore.h (for_all_ai_sk_analyses): New macro. Iterate over all 
+	scorekeeper analyses.
+
+2005-03-07  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Remove some worthless side goals.
+	* goal.def (GOAL_WON_GAME): Delete.
+	  (GOAL_LOST_GAME): Delete.
+	* ai.c (goal_truth): Remove 'GOAL_WON_GAME' and 'GOAL_LOST_GAME' 
+	cases.
+	* mplayer.c (analyze_the_game): Do not create a 'won-game' goal.
+
+2005-03-06  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Hook scorekeeper analysis code into mplayer logic.
+	Fix a couple of minor bugs.
+	* ai.h (a_strategy): Remove 'sk_analyses' field.
+	* aiscore.h: Do not include 'conq.h' and 'kernel.h'. Rely on 
+	implementation file to pull those in as is done elsewhere in 
+	Xconq.
+	  (enum AI_SKANKind): Add 'AI_SKAN_TESTOP'. (Note: We may just get 
+	rid of this, and the whole business of subclassing from 
+	'AI_SKANode' since it has not proved to be advantageous as it 
+	might have been.)
+	  (AI_SK_CHANGE_SCORE): New macro. Value for scorekeepers that 
+	just add or set a raw number for a score.
+	  (analyze_scorekeepers): New prototype.
+	* aiscore.cc: Include 'conq.h' and 'kernel.h'.
+	  (AI_SKANode_UpropInt::merge_or_insert_into_list): Handle case 
+	where a node with an unique upropname is being merged into existing 
+	list.
+	  (analyze_sk_test): Handle recursing into sublists. Handle numbers 
+	as tests in certain contexts.
+	  (analyze_sk_action): Do not check if a symbol is bound or not 
+	when testing for keyowrds. It doesn't matter, since the keyword 
+	comes from the symbol's string. Some keywords, such as 'win', 'lose', 
+	and 'draw' are bound.
+	  (analyze_scorekeepers): New function. Runs analysis on all 
+	scorekeepers.
+	* mplayer.c: Include 'aiscore.h'.
+	  (determine_subgoals): Ifdef out old scorekeeper analysis. Hook 
+	in new scorekeeper analysis.
+	  (analyze_sk_test): Finish cleaning out old draft 1 implementation.
+
+2005-03-06  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Make AI scorekeeper analysis stuff compile and link.
+	* kernel/Makefile.in: Hook in 'aiscore.o' and 'aiscore.h'.
+	* aiscore.h: Include 'kernel.h' instead of 'ai.h'.
+	  (enum AI_SKANKind): Place ';' after definition.
+	  (AI_SKANode_UpropInt::destroy): Fix prototype.
+	  (AI_SKANode_UpropInt::destroy_all): Rename to 'destroy_list'.
+	  (AI_SKANode_TestOp::construct): Add missing parameter.
+	  (AI_SKANode_TestOp::destroy_all): Rename to 'destroy_list'.
+	  (AI_SKAnalysis::init): Fix typo in declaration.
+	  (AI_SKAnalysis::construct): Likewise.
+	  (AI_SKAnalysis::copy_to): Likewise.
+	  (AI_SKAnalysis::clone): Likewise.
+	  (AI_SKAnalysis::destroy): Likewise.
+	  (analyze_sk_action): Likewise.
+	  (analyze_scorekeeper): Likewise.
+	* aiscore.cc (AI_SKANode_UpropInt::construct): Fix improper use of 
+	'sizeof'.
+	  (AI_SKANode_UpropInt::clone): Do not call constructor; allocate 
+	and init directly.
+	  (AI_SKANode_UpropInt::clone_list): Cast 'next' pointer to proper 
+	type.
+	  (AI_SKANode_UpropInt::destroy_list): Likewise.
+	  (AI_SKANode_UpropInt::merge_or_insert_into_list): Declare missing 
+	variable. Cast 'next' pointer to proper type.
+	  (AI_SKANode_TestOp::construct): Make parameter list match declared 
+	one. Fix improper use of 'sizeof'.
+	  (AI_SKANode_TestOp::clone): Do not call constructor; allocate 
+	and init directly.
+	  (AI_SKANode_TestOp::clone_list): Cast 'next' pointer to proper 
+	type.
+	  (AI_SKANode_TestOp::destroy_list): Likewise.
+	  (AI_SKAnalysis::construct): Fix improper use of 'sizeof'.
+	  (AI_SKAnalysis::clone): Return cloned node.
+	  (AI_SKAnalysis::destroy): Scope static methods from 
+	'AI_SKANode_UpropInt' not 'SKANode_UpropInt'.
+	  (AI_SKAnalysis::pop_test_op): Cast 'next' pointer to proper type.
+	  (AI_SKAnalysis::search_test_ops_for): Likewise. Declare missing 
+	'curop' variable.
+	  (analyze_sk_sum_uprop_test): Declare missing variables. Call 
+	methods with correct number of arguments.
+	  (analyze_sk_turn_test): Declare missing variable.
+	  (analyze_sk_score_test): Likewise.
+	  (analyze_sk_arith_op_test): Pop and destroy operators as two 
+	separate actions to prevent l-value problems with '&'. Call 
+	'analyze_*' functions rather than 'eval_*' functions.
+	  (analyze_sk_arith_comp_test): Likewise.
+	  (analyze_sk_bool_comp_test): Likewise.
+	  (analyze_sk_if_action): Delete unused, shadowed variable. Fix 
+	typo. Fix unclosed comments.
+
+2005-03-06  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+        Changelog for CVS branch: BRANCH_EMCDONALD_AI.

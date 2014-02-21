@@ -1,0 +1,363 @@
+# Top-level makefile for Xconq kernel and interfaces.
+# Copyright (C) 1991-1995, 1998-2000 Stanley T. Shebs.
+# Copyright (C) 2003-2005 Eric A. McDonald.
+
+# Xconq is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+prefix = @prefix@
+
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+datadir = @xconq_data_dir@
+mandir = @mandir@
+man6dir = $(mandir)/man6
+infodir = @infodir@
+docdir = $(datadir)/doc
+
+gamelibdir = $(datadir)/lib
+imagesdir = $(datadir)/images
+tcltkdir = $(datadir)/tcltk
+BWidgetdir = $(datadir)/tcltk/BWidget
+BWidgetimagesdir = $(datadir)/tcltk/BWidget/images
+BWidgetlangdir = $(datadir)/tcltk/BWidget/lang
+
+scoresdir = @scoresdir@
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+GAMEUID = @gameuser@
+GAMEGRP = @gamegrp@
+
+GAMEPERM = 04755
+DIRPERM  = 0755
+FILEPERM = 0644
+
+SHELL = /bin/sh
+
+INSTALL = install -c
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL) -m 644
+
+SUBDIRS =   kernel \
+	    x11 \
+	    curses \
+	    tcltk \
+	    sdl \
+	    lib \
+	    images \
+	    doc \
+	    test \
+	    misc 
+
+CC = @CXX@
+CXX = @CXX@
+
+CFLAGS = @CXXFLAGS@
+CXXFLAGS = @CXXFLAGS@
+
+RANLIB = ranlib
+
+AR = ar
+
+AR_FLAGS = rcu
+
+ALLTARGET = all-@CONFIGTARGET@
+INSTALLTARGET = install-@CONFIGTARGET@
+
+# Host and target-dependent makefile fragments come in here.
+####
+# End of host and target-dependent makefile fragments
+
+FLAGS_TO_PASS = \
+	"prefix=$(prefix)" \
+	"exec_prefix=$(exec_prefix)" \
+	"bindir=$(bindir)" \
+	"datadir=$(datadir)" \
+	"scoresdir=$(scoresdir)" \
+	"AR=$(AR)" \
+	"AR_FLAGS=$(AR_FLAGS)" \
+	"CC=$(CC)" \
+	"CFLAGS=$(CFLAGS)" \
+	"REQD_CFLAGS=$(REQD_CFLAGS)" \
+	"CXX=$(CXX)" \
+	"CXXFLAGS=$(CXXFLAGS)" \
+	"RANLIB=$(RANLIB)" \
+	"MAKEINFO=$(MAKEINFO)" \
+	"INSTALL=$(INSTALL)" \
+	"INSTALL_PROGRAM=$(INSTALL_PROGRAM)" \
+	"INSTALL_DATA=$(INSTALL_DATA)"
+
+UI_TARGET = @UI_TARGET@
+
+all:	all-$(UI_TARGET)
+
+all-xconq: all-$(UI_TARGET)
+
+all-tkconq all-sdlconq all-cconq all-tcltk all-SelFile all-kernel: 
+
+# Target for building Tcl/Tk Xconq.
+
+all-tkconq:     all-tcltk all-tcl all-tk
+	@dir=tcltk; \
+	if [ -f ./$${dir}/Makefile ] ; then \
+	  r=`pwd`; export r; \
+	  srcroot=`cd $(srcdir); pwd`; export srcroot; \
+	  (cd $${dir} && $(MAKE) $(FLAGS_TO_PASS) all-xconq); \
+	else \
+	  true; \
+	fi
+
+# Target for building SDL Xconq.
+
+all-sdlconq:    all-sdl
+	@dir=sdl; \
+	if [ -f ./$${dir}/Makefile ] ; then \
+	  r=`pwd`; export r; \
+	  srcroot=`cd $(srcdir); pwd`; export srcroot; \
+	  (cd $${dir} && $(MAKE) $(FLAGS_TO_PASS) all-xconq); \
+	else \
+	  true; \
+	fi
+
+# Target for building Curses Xconq
+
+all-cconq:      
+	@dir=curses; \
+	if [ -f ./$${dir}/Makefile ] ; then \
+	  r=`pwd`; export r; \
+	  srcroot=`cd $(srcdir); pwd`; export srcroot; \
+	  (cd $${dir} && $(MAKE) $(FLAGS_TO_PASS) all); \
+	else \
+	  true; \
+	fi
+
+all-tcltk:
+	@dir=`echo $@ | sed -e 's/all-//'`; \
+	if [ -f ./$${dir}/Makefile ] ; then \
+	  r=`pwd`; export r; \
+	  srcroot=`cd $(srcdir); pwd`; export srcroot; \
+	  (cd $${dir} && $(MAKE) $(FLAGS_TO_PASS) all-libs); \
+	else \
+	  true; \
+	fi
+
+all-sdl:
+	@dir=`echo $@ | sed -e 's/all-//'`; \
+	if [ -f ./$${dir}/Makefile ] ; then \
+	  r=`pwd`; export r; \
+	  srcroot=`cd $(srcdir); pwd`; export srcroot; \
+	  (cd $${dir} && $(MAKE) $(FLAGS_TO_PASS) all-libs); \
+	else \
+	  true; \
+	fi
+
+all-kernel:
+	@dir=`echo $@ | sed -e 's/all-//'`; \
+	if [ -f ./$${dir}/Makefile ] ; then \
+	  r=`pwd`; export r; \
+	  srcroot=`cd $(srcdir); pwd`; export srcroot; \
+	  (cd $${dir} && $(MAKE) $(FLAGS_TO_PASS) all); \
+	else \
+	  true; \
+	fi
+
+all-SelFile:
+	@dir=`echo $@ | sed -e 's/all-//'`; \
+	if [ -f ./$${dir}/Makefile ] ; then \
+	  r=`pwd`; export r; \
+	  srcroot=`cd $(srcdir); pwd`; export srcroot; \
+	  (cd $${dir} && $(MAKE) $(FLAGS_TO_PASS) all); \
+	else \
+	  true; \
+	fi
+
+all-tcl:
+	@dir=`echo $@ | sed -e 's/all-//'`; \
+	if [ -f ./$${dir}/Makefile ] ; then \
+	  r=`pwd`; export r; \
+	  srcroot=`cd $(srcdir); pwd`; export srcroot; \
+	  (cd $${dir} && $(MAKE) $(FLAGS_TO_PASS) all); \
+	else \
+	  true; \
+	fi
+
+all-tk:
+	@dir=`echo $@ | sed -e 's/all-//'`; \
+	if [ -f ./$${dir}/Makefile ] ; then \
+	  r=`pwd`; export r; \
+	  srcroot=`cd $(srcdir); pwd`; export srcroot; \
+	  (cd $${dir} && $(MAKE) $(FLAGS_TO_PASS) all); \
+	else \
+	  true; \
+	fi
+
+installcheck:
+
+check: force
+	cd kernel && make skelconq
+	@if [ -f test/Makefile ]; then \
+	  rootme=`pwd`; export rootme; \
+	  cd test; \
+	  $(MAKE) $(TARGET_FLAGS_TO_PASS) check; \
+	else true; fi
+
+info dvi html install-info clean-info clean-dvi clean-html: force
+	@$(MAKE) $(FLAGS_TO_PASS) DO=$@ "DODIRS=doc" subdir_do
+
+install: all install-$(UI_TARGET)
+
+install-only: install-$(UI_TARGET)
+
+install-xconq: all install-$(UI_TARGET)
+
+install-tkconq:	all-tkconq install-lib install-images install-dirs
+	@dir=tcltk; \
+	if [ -f ./$${dir}/Makefile ] ; then \
+	  r=`pwd`; export r; \
+	  srcroot=`cd $(srcdir); pwd`; export srcroot; \
+	  (cd $${dir} && $(MAKE) $(FLAGS_TO_PASS) install-xconq); \
+	else \
+	  true; \
+	fi
+
+install-sdlconq:    all-sdlconq install-lib install-images install-dirs
+	@dir=sdl; \
+	if [ -f ./$${dir}/Makefile ] ; then \
+	  r=`pwd`; export r; \
+	  srcroot=`cd $(srcdir); pwd`; export srcroot; \
+	  (cd $${dir} && $(MAKE) $(FLAGS_TO_PASS) install-xconq); \
+	else \
+	  true; \
+	fi
+
+install-cconq:	all-cconq install-lib install-dirs
+	@dir=curses; \
+	if [ -f ./$${dir}/Makefile ] ; then \
+	  r=`pwd`; export r; \
+	  srcroot=`cd $(srcdir); pwd`; export srcroot; \
+	  (cd $${dir} && $(MAKE) $(FLAGS_TO_PASS) install-cconq); \
+	else \
+	  true; \
+	fi
+
+install-lib: install-dirs
+	@dir=lib; \
+	if [ -f ./$${dir}/Makefile ] ; then \
+	  r=`pwd`; export r; \
+	  srcroot=`cd $(srcdir); pwd`; export srcroot; \
+	  (cd $${dir} && $(MAKE) $(FLAGS_TO_PASS) install-only); \
+	else \
+	  true; \
+	fi
+
+install-images: install-dirs
+	@dir=images; \
+	if [ -f ./$${dir}/Makefile ] ; then \
+	  r=`pwd`; export r; \
+	  srcroot=`cd $(srcdir); pwd`; export srcroot; \
+	  (cd $${dir} && $(MAKE) $(FLAGS_TO_PASS) install-only); \
+	else \
+	  true; \
+	fi
+
+MAKEDIRS= \
+	$(prefix) \
+	$(exec_prefix) \
+	$(bindir) \
+	$(datadir) \
+	$(gamelibdir) \
+	$(imagesdir) \
+	$(scoresdir) \
+	$(mandir) \
+	$(man6dir) \
+	$(infodir) \
+	$(tcltkdir) \
+	$(BWidgetdir) \
+	$(BWidgetimagesdir) \
+	$(BWidgetlangdir)
+
+.PHONY: install-dirs
+install-dirs:
+	@for i in $(MAKEDIRS) ; do \
+		echo Making $$i... ; \
+		parent=`echo $$i | sed -e 's@/[^/]*$$@@' | sed -e 's@^$$@/@'`; \
+		if [ -d $$parent ] ; then true ; else mkdir $$parent ; fi ; \
+		if [ ! -d $$i ] ; then \
+			if mkdir $$i ; then \
+				true ; \
+			else \
+				exit 1 ; \
+			fi ; \
+		else \
+			true ; \
+		fi ; \
+	done
+	chown $(GAMEUID) $(scoresdir)
+	chgrp $(GAMEGRP) $(scoresdir)
+	chmod $(DIRPERM) $(scoresdir)
+
+# Build a source distribution.
+DIST_VERSION=@XCONQ_VERSION_FULL@
+DIST_NAME=xconq-$(DIST_VERSION)
+
+dist: info html check-cvs
+	(cd .. && \
+	cvs -z3 -d`cat xconq/CVS/Root` export -d $(DIST_NAME) -r HEAD xconq && \
+	cp xconq/doc/*.info xconq/doc/*.html $(DIST_NAME)/doc && \
+	tar czvf $(DIST_NAME).tar.gz $(DIST_NAME) && \
+	rm -rf $(DIST_NAME))
+
+bz2dist: info html check-cvs
+	(cd .. && \
+	cvs -z3 -d`cat xconq/CVS/Root` export -d $(DIST_NAME) -r HEAD xconq && \
+	cp xconq/doc/*.info xconq/doc/*.html $(DIST_NAME)/doc && \
+	tar cjvf $(DIST_NAME).tar.bz2 $(DIST_NAME) && \
+	rm -rf $(DIST_NAME))
+
+lzmadist: info html check-cvs
+	(cd .. && \
+	cvs -z3 -d`cat xconq/CVS/Root` export -d $(DIST_NAME) -r HEAD xconq && \
+	cp xconq/doc/*.info xconq/doc/*.html $(DIST_NAME)/doc && \
+	7z a $(DIST_NAME).7z -r $(DIST_NAME) && \
+	rm -rf $(DIST_NAME))
+
+check-cvs:
+	@if [ ! -d CVS ]; then exit 1; fi; \
+	if [ ! -f CVS/Root ]; then exit 1; fi; \
+	true
+
+clean:
+	@$(MAKE) $(FLAGS_TO_PASS) DO=clean "DODIRS=$(SUBDIRS)" subdir_do 
+
+distclean: clean
+	@$(MAKE) $(FLAGS_TO_PASS) DO=distclean "DODIRS=$(SUBDIRS)" subdir_do 
+	rm -f Makefile config.status config.cache
+
+extraclean: distclean
+	rm -f *~* .*~* #* %*
+	rm -f */*~* */.*~* */#* */%*
+	rm -f Makefile config.status
+
+realclean: distclean
+	@$(MAKE) $(FLAGS_TO_PASS) DO=realclean "DODIRS=$(SUBDIRS)" subdir_do
+	rm -f Makefile
+
+subdir_do: force
+	@srcroot=`cd $(srcdir); pwd`; export srcroot; \
+	for i in $(DODIRS); do \
+		if [ -f ./$$i/Makefile ] ; then \
+			if (cd ./$$i && \
+				$(MAKE) $(FLAGS_TO_PASS) $(DO)) ; then true ; \
+			else exit 1 ; fi ; \
+		else true ; fi ; \
+	done
+
+Makefile: Makefile.in $(host_makefile_frag) $(target_makefile_frag)
+	$(SHELL) ./config.status
+
+force:

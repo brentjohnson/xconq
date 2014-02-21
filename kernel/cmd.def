@@ -1,0 +1,492 @@
+/* Definitions of commands for Xconq.
+   Copyright (C) 1993-1999 Stanley T. Shebs.
+
+Xconq is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.  See the file COPYING.  */
+
+DEF_CMD(  ' ' , "reserve", do_reserve,
+  "put into reserve for this turn")
+
+DEF_CMD(  '!' , "detonate", do_detonate,
+  "detonate")
+
+/* _CMD(  '"' , "", do_,
+  "") */
+
+DEF_CMD(  '#' , "distance", do_distance,
+  "display distance to selected place")
+
+/* _CMD(  '$' , "", do_,
+  "") */
+
+/* _CMD(  '%' , "", do_,
+  "") */
+
+/* _CMD(  '&' , "", do_,
+  "") */
+
+/* _CMD(  ''' , "", do_,
+  "") */
+
+/* _CMD(  '(' , "", do_,
+  "") */
+
+/* _CMD(  ')' , "", do_,
+  "") */
+
+/* _CMD(  '*' , "", do_,
+  "") */
+
+DEF_CMD(  '+' , "up", do_up,
+  "increase altitude")
+
+/* _CMD(  ',' , "", do_,
+  "") */
+
+DEF_CMD(  '-' , "down", do_down,
+  "decrease altitude")
+
+DEF_CMD(  '.' , "recenter", do_recenter,
+  "center around the current point or selected units")
+
+/* _CMD(  '/' , "", do_,
+  "") */
+
+/* _CMD(  ':' , "", do_,
+  "") */
+
+/* _CMD(  ';' , "", do_,
+  "") */
+
+/* _CMD(  '<' , "", do_,
+  "") */
+
+/* _CMD(  '=' , "", do_,
+  "") */
+
+/* _CMD(  '>' , "", do_,
+  "") */
+
+DEF_CMD(  '?' , "help", do_help,
+  "display help info")
+
+DEF_CMD(  '@' , "angle", do_set_view_angle,
+  "change the angle at which a map is viewed")
+
+/* _CMD(  '[' , "", do_,
+  "") */
+
+DEF_CMD(C('['), "escape", do_escape,
+  "")
+
+/* _CMD(  '\\' , "", do_,
+  "") */
+
+/* _CMD(C('\\'), "", do_,
+  "") */
+
+/* _CMD(  ']' , "", do_,
+  "") */
+
+/* _CMD(C(']'), "", do_,
+  "") */
+
+/* _CMD(  '^' , "", do_,
+  "") */
+
+/* _CMD(C('^'), "", do_,
+  "") */
+
+/* _CMD(  '_' , "", do_,
+  "") */
+
+/* _CMD(C('_'), "", do_,
+  "") */
+
+/* _CMD(  '`' , "", do_,
+  "") */
+
+DEF_CMD(  '{' , "zoom-out", do_zoom_out,
+  "zoom out to see less map detail")
+
+/* _CMD(  '|' , "", do_,
+  "") */
+
+DEF_CMD(  '}' , "zoom-in", do_zoom_in,
+  "zoom in to see more map detail")
+
+/* _CMD(  '~' , "", do_,
+  "") */
+
+DEF_CMD(  'a' , "attack", do_attack,
+  "attack")
+
+DEF_CMD(  'A' , "add-terrain", do_add_terrain,
+  "add (or alter) terrain")
+
+DEF_CMD(C('A'), "auto", do_auto,
+  "toggle AI control of unit")
+
+DEF_CMD(  'b' , "southwest", do_dir,
+  "move southwest")
+
+DEF_CMD(  'B' , "southwest-multiple", do_dir_multiple,
+  "move southwest multiple")
+
+/* _CMD(C('B'), "", do_,
+  "") */
+
+DEF_CMD(  'c' , "change-type", do_change_type,
+  "change unit type")
+
+DEF_CMD(  'C' , "clear-plan", do_clear_plan,
+  "clear unit plans")
+
+/* _CMD(C('C'), "", do_,
+  "") */
+
+DEF_CMD(  'd' , "delay", do_delay,
+  "delay unit action until after others have moved")
+
+DEF_CMD(  'D' , "disband", do_disband,
+  "disband a unit")
+
+/* _CMD(C('D'), "", do_,
+  "") */
+
+DEF_CMD(  'e' , "embark", do_embark,
+  "embark units onto transport occupying same unit")
+
+/* _CMD(  'E' , "", do_,
+  "") */
+
+DEF_CMD(C('E'), "disembark", do_disembark,
+  "disembark from transport into same cell")
+
+DEF_CMD(  'f' , "fire", do_fire,
+  "fire at a unit")
+
+DEF_CMD(  'F' , "formation", do_set_formation,
+  "set position of units relative to another")
+
+DEF_CMD(C('F'), "fire-into", do_fire_into,
+  "fire into a location")
+
+DEF_CMD(  'g' , "give", do_give,
+  "give supplies")
+
+DEF_CMD(  'G' , "give-unit", do_give_unit,
+  "give unit to side")
+
+/* _CMD(C('G'), "", do_,
+  "") */
+
+DEF_CMD(  'h' , "west", do_dir,
+  "move west")
+
+DEF_CMD(  'H' , "west-multiple", do_dir_multiple,
+  "move west multiple")
+
+/* _CMD(C('H'), "", do_,
+  "") */
+
+DEF_CMD(  'i' , "in", do_occupant,
+  "look at occupant(s)")
+
+DEF_CMD(  'I' , "idle", do_idle,
+  "idle (sentry) for a given time")
+
+/* _CMD(C('I'), "", do_,
+  "") */
+
+DEF_CMD(  'j' , "south", do_dir,
+  "move south")
+
+DEF_CMD(  'J' , "south-multiple", do_dir_multiple,
+  "move south multiple")
+
+/* _CMD(C('J'), "", do_,
+  "") */
+
+DEF_CMD(  'k' , "north", do_dir,
+  "move north")
+
+DEF_CMD(  'K' , "north-multiple", do_dir_multiple,
+  "move north multiple")
+
+/* _CMD(C('K'), "", do_,
+  "") */
+
+DEF_CMD(  'l' , "east", do_dir,
+  "move east")
+
+DEF_CMD(  'L' , "east-multiple", do_dir_multiple,
+  "move east multiple")
+
+/* _CMD(C('L'), "", do_,
+  "") */
+
+DEF_CMD(  'm' , "move-to", do_move_to,
+  "move to a place")
+
+DEF_CMD(  'M' , "message", do_message,
+  "send a message to another side or sides")
+
+DEF_CMD(C('M'), "end-turn", do_end_turn,
+  "end activity for this turn")
+
+DEF_CMD(  '\n', "end-turn", do_end_turn,
+   "end activity for this turn")
+
+DEF_CMD(  'n' , "southeast", do_dir,
+  "move southeast")
+
+DEF_CMD(  'N' , "southeast-multiple", do_dir_multiple,
+  "move southeast multiple")
+
+/* _CMD(C('N'), "", do_,
+  "") */
+
+DEF_CMD(  'o' , "other", do_other,
+  "other commands")
+
+/* _CMD(  'O' , "", do_,
+  "") */
+
+/* _CMD(C('O'), "", do_,
+  "") */
+
+DEF_CMD(  'p' , "produce", do_produce,
+  "set material production")
+
+DEF_CMD(  'P' , "produce-unit", do_build,
+  "set up construction tasks")
+
+DEF_CMD(C('P'), "repair", do_repair,
+  "repair a unit")
+
+/* _CMD(  'q' , "", do_,
+  "") */
+
+DEF_CMD(  'Q' , "quit", do_quit,
+  "get out of the game")
+
+/* _CMD(C('Q'), "", do_,
+  "") */
+
+DEF_CMD(  'r' , "return", do_return,
+  "return to a resupply point")
+
+DEF_CMD(  'R' , "remove-terrain", do_remove_terrain,
+  "remove terrain")
+
+DEF_CMD(C('R'), "refresh", do_refresh,
+  "refresh/redraw display")
+
+DEF_CMD(  's' , "sleep", do_sleep,
+  "go to sleep")
+
+DEF_CMD(  'S' , "save", do_save,
+  "save the game into a file")
+
+/* _CMD(C('S'), "", do_,
+  "") */
+
+DEF_CMD(  't' , "take", do_take,
+  "take supplies from unit or terrain")
+
+/* _CMD(  'T' , "", do_,
+  "") */
+
+/* _CMD(C('T'), "", do_,
+  "") */
+
+DEF_CMD(  'u' , "northeast", do_dir,
+  "move northeast")
+
+DEF_CMD(  'U' , "northeast-multiple", do_dir_multiple,
+  "move northeast multiple")
+
+/* _CMD(C('U'), "", do_,
+  "") */
+
+DEF_CMD(  'w' , "wake", do_wake,
+  "wake units up")
+
+DEF_CMD(  'W' , "wakeall", do_wake_all,
+  "wake units and all their occupants up")
+
+/* _CMD(C('W'), "", do_,
+  "") */
+
+DEF_CMD(  'v'  , "flash", do_flash,
+  "flash the current position")
+
+/* _CMD(  'V' , "", do_,
+  "") */
+
+/* _CMD(C('V'), "", do_,
+  "") */
+
+DEF_CMD(  'y' , "northwest", do_dir,
+  "move northwest")
+
+DEF_CMD(  'Y' , "northwest-multiple", do_dir_multiple,
+  "move northwest multiple")
+
+/* _CMD(C('Y'), "", do_,
+  "") */
+
+DEF_CMD(  'z' , "survey", do_survey,
+  "switch between surveying and moving")
+
+/* _CMD(  'Z' , "", do_,
+  "") */
+
+/* _CMD(C('Z'), "", do_,
+  "") */
+
+/* Commands with no dedicated single characters. */
+
+DEF_CMD(   0  , "add-player", do_add_player,
+  "add another player to the game")
+
+#if 0
+
+DEF_CMD(   0  , "agreement-draft", do_agreement_draft,
+  "")
+
+DEF_CMD(   0  , "agreement-drafter", do_agreement_drafter,
+  "")
+
+DEF_CMD(   0  , "agreement-propose", do_agreement_propose,
+  "")
+
+DEF_CMD(   0  , "agreement-proposer", do_agreement_proposer,
+  "")
+
+DEF_CMD(   0  , "agreement-sign", do_agreement_sign,
+  "")
+
+DEF_CMD(   0  , "agreement-signer", do_agreement_signer,
+  "")
+
+DEF_CMD(   0  , "agreement-term", do_agreement_term,
+  "")
+
+#endif
+
+DEF_CMD(   0  , "ai", do_ai_side,
+  "switch side over to AI control")
+
+DEF_CMD(   0  , "c-rate", do_c_rate,
+  "set conversion rates")
+
+DEF_CMD(   0  , "collect", do_collect,
+  "collect some type of material")
+
+DEF_CMD(   0  , "copying", do_copying,
+  "display copying conditions")
+
+DEF_CMD(   0  , "distrust", do_distrust,
+  "declare lack of trust in a side")
+
+DEF_CMD(   0  , "doctrine", do_doctrine,
+  "examine and modify doctrine")
+
+DEF_CMD(   0  , "draw", do_draw_willingness,
+  "declare willingness to draw")
+
+DEF_CMD(   0  , "follow-action", do_follow_action,
+  "toggle action following")
+
+DEF_CMD(   0  , "if", do_standing_orders,
+  "set up standing orders")
+
+DEF_CMD(   0  , "map", do_map,
+  "set map appearance")
+
+DEF_CMD(   0  , "name", do_name,
+  "name a unit")
+
+DEF_CMD(   0  , "new-map", do_new_map,
+  "open a new map window")
+
+DEF_CMD(   0  , "orders", do_orders_popup,
+  "")
+
+DEF_CMD(   0  , "print", do_print_view,
+  "print a view of the world")
+
+DEF_CMD(   0  , "rate", do_set_rate,
+  "set AI play rate")
+
+DEF_CMD(   0  , "release", do_release,
+  "allow side to control itself")
+
+DEF_CMD(   0  , "replan", do_force_global_replan,
+  "")
+
+DEF_CMD(   0  , "research", do_research,
+  "make side research a specific advance")
+
+DEF_CMD(   0  , "resign", do_resign,
+  "resign from the game")
+
+DEF_CMD(   0  , "run", do_run,
+  "auto-finish for a given number of turns")
+
+DEF_CMD(   0  , "side", do_side_closeup,
+  "")
+
+DEF_CMD(   0  , "submit", do_submit,
+  "allow side to be controlled by another")
+
+DEF_CMD(   0  , "trust", do_trust,
+  "declare trust in another side")
+
+DEF_CMD(   0  , "unit", do_unit_closeup,
+  "")
+
+DEF_CMD(   0  , "version", do_version,
+  "display version info")
+
+DEF_CMD(   0  , "warranty", do_warranty,
+  "display non-warranty")
+
+DEF_CMD(   0  , "world-map", do_world_map,
+  "open a new window that is zoomed to show the whole world")
+
+DEF_CMD(   0  , "Wlog", do_warning_log,
+  "toggle logging of warning messages")
+
+#ifdef DESIGNERS
+
+DEF_CMD(   0  , "design", do_design,
+  "toggle designer abilities")
+
+DEF_CMD(   0  , "gdl", do_gdl,
+  "evaluate a GDL form")
+
+#endif /* DESIGNERS */
+
+#ifdef DEBUGGING
+
+DEF_CMD(   0  , "DD", do_debug,
+  "toggle general debugging")
+
+DEF_CMD(   0  , "DG", do_debugg,
+  "toggle graphical interface debugging")
+
+DEF_CMD(   0  , "DM", do_debugm,
+  "toggle AI (mplayer) debugging")
+
+DEF_CMD(   0  , "DP", do_profile,
+  "")
+
+DEF_CMD(   0  , "DT", do_trace,
+  "")
+
+#endif /* DEBUGGING */

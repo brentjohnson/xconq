@@ -1,0 +1,355 @@
+/* src/include/acconfig.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define to 1 if translation of program messages to the user's native
+   language is requested. */
+#undef ENABLE_NLS
+
+/* Define to 1 if an error should be generated if <climits> is missing. */
+#undef ERROR_ON_MISSING_CLIMITS
+
+/* Define to 1 if an error should be generated if <cstdarg> is missing. */
+#undef ERROR_ON_MISSING_CSTDARG
+
+/* Define to 1 if an error should be generated if <cstddef> is missing. */
+#undef ERROR_ON_MISSING_CSTDDEF
+
+/* Define to 1 if an error should be generated if <cstdio> is missing. */
+#undef ERROR_ON_MISSING_CSTDIO
+
+/* Define to 1 if an error should be generated if <cstdlib> is missing. */
+#undef ERROR_ON_MISSING_CSTDLIB
+
+/* Define to 1 if an error should be generated if <cstring> is missing. */
+#undef ERROR_ON_MISSING_CSTRING
+
+/* Define to 1 if an error should be generated if <float.h> is missing. */
+#undef ERROR_ON_MISSING_FLOAT_H
+
+/* Define to 1 if an error should be generated if <inttypes.h> is missing. */
+#undef ERROR_ON_MISSING_INTTYPES_H
+
+/* Define to 1 if an error should be generated if <iomanip> is missing. */
+#undef ERROR_ON_MISSING_IOMANIP
+
+/* Define to 1 if an error should be generated if <iostream> is missing. */
+#undef ERROR_ON_MISSING_IOSTREAM
+
+/* Define to 1 if an error should be generated if <limits.h> is missing. */
+#undef ERROR_ON_MISSING_LIMITS_H
+
+/* Define to 1 if an error should be generated if <memory.h> is missing. */
+#undef ERROR_ON_MISSING_MEMORY_H
+
+/* Define to 1 if an error should be generated if <stdarg.h> is missing. */
+#undef ERROR_ON_MISSING_STDARG_H
+
+/* Define to 1, if an error should be generated if Standard C headers missing.
+   */
+#undef ERROR_ON_MISSING_STDC_HEADERS
+
+/* Define to 1 if an error should be generated if <stddef.h> is missing. */
+#undef ERROR_ON_MISSING_STDDEF_H
+
+/* Define to 1 if an error should be generated if <stdexcept> is missing. */
+#undef ERROR_ON_MISSING_STDEXCEPT
+
+/* Define to 1 if an error should be generated if <stdint.h> is missing. */
+#undef ERROR_ON_MISSING_STDINT_H
+
+/* Define to 1 if an error should be generated if <stdio.h> is missing. */
+#undef ERROR_ON_MISSING_STDIO_H
+
+/* Define to 1 if an error should be generated if <stdlib.h> is missing. */
+#undef ERROR_ON_MISSING_STDLIB_H
+
+/* Define to 1 if an error should be generated if <string> is missing. */
+#undef ERROR_ON_MISSING_STRING
+
+/* Define to 1 if an error should be generated if <strings.h> is missing. */
+#undef ERROR_ON_MISSING_STRINGS_H
+
+/* Define to 1 if an error should be generated if <string.h> is missing. */
+#undef ERROR_ON_MISSING_STRING_H
+
+/* Define to 1 if an error should be generated if <sys/stat.h> is missing. */
+#undef ERROR_ON_MISSING_SYS_STAT_H
+
+/* Define to 1 if an error should be generated if <sys/types.h> is missing. */
+#undef ERROR_ON_MISSING_SYS_TYPES_H
+
+/* Define to 1 if an error should be generated if <unistd.h> is missing. */
+#undef ERROR_ON_MISSING_UNISTD_H
+
+/* Define to 1, if an error should be generated if <stat.h> with working stat
+   macros missing. */
+#undef ERROR_ON_MISSING_WORKING_STAT_MACROS
+
+/* Define to 1 if you have the MacOS X function CFLocaleCopyCurrent in the
+   CoreFoundation framework. */
+#undef HAVE_CFLOCALECOPYCURRENT
+
+/* Define to 1 if you have the MacOS X function CFPreferencesCopyAppValue in
+   the CoreFoundation framework. */
+#undef HAVE_CFPREFERENCESCOPYAPPVALUE
+
+/* Define to 1 if you have the <climits> header file. */
+#undef HAVE_CLIMITS
+
+/* Define to 1 if you have the <cstdarg> header file. */
+#undef HAVE_CSTDARG
+
+/* Define to 1 if you have the <cstddef> header file. */
+#undef HAVE_CSTDDEF
+
+/* Define to 1 if you have the <cstdio> header file. */
+#undef HAVE_CSTDIO
+
+/* Define to 1 if you have the <cstdlib> header file. */
+#undef HAVE_CSTDLIB
+
+/* Define to 1 if you have the <cstring> header file. */
+#undef HAVE_CSTRING
+
+/* Define to 1 if <float.h> can be used by a C++ compiler. */
+#undef HAVE_CXX_OK_FLOAT_H
+
+/* Define to 1 if <inttypes.h> can be used by a C++ compiler. */
+#undef HAVE_CXX_OK_INTTYPES_H
+
+/* Define to 1 if <limits.h> can be used by a C++ compiler. */
+#undef HAVE_CXX_OK_LIMITS_H
+
+/* Define to 1 if <memory.h> can be used by a C++ compiler. */
+#undef HAVE_CXX_OK_MEMORY_H
+
+/* Define to 1 if <stdarg.h> can be used by a C++ compiler. */
+#undef HAVE_CXX_OK_STDARG_H
+
+/* Define to 1 if <stddef.h> can be used by a C++ compiler. */
+#undef HAVE_CXX_OK_STDDEF_H
+
+/* Define to 1 if <stdint.h> can be used by a C++ compiler. */
+#undef HAVE_CXX_OK_STDINT_H
+
+/* Define to 1 if <stdio.h> can be used by a C++ compiler. */
+#undef HAVE_CXX_OK_STDIO_H
+
+/* Define to 1 if <stdlib.h> can be used by a C++ compiler. */
+#undef HAVE_CXX_OK_STDLIB_H
+
+/* Define to 1 if <strings.h> can be used by a C++ compiler. */
+#undef HAVE_CXX_OK_STRINGS_H
+
+/* Define to 1 if <string.h> can be used by a C++ compiler. */
+#undef HAVE_CXX_OK_STRING_H
+
+/* Define to 1 if <sys/stat.h> can be used by a C++ compiler. */
+#undef HAVE_CXX_OK_SYS_STAT_H
+
+/* Define to 1 if <sys/types.h> can be used by a C++ compiler. */
+#undef HAVE_CXX_OK_SYS_TYPES_H
+
+/* Define to 1 if <unistd.h> can be used by a C++ compiler. */
+#undef HAVE_CXX_OK_UNISTD_H
+
+/* Define to 1 if <float.h> does not need to be wrapped with extern "C" to be
+   used by a C++ compiler. */
+#undef HAVE_CXX_SAFE_FLOAT_H
+
+/* Define to 1 if <inttypes.h> does not need to be wrapped with extern "C" to
+   be used by a C++ compiler. */
+#undef HAVE_CXX_SAFE_INTTYPES_H
+
+/* Define to 1 if <limits.h> does not need to be wrapped with extern "C" to be
+   used by a C++ compiler. */
+#undef HAVE_CXX_SAFE_LIMITS_H
+
+/* Define to 1 if <memory.h> does not need to be wrapped with extern "C" to be
+   used by a C++ compiler. */
+#undef HAVE_CXX_SAFE_MEMORY_H
+
+/* Define to 1 if <stdarg.h> does not need to be wrapped with extern "C" to be
+   used by a C++ compiler. */
+#undef HAVE_CXX_SAFE_STDARG_H
+
+/* Define to 1 if <stddef.h> does not need to be wrapped with extern "C" to be
+   used by a C++ compiler. */
+#undef HAVE_CXX_SAFE_STDDEF_H
+
+/* Define to 1 if <stdint.h> does not need to be wrapped with extern "C" to be
+   used by a C++ compiler. */
+#undef HAVE_CXX_SAFE_STDINT_H
+
+/* Define to 1 if <stdio.h> does not need to be wrapped with extern "C" to be
+   used by a C++ compiler. */
+#undef HAVE_CXX_SAFE_STDIO_H
+
+/* Define to 1 if <stdlib.h> does not need to be wrapped with extern "C" to be
+   used by a C++ compiler. */
+#undef HAVE_CXX_SAFE_STDLIB_H
+
+/* Define to 1 if <strings.h> does not need to be wrapped with extern "C" to
+   be used by a C++ compiler. */
+#undef HAVE_CXX_SAFE_STRINGS_H
+
+/* Define to 1 if <string.h> does not need to be wrapped with extern "C" to be
+   used by a C++ compiler. */
+#undef HAVE_CXX_SAFE_STRING_H
+
+/* Define to 1 if <sys/stat.h> does not need to be wrapped with extern "C" to
+   be used by a C++ compiler. */
+#undef HAVE_CXX_SAFE_SYS_STAT_H
+
+/* Define to 1 if <sys/types.h> does not need to be wrapped with extern "C" to
+   be used by a C++ compiler. */
+#undef HAVE_CXX_SAFE_SYS_TYPES_H
+
+/* Define to 1 if <unistd.h> does not need to be wrapped with extern "C" to be
+   used by a C++ compiler. */
+#undef HAVE_CXX_SAFE_UNISTD_H
+
+/* Define if the GNU dcgettext() function is already present or preinstalled.
+   */
+#undef HAVE_DCGETTEXT
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Define to 1 if you have the <float.h> header file. */
+#undef HAVE_FLOAT_H
+
+/* Define if the GNU gettext() function is already present or preinstalled. */
+#undef HAVE_GETTEXT
+
+/* Define if you have the iconv() function. */
+#undef HAVE_ICONV
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the <iomanip> header file. */
+#undef HAVE_IOMANIP
+
+/* Define to 1 if you have the <iostream> header file. */
+#undef HAVE_IOSTREAM
+
+/* Define to 1 if you have the <limits.h> header file. */
+#undef HAVE_LIMITS_H
+
+/* Define to 1 if long double works and has more range or precision than
+   double. */
+#undef HAVE_LONG_DOUBLE
+
+/* Define to 1, if 'long long int' is available and is twice as wide as 'long
+   int'. */
+#undef HAVE_LONG_LONG_INT
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the <stdarg.h> header file. */
+#undef HAVE_STDARG_H
+
+/* Define to 1 if you have the <stddef.h> header file. */
+#undef HAVE_STDDEF_H
+
+/* Define to 1 if you have the <stdexcept> header file. */
+#undef HAVE_STDEXCEPT
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdio.h> header file. */
+#undef HAVE_STDIO_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <string> header file. */
+#undef HAVE_STRING
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/time.h> header file. */
+#undef HAVE_SYS_TIME_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Define to 1 if 'wchar_t' is available. */
+#undef HAVE_WCHAR_T
+
+/* Define as const if the declaration of iconv() needs const. */
+#undef ICONV_CONST
+
+/* Define to 1 if <inttypes.h> needs to be included to provide 'wchar_t'. */
+#undef NEED_INTTYPES_H_FOR_WCHAR_T
+
+/* Define to 1 if <stdint.h> needs to be included to provide 'wchar_t'. */
+#undef NEED_STDINT_H_FOR_WCHAR_T
+
+/* Define to 1 if <sys/types.h> needs to be included to provide 'wchar_t'. */
+#undef NEED_SYS_TYPES_H_FOR_WCHAR_T
+
+/* Define to 1 if <unistd.h> needs to be included to provide 'wchar_t'. */
+#undef NEED_UNISTD_H_FOR_WCHAR_T
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* The size of a `int', as computed by sizeof. */
+#undef SIZEOF_INT
+
+/* The size of a `long int', as computed by sizeof. */
+#undef SIZEOF_LONG_INT
+
+/* The size of a `short int', as computed by sizeof. */
+#undef SIZEOF_SHORT_INT
+
+/* The size of a `void *', as computed by sizeof. */
+#undef SIZEOF_VOID_P
+
+/* Define to 1 if the `S_IS*' macros in <sys/stat.h> do not work properly. */
+#undef STAT_MACROS_BROKEN
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
+#undef TIME_WITH_SYS_TIME
+
+/* Define to 1 if build host is an Unix-like platform. */
+#undef UNIX
+
+/* Version number of package */
+#undef VERSION
+
+/* Define to 1 if type `char' is unsigned and you are not using gcc.  */
+#ifndef __CHAR_UNSIGNED__
+# undef __CHAR_UNSIGNED__
+#endif

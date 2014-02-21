@@ -1,0 +1,19 @@
+/* Definitions of all the plan types in Xconq.
+   Copyright (C) 1993, 1994, 1995 Stanley T. Shebs.
+
+Xconq is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.  See the file COPYING.  */
+
+DEF_PLAN("None", PLAN_NONE)
+
+DEF_PLAN("Passive", PLAN_PASSIVE)
+
+DEF_PLAN("Defensive", PLAN_DEFENSIVE)
+
+DEF_PLAN("Exploratory", PLAN_EXPLORATORY)
+
+DEF_PLAN("Offensive", PLAN_OFFENSIVE)
+
+DEF_PLAN("Improving", PLAN_IMPROVING)

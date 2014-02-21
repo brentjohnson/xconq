@@ -1,0 +1,166 @@
+#!/usr/local/bin/perl
+#eval 'exec /usr/local/bin/perl -S $0 ${1+"$@"}'
+#	if $running_under_some_shell;
+
+require "getopts.pl";
+&Getopts('o:');
+#die "Usage: scn2g [-o outfile] [infile]\n" if @ARGV > 1;
+
+#
+# Get stdout set up and the default module name
+#
+if ( $opt_o ) {
+    #
+    # If they give us an output file name, open it
+    # and use it as the module name (minus path and extension).
+    #
+    open(STDOUT, ">$opt_o") || die "Couldn't open $opt_o for output: $!\n";
+    ($m = $opt_o) =~ s#(.*/)?(.*)\.g$#$2#;
+} elsif (@ARGV) {
+    #
+    # If they give us an input file,
+    # use it as the output file name (minus path and extension plus .g)
+    # and use it as the module name (minus path and extension).
+    #
+    ($m = $ARGV[0]) =~ s#(.*/)?(.*)\.scn$#$2#;
+    unless ( -e "$m.g" ) {
+	open(STDOUT, ">$m.g") || die "Couldn't open $m.g for output: $!\n";
+    }
+} else {
+    #
+    # OK, we got nothin', output is stdout and module name is junk.
+    #
+    $m = 'xxx';
+}
+
+$\ = "\n";	# terminate every print with a newline.
+
+@types = ( 'pt_value', 'units', 'resources', 'unit_at' );
+
+LINE:
+while (<>) {
+    # strip trailing whitespace (and the newline).
+    s/\s*$//;
+
+    if (/^Xconq (\d+) [\+-]* ([^;]*)(;?)$/) {
+	local($n) = $1;
+        print qq/(game-module "$m"\n  (blurb "$2")/;
+	if ( $3 ) {
+	    print "  (game-module (notes (";
+	    COMMENT:
+	    while (<>) {
+		last COMMENT if /^\.$/;
+		chop;
+		print;
+	    }
+	    print "  ))";
+	}
+	while ( $n-- ) {
+	    chop($f = <>);
+	    print(qq/  (base-module "$1")/), next if $f =~ /^(\S*)\.per$/;
+	    push(@incfiles, $f);
+	}
+        print ")\n";
+	foreach $f ( @incfiles ) {
+	    print qq/(include "$f")/;
+	}
+	next LINE;
+    } elsif (/^Globals/) {
+	split;
+	&read_globs(@_[1..5]);
+	next LINE;
+    } elsif (/^Sides/) {
+	split;
+	&read_sides(@_[1], @_[2]);
+	next LINE;
+    } elsif (/^Units/) {
+	split;
+	($num, $detail) = @_[1,2];
+	&read_unit($detail) while ($num--);
+	next LINE;
+    }
+
+    s/^/;/;
+    print;
+}
+
+sub read_globs {
+    local($first_turn, $last_turn, $set_prod, $leave, $conds) = @_;
+    local($n);
+
+    print "; fixed production" if $set_prod;
+    print "; leave from edges" if $leave;
+    print "(set turn $first_turn)" if $first_turn;
+    print "(set last-turn $last_turn)";
+
+    print "";
+    for ($n = 1; $n <= $conds; ++$n) {
+	chop($_ = <>);
+	local($w, $t, $st, $end, $s) = split;
+	$w = ($w = 0)? 'lose' : 'win';
+	$s++;
+	print qq/(scorekeeper |cond$n| (title "$types[$t]")/;
+	print "  (applies-to $s)" unless ($s == -1);
+	print "; (trigger if turn > $st and turn < $end)";
+
+	chop($_ = <>);
+	print "; (do if ($types[$t] $_) $w)";
+
+	print ")";
+    }
+}
+
+sub read_sides {
+    local($num, $detail) = @_;
+    local($n);
+
+    print "";
+    for ($n = 1; $n <= $num; ++$n) {
+	$_ = <>;
+	chop($_);
+	push(@sides, $_);
+	print qq/(side $n (name "$_")/;
+
+	if ( $detail > 1 ) {
+	    local(@t);
+	    $_ = <>;
+	    split;
+	    for ($i = 1; $i < $num + 1; ++$i) {
+		push(@t, (@_[$i] == 100)? 'true' : 'false');
+	    }
+	    print "  (trusts @t)";
+	}
+	if ( $detail > 2 ) {
+	    print STDERR "Oh, shit, I don't know what to do with all this";
+	}
+	print ")";
+    }
+    print "(set sides-min $num) (set sides-max $num)\n";
+}
+
+sub read_unit {
+    local($detail) = @_;
+
+    chop($_ = <>);
+    local($char, $name, $loc, $owner) = split;
+    $loc =~ s/,/ /;
+    ++$owner;
+    $name =~ s/\*/ /g;
+    print "($char $loc $owner";
+    print qq/  (n "$name")/ unless $name eq ' ';
+
+    if ( $detail > 1 ) {
+	chop($_ = <>);
+	split;
+	local($no, $hp, $qual, $prod, $tl, $before, $trans) = @_[1,3,4,7..10];
+	local(@res) = splice(@_, 11);
+	print "  (nb $no) (hp $hp) (m @res)";
+	print "  (in $trans)" if $trans != -1;
+	print "  (cxp $qual)" if $qual != 0;
+	# no handling of production type, turns left in build or made before.
+    }
+    if ( $detail > 2 ) {
+	print STDERR "Oh no, I don't know what to do with all this";
+    }
+    print ")";
+}

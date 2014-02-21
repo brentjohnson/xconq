@@ -1,0 +1,228 @@
+# Makefile for Xconq documentation.
+# Copyright (C) 1993-1997, 1999-2000 Stanley T. Shebs.
+
+# Xconq is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+prefix = @prefix@
+
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+datadir = @xconq_data_dir@
+mandir = @mandir@
+man6dir = $(mandir)/man6
+infodir = @infodir@
+docdir = $(datadir)/doc
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+SHELL = /bin/sh
+
+INSTALL = install -c
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL)
+
+CC = @CXX@
+CXX = @CXX@
+
+# CFLAGS = -g
+CFLAGS = @CXXFLAGS@
+CXXFLAGS = @CXXFLAGS@
+
+MAKEINFO = makeinfo
+
+MAKEINFOFLAGS =
+
+TEX = tex
+
+TEXINDEX = texindex
+
+# Where to find texinfo; dist should include a recent one.
+
+TEXIDIR = .
+
+SET_TEXINPUTS = TEXINPUTS=${TEXIDIR}:.:$(srcdir):$$TEXINPUTS
+
+DOCFILES_PLAY = \
+	$(srcdir)/xconq.texi \
+	$(srcdir)/commands.texi \
+	$(srcdir)/glossary.texi \
+	$(srcdir)/gpl.texi
+
+DOCFILES_DESIGN = \
+	$(srcdir)/xcdesign.texi \
+	$(srcdir)/design.texi \
+	$(srcdir)/refman.texi \
+	$(srcdir)/glossary.texi \
+	syms.texi \
+	$(srcdir)/syntax.texi
+
+DOCFILES_HACKING = \
+	$(srcdir)/hacking.texi
+
+# Host and target-dependent makefile fragments come in here.
+####
+# End of host and target-dependent makefile fragments.
+
+.c.o:
+	$(CC) -c $(ALL_CFLAGS) $<
+
+# Don't have "all" do anything, there is no one right choice for info
+# formatting.
+
+all:
+
+install:
+
+install-only:
+
+# Generation of info files.
+
+info: xconq.info xcdesign.info hacking.info
+
+xconq.info:	$(DOCFILES_PLAY)
+	$(MAKEINFO) -I $(srcdir) -o ./xconq.info $(MAKEINFOFLAGS) $(srcdir)/xconq.texi
+
+xcdesign.info:	$(DOCFILES_DESIGN)
+	$(MAKEINFO) -I $(srcdir) -o ./xcdesign.info $(MAKEINFOFLAGS) $(srcdir)/xcdesign.texi
+
+hacking.info:	$(DOCFILES_HACKING)
+	$(MAKEINFO) -I $(srcdir) -o ./hacking.info $(MAKEINFOFLAGS) $(srcdir)/hacking.texi
+
+install-info: info
+	for i in *.info* ; do \
+		$(INSTALL_DATA) $$i $(infodir)/$$i ; \
+	done
+
+# Generation of DVI files.
+
+dvi: playref.dvi gdlref.dvi xconq.dvi xcdesign.dvi hacking.dvi
+
+# Player's reference sheet.
+
+playref.dvi: playref.texi commands.texi
+	$(SET_TEXINPUTS) $(TEX) $(srcdir)/playref.texi
+
+# Game designer's reference sheet.
+
+gdlref.dvi: gdlref.texi syntax.texi syms.texi
+	$(SET_TEXINPUTS) $(TEX) $(srcdir)/gdlref.texi
+
+# KWIC list of GDL symbols, with keywords edited down to fit
+# in the available space.
+
+syms.texi: syms.raw kwic
+	./kwic -dots -pad -breakup <syms.raw \
+	| sed -e 's/Property/Prop/' \
+	| sed -e 's/Global/G/' \
+	| sed -e 's/Terrain/T/' \
+	| sed -e 's/Material/M/' \
+	| sed -e 's/Advance/A/' \
+	| sed -e 's/Scorekeeper/SK/' \
+	| sed -e 's/Extension/Ext/' \
+	| sed -e 's/ColorImage/CImg/' \
+	| sed -e 's/AreaRestriction/AreaRes/' \
+	| sed -e 's/SynthesisMethod/SynthMeth/' >syms.texi.new
+	$(srcdir)/../move-if-change syms.texi.new syms.texi
+
+syms.raw: getsyms.sh refman.texi
+	$(srcdir)/getsyms.sh $(srcdir)/refman.texi >syms.raw.new
+	$(srcdir)/../move-if-change syms.raw.new syms.raw
+
+# Player's manual.
+
+xconq.dvi:	$(DOCFILES_PLAY)
+	$(SET_TEXINPUTS) $(TEX) $(srcdir)/xconq.texi
+	$(TEXINDEX) xconq.??
+	$(SET_TEXINPUTS) $(TEX) $(srcdir)/xconq.texi
+
+# Game designer's manual.
+
+xcdesign.dvi:	$(DOCFILES_DESIGN)
+	$(SET_TEXINPUTS) $(TEX) $(srcdir)/xcdesign.texi
+	$(TEXINDEX) xcdesign.??
+	$(SET_TEXINPUTS) $(TEX) $(srcdir)/xcdesign.texi
+
+# Hacker's manual.
+
+hacking.dvi:	$(DOCFILES_HACKING)
+	$(SET_TEXINPUTS) $(TEX) $(srcdir)/hacking.texi
+	$(TEXINDEX) hacking.??
+	$(SET_TEXINPUTS) $(TEX) $(srcdir)/hacking.texi
+
+# PS file generation.
+
+ps: playref.ps gdlref.ps xconq.ps xcdesign.ps
+
+playref.ps:	playref.dvi
+	dvips playref.dvi -o playref.ps
+
+gdlref.ps:	gdlref.dvi
+	dvips gdlref.dvi -o gdlref.ps
+
+xconq.ps:	xconq.dvi
+	dvips xconq.dvi -o xconq.ps
+
+xcdesign.ps:	xcdesign.dvi
+	dvips xcdesign.dvi -o xcdesign.ps
+
+hacking.ps:	hacking.dvi
+	dvips hacking.dvi -o hacking.ps
+
+# HTML generation.
+
+html:	xconq_1.html xcdesign_1.html hacking_1.html
+
+xconq_1.html:	$(DOCFILES_PLAY)
+	perl $(srcdir)/texi2html -split_section -glossary -menu -verbose $(srcdir)/xconq.texi
+
+xcdesign_1.html:	$(DOCFILES_DESIGN)
+	perl $(srcdir)/texi2html -split_section -glossary -menu -verbose $(srcdir)/xcdesign.texi
+
+hacking_1.html:	$(DOCFILES_HACKING)
+	perl $(srcdir)/texi2html -split_section -glossary -menu -verbose $(srcdir)/hacking.texi
+
+# A small KWIC generator.
+
+kwic:	kwic.o
+	$(CC) $(CFLAGS) -o kwic kwic.o
+
+clean-info:
+	rm -f xconq.info*
+	rm -f xcdesign.info*
+	rm -f hacking.info*
+
+clean-dvi:
+	rm -f xconq.dvi playref.dvi
+	rm -f xcdesign.dvi gdlref.dvi
+	rm -f hacking.dvi
+
+clean-ps:
+	rm -f *.ps
+
+clean-html:
+	rm -f *.html
+
+clean:
+	rm -f xconq.?? xconq.??? playref.?? playref.???
+	rm -f xcdesign.?? xcdesign.??? gdlref.?? gdlref.???
+	rm -f hacking.?? hacking.???
+	rm -f *.o *.log
+	rm -f kwic
+	rm -f syms.raw syms.texi
+
+distclean: clean clean-info clean-dvi clean-ps clean-html
+	rm -f Makefile config.status syms.texi
+
+extraclean: distclean
+	rm -f *~* .*~*
+
+realclean: distclean
+
+Makefile: Makefile.in $(host_makefile_frag) $(target_makefile_frag)
+        cd .. \
+          && CONFIG_FILES=doc/$@ CONFIG_HEADERS= $(SHELL) ./config.status

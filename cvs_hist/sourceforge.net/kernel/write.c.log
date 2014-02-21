@@ -1,0 +1,141 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/write.c,v
+Working file: write.c
+head: 1.7
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.7
+	BPT_EMCDONALD_AI_15: 1.7
+	SS_7_5_0_0pre_0_20050612: 1.4
+	BPT_MSKALA_IMF_3: 1.4
+	BPT_MSKALA_SUPPLY_12: 1.4
+	BPT_EMCDONALD_AI_14: 1.4
+	MPT_EMCDONALD_AI_7: 1.3.2.1
+	BPT_EMCDONALD_AI_13: 1.3
+	SS_7_5_0_0pre_0_20050501: 1.3
+	BPT_EMCDONALD_AI_12: 1.3
+	MPT_EMCDONALD_AI_6: 1.3
+	BPT_EMCDONALD_AI_11: 1.3
+	SS_7_5_0_0pre_0_20050416: 1.3
+	BPT_EMCDONALD_AI_10: 1.3
+	MPT_EMCDONALD_AI_5: 1.3
+	BPT_EMCDONALD_AI_9: 1.3
+	BPT_EMCDONALD_AI_8: 1.3
+	MPT_EMCDONALD_AI_4: 1.3
+	BPT_EMCDONALD_AI_7: 1.3
+	MPT_EMCDONALD_AI_3: 1.3
+	BPT_EMCDONALD_AI_6: 1.3
+	BPT_MSKALA_SUPPLY_11: 1.3
+	BPT_EMCDONALD_AI_5: 1.3
+	MPT_EMCDONALD_AI_2: 1.3
+	SS_7_5_0_0pre_0_20050322: 1.3
+	BPT_MSKALA_SUPPLY_10: 1.3
+	BPT_EMCDONALD_AI_4: 1.3
+	MPT_EMCDONALD_AI_1: 1.3
+	BPT_EMCDONALD_AI_3: 1.3
+	BPT_MSKALA_SUPPLY_9: 1.3
+	MPT_MSKALA_SUPPLY_3: 1.1.1.1.4.2
+	BPT_EMCDONALD_AI_2: 1.3
+	BPT_MSKALA_SUPPLY_8: 1.3
+	MPT_MSKALA_SUPPLY_2: 1.1.1.1.4.2
+	BPT_MSKALA_SUPPLY_7: 1.3
+	BRANCH_EMCDONALD_AI: 1.3.0.2
+	BPT_EMCDONALD_AI_1: 1.3
+	BPT_MSKALA_SUPPLY_6: 1.3
+	SS_7_5_0_0pre_0_20050225: 1.3
+	BPT_MSKALA_SUPPLY_5: 1.3
+	MPT_MSKALA_SUPPLY_1: 1.1.1.1.4.2
+	BPT_MSKALA_SUPPLY_4: 1.2
+	BPT_MSKALA_SUPPLY_3: 1.2
+	BPT_MSKALA_SUPPLY_2: 1.2
+	SS_7_5_0_0pre_0_20050208: 1.2
+	BPT_MSKALA_IMF_2: 1.1.1.1
+	BRANCH_MSKALA_SUPPLY: 1.1.1.1.0.4
+	BPT_MSKALA_SUPPLY_1: 1.1.1.1
+	SS_7_5_0_0pre_0_20050117: 1.1.1.1
+	SS_7_5_0_0pre_0_20050108: 1.1.1.1
+	SS_7_5_0_0pre_0_20041228: 1.1.1.1
+	BRANCH_MSKALA_IMF: 1.1.1.1.0.2
+	BPT_MSKALA_IMF_1: 1.1.1.1
+	SS_7_5_0_0pre_0_20041211: 1.1.1.1
+	SS_7_5_0_0pre_0_20041126: 1.1.1.1
+	GENESIS: 1.1.1.1
+	PRIVATE_TREE_1: 1.1.1
+keyword substitution: kv
+total revisions: 14;	selected revisions: 14
+description:
+----------------------------
+revision 1.7
+date: 2005/06/18 23:50:07;  author: eric_mcdonald;  state: Exp;  lines: +14 -16
+Alter the way dice specs work.
+Honor dice specs for unit explosion damage.
+Move another game to the bitrot archive.
+----------------------------
+revision 1.6
+date: 2005/06/17 02:54:12;  author: eric_mcdonald;  state: Exp;  lines: +5 -5
+Implement per-side general action restrictions.
+Implement per-side construction restrictions.
+Decommision Iplayer.
+----------------------------
+revision 1.5
+date: 2005/06/15 03:18:46;  author: eric_mcdonald;  state: Exp;  lines: +29 -7
+Prepare for some new side-based action-restriction properties.
+Restrict damaged terrain outcomes based on detonator type.
+----------------------------
+revision 1.4
+date: 2005/06/06 03:03:47;  author: eric_mcdonald;  state: Exp;  lines: +0 -4
+Merge from 'MPT_EMCDONALD_AI_6' to 'MPT_EMCDONALD_AI_7'.
+----------------------------
+revision 1.3
+date: 2005/02/23 05:06:05;  author: eric_mcdonald;  state: Exp;  lines: +1 -1
+branches:  1.3.2;
+Merge in changes from root of 'BRANCH_MSKALA_SUPPLY' to 'MPT_MSKALA_SUPPLY_1'.
+----------------------------
+revision 1.2
+date: 2005/02/06 02:59:32;  author: eric_mcdonald;  state: Exp;  lines: +6 -3
+More scorekeeper improvements.
+----------------------------
+revision 1.1
+date: 2004/11/21 03:01:28;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.1;
+Initial revision
+----------------------------
+revision 1.1.1.1
+date: 2004/11/21 03:01:28;  author: eric_mcdonald;  state: Exp;  lines: +0 -0
+branches:  1.1.1.1.2;  1.1.1.1.4;
+Initial import from private repo into SF repo.
+----------------------------
+revision 1.1.1.1.4.3
+date: 2005/06/06 03:18:21;  author: eric_mcdonald;  state: Exp;  lines: +0 -4
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_11' and 'BPT_MSKALA_SUPPLY_12'.
+----------------------------
+revision 1.1.1.1.4.2
+date: 2005/02/09 18:11:31;  author: matthewskala;  state: Exp;  lines: +6 -3
+Merge in changes from trunk, fix bug by allowing unit material stores to go negative during economy phase.
+----------------------------
+revision 1.1.1.1.4.1
+date: 2005/01/28 21:54:12;  author: matthewskala;  state: Exp;  lines: +1 -1
+Switch from shorts to longs for unit material stores.
+Streamline handling of different types of "material-handling thing",
+and add support for treasuries.
+----------------------------
+revision 1.1.1.1.2.1
+date: 2005/06/06 03:39:36;  author: eric_mcdonald;  state: Exp;  lines: +7 -8
+Merged in all trunk changes between BPT_MSKALA_IMF_2 and BPT_MSKALA_IMF_3.
+----------------------------
+revision 1.3.2.2
+date: 2005/07/10 15:43:07;  author: eric_mcdonald;  state: Exp;  lines: +43 -23
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_14' and 'BPT_EMCDONALD_AI_15'.
+----------------------------
+revision 1.3.2.1
+date: 2005/06/03 02:32:44;  author: eric_mcdonald;  state: Exp;  lines: +0 -4
+Make creation and building ACP-less.
+Rework build task.
+Some more repair-related tests.
+Improvement task management. Include support for enqueuing ops.
+Fix crashing bug in SDL interface.
+Fix apparent bug in net receive code.
+Cleanup code.
+=============================================================================

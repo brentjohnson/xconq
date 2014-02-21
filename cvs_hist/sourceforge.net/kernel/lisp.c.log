@@ -1,0 +1,140 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/lisp.c,v
+Working file: lisp.c
+head: 1.8
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.8
+	BPT_EMCDONALD_AI_15: 1.8
+	SS_7_5_0_0pre_0_20050612: 1.6
+	BPT_MSKALA_IMF_3: 1.6
+	BPT_MSKALA_SUPPLY_12: 1.6
+	BPT_EMCDONALD_AI_14: 1.6
+	MPT_EMCDONALD_AI_7: 1.6
+	BPT_EMCDONALD_AI_13: 1.6
+	SS_7_5_0_0pre_0_20050501: 1.6
+	BPT_EMCDONALD_AI_12: 1.6
+	MPT_EMCDONALD_AI_6: 1.6
+	BPT_EMCDONALD_AI_11: 1.6
+	SS_7_5_0_0pre_0_20050416: 1.6
+	BPT_EMCDONALD_AI_10: 1.6
+	MPT_EMCDONALD_AI_5: 1.6
+	BPT_EMCDONALD_AI_9: 1.6
+	BPT_EMCDONALD_AI_8: 1.6
+	MPT_EMCDONALD_AI_4: 1.6
+	BPT_EMCDONALD_AI_7: 1.6
+	MPT_EMCDONALD_AI_3: 1.6
+	BPT_EMCDONALD_AI_6: 1.6
+	BPT_MSKALA_SUPPLY_11: 1.6
+	BPT_EMCDONALD_AI_5: 1.6
+	MPT_EMCDONALD_AI_2: 1.6
+	SS_7_5_0_0pre_0_20050322: 1.6
+	BPT_MSKALA_SUPPLY_10: 1.6
+	BPT_EMCDONALD_AI_4: 1.6
+	MPT_EMCDONALD_AI_1: 1.6
+	BPT_EMCDONALD_AI_3: 1.6
+	BPT_MSKALA_SUPPLY_9: 1.6
+	MPT_MSKALA_SUPPLY_3: 1.3.2.2
+	BPT_EMCDONALD_AI_2: 1.6
+	BPT_MSKALA_SUPPLY_8: 1.6
+	MPT_MSKALA_SUPPLY_2: 1.3.2.2
+	BPT_MSKALA_SUPPLY_7: 1.6
+	BRANCH_EMCDONALD_AI: 1.6.0.2
+	BPT_EMCDONALD_AI_1: 1.6
+	BPT_MSKALA_SUPPLY_6: 1.6
+	SS_7_5_0_0pre_0_20050225: 1.6
+	BPT_MSKALA_SUPPLY_5: 1.6
+	MPT_MSKALA_SUPPLY_1: 1.3.2.2
+	BPT_MSKALA_SUPPLY_4: 1.6
+	BPT_MSKALA_SUPPLY_3: 1.5
+	BPT_MSKALA_SUPPLY_2: 1.5
+	SS_7_5_0_0pre_0_20050208: 1.5
+	BPT_MSKALA_IMF_2: 1.3
+	BRANCH_MSKALA_SUPPLY: 1.3.0.2
+	BPT_MSKALA_SUPPLY_1: 1.3
+	SS_7_5_0_0pre_0_20050117: 1.2
+	SS_7_5_0_0pre_0_20050108: 1.2
+	SS_7_5_0_0pre_0_20041228: 1.2
+	BRANCH_MSKALA_IMF: 1.2.0.2
+	BPT_MSKALA_IMF_1: 1.2
+	SS_7_5_0_0pre_0_20041211: 1.2
+	SS_7_5_0_0pre_0_20041126: 1.2
+	GENESIS: 1.1.1.1
+	PRIVATE_TREE_1: 1.1.1
+keyword substitution: kv
+total revisions: 14;	selected revisions: 14
+description:
+----------------------------
+revision 1.8
+date: 2005/06/19 23:39:37;  author: eric_mcdonald;  state: Exp;  lines: +5 -2
+Fix serious bugs in the encoding of negative dice reps.
+Add support of occs-on-completion for initial units placement.
+----------------------------
+revision 1.7
+date: 2005/06/18 23:50:07;  author: eric_mcdonald;  state: Exp;  lines: +87 -29
+Alter the way dice specs work.
+Honor dice specs for unit explosion damage.
+Move another game to the bitrot archive.
+----------------------------
+revision 1.6
+date: 2005/02/19 15:56:23;  author: eric_mcdonald;  state: Exp;  lines: +32 -0
+branches:  1.6.2;
+Address issue with assigning a values list to each elt of a types list.
+Fix quoting issue in games lib.
+Add purely blank image to image lib.
+----------------------------
+revision 1.5
+date: 2005/02/07 02:31:55;  author: eric_mcdonald;  state: Exp;  lines: +11 -10
+Finish scorekeeper improvements (for now).
+New util function for flagging an array of utypes based on a GDL object.
+----------------------------
+revision 1.4
+date: 2005/02/05 23:36:32;  author: eric_mcdonald;  state: Exp;  lines: +155 -3
+Hoist boolean and arithmetic comparison keywords into general GDL evaluator.
+Ensure that GDL bool constants match the value of the macros we use in hacking.
+Rearchitect scorekeeper logic.
+----------------------------
+revision 1.3
+date: 2005/01/23 02:40:46;  author: eric_mcdonald;  state: Exp;  lines: +33 -0
+branches:  1.3.2;
+Unimplement 'last-regular-side-wins' as separate scorekeeper.
+Instead, just make the 'applies-to' property meaningful.
+Another implementation of Lisp boolean evaluator that uses parameter boxes.
+New parambox for sides.
+----------------------------
+revision 1.2
+date: 2004/11/21 20:38:39;  author: eric_mcdonald;  state: Exp;  lines: +3 -1
+branches:  1.2.2;
+Fix segmentation fault caused by overly agressive evaluation of GDL symbols.
+----------------------------
+revision 1.1
+date: 2004/11/21 03:01:09;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.1;
+Initial revision
+----------------------------
+revision 1.1.1.1
+date: 2004/11/21 03:01:09;  author: eric_mcdonald;  state: Exp;  lines: +0 -0
+Initial import from private repo into SF repo.
+----------------------------
+revision 1.2.2.2
+date: 2005/06/06 03:39:35;  author: eric_mcdonald;  state: Exp;  lines: +198 -13
+Merged in all trunk changes between BPT_MSKALA_IMF_2 and BPT_MSKALA_IMF_3.
+----------------------------
+revision 1.2.2.1
+date: 2005/01/28 03:35:59;  author: eric_mcdonald;  state: Exp;  lines: +33 -0
+Merge in trunk changes between BPT_MSKALA_IMF_1 and BPT_MSKALA_IMF_2.
+----------------------------
+revision 1.3.2.2
+date: 2005/02/23 03:40:21;  author: eric_mcdonald;  state: Exp;  lines: +32 -0
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_3' and 'BPT_MSKALA_SUPPLY_4'.
+----------------------------
+revision 1.3.2.1
+date: 2005/02/09 18:11:27;  author: matthewskala;  state: Exp;  lines: +166 -13
+Merge in changes from trunk, fix bug by allowing unit material stores to go negative during economy phase.
+----------------------------
+revision 1.6.2.1
+date: 2005/07/10 15:42:52;  author: eric_mcdonald;  state: Exp;  lines: +90 -29
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_14' and 'BPT_EMCDONALD_AI_15'.
+=============================================================================

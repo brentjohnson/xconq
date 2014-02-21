@@ -1,0 +1,558 @@
+
+RCS file: /cvs/xconq/xconq/kernel/iplayer.c,v
+Working file: iplayer.c
+head: 1.40
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.24
+	xconq-7_4-branch: 1.24.0.2
+	xconq-7_4-branchpoint: 1.24
+	xtconq-pre-removal: 1.14
+	xconq-7_3_3-release: 1.8
+	xconq-7_3_2-release: 1.8
+	xconq-7_3_1-release: 1.8
+	xconq-7_3-branch: 1.8.0.2
+	xconq-7_3-branchpoint: 1.8
+keyword substitution: kv
+total revisions: 40;	selected revisions: 40
+description:
+----------------------------
+revision 1.40
+date: 2004/08/20 23:26:11;  author: ronne;  state: Exp;  lines: +4 -3
+Improved combat code part 1: TASK_ATTACK, TASK_FIRE, unit view clearance.
+----------------------------
+revision 1.39
+date: 2004/06/20 17:23:05;  author: mcdonald;  state: Exp;  lines: +2 -1
+Cache results of recently added ACP and MP artithmetic functions.
+Finish replacing 'u_acp' and 'u_speed' calls in the kerenl, where appropriate.
+Minor fix to the help system.
+New option for Wreckreation.
+----------------------------
+revision 1.38
+date: 2004/05/02 22:19:18;  author: mcdonald;  state: Exp;  lines: +10 -6
+Revert to the pathfinder in use prior to 2003/11/13.
+Add appropriate replacements for useful elements of post-2003/11/13 pathfinder.
+----------------------------
+revision 1.37
+date: 2003/11/13 21:18:48;  author: ronne;  state: Exp;  lines: +6 -10
+New path-finding code from Peter Garrone.
+----------------------------
+revision 1.36
+date: 2003/08/24 22:53:31;  author: ronne;  state: Exp;  lines: +2 -3
+Improvements to interfaces and the ai construction code.
+----------------------------
+revision 1.35
+date: 2002/07/21 22:15:24;  author: ronne;  state: Exp;  lines: +2 -2
+More ai bug fixes.
+----------------------------
+revision 1.34
+date: 2002/07/17 23:05:38;  author: ronne;  state: Exp;  lines: +18 -61
+Fixes to the AI build code.
+----------------------------
+revision 1.33
+date: 2002/07/16 22:27:48;  author: ronne;  state: Exp;  lines: +11 -4
+Major fixes to the AI code.
+----------------------------
+revision 1.32
+date: 2002/07/05 22:30:13;  author: ronne;  state: Exp;  lines: +0 -1
+Fixes to reserve and sleep code.
+----------------------------
+revision 1.31
+date: 2002/07/03 20:06:26;  author: kingdon;  state: Exp;  lines: +1 -1
+* kernel/iplayer.c: Put newline at end of file.
+----------------------------
+revision 1.30
+date: 2002/07/01 23:47:31;  author: ronne;  state: Exp;  lines: +14 -33
+Clean up ai_finish_movement code.
+----------------------------
+revision 1.29
+date: 2002/05/11 20:49:41;  author: ronne;  state: Exp;  lines: +0 -6
+Clean out unused variables.
+----------------------------
+revision 1.28
+date: 2002/03/29 17:45:19;  author: ronne;  state: Exp;  lines: +4 -5
+Streamline network code.
+----------------------------
+revision 1.27
+date: 2002/03/03 00:43:10;  author: ronne;  state: Exp;  lines: +0 -6
+Fix synch errors when client starts under ai control.
+----------------------------
+revision 1.26
+date: 2002/03/02 18:34:02;  author: ronne;  state: Exp;  lines: +0 -5
+Fix turn off ai synch errors & xtconq startup code.
+----------------------------
+revision 1.25
+date: 2000/12/18 16:50:48;  author: shebs;  state: Exp;  lines: +12 -6
+	Eliminate the macros MAXUTYPES, MAXTTYPES, MAXMTYPES, and
+	MAXATYPES, size all type handling dynamically.
+	* config.h (MAXUTYPES, MAXTTYPES, MAXMTYPES, MAXATYPES): Remove.
+	* game.h (NONUTYPE, NONTTYPE, NONMTYPE, NONATYPE): Define to be -1.
+	(count_terrain_subtypes, numcelltypes, numbordtypes, numconntypes,
+	numcoattypes): Declare here instead of in world.h.
+	(tmp_u_array, tmp_t_array): Declare.
+	* gvar.def (edge-terrain, river-sink-terrain): Don't use type
+	bounds.
+	* table.def (adjacent-terrain-effect, terrain-exhaustion-type): Ditto.
+	* utype.def (obsolete, wrecked-type): Ditto.
+	* generic.c (count_terrain_subtypes, numcelltypes, etc): Move here
+	from world.c.
+	(tmp_u_array, tmp_t_array): New globals.
+	(curmaxutypes, curmaxmtypes, curmaxttypes, curmaxatypes): Set to
+	defaults convenient for the first allocation.
+	(create_unit_type): New function.
+	(disallow_more_unit_types, disallow_more_terrain_types): New functions.
+	(allocate_table): Use them.
+	* help.c (tm_table_row_desc): Remove, never used.
+	* init.c (check_game_validity): Call disallow_* to make sure
+	some type arrays are computed and cached.
+	(calculate_globals): Ditto.
+	(make_initial_materials): Use tmp_t_array.
+	* mkrivers.c (make_up_river_borders): Ditto.
+	* mkterr.c (elev_range, elev_lo, elev_hi, raw_range, raw_lo,
+	raw_hi): New static globals.
+	(compose_area, compose_earthlike_area): Use them.
+	(make_random_terrain, fix_adjacent_terrain,
+	flatten_liquid_terrain): Use tmp_t_array.
+	* mkunits.c (make_countries): Dynalloc local arrays.
+	(country_is_complete, make_independent_units): Use tmp_u_array.
+	* nlang.c (ohd_nums, ohd_incomplete): New static globals.
+	(others_here_desc, occupants_desc): Use them.
+	* plan.c (plan_colonize_support): Use tmp_u_array.
+	(gctc_supply): New static global.
+	(good_cell_to_colonize): Use it.
+	* ps.c (summary_of_seen_units_at): Use tmp_u_array.
+	* read.c (default_supply): Remove, no longer to use.
+	(init_predefined_symbols): Remove its setup.
+	(interp_unit_default): Similarly.
+	(interp_unit): Don't use default_supply.
+	(interp_utype): Remove test for too many types, call
+	create_unit_type.
+	(interp_ttype, interp_mtype, interp_atype): Remove tests
+	for too many types.
+	(too_many_types): Remove, no longer needed.
+	(rd_u_arr): New static global.
+	(interp_standing_order, read_utype_doctrine): Use it.
+	* run.c (rau_incrs): New static global.
+	(run_advanced_units): Use it.
+	(apr_type): New static global.
+	(auto_pick_unit_research, auto_pick_side_research): Use it.
+	(auto_pick_new_build_task): Use tmp_u_array.
+	* run2.c (ttotals, uttotals): New static globals.
+	(run_economy): Use them.
+	* score.c (sum_property): Use tmp_u_array.
+	* side.c (new_doctrine): Call disallow_more_unit_types.
+	* supply.c (mad): New static global.
+	(init_supply_system): Set it up.
+	* unit.c (create_unit): Allocate numlivebytype and completenesses.
+	(oc_numtypes): New static global.
+	(can_occupy_unit): Use it.
+	(toc_numtypes, type_can_occupy_cell): Similarly.
+	(ocw_numtypes, can_occupy_cell_without): Similarly.
+	(tocw_numtypes, type_can_occupy_cell_without): Similarly.
+	(conn_num_types, can_occupy_conn_1): Similarly.
+	(can_carry, type_can_occupy): Use tmp_u_array.
+	(num_each_type, shared_each_type): New static globals.
+	(eject_excess_occupants): Use them.
+	(shortest_unique_name): Dynalloc firstuniq, use it as flag
+	instead of shortestdone.
+	(shortest_generic_name): Similarly.
+	* write.c (write_table): Increase histogram size.
+
+	* ai.c (atc_type): New static global.
+	(assign_to_colonize): Use it.
+	(pbt_prefs, pbt_fringe_terrain, pbt_enemy_types,
+	pbt_num_to_transport): New static globals.
+	(preferred_build_type): Use them.
+	* ai.h (Strategy): Declare strengths etc as arrays of pointers
+	instead of 2D arrays, unitlist and unitlistcount as pointers.
+	(Theater): Similarly for numassigned, numneeded, etc.
+	(strength_est, etc): New macros (not used yet).
+	* iplayer.c (iru_numoffensive, iru_numdefensive): New static globals.
+	(iplayer_review_units): Use them.
+	* mplayer.c (mplayer_create_strategy): Allocate strength arrays.
+	(create_theater): Dynalloc numassigned etc fields.
+	(estimate_strengths, mplayer_read_strengths, mplayer_save_state):
+	Change to pointer-to-pointer refs.
+	(mru_numoffensive, mru_numdefensive): New static globals.
+	(mplayer_review_units): Use them.
+	* oplayer.c: Similarly.
+
+	* cmd.c (gt_amts, gt_rslts): New static globals.
+	(do_one_give, do_one_take): Use them.
+	* ui.h (VP draw_materials): Make into a pointer.
+	* ui.c (new_vp): Allocate draw_materials field.
+
+	* maccmd.c (do_one_add_terrain): Use tmp_t_array.
+	* macwins.c (side_research_dialog): Make participants static global.
+
+	* tkconq.h (UI material_color, etc): Change from array to pointer.
+	(UI cell_color, cell_shades): Rename from cellcolor and cellshades.
+	(UI best_timages): Similarly.
+	(UI unitpics, unitmasks, bestmimages): Remove, not used.
+	(Map uvec, ustr, tvec, tstr): Change from array to pointer.
+	* tkcmd.c (do_add_terrain, do_remove_terrain): Use tmp_t_array.
+	(do_build): Use tmp_u_array.
+	* tkinit.c (utype_indexes, mtype_indexes): Change to pointers.
+	(init_display): Remove inits of unused fields, alloc space for
+	cell_shades and material_color.
+	(init_material_images): Remove setup of bestmimages.
+	(init_terrain_images): Allocate for best_timages and terrpics.
+	(init_shades): Use array-of-array refs to cell_shades.
+	* tkmain.c (last_num_units_in_play, last_num_units_incomplete):
+	Change from arrays to pointers.
+	(init_redraws, update_unit_type_list): Allocate them.
+	(create_map): Alloc map uvec, ustr, etc.
+	* tkmap.c: Update refs to renamed fields.
+	(MapW draw_aux_terrain, draw_materials): Make into pointers.
+
+	* ccmd.c (do_build): Use tmp_u_array.
+	* cconq.c (init_display): Use numutypes to size allocs.
+	(ask_unit_type, ask_terrain_type): Use array of int instead of short.
+	* cdraw.c (draw_type_list_entry): Init lasttypevisible from numutypes.
+
+	* cconq.c (do_dir_2): Fix a variable name.
+	* cconq.h: Use #else instead of #elif.
+----------------------------
+revision 1.24
+date: 2000/12/02 18:16:14;  author: shebs;  state: Exp;  lines: +0 -34
+	* ai.c (ai_go_after_victim, etc): Display AI type name in
+	debug output.
+	* iplayer.c (iplayer_react_to_new_side, iplayer_save_state,
+	iplayer_theater_at, iplayer_at_desig): Remove again, fixed
+	callers.
+	* mplayer.c (mplayerinited): Remove, not useful.
+	(mplayer_init): Remove ref, also use ai_controlled macro.
+	* oplayer.c (oplayerinited): Similarly.
+	* ui.c (oneliner): Test ai_at_desig before using.
+----------------------------
+revision 1.23
+date: 2000/11/30 21:39:09;  author: ronne;  state: Exp;  lines: +44 -0
+Restore dummy functions called when dside is under iplayer control.
+----------------------------
+revision 1.22
+date: 2000/11/30 17:08:26;  author: shebs;  state: Exp;  lines: +19 -73
+	* unit.h (ai_controlled): New macro.
+	* ai.c, iplayer.c, mplayer.c, plan.c, run.c, macunit.c: Use it
+	everywhere.
+
+	* ai.c (offensive_worth, defensive_worth): Break complicated
+	expressions into several statements.
+	* iplayer.c (iplayerinited): Remove, never used.
+	(iplayer_react_to_new_side, iplayer_save_state,
+	iplayer_theater_at, iplayer_at_desig): Remove, never used.
+	* run.c (move_one_unit_multiple): Rework test of AI units
+	needing to run task reactions.
+	* task.c (execute_task): Don't skip to task reaction if unit
+	is not AI controlled.
+----------------------------
+revision 1.21
+date: 2000/11/27 15:33:21;  author: shebs;  state: Exp;  lines: +20 -22
+	Remove wired-in list of AI types.
+	* config.h (numaitypes): Remove.
+	(MAXAITYPES): New macro.
+	* ai.h (enum AIType): Remove.
+	(AI_ops): Move back to here from conq.h.
+	(Strategy type): Remove field.
+	* ai.c (mplayer_ops, iplayer_ops, oplayer_ops): Remove.
+	(numaitypes): New global.
+	(all_ai_ops): Make static array of ops, instead of pointers to ops.
+	(init_ai_types): Call registration functions.
+	(ai_type_name): Re-enable.
+	(next_ai_type_name, ai_type_help, etc): Fix refs to all_ai_ops.
+	(next_ai_type_name, init_ai, etc): Fix AI type iteration.
+	* iplayer.c (register_iplayer): New function.
+	(iplayer_ops): Remove.
+	(iplayer_create_strategy): Don't init type.
+	* mplayer.c (register_mplayer): New function.
+	(mplayer_ops): Remove.
+	(mplayer_create_strategy): Don't init type.
+	* oplayer.c (register_oplayer): New function.
+	(oplayer_ops): Remove.
+	(oplayer_create_strategy): Don't init type.
+
+	* macmenus.c (build_ai_type_menu): Use next_ai_type_name to
+	iterate over AI types.
+	(adjust_menus): Iterate over AI type menu entries instead of
+	using numaitypes.
+
+	* ai.c (ai_go_after_victim, etc): Don't assume mplayer in debug
+	output.
+	(unit_strength): Remove, never used.
+----------------------------
+revision 1.20
+date: 2000/11/26 00:33:47;  author: ronne;  state: Exp;  lines: +30 -1098
+General cleanup of kernel prototypes - part 5.
+----------------------------
+revision 1.19
+date: 2000/11/20 04:15:27;  author: shebs;  state: Exp;  lines: +13 -5
+	Don't let eagerness to attack override critical repair
+	and resupply tasks.
+	* mplayer.c (offensive_reaction): Don't forget about
+	repair and resupply tasks even if there are offensive
+	opportunities.
+	* iplayer.c (offensive_reaction): Ditto.
+----------------------------
+revision 1.18
+date: 2000/11/16 23:33:12;  author: ronne;  state: Exp;  lines: +0 -1
+General cleanup of kernel prototypes - part 2.
+----------------------------
+revision 1.17
+date: 2000/11/05 19:47:01;  author: shebs;  state: Exp;  lines: +1 -0
+	Add an old copy of the mplayer for comparison purposes, call it
+	"oplayer".
+	* kernel/oplayer.c: New file, 7.3.3 version of mplayer, updated.
+	* kernel/Makefile.in (OBJS): Add oplayer.o.
+	* config.h (numaitypes): Increment.
+	* ai.h (oplayertype): New enum value.
+	* ai.c (init_ai_types): Add oplayer.
+
+	Add help info for AI types.
+	* ai.h (AI_ops help): New field, brief info about AI.
+	* ai.c (ai_type_name, ai_type_help): New functions.
+	* iplayer.c (iplayer_ops): Add help field.
+	* mplayer.c (mplayer_ops): Ditto.
+
+	* mplayer.c: Use side->id instead of side_number() throughout.
+	(rethink_plan): Sit still if we found a transport to accelerate
+	with.
+	* tp.c (net_push_sentry_task): New function.
+----------------------------
+revision 1.16
+date: 2000/10/29 21:10:37;  author: ronne;  state: Exp;  lines: +34 -27
+Improve ai planning. More support for combat model 1.
+----------------------------
+revision 1.15
+date: 2000/09/17 20:15:42;  author: ronne;  state: Exp;  lines: +63 -6
+Improve ai handling of disappearing targets.
+----------------------------
+revision 1.14
+date: 2000/08/20 20:25:05;  author: ronne;  state: Exp;  lines: +31 -11
+More changes to construction and research.
+----------------------------
+revision 1.13
+date: 2000/08/15 23:42:54;  author: ronne;  state: Exp;  lines: +0 -10
+Clean up and simplify advanced unit code.
+----------------------------
+revision 1.12
+date: 2000/08/13 15:21:00;  author: shebs;  state: Exp;  lines: +5 -8
+	Fix various bugs in unit viewing, especially for see_all case.
+	* iplayer.c (can_see_actual_units): Remove, no longer used.
+	(preferred_build_type): Test side->see_all.
+	* mplayer.c (can_see_actual_units): Remove, no longer used.
+	(review_theaters, estimate_strengths, preferred_build_type): Fix
+	!side->see_all cases.
+	* plan.c (victim_here): Remove a comment.
+	* side.c (become_designer, become_nondesigner): Add notices
+	to all sides.
+	(unit_view_at, unit_view_next): Handle side->see_all case by
+	faking view objects.
+	(add_unit_view): Record the date of the unit view.
+	* side.h: Add some comments.
+	* task.c (do_hit_unit_task): Always use unit views.
+	(parse_unit): Remove redundant see_all test.
+----------------------------
+revision 1.11
+date: 2000/07/08 12:20:34;  author: shebs;  state: Exp;  lines: +25 -27
+	* combat.c: Tweak formatting.
+	* plan.c (victim_here): Loop over unit views, comment out
+	test of unit size since it looks at unit directly.
+	(victim_x, victim_y, victim_rating, etc): Rename from victimx etc.
+	(target_here): Loop over unit views.
+	(target_x, target_y, target_rating, etc): Rename from targetx etc.
+	* iplayer.c (iplayer_go_after_victim, iplayer_fire_at_opportunity,
+	enemy_close_by): Declare victim_rating etc in scope of functions.
+	* mplayer.c: Ditto.
+	* task.c (do_hit_unit_task): Add notes about views.
+	* ui.c (find_unit_or_occ_view, find_unit_view_at,
+	nearest_unit_view): New functions.
+	(oneliner): Call nearest_unit_view, test for unit views instead
+	of units_visible.
+	(dump_text_view): Similarly.
+
+	* tkmain.c (update_mouseover): Use unit views to decide whether
+	cursor is over an attackable unit.
+	* tkmap.c (draw_units): Almost always use unit views (exception is
+	vp->show_all).
+----------------------------
+revision 1.10
+date: 2000/07/03 16:43:37;  author: shebs;  state: Exp;  lines: +6 -5
+	Change unit viewing to use view objects instead of a layer.
+	* unit.h (UnitView): New struct.
+	* side.h (Side unitview, unitviewdate): Remove.
+	(Side unit_views): New field.
+	(for_all_view_stack): New macro.
+	(unit_view, set_unit_view, builduview, vside, vtype, vhp, EMPTY,
+	appears_empty, vside_indep, unit_view_date, set_unit_view_date):
+	Remove, no longer used.
+	* config.h (MAXVIEWHISTORY): Remove, no longer used.
+	* side.c (init_view): Remove unit view layer init.
+	(unit_view_at, unit_view_next, add_unit_view, remove_unit_view,
+	mistake_view): New functions.
+	(fn_set_unit_view, fn_set_unit_view_date): Remove.
+	(side_sees_image, all_see_leave, reset_all_views,
+	react_to_seen_unit, see_cell, see_exact, paint_view_1): Rewrite to
+	use view objects.
+	* ai.c (enemies_present): Ditto.
+	* iplayer.c (preferred_build_type): Ditto.
+	* mkroads.c (unit_sees_other_unit): Ditto.
+	* mplayer.c (review_theaters, estimate_strengths,
+	preferred_build_type): Ditto.
+	* plan.c (alternate_target_here, victim_here, target_here,
+	indep_captureable_here, useful_captureable_here,
+	can_capture_neighbor): Ditto.
+	* ps.c (sideno_of_seen_unit_at): Ditto.
+	* run2.c (unit_revolt, visible_to): Ditto.
+	* task.c (target_visible): Ditto.
+	* ui.c (oneliner, dump_text_view
+	* cdraw.c (draw_units, draw_legend, show_closeup): Ditto.
+	* xdraw.c (draw_map_info, etc): Ditto.
+	* macdesign.c (apply_designer_tool): Ditto.
+	* macrow.c (draw_units): Ditto.
+	* tkmain.c (update_mouseover): Ditto.
+	* tkmap.c (draw_units, handle_designer_mouse_down): Ditto.
+	(x_xform_unit_view): New function.
+
+	* init.c (init_all_views): Fold in init_view_2, comment out
+	unit view clearing.
+	* plan.c (threat, usable_cell): Comment out, not used apparently.
+	* read.c (fill_in_side): Comment out unit view reading.
+	* ui.c, ui.h (xform_unit_view_: New function.
+	(utype_seen_at): Comment out unit view case.
+	* write.c (fn_unit_view, fn_unit_view_date): Remove.
+	(write_side_view): Write unit view list instead of layer.
+
+	* cmdline.h (make_default_player_spec): Move decl to here
+	from cmdline.c.
+	* skelconq.c, wconq.c, xconq.c, xtconq.c, xtmain.c: Remove decls
+	that are in cmdline.h.
+	* tkmain.c: Ditto, and include cmdline.h.
+	* cconq.c (make_default_player_spec): New function.
+
+	* tkmain.c (tk_reset_popup_flag): New tcl command.
+
+	* nlang.c (medium_long_unit_handle): Remove unused local.
+----------------------------
+revision 1.9
+date: 2000/06/20 16:23:43;  author: shebs;  state: Exp;  lines: +0 -4
+	* config.h: Remove ANSI_PROTOTYPES and __STDC__ conditionals.
+	* misc.h (PARAMS): Remove decl.
+	* obstack.h, obstack.c: Remove uses of PARAMS and ANSI_PROTOTYPES.
+	* macinit.c, macmenus.c, macmouse.c: Ditto.
+	* xcmd.c, xdesign.c, xhelp.c, ximf.c, xinit.c, xprint.c, xtmain.c:
+	Ditto.
+
+	* iplayer.c, mkrivers.c, mplayer.c, run.c, util.c, write.c: Remove
+	some redundant function decls.
+	* macwins.c: Ditto.
+	* tkimf.c: Remove unused decl.
+----------------------------
+revision 1.8
+date: 2000/06/04 16:19:03;  author: shebs;  state: Exp;  lines: +0 -2
+	More rewriting of variant handling and player setup.
+	* keyword.def (indepside-has-ai, indepside-can-build,
+	indepside-can-research, indepside-has-treasury): Comment out,
+	will no longer define as variants.
+	* ai.c, ai.h (next_ai_type_name): Rename from next_ai_type.
+	(find_ai_type): New function.
+	* cmdline.c (unixify_variant_name): Remove.
+	(game_usage_info): Use variant ids as argument names.
+	* kernel.h (set_ai_for_player, etc): Move here from conq.h.
+	* init.c (make_up_a_side): Remove set of ingame, redundant.
+	(set_ai_for_player): Warn about invalid AI types.
+	* iplayer.c, mplayer.c: Remove decls now in ai.h.
+	* kpublic.h: Rearrange some decls.
+	* module.c (do_one_variant): Remove indepside variants.
+	* read.c (force_all_variants): New global.
+	(add_std_var): New function.
+	(interp_variant_defns): Rewrite to use it for all variant
+	setup.
+	(add_more_variants): Remove, no longer needed.
+	(interp_game_module): Call interp_variant_defns.
+	* run.c (init_movement): Simplify code.
+	* score.c (eval_sk_last_side_wins, eval_sk_last_alliance_wins):
+	Don't require indepside to lose.
+	(record_into_scorefile): Use a switch statement for variants.
+	(score_variant_desc): Remove indepside variants.
+
+	* macinit.c (interpret_variants, implement_variants): Remove
+	indepside variants.
+	(hit_player_setup_dialog): Use net_exchange_players.
+
+	* tkconq.tcl (add_variants_dialog_items): Wrap help text by
+	words.
+	(add_player_dialog_items): Always create indepside entry but
+	conditionalize packing, add indepside button, improve test of
+	random/sidelib name button enabling.
+	(popup_indepside, ok_indepside): New procs.
+	* tkinit.c (init_display): Seed indepside globals.
+	* tkmain.c (tk_set_indepside_options): New tcl command.
+	(tk_set_ai_for_player): Interpret AI name passed directly.
+	(interpret_variants): Remove indepside variants.
+----------------------------
+revision 1.7
+date: 2000/04/07 17:19:35;  author: shebs;  state: Exp;  lines: +122 -175
+	* ai.c (next_ai_type): Simplify.
+	* conq.h (has_advance_to_research): Declare here.
+	* cmd.c, run.c, macunit.c, macwins.c: ...instead of here.
+	* combat.c: Cosmetic changes.
+	* iplayer.c: Remove more unused code, elim warnings.
+	* mplayer.c (mp_collect_here): Declare.
+	* plan.c: Comment out unused code.
+	* supply.c: Remove unused globals.
+----------------------------
+revision 1.6
+date: 2000/04/02 23:35:12;  author: shebs;  state: Exp;  lines: +4 -71
+	* read.c, side.c, unit.h, write.c: Cosmetic changes.
+	* iplayer.c: Remove unused code.
+----------------------------
+revision 1.5
+date: 2000/03/12 20:04:53;  author: shebs;  state: Exp;  lines: +1 -19
+	* iplayer.c: Remove unneeded decls.
+----------------------------
+revision 1.4
+date: 2000/03/05 15:32:48;  author: shebs;  state: Exp;  lines: +2 -2
+	* task.def (TASK_BUILD): Add args for location at which to build.
+	* task.c (do_build_task): Pass location to create-at action.
+	* iplayer.c, mplayer.c, kpublic.h, plan.c, task.c, tp.c,
+	ccmd.c, macunit.c, macwins.c, tkcmd.c, xcmd.c: Update all calls.
+
+	* task.def (TASK_DO_ACTION): Remove, never used.
+	* task.c (do_action_task): Remove.
+	* xcloseup.c: Remove ref.
+----------------------------
+revision 1.3
+date: 1999/12/08 03:13:10;  author: shebs;  state: Exp;  lines: +5 -30
+	* gvar.def (side-can-research): New global.
+	* table.def (conversion): New material-material table.
+	* utype.def (advanced-auto-construct, advanced-auto-research,
+	use-own-cell): New properties.
+	* cmd.c (do_research): Use new global, test for more cases.
+	* iplayer.c (iplayer_save_state): Removed unneeded code.
+	* kpublic.h (net_set_side_research): Declare.
+	* nlang.c (UsualDateStepRange): New struct.
+	(date_step_ranges): New array, was datesteptype.
+	(init_calendar): Handle ranges of turns for date steps.
+	(parse_date_step_range): New function.
+	(parse_usual_date): Add arg, change all callers.
+	(usual_date_string): Search ranges to find right step type.
+	* plan.c (execute_plan): Comment out advanced unit escape.
+	* run.c (run_advanced_units): Add material conversion step.
+	(run_population): Use unit_handle.
+	(allocate_used_cells): Make extra cell usage optional, don't
+	handle inside search loop.
+	* run2.c (run_side_research): Use material consumption.
+	* tp.c (net_set_side_research): New function.
+	(receive_side_prop): Handle side research packet.
+----------------------------
+revision 1.2
+date: 1999/11/05 04:05:47;  author: shebs;  state: Exp;  lines: +1 -1
+	* actions.c (make_unit_complete): Remove unused side.
+	* iplayer.c (iplayer_init): Fix assignment.
+	* mplayer.c (mplayer_init): Ditto.
+----------------------------
+revision 1.1
+date: 1999/10/28 23:26:48;  author: ronne;  state: Exp;
+Add iplayer.
+=============================================================================

@@ -1,0 +1,36 @@
+# Copyright (C) 1994, 1995, 1999 Stanley T. Shebs.
+
+# Xconq is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+SHELL = /bin/sh
+
+# Host and target-dependent makefile fragments come in here.
+####
+# End of host and target-dependent makefile fragments.
+
+all:
+
+install: all install-only
+
+install-only:
+
+clean:
+	rm -f *.o core
+
+distclean: clean
+	rm -f Makefile config.status
+
+extraclean: distclean
+	rm -f *~* .*~*
+
+realclean: distclean
+
+Makefile: Makefile.in $(host_makefile_frag) $(target_makefile_frag)
+        cd .. \
+          && CONFIG_FILES=misc/$@ CONFIG_HEADERS= $(SHELL) ./config.status

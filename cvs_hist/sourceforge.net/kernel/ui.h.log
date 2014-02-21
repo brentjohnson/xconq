@@ -1,0 +1,126 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/ui.h,v
+Working file: ui.h
+head: 1.5
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.5
+	BPT_EMCDONALD_AI_15: 1.5
+	SS_7_5_0_0pre_0_20050612: 1.5
+	BPT_MSKALA_IMF_3: 1.5
+	BPT_MSKALA_SUPPLY_12: 1.5
+	BPT_EMCDONALD_AI_14: 1.5
+	MPT_EMCDONALD_AI_7: 1.4.2.1
+	BPT_EMCDONALD_AI_13: 1.4
+	SS_7_5_0_0pre_0_20050501: 1.4
+	BPT_EMCDONALD_AI_12: 1.4
+	MPT_EMCDONALD_AI_6: 1.4
+	BPT_EMCDONALD_AI_11: 1.4
+	SS_7_5_0_0pre_0_20050416: 1.4
+	BPT_EMCDONALD_AI_10: 1.4
+	MPT_EMCDONALD_AI_5: 1.4
+	BPT_EMCDONALD_AI_9: 1.4
+	BPT_EMCDONALD_AI_8: 1.4
+	MPT_EMCDONALD_AI_4: 1.4
+	BPT_EMCDONALD_AI_7: 1.4
+	MPT_EMCDONALD_AI_3: 1.4
+	BPT_EMCDONALD_AI_6: 1.4
+	BPT_MSKALA_SUPPLY_11: 1.4
+	BPT_EMCDONALD_AI_5: 1.4
+	MPT_EMCDONALD_AI_2: 1.4
+	SS_7_5_0_0pre_0_20050322: 1.4
+	BPT_MSKALA_SUPPLY_10: 1.4
+	BPT_EMCDONALD_AI_4: 1.4
+	MPT_EMCDONALD_AI_1: 1.4
+	BPT_EMCDONALD_AI_3: 1.4
+	BPT_MSKALA_SUPPLY_9: 1.4
+	MPT_MSKALA_SUPPLY_3: 1.3.2.1
+	BPT_EMCDONALD_AI_2: 1.4
+	BPT_MSKALA_SUPPLY_8: 1.4
+	MPT_MSKALA_SUPPLY_2: 1.3.2.1
+	BPT_MSKALA_SUPPLY_7: 1.4
+	BRANCH_EMCDONALD_AI: 1.4.0.2
+	BPT_EMCDONALD_AI_1: 1.4
+	BPT_MSKALA_SUPPLY_6: 1.3
+	SS_7_5_0_0pre_0_20050225: 1.3
+	BPT_MSKALA_SUPPLY_5: 1.3
+	MPT_MSKALA_SUPPLY_1: 1.3
+	BPT_MSKALA_SUPPLY_4: 1.3
+	BPT_MSKALA_SUPPLY_3: 1.3
+	BPT_MSKALA_SUPPLY_2: 1.3
+	SS_7_5_0_0pre_0_20050208: 1.3
+	BPT_MSKALA_IMF_2: 1.3
+	BRANCH_MSKALA_SUPPLY: 1.3.0.2
+	BPT_MSKALA_SUPPLY_1: 1.3
+	SS_7_5_0_0pre_0_20050117: 1.3
+	SS_7_5_0_0pre_0_20050108: 1.3
+	SS_7_5_0_0pre_0_20041228: 1.3
+	BRANCH_MSKALA_IMF: 1.1.1.1.0.2
+	BPT_MSKALA_IMF_1: 1.1.1.1
+	SS_7_5_0_0pre_0_20041211: 1.1.1.1
+	SS_7_5_0_0pre_0_20041126: 1.1.1.1
+	GENESIS: 1.1.1.1
+	PRIVATE_TREE_1: 1.1.1
+keyword substitution: kv
+total revisions: 11;	selected revisions: 11
+description:
+----------------------------
+revision 1.5
+date: 2005/06/06 03:03:47;  author: eric_mcdonald;  state: Exp;  lines: +2 -1
+Merge from 'MPT_EMCDONALD_AI_6' to 'MPT_EMCDONALD_AI_7'.
+----------------------------
+revision 1.4
+date: 2005/03/04 04:15:37;  author: eric_mcdonald;  state: Exp;  lines: +8 -1
+branches:  1.4.2;
+Fix bug in the reporting of the nearest unit under mouse cursor.
+----------------------------
+revision 1.3
+date: 2004/12/27 23:19:24;  author: eric_mcdonald;  state: Exp;  lines: +1 -0
+branches:  1.3.2;
+Fix 'see-mistake-chance' bug. (Reported by Elijah Meeks.)
+Also document 'see-mistake-range-min' now that the stuff works.
+----------------------------
+revision 1.2
+date: 2004/12/25 19:25:20;  author: eric_mcdonald;  state: Exp;  lines: +55 -36
+Major changes to the UI API.
+Major cleanup and refactoring of the Tkconq unit display code.
+Improvements to my little local-build script.
+----------------------------
+revision 1.1
+date: 2004/11/21 03:01:24;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.1;
+Initial revision
+----------------------------
+revision 1.1.1.1
+date: 2004/11/21 03:01:24;  author: eric_mcdonald;  state: Exp;  lines: +0 -0
+branches:  1.1.1.1.2;
+Initial import from private repo into SF repo.
+----------------------------
+revision 1.1.1.1.2.2
+date: 2005/06/06 03:39:36;  author: eric_mcdonald;  state: Exp;  lines: +10 -2
+Merged in all trunk changes between BPT_MSKALA_IMF_2 and BPT_MSKALA_IMF_3.
+----------------------------
+revision 1.1.1.1.2.1
+date: 2005/01/28 03:36:15;  author: eric_mcdonald;  state: Exp;  lines: +56 -36
+Merge in trunk changes between BPT_MSKALA_IMF_1 and BPT_MSKALA_IMF_2.
+----------------------------
+revision 1.3.2.2
+date: 2005/06/06 03:18:21;  author: eric_mcdonald;  state: Exp;  lines: +2 -1
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_11' and 'BPT_MSKALA_SUPPLY_12'.
+----------------------------
+revision 1.3.2.1
+date: 2005/03/14 01:12:29;  author: eric_mcdonald;  state: Exp;  lines: +8 -1
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_6' and 'BPT_MSKALA_SUPPLY_7'.
+----------------------------
+revision 1.4.2.1
+date: 2005/06/03 02:32:44;  author: eric_mcdonald;  state: Exp;  lines: +2 -1
+Make creation and building ACP-less.
+Rework build task.
+Some more repair-related tests.
+Improvement task management. Include support for enqueuing ops.
+Fix crashing bug in SDL interface.
+Fix apparent bug in net receive code.
+Cleanup code.
+=============================================================================

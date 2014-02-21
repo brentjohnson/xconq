@@ -1,0 +1,67 @@
+
+RCS file: /cvs/xconq/xconq/kernel/path.c,v
+Working file: path.c
+head: 1.10
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 10;	selected revisions: 10
+description:
+----------------------------
+revision 1.10
+date: 2004/05/02 22:19:18;  author: mcdonald;  state: Exp;  lines: +6 -0
+Revert to the pathfinder in use prior to 2003/11/13.
+Add appropriate replacements for useful elements of post-2003/11/13 pathfinder.
+----------------------------
+revision 1.9
+date: 2004/01/19 21:07:36;  author: mcdonald;  state: Exp;  lines: +3 -0
+Improve victim rating computation.
+Improve performance of non-networked games.
+Add new macro routines for debugging.
+Add new search algorithm.
+----------------------------
+revision 1.8
+date: 2004/01/10 20:49:10;  author: mcdonald;  state: Exp;  lines: +0 -2
+Add new files for general AI/UI utility functions.
+Start adding more AI-related functions to "ai_" namespace.
+Include 'assert.h' in a master header instead of various and sundry sources.
+Rewrite 'could_hit' in terms of new functions.
+Begin migrating general AI/UI utility functions to 'aiutil'.
+Create some new general AI/UI utility functions in 'aiutil'.
+Improve victim finder by rejecting unreachable targets.
+----------------------------
+revision 1.7
+date: 2004/01/02 03:11:44;  author: mcdonald;  state: Exp;  lines: +2 -0
+Fix serious movement bug caused by Peter's pathing code.
+Try to speed up pathing performance some.
+----------------------------
+revision 1.6
+date: 2003/12/28 20:53:24;  author: mcdonald;  state: Exp;  lines: +1 -1
+Remove unneeded subtarget for making tarballs.
+Implement tables of packed booleans.
+Provide a toggle-switch for long-range pathfinding.
+Improve efficiency of movement/pathfinding code on average.
+Improve AI victim-finding to prevent concentrating too many units on 1 target.
+----------------------------
+revision 1.5
+date: 2003/12/04 01:11:42;  author: ronne;  state: Exp;  lines: +6 -0
+Fix sync bug in path-finding code.
+----------------------------
+revision 1.4
+date: 2003/11/30 23:31:01;  author: mcdonald;  state: Exp;  lines: +2 -2
+Make the Xconq apps compile with strict ANSI C compliance.
+----------------------------
+revision 1.3
+date: 2003/11/29 06:25:04;  author: mcdonald;  state: Exp;  lines: +11 -0
+Patch from Peter Garrone (modified) to better handle transports and b-slides.
+----------------------------
+revision 1.2
+date: 2003/11/14 03:51:49;  author: mcdonald;  state: Exp;  lines: +2 -2
+Include forgotten fix to path code from Peter Garrone.
+----------------------------
+revision 1.1
+date: 2003/11/13 22:03:34;  author: ronne;  state: Exp;
+New path-finding code from Peter Garrone.
+=============================================================================

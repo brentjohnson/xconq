@@ -1,0 +1,2597 @@
+PROJECT IDEAS
+
+This list is a collection of ideas about what to change in Xconq.
+In general, these are new features, rather than bug fixes.
+Everything is grouped into one of several categories, although
+the grouping is not precise, and to find out if some idea has been
+already thought of, you should search this using appropriate keywords.
+
+--Kernel
+
+K14. Add area illumination ability so that burning wrecks and such can
+illuminate immediate area at night.  Do by adding bit vector for
+lighting or coverage-like array.  Define property u_lighting_radius.
+Give units a night vision radius smaller than normal vision radius.
+To compute, scan normal vision radius, but skip over unlit cells
+and view illuminated cells.  Add a uu_night_see_chance.  Make AI
+aware of light/dark effects.  To do flare illumination, create
+illumination at alt X, descending to alt Y, computing different
+illumination as flare descends.  Use for night variant in panzer.
+
+K16. Define u_see_hp to be able to see hp of all units, including
+enemies.  Default to false but enable in standard game.  Only
+work for enemies under observation, need glimpse objects recording
+hp to make work for units not covered.  Need ability to select enemy
+units, update curunit tests to handle properly.
+
+K32. Add a "facing" bitmask that indicates the directions that a unit
+is "facing", or can operate in, add effects of facing vs non-facing.
+Come up with a display for this. (Can use pairs of 1-dir units to make
+bridges.)  Add commands to turn mobile units, draw arrows/heavy lines
+around unit icon to indicate facing.  Facing affects visibility
+including hallucination, movement, combat, but not zoc?  Define
+acp-to-turn, -1 for prohibited, 0 for zero cost.  Use gettysburg,
+panzer.
+
+K37. To decide about control, see if any units cannot always be controlled
+directly, then for those compute the max radius that controlling units
+can be in.  If > 1, should define a layer, otherwise check directly
+when need to know.  Uncontrolled units may be viewed, but all commands
+are disabled (or: commands work, but only n% that they will be executed
+instead of something random).  Use in ww2-bn, maybe voyages.
+
+K38. Add a commander property to units, control of units can recurse through
+commanders, so unit not under direct control can be under control if
+commander is in control range.  Add doctrine to keep unit within x
+distance of commander.  Use in ww2-bn.
+
+K39. Some unit types in some games should be unwilling to break a treaty.
+DoW is agreement by single player doing the declaration, terms are to
+treat side as enemy (doctrine), and to hit other side (how often?),
+could demand a surrender of some sort.
+DoW must be public.
+Up to other sides how to respond.
+Peace treaty includes terms to nullify DoW.
+DoW may not be possible or meaningful in some games...
+In general, terms should be able to include refs to other agreements.
+DoW can always be rescinded by player alone, make it have morale
+consequences?
+Use in all grand strategic games.
+
+K43.
+DEF_UPROP_I("storage", u_storage,
+	"space for materials shared by all types",
+	storage, 0, 0, 9999)
+DEF_UM_TABLE("material-size-in-unit", um_size,
+	"how much space one unit of a material requires in a unit",
+	umsize, constumsize, 0, 1, 9999)
+@deffn UnitTypeProperty @code{storage} n
+This property is a unit's generic space for materials of any type.
+Defaults to @code{0}.
+@end deffn
+@deffn Table @code{material-size-in-unit} u m -> n
+This table is the amount by which the given material counts against
+the unit's storage space.
+Defaults to @code{1}.
+@end deffn
+(Would use in logistics-heavy games for cargo units, no such games tho.)
+
+K47. Terrain types should have a precedence determining which
+conn/border types override each other's effects (right now any conn
+overrides any border).  Should be a property of ttypes.  Apply only
+to conns/bords, numerical values unimportant, allow anything > 0.
+Use for interdicted bridges - damage to road with precedence over
+river changes type to damaged road that has less precedence.
+Also use precedence for drawing order - iterate from least to
+greatest precedence, using precomputed array.  Use in panzer,
+ww2-bn.
+
+K58. Be able to expand country borders by building or occupying
+outside original country.
+ut_add_people_chance n%
+ut_add_people_adj_chance n%
+Use in enhanced standard game.
+
+K63. Should use elevation diffs to decide about sloping terrain (a new
+subtype-x).  Add to basic percentile algorithm.  Use in panzer.
+
+K66. Define parms for variability of initial materials using variation
+on fractal percentile synth method.  No game to use?
+
+K67. Add flooding rules for when terrain changed around a liquid type.
+Non-liquid border could be a dike.  Panzer & other tactical games.
+
+K68. Add density of occupants of indep units already placed.  Specify for
+both units that have to be occs and others that don't.
+
+K71. Add recorded events that get played when their scheduled time
+arrives, so that a city could revolt or disappear at a preset time.
+Playing scheduled events should happen after acp/mp calc, but before
+players actually get to move.
+
+K72. Add synth method for secret scorekeeper goals, use to build
+panzer scenarios.
+
+K73. Use password to match up players when restoring into a different set
+of displays.  If no password, then will just accept a different
+assignment, perhaps warn for cmdline setup, flag in dialog boxes.
+
+K78. Fix up material transfer action so that transfer is free or cheap
+in most games, but can be made expensive.  For logistics-heavy games,
+none such currently.
+
+K80. Define action "influence" that is like proposed "charm" but more
+general.
+
+K81. Allow the construction of bases even when it would be necessary
+to bring all units stacked in the cell inside the incomplete base,
+in order to make sufficient room.
+Entries should be automatic and free.
+Do by scanning all units stacked in cell, compute effect of each unit
+entering, stop when to-be-constructed unit would be full or when
+sufficient room in cell.  Otherwise report "delay in starting construction".
+
+K88. Generalized notion of fire interdiction would be useful, could subsume
+effects of jammers and suchlike.
+
+K89. To do non-integral cell/turn speeds, available acp should
+translate to varying moves/turn.  Improves movement of damaged
+units in all games.
+
+K90. Define material-theft-per-contact(u1, u2, r) -> n in combat,
+material-loss-per-hit(u1, u2, r) -> n which is material completely lost.
+Some could be "resorbed" by terrain?  Use for population loss in cities
+being attacked, etc.
+
+K92. A mobile unit should be considered surrounded or cornered if adjacent
+cells are either impassable or occupied by unfriendlies.  Also look for
+impassable borders and passable connections.  Use in gettysburg.
+
+K93. Occupants of captured units might get to stay and not change side
+if friendliness-to-enter allows it (?).
+
+K94. Detonation's effects should depend on altitude of detonating unit -
+compute the "actual" 3d distance.  Use for nuclear blasts in modern
+operational games (none yet defined).
+
+K95. Define effects of altitude differences on all unit interactions.
+LOS: (already works? but still need cloud effect also)
+combat: altitude-to-fight constrains alt diffs for combat - if user
+orders combat, and must go lower to fight, do automatically?
+Or alt diff affects likelihood of success.
+supply: alt-diff-to-transfer-material.
+construction: can floating city build ground units at any alt?
+Add to doctrine to specify preferred altitude range.
+Only add all this when have a game that needs it - modern tactical,
+for helicopters, modern strategic, for satellites and missiles.
+
+K96. Damage to multi-part units could be done by detaching wrecked-type
+instead of damaging all parts equally.  Do only if wrecked-type
+has appropriate sizes.  Only applies if wrecked-type has equal num
+parts to original type.
+
+K98. If a side wins a battle, then side's units involved should gain affinity
+for side, lose fear of other side.
+On losing side, units lose affinity for own side and increase fear of
+winning side.  Nonparticipants also affected, but less so.
+Affinity increases by positive acts, fear increases by negative acts.
+Betrayals should be detectable, have large effect.
+Need some implicit agreements about defense of units on a side,
+that players should not violate.
+
+K100. Add a "coordination" action that adds other units to a unit's attack,
+with multiplied effect.  Attack action has to look at each coordinating
+unit, add effect if able to do so, and take away acp for coordinating
+units also.
+
+K101. For variable-commitment combat, attacker effectively sets m% commitment
+for self, desires n% from defender.  Defender then chooses between n1-n2%
+commitment, where limits set by unit types and m%.
+Possible reactions also limited by commitment - defender could disengage
+at <10% commitment, say, is otherwise stuck in the battle.
+Reactions are counterattack, surrender, withdraw, do nothing special,
+these are (mostly) indep of damage.
+Commitments default to zero.  If can be nonzero, create battle objects.
+@deffn Table @code{attack-commit-min??} u1 u2 -> n%
+@end deffn
+@deffn Table @code{defend-commit-min??} u1 u2 -> n%
+These tables are the minimum limits on the initial commitment to a battle.
+Defaults to @code{0}.
+@end deffn
+@deffn Table @code{attack-commit-max??} u1 u2 -> n%
+@end deffn
+@deffn Table @code{defend-commit-max??} u1 u2 -> n%
+These tables are the maximum limits on the initial commitment to a battle.
+Defaults to @code{100}.
+@end deffn
+@deffn Table @code{attack-commit-up-max??} u1 u2 -> n%
+@end deffn
+@deffn Table @code{defend-commit-up-max??} u1 u2 -> n%
+@end deffn
+@deffn Table @code{attack-commit-down-max??} u1 u2 -> n%
+@end deffn
+@deffn Table @code{defend-commit-down-max??} u1 u2 -> n%
+These tables are the maximum limits on the change to commitment to a battle.
+Defaults to @code{100}.
+@end deffn
+Once battle object exists, units are committed to battle-fighting
+each turn, all acp gets used up.  Space acp consumption over turn,
+allows multiple attempts to withdraw.  But besieged town might still
+be able to use acp to build units... use commitment level to decide
+acp consumption.  Player decision to adjust desired
+commitment level, unit attempts to adjust to match.  If no player
+input, then doctrine decides.  Add command to add a unit to existing
+battle.  Allow units to engage in more than one battle at a time,
+preexisting commitment determines how many.
+DEF_KWD("battle", K_BATTLE)
+	  case K_BATTLE:
+	    read_warning("battle objects not yet supported");
+	    break;
+@node Battle Forms, Types in General, History Forms, Reference Manual
+@section Battle Forms
+Battles always have exactly two ``sides'', referred to as
+the attacker-list or A-list and the defender-list or D-list, so
+as not to confuse them with sides in the game.
+@deffn Form @code{battle} a-list d-list@dots{}
+@end deffn
+Each list has the form
+@example
+((<unit> <commitment>) ...)
+@end example
+(in Combat Actions)
+@c Combat may last longer than a single action;
+@c it is then called a @dfn{battle} and divided into @dfn{rounds}.
+@c The battle exists until one participant has a commitment of zero.
+@c Units in a battle need not attack, and no damage will occur if none do so,
+@c but they cannot move away until no longer committed.
+@node Multi-Round Battles, Capture, Unit Combat, Unit Combat
+@subsection Multi-Round Battles
+@c By default, combat actions are basically raids;
+@c one strike and it's all over.
+@c This of course is highly unrealistic, and leads players to
+@c engage in combat far more casually than is realistic.
+@c 
+@c You make combat more involving by defining commitments to battles.
+@c Basically, units attack by raising their commitment from zero up to some
+@c values, and remain in combat until they die, are captured, or withdraw
+@c by reducing their commitment to zero again.  At the start of each round,
+@c each unit that is participating has the choice of raising or lowering its
+@c commitment to the battle, within bounds that you define.
+@c 
+@c Note that units in battle don't have to attack, but that they are
+@c prevented from doing other things.  This can be useful not only
+@c for field battles, but sieges (cities have to deal with besiegers),
+@c and wrestling matches.
+Use in division-level games.
+
+K103. If defender counterattacks, then might exchange attacker/defender
+in battle, so now defender can decide commit/withdraw.
+
+K107. cxp affects both attack and defense abilities, should define
+uu_cxp_{attack,defend}_effect.
+
+K111.
+@deffn Table @code{cxp-hit-plus-max} u1 u2 -> n%
+This table is the maximum hit modifier for attacker unit.
+Defaults to @code{0}.
+@end deffn
+@deffn Table @code{cxp-hit-minus-max} u1 u2 -> n%
+This table is the maximum hit modifier for defender unit.
+Defaults to @code{0}.
+The actual hit probability equals the basic hit probability, plus
+@code{experience-hit-plus-max} times fractional experience (i.e.
+experience divided by maximum experience) of the attacking unit, minus 
+@code{experience-hit-minus-max} times fractional experience of the
+defending unit.
+@end deffn
+Use in ww2 divisional games.
+
+K112.
+DEF_VAR_I("actions-are-buffered", g_actions_buffered, set_g_actions_buffered,
+	"",
+	gactionsbuffered, 0, 0, 1)
+@deffn GlobalVariable @code{actions-are-buffered} t/f
+This variable is @code{true} if all the units of the same priority
+must specify their actions first and then execute
+them all at once,
+rather than deciding and executing before the next unit gets to act.
+Defaults to @code{false}.
+@end deffn
+
+K115.
+DEF_UU_TABLE("attack-elevation-effect", uu_attack_elev_effect,
+	"",
+	uuattackeleveff, constuuattackeleveff, 0, 100, 9999)
+@deffn Table @code{attack-elevation-effect} n
+Defaults to @code{100}.
+@end deffn
+Use in gettysburg, panzer.
+
+K117.
+DEF_UU_TABLE("ambush-chance", uu_ambush,
+	"chance that a unit will be able to attack by surprise",
+	uuambush, constuuambush, 0, 0, 100)
+@deffn Table @code{ambush-chance} u1 u2 -> n%
+If @var{u1} attempts to move into a cell containing @var{u2},
+then a) if can't co-occupy, this table is the chance that @var{u1}
+gets a chance to attack at improved odds(?), or if b) if can
+co-occupy, then @var{u1} will enter the cell, then be attacked
+as in a).  The ambusher's plan can flag whether the unit
+will take ambush opportunities or not.
+@end deffn
+Use in panzer.
+
+K119.
+@deffn Table @code{ablation} u1 u2 -> n%
+This table is the amount of the hit that gets passed through
+to the transport's occupants.
+Defaults to @code{100}.
+@end deffn
+@deffn Table @code{stack-ablation} u1 u2 -> n%
+@end deffn
+
+K120. Add a way for elevation to screen out detonation effects.
+
+K124. Add a backdrop probability that a side or group of units can change
+to an active side all at once, reflects changing politics, requires
+maintenance of reserves, etc.  Similar to revolt/surrender.
+
+K126. Add ut_people_supply that is amount of supply gotten by unit if
+people in cell are on the same side.  Need supply models?
+
+K130. Siege surrender chance should be distinct from normal surrender chance.
+
+K131. Games should be able to define what size groups can be surrounded,
+by radius or number of units.  Default to 1 cell areas.
+
+K132. [need to identify motives for material demand, if type not needed
+for actual survival - dyes needed for "art" for example -
+might vary between sides/unit types?]
+[would need to define generic elasticity of demands,
+also the profit-seekingness of a population (vs conservatism, etc)]
+[need some notion of credit too?]
+[units can effectively forage at some distance, distinguish foraging
+from actual production]
+[price should go up as material is transported further and further,
+and across varying difficulty of terrain...]
+[note that as sides, players can't force cell economy but can
+encourage it]
+[perhaps allow a side to fix a price artificially, let everything
+else readjust around it?]
+Sides can specify their trading relationship with other sides,
+by specifying the ratio of tariff to supply [etc].
+[trade relationship is indep of general trust/friendliness]
+[some type of agreements might be intrinsically enforceable, such as
+exchanges between units that cannot attack or capture each other]
+[exchange of material needs to relax fullness rules or be done as
+a sort of prim, else might not be able to trade when full]
+
+K133. Do supply lines, display unit's supplier and maybe supply route.
+(finish Perttu code?)
+
+K136. Weather needs pressure, humidity, calculates new values of these
+and also has effects on visibility at multiple levels of atmosphere.
+Need to identify effect of each terrain type (and elevation) on each
+of these, also specify the rate at which changes occur.
+Effects on supply.
+Effect on vision, sensing in general.
+Each utype has preferred weather, gradual falloff in effectiveness.
+Add a generic "violence" value that summarizes wind/storm strength,
+relate to unit behavior.
+Impl via weather phenomena - overcast/clouds, rain/snow, storms/wind,
+temperature, humidity (compute value of phenomena, then compute phenomena's
+effect on units).
+Attrition increased by storms, also chance of accidents (for each accident
+type), changes to speed and acp.
+Could make some types of terrain temporarily impassable.
+Display should show fronts, major storms.
+
+K139. The primary effect of clouds is to make things harder to see,
+can affect both units on ground (such as for fog) and in the air.
+Use interpolation list to related density to amount of effect.
+@deffn UnitTypeProperty @code{vision-cloud-effect} xxx
+@end deffn
+Use in ww2-bn, panzer.
+
+K141. Be able to play back a recorded sequence of weather during a game.
+
+K144. Add a scorekeeper that looks at side view to decide whether player has
+discovered something that is to be searched for.  Should be able to
+require finding a lost city, etc.  Would use in voyages scenario.
+
+K145. Add option to scorekeeper to run on success/failure of an action
+matching given parameters, plus option to run on occurrence of a specified
+events, otherwise scorekeeper runs at either beginning or end of turn.
+Matching includes side and unit.
+
+K152.
+@deffn UnitTypeProperty @code{spot-movement} t/f
+If this property is @code{true},
+then the unit's chance to be seen by other sides will be
+tested each time the unit moves.
+@code{spot-action} implies @code{spot-movement}.
+Defaults to @code{true}.
+@end deffn
+Would use for subs and other stealth units in modern games.
+
+K154.
+@deffn Table @code{see-combat-chance} u1 u2 -> n%
+This table is the basic chance to see a unit of type @var{u1} when
+in combat with a unit of type @var{u2}.
+The location of @var{u1} must be covered by some unit on the viewing side.
+This is evaluated for each combat action within a turn.
+Defaults to @code{100}.
+@end deffn
+Use when subs attack surface ships.
+
+K157. Add an ability to store and act on dated future plans and goals.
+Need to be able to evaluate preconditions for plan, so can do only
+if makes sense.  Use to emulate TOAW,
+
+K159. Attack tasks should prefer to go after damageable units.
+
+K161. Defense plan should identify what is defended, and what are the threats.
+If no threats, unit just tries to stay healthy.
+Defender's search for threats should cover a radius computed from
+defender's and ward's positions, areas covered by view, speed of threats
+(need to see bombers *before* they reach cities, can attack and retire
+before anybody can react).
+Also define a perimeter to anticipate threat - if unit seen within
+perimeter, move between without trying to attack.
+Threats can be recognized directly, or gotten from AI's list of threats.
+A unit is a threat if
+1) it can capture or damage the ward
+2) it can cut the ward off from supply or other defenders
+3) it can hurt the defender
+To respond to a chosen threat, can 1) attack the threat, 2) interpose,
+3) move the ward, either on own or by carrying.
+
+K163. "Intercept/defensive" plan directs units to patrol in an area,
+attacks any enemy unit (doctrine defines "enemy") that is of a type
+that can be attacked/harassed/blocked (ignore types that we can't do
+anything about!)  Only some kinds of defensive units are interceptors,
+others are blockers or kept in reserve.  Blockers interpose rather
+than attack enemies, while reserves avoid contact until plan is
+changed.  Defn of "reserve" partly depends on attacker, so fighters
+intercept bombers but ignore battleships.  Do as explicit decision in
+general defense plan.
+
+K164. Re-evaluate return if transport moving away too fast.
+Calc distance, record as task parameter, check on next
+execution of task.  Add AI hook to allow for making transport move
+slower or rendezvous with unit needing supplies.
+Could have a "home" unit that is preferred if in range, such as
+fighters assigned to carriers.  Don't return to transports that
+don't have any fuel, unless there is no other choice; check on
+each task execution. Special-case
+grounding of aircraft if no supply in a base vs starvation of troops
+if no food in a base.
+
+K165. Exploration plan should set recon vs invasion type, use to decide
+about visibility while exploring.  Recon should attempt to gather
+knowledge without being seen.
+
+K167. Define a plan type that tracks/shadows units while staying out of sight
+as much as possible.  Would have to keep unit within view range but outside
+of its view range (and any other coverage, should write something to see
+whether a given cell might be visible to enemy), but may have to get
+closer to avoid losing trackee.  If unit being tracked seems about to
+do some damage, engage instead of shadowing.  May sometimes want to
+move to block or slow down trackee's escape.
+
+K171. What about a task to not just resupply but to prepare for a long trip?
+Stock enough to make a crossing, etc.
+Check when doing an approach task, may want to push a "fillup" task.
+
+K172. Add notion of "supporting" another unit to plan, then unit could wake
+up and get involved automatically if combat nearby.
+Should specify by type & distance, as well as particular unit.
+
+K173. Do general org chart mechanism, as combined plan/task/AI
+machinery (formal limits on action expressed as unit control
+properties/tables).
+Allow promoting any (or restricted type?) unit to be a commander, and
+assignment of units to commanders.
+Units can have orders to follow cmdr, cmdrs could have utype requisitions
+so production automatically goes to them.
+(Machine player could use this too.)
+Add a display to show how everything relates.
+Define a commander_decide_plan(cmdr, unit) or have cmdr make tasks directly?
+Each commander should have (or appoint) a deputy unit that will get its
+plan data if it dies.  If deputy dies, should work down through orgchart
+to find anyone, only giving up if entire group is gone.
+"Commander" plan is mod of other plan types, cmdr bit is for coordination.
+Cmdr plan includes an "ideal" mix of types to command.
+AI uses to set production, human gets told of cmdr unit's needs somehow.
+
+K175. Should be able to set a "build rate" that is slower than "fast
+as possible", to avoid material depletion.  (i.e. use doctrine to set
+default rate of build actions, set actual rate in build task?)  Define
+as amt of time to wait before starting build of next type (if the
+same).
+
+K176. Define a "meet" task where transport and occ (or whatever pair
+or group) converge on a mutually acceptable place.  Track progress,
+give up if not getting closer.
+
+K179. Add an "engineering" plan type, with subtypes "make-access" and "block-access".
+Engineering units build access routes
+by adding/removing/modifying terrain, or by building units that serve
+only as bridges.  Should be able to build multi-cell/unit chains in
+difficult cases.  Examples: could bridge one blocking cell by a) building
+a transport unit that ferries, or b) building two connections.  Could
+bridge a single blocking border by building a connection or by removing
+border.  Want to do this for any cell that is very expensive to cross.
+To implement, plan should look for cheapest route assuming that blockage
+has been negated, then build bridges for that route.
+Engineers should also know how to build roads, do that if road movement
+is much faster (such as doubled) than normal movement.
+
+K181. Fix AI so that it obeys real-time limits, and so that if acting as
+assistant, timeout isn't ended prematurely.
+
+K185. Need better weighting of hit prob vs death prob, also relate to goals,
+so unit with low hit prob will still attack another unit if it can win
+the game by doing so.  (implies we need to evaluate importance of goals,
+nearness to achieving them)
+
+K187. Get goals from a hash table instead of creating anew each time.
+Parameters of goal will be read-only.
+get_goal(type, p1, ...)
+change_goal(goal, newtype, newp1, ...)
+Read/write goals as separate forms, make xrefs to them.
+
+K192. Implement Massimo's proposal for morale and feelings:
+
+@subsection Morale effects
+
+All the following modifier add to the given quantity; they are
+proportional to @code{morale} and are given at @code{morale-max}
+(i.e., they are multiplied by @code{morale}/@code{morale-max} first).
+They all default to @code{0}.
+
+@deffn Table @code{surrender-chance-morale-modifier} u1 u2 -> n%
+[use for sieges?]
+@end deffn
+
+@deffn UnitTypeProperty @code{disband-chance-modifier} n%
+@end deffn
+
+@code{disband-chance-modifier} requires of course the introduction of
+@deffn UnitTypeProperty @code{disband-chance} n%
+This is the chance for the unit to disband spontaneously.
+Defaults to @code{0}.
+@end deffn
+Example: setting @code{disband-chance} to @code{0} and
+@code{disband-chance-modifier} negative can model samurais: when morale
+becomes negative (their honor is spoiled), they have a chance of
+disbanding (with @code{disband-message} @code{"commits seppuku"}).
+
+@subsection Feelings effects
+
+All the following modifier add to the given quantity; they are
+proportional to @code{feelings} towards the ``other unit's side'' (which
+may often be the ``unit's own side'') and are given at @code{feeling-max}.
+They all default to @code{0}.
+
+@deffn Table @code{surrender-chance-feeling-modifier} u1 u2 -> n
+[use for sieges?]
+@end deffn
+
+@deffn Table @code{capture-chance-modifier} u1 u2 -> n
+@end deffn
+
+@deffn Table @code{withdraw-chance-modifier} u1 u2 -> n
+@end deffn
+
+@deffn Table @code{control-chance-modifier} u1 u2 -> n
+@end deffn
+
+@deffn UnitTypeProperty @code{revolt-chance-modifier} n%
+(proportional to @code{feelings} towards the ``unit's own side'').
+@end deffn
+
+@subsection Morale changes
+
+They all add to the unit's @code{morale}.
+They all default to @code{0}.
+
+@deffn UnitTypeProperty @code{acp-low-point} acp
+@end deffn
+@deffn UnitTypeProperty @code{acp-low-morale} fp
+@end deffn
+@deffn UnitTypeProperty @code{acp-high-point} acp
+@end deffn
+@deffn UnitTypeProperty @code{acp-high-morale} fp 
+If u is left with less then @code{acp-low-point} acp at the end of a
+turn, @code{acp-low-morale} is added to its @code{morale}.
+If u is left with more then @code{acp-high-point} acp at the end of a
+turn, @code{acp-high-morale} is added to its @code{morale}.
+
+They model fatigue/rest effects.
+@end deffn
+
+@subsection Feelings changes
+They all add to the unit's @code{feelings} towards the ``other unit's
+side''.  They all default to @code{0}.
+
+@deffn Table @code{transport-feelings} u1 u2 -> fp
+fp is added after each turn to the @code{feelings} of u1, enjoing the
+ride or the vacation in u2 (which can be a ``resort hotel'').
+@end deffn
+
+@deffn Table @code{material-transfer-feelings} u m -> fp
+fp is added (for each mp transferred) to the @code{feelings} towards the
+side transferring the material m to u.
+Models pay, bribes ... (m is often @code{"gold"}).
+@end deffn
+
+@subsection Morale and feelings changes
+
+They add to the unit's @code{morale}, to @code{feelings} towards the
+``unit's own side'', or to  @code{feelings} towards the ``other unit's
+side'', according to their keyword.  They all default to @code{0}.
+
+
+@deffn Table @code{win-morale} u1 u2 -> fp
+@end deffn
+@deffn Table @code{win-own-feeling} u1 u2 -> fp
+@end deffn
+@deffn Table @code{win-other-feeling} u1 u2 -> fp
+They are applied when u1 destroys u2.
+@end deffn
+
+@deffn Table @code{hit-own-feeling} u1 u2 -> fp
+@end deffn
+@deffn Table @code{hit-other-feeling} u1 u2 -> fp
+They are applied when u1 hits u2.
+@end deffn
+
+@deffn Table @code{wound-own-feeling} u1 u2 -> fp
+@end deffn
+@deffn Table @code{wound-other-feeling} u1 u2 -> fp
+They are applied when u1 is hit by u2.
+@end deffn
+
+@deffn Table @code{capture-own-feeling} u1 u2 -> fp
+@end deffn
+@deffn Table @code{capture-other-feeling} u1 u2 -> fp
+They are applied when u1 is captured by u2.
+@end deffn
+
+@deffn UnitTypeProperty @code{change-side-own-feeling} fp 
+@end deffn
+@deffn UnitTypeProperty @code{change-side-other-feeling} fp
+They are applied when u changes side (own is the ``old'' side, ``other''
+the new side).
+@end deffn
+
+@deffn UnitTypeProperty @code{revolt-morale} fp
+@end deffn
+@deffn UnitTypeProperty @code{revolt-own-feeling} fp 
+They are applied when u revolts.
+@end deffn
+
+@subsection Charm
+
+This action can model magic spells, terrorism, psychological weapons,
+propaganda, bribes, etc.
+
+@deffn ActionType @code{charm} unit
+This is the action that a unit performs to modify the @code{morale} and
+@code{feelings} of another unit.  The unit must be visible and within
+@code{charm-range} to be charmed. 
+@end deffn
+
+@deffn UnitTypeProperty @code{charm-range} dist 
+Defaults to @code{1}.
+@end deffn
+
+@deffn Table @code{charm-friend-chance} u1 u2 -> n% 
+The chance of charming a friendly unit.
+Defaults to @code{0}.
+@end deffn
+@deffn Table @code{charm-enemy-chance} u1 u2 -> n%
+The chance of charming a hostile unit.
+Defaults to @code{0}.
+@end deffn
+
+@deffn Table @code{acp-to-charm} u1 u2 -> acp
+This is the number of acp a unit uses to do one charm action.
+Defaults to @code{1}.
+@end deffn
+@deffn Table @code{charm-consumption} u1 m -> mp
+This is the amount
+of u1's supply used up in one charm action.
+m is usually something like @code{"mana"} or @code{"gold"}.
+Defaults to @code{0}.
+@end deffn
+
+@deffn Table @code{charm-morale} u1 u2 -> fp
+Added to u2's @code{morale} if charm is successful.
+Defaults to @code{0}.
+@end deffn
+@deffn Table @code{charm-own-feeling} u1 u2 -> fp
+Added to u2's @code{feelings} towards its side if charm is successful.
+Defaults to @code{0}.
+@end deffn
+@deffn Table @code{charm-other-feeling} u1 u2 -> fp
+Added to u2's @code{feelings} towards u1's side if charm is successful.
+Defaults to @code{0}.
+@end deffn
+
+@subsection Relaxation
+
+@deffn UnitTypeProperty @code{own-feelings-relaxation} n
+(for the unit's own side)
+@end deffn
+@deffn UnitTypeProperty @code{other-feelings-relaxation} n 
+(for all the other sides)
+
+They default to @code{100}.
+@end deffn
+
+At the and of each turn, the old values of @code{feelings}
+are multiplied by (the appropriate) n/100; then all the
+previous modifiers are added; the result is rounded to an integer in the
+usual (stochastic) way to obtain the new @code{feelings}.
+
+@subsection Missing
+
+@code{revolt-chance} modifier for occupants (and nearby units).  Then,
+using with @code{revolt-chance-modifier} and assuming that a
+newly-captured unit retains a ``bad'' feeling towards the old enemy, you
+will have to guard a newly-captured unit (with your ``secret police''?)
+until its feeling towards you improves.
+
+Effects of side behavior: d.o.w. or breaking a treatise should modify
+feelings of (certain) units.
+
+Effects of weather.
+(end of proposal)
+
+K194. Kernel should be able to do a system reset - all data structures
+and all allocation, so that a different game can be started up.
+
+K198. Only cache a limited number of help node texts, flush oldest
+when limit reached.
+
+K205. Add a way to make captured units disappear from game automatically,
+even if type of unit may exist on the capturing side.
+
+K211. Include values such as @code{enforced} and @code{publicity} for
+agreements?
+
+K212. Add symbols for agreement states.
+
+K214. self-required should also have a related side property?
+[rounding-down advantage should not eliminate one needed as self-unit?]
+
+K215. Allow a null unit to transfer-action to be act of discarding material?
+
+K221. For each scorekeeper, add an internal flag that saves applicability
+of scorekeeper, also calc for current turn - if changed, then AI
+analysis code should re-run.
+
+K223. Add option to rotate a map, at least by 60-deg increments.
+60 left, 1st hextant formula is y' = x + y, x' = -y, etc.  Also
+be able to scale map on the fly, not just as part of saving.
+
+K226. Implement unit layer for large worlds using some sort of tree search
+to find unit at x,y and not allocating unit layer at all.
+
+K231. Extend "bridge" table to distinguish from/to terrain, and to apply to
+assaults as well as captures.  Come up with a new name for it.
+
+K236. Optimize mapping side and unit ids back to objects themselves.  Use hash
+table for units (hash on low bits of id), direct table for sides.
+
+K243. Keep part of history log on disk rather than in memory if log gets large.
+
+K245. Implement side control; add controlled side's units to controller's move
+vector.
+
+K246. Add controls for random cloud variation.  Use in ww2-bn, make
+cloud affect air value.
+
+K247. Add effect of temperature on cloud formation.
+
+K248. Provide a way for the gdl command to clear and recalculate all data
+cached as the result of game parameter analysis.
+
+K252. Add the ability to use the unit defaults to set default plan properties.
+
+K253. Change ammo usage specification to use two uu tables, one for
+material type that will be used as ammo, and one to specify amount
+(consumption-per-attack), eliminate hit-by table.
+
+K255. Add ability to make some types' initial numbers settable by advantage,
+have others unchanging.  Use in standard game to adjust towns but leave
+city numbers fixed.
+
+K256. Add mechanism to define multiple types of accidents, each with own
+probability, notification, etc.  Use basic table to trigger scan of possible
+accident types, weight each for likelihood.
+
+K257. Add a way to specify that a country should include specified numbers of
+preexisting units already on map.
+
+K259. Add machinery to control size and detail of log, translate old stuff or
+some event types into summaries rather than full records.
+
+K261. Add mechanism to record and replay a full transcript of all or part of
+a game.
+
+K263. Let transports on a trusted side do auto-resupply of occupants.
+
+K264. Add consumption of material as part of change-type action.
+
+K265. Add effect of being an occupant on weapon height.
+
+K266. If unit accelerated by occupant has not yet moved in a turn, then
+entry of accelerating occupant should increment acp to what it would have
+had if occupant had started inside unit.
+
+K269. Implement a convex region finder that works by picking random
+points as seeds and grows out from those.  Sides have to be "locked"
+if entire side can't all grow - combo of locked and unlocked sides
+allows region to become parallelogram, triangle, etc.  How should
+borders and connections affect generic region finding?  Grow from
+random points until about 3/4 of cells in regions, then scan down to
+finish off.  (Could leave single points as "their own regions", not
+alloc any region structs.) Use for complicated pathfinding.
+
+K270. General path objects consist of multiple segments, each with start/end
+point and a validity test (that can be done at any time).  Also include
+a bit with segment saying "shortest" or just "nonincreasing distance".
+Should be possible for a path to say "impossible" for some segment??
+(consider path that consists of land travel segments plus a sea hop
+that needs a ferry of some sort - path is still valid and useful.)
+
+K272. To do play-by-mail games, need to be able to save an optionally
+encrypted game and pass along to next player - player info includes
+some sort of bit indicating where to send to. (player-address slot)
+Encrypted game should retain game-module form as plaintext, include a
+"password" slot, then all numbers appearing at "top level" will be
+decrypted, random forms still read normally.  Also must be able to
+store all notices so other players can see.
+
+K273. Add a zero-morale retreat chance that is < 100%.
+
+K274. Add a way to sell or trade tech levels and advances explicitly.
+
+K276. Allow connection terrain to be used as passageways in mazes.
+
+K277. When doing initial placement, test for presence of connection
+that allows unit, even if underlying terrain does not.
+
+K279. When doing games based on real world maps&cities, allow option
+to give all possible cities to a side, so that easy captures at
+beginning don't cause AIs on weak sides to give up immediately.
+Also add way for side selection to choose sides whose initial
+units will match the desired advantages as closely as possible.
+
+K282. Add incremental random unit generation, chance of appearing near
+existing units, don't generate any more than a certain density.
+Distinguish initial density that can depopulate, vs ongoing density?
+Hard to track, would need additional layer...
+unit-create-chance u t
+unit-create-density-max u t
+unit-create-radius u1 u2
+Code tests for need to generate at each turn for each unit on a side.
+Use in Africa exploration.
+
+K283. Add way to do a "coordinated" attack that is different from
+a battle, involves multiple units with corresponding advantage.
+
+K284. Allow strings and lists in tables by using table as index
+to lookup table of the strings/lists.  Keep a bit in basic table
+defn to distinguish; code will always have to call the lookup
+explicitly after getting the integer from uu_foo_bar.
+
+K285. Make move-range useful or eliminate.
+
+K286. Add a feature type (group [name] [size terrain-type]).
+
+K287. Improve kernel performance.  Startup costs include lookup_string,
+keyword_code, set_utype_property, patch_linear_terrain.  In cobra.g,
+90% of car() calls come from interp_one_clause.  After 60 turns of
+a standard game, search_around is 9% of time, draw_* is 20%,
+indep_captureable_here 3%, resupply_test 2%, t_subtype 2% (3% in
+gettysburg).  During startup, strmgetc is 11%, xrandom 7%,
+point_in_dir 5%.
+
+K289. Offensive plan should attack, then retreat for repairs if
+damaged, otherwise attack again.  (Does this already happen?)
+
+K290. Add a way to select a random subregion of a pre-existing map at startup;
+could choose a 60x30 piece of earth-50km instead of synthesizing, for instance.
+Analyze mix of terrain in piece and choose only if correct amounts.
+
+K291. Add a way to specify how far over a hill crest a unit can peer and see
+things without being seen.  Related to eye-height, but is more like an
+"eye-lean-over-angle". Connected to cell slope/cliff model and unit placement
+within cell.
+
+K292. Decide relationship between plan type and goals.
+
+K293. Add task type "destroy" to continue combat until enemy or self is dead,
+add to doctrine to allow for breaking off and retreating at given hp level,
+if possibility of repair or recovery.  Modification to hit-unit task?
+
+K295. Use change-type action in some game, or eliminate.
+
+K296. Add task type "build-road" and/or "clear path".
+
+K297. Add way to cluster independent units in groups - specify radius & number
+in cluster.  Do as chance-adjacent property - chance to place close to last
+one placed?  Hard to guarantee specific range of cluster sizes.
+
+K299. Add units that may cover multiple cells.  Each cell's unit ptr points to
+same unit; if unit mobile, recalculation on moves more complicated.  Decide
+how stacking works with each cell.
+
+K301. Add a doctrine option to let units be more aggressive when operating on a
+passive plan; if enemies show up within a certain radius, attack spontaneously.
+Different from offensive plan, which actively searches for things to attack.
+
+K302. Add an unload task (or command?) that puts all occupants out into
+surrounding terrain.
+
+K303. Add a "finish turn as soon as all units with order have moved" mode,
+plus a settable time delay to keep game from going too fast.  Perhaps set
+short intervals between unit moves also, so movement spread smoothly
+throughout period of turn.
+
+K304. Change the stochastic and percentage values, plus the use of
+decimal points, so that 1.00 and 1 are not equivalent.
+
+K307. Add mounted/transport/fast mode for units, improves speed,
+reduces combat ability.  Make it possible for unit to gain/lose
+ability, by acquisition/loss of a particular unit type.
+
+K308. Add defensive/entrenched mode, increases defensive ability,
+reduces other actions.  Allow gradual addition of entrenchment,
+unit property that is 0 to n max.
+
+K309. Add inactive mode?  Would consume less supply.
+
+K311. Make campaign games by linking a series or tree of game
+modules together, clearing part of state and retaining other
+parts.  Specify by defining the next scenario if won the current
+one, or another if lost.  Need a way to define carryover of units
+and such, perhaps with restored hp.
+
+K312. Provide a set of unit/utype properties that define combat
+without using tables, a la boardgames.  Define attack/defense
+factors, distinguish air/naval/ground, armored/unarmored values.
+
+K313. Add way to attack/damage terrain, esp. connections that are
+bridges.  Need new action, includes direction of conn or bord.
+
+K314. Add a way for players to buy units, either at outset, at
+specified times, or at any time.  Use per-side material accum
+as money, have way to control list of what can be purchased at
+any time, disable choice of too-expensive types.  For purchased
+units, add way to control location of appearance, allow requiring
+a delay between purchase and appearance.
+
+K315. Define suppression/disruption as temporary loss of hp, entirely
+restored at end of turn. (or let hp recovery do variable rate?).
+Suppression to 0 hp still causes destruction of unit, or perhaps
+requires it to withdraw to a safe area if possible.
+
+K316. Add a way for nearby units, such as artillery types, to
+improve defensive strength when attacked.
+
+K318. Add a favored-transport table to express which transports a
+randomly-generated occupant should go in, use in panzer & flattop.
+
+K319. For research of advances, allow different cases:
+per unit, explicit advance, backdrop
+per unit, explicit advance, action
+per unit, set weights, backdrop
+per unit, set weights, action
+per side, explicit advance (equiv to setting weights to zero for all but 1)
+per side, set weights
+Note that a flying city ought to be able to do both research and movement,
+how to do both with acp?
+Use doctrine to control emphasis on per-unit research, could organize
+by advance category so as to apply to future advances.
+Want material consumption for advance, plus time constraint - can happen
+no faster than x turns, or no sooner than turn n.
+Per-unit research should be limited by unit type, so labs can research
+scientific advances but not religious.
+For per-side research, define how many advances may be researched at
+once.  Weights could apply to category, be impled as doctrine?
+Interface could display as draggable sliders.
+
+K320. Some advances should be able to be random, no player control on
+rate of progress (for instance social advances).  Define as
+random-advance-chance property.
+
+K322. Add synth option to reduce elevation of stream valleys.  Use
+in panzer.
+
+K323. Rename road-into-chance to road-into-pref or -weight or some such.
+
+K324. Ensure that initial view cells are all connected to each other.
+Do by computing centroid, then scan every cell and require that each
+cell different from centroid have an adjacent cell that is both seen
+and closer to the centroid than itself, making one of the closer cells
+seen if necessary to ensure.
+
+K325. Add the ability to adjust initial treasury according to advantage.
+
+K326. Make u_available work.  At the beginning of each turn, compute
+new availability vector, make all now-unavailable units vanish.
+Define for_all_avail_unit_types(j, u), convert unit type iterations
+as necessary.
+
+K327. Make a true real-time mode that makes each turn of identical
+length.
+
+K328. Add a way to specify a buffer zone around units during
+placement; so cells adj to a type must include (or exclude) terrain of
+particular types.
+
+K329. When randomly placing indeps, avoid stacking in a single cell.
+
+K330. When a passable road ends in a mountain cell, disallow unit
+move past road end into a adjacent passable cell not connected to
+by the road.  Similarly for combat.
+
+K331. Develop system for rating players; use advantage ratio to
+adjust score (win at 1:7 yields 128 points, at 7:1 yields 1/128
+point for instance).
+
+K332. Add an "untried unit" mechanism where a unit's cxp or individual
+proficiency is randomly set after its first time in combat.
+
+K333. Add formation option to set position relative to lead unit's
+facing or movement direction.
+
+K334. Add a combat mode to unit plans - "at will" attack enemies
+nearby, "defense" defends if attacked, "no combat" avoids all combat.
+
+K335. Elevation at corner of cell is average of 3 cells, unless
+a liquid border (river) is present or one of cells is liquid, then
+use min of elevations.
+
+K336. Unit's build task should always include location to build new
+unit at.  Check desired build location, fail task immediately if
+location not valid, then push move task to get within build range.
+
+K337. Units in formation should get to act each time the leader
+acts, if movement priority allows.  Do by sorting followers right
+behind leader, look at action vector for followers after moving
+a unit.  Change formation to be based on plan properties rather
+than a goal.
+
+K338. Handle firing over poles - if firing range reaches offmap and
+area is cylindrical, compute approximate offmap distance to reach
+plus area re-entry point, get total distance from offmap part plus
+the two onmap parts.
+
+K339. Change file/line report for read warnings to work for both
+lisp.c and read.c code, to be more accurate, and to report only the
+first line.
+
+K340. In networked games, if master wants to quit, need to choose
+new master, have it open a public socket, and wait for all remaining
+programs to connect to new master.  Can any program become the
+master?  If not, then must signal others.
+
+K341. Add doctrine to control whether units start game awake or
+asleep, start aircraft asleep in flattop etc.
+
+K342. Define a notion of aircraft raid that is different from firing,
+can be interdicted etc.  Use in division-level games.  Includes
+(effective) move to target, attack, return.  Does not really move, but
+action will scan terrain under path from base to target, can spot, be
+intercepted, etc.  (Interception is automatic by appropriate units
+under path.)  Display all activity on screen - animate movement
+towards target, action by interceptors, hitting of target, return to
+base.  Must be possible for radar-type units to detect raid enroute,
+so must compute (straight-line or roundabout?) sequence of cells
+passed over, compute visibility.
+
+K343. Consider removing create-units-from-specs.
+
+K344. Restructure base module/scenario relationship.  Each base
+module is a separate set of rules (minimize rule sharing), and
+interfaces present a game as a combination of scenario + rule
+set.  Random setups should be on same level as preset scenarios.
+
+K345. Allow features to be nested.  No overlapping however, so
+mountain range can't be partially in Europe and partly in Asia.
+How to decide whether to display containing feature instead of
+contained feature??  Always display contained feature, but use
+containing feature to compute centroid only?
+
+K346. Add categories of features?  Political/admin division layer
+separate from natural features.
+
+K347. Add ability for base module's variants to appear in
+scenarios' variant list?
+
+K348. Add a way to have structured numbers, corresponding to
+chain of command, display more or fewer nums depending on context.
+
+K349. Eliminate concept of damaged multi-part units - multi-part
+types always have 1 hp/part.
+
+K350. Add way to attach historical data to units, name of cmdr,
+date formed, etc.
+
+K351. To support online design, be able to add new types at
+any time, realloc internally as needed.
+
+K353. Make fractional material production deterministic by
+turn number rather than probabilistic.
+
+K354. Decide whether to keep unit->production cache or just
+to make the array a local var.  Don't save/restore.
+
+K355. Decide how to handle scorefiles in a networked game.
+
+K356. To add a new player to networked game, would-be new player
+connects to public socket fd, get chat window, master broadcasts
+desire to join.  Other players could (re)open chat windows, discuss.
+At start of next turn (or immed?), bring up player/side assignment,
+disable most buttons, add new side and player.  All players have to
+OK, then new player is in.
+
+K357. When quitting from networked game, send quit msg broadcast to
+all, do side's fate as specified in msg (resign to side x, etc), call
+close_remote_connection with rid, mark fd as invalid and close.  Could
+also turn side over to AI and disconnect - use separate msg 'd' to
+disconnect, 'c' to reconnect into old position.
+
+K358. Use mp-to-traverse to compute move cost for border slides.
+
+K359. Remove change-side action, convert to a manual change-side
+step run directly by sides, but record in the history.
+
+K360. Add view layers for people and control data.
+
+K361. Add a test that unit type names (and variables?) do not match
+any keyword.
+
+K362. Eliminate side_number(), use direct side->id refs everywhere
+instead.
+
+K363. Change river handling so that river conn does not exist in
+sea.  Need to make asymmetric connections work.
+
+K364. Let units in reserve/sleep wake up before end of turn and
+do more actions - don't end turn unless all players have also
+normal movement (need a special state side->probablyfinished).
+
+K365. Reduce the effectiveness of blind fire-into actions, define
+as unit-unit blind fire hit chance (or default single parameter?).
+
+K366. If unit view object no longer corresponds with a real unit,
+clear the id and unit pointer fields.
+
+K367. Compact saved unit view by not saving views of own or see-always
+units, sharing x,y as in ((y1 (x1 v1 v2 v3) (x2 v4)) (y2 (x3 v5) ...)).
+
+K368. Elevation fixing should flatten out elevations of liquid terrain.
+
+K369. Add ability to define many sides in people layer (such as for
+base map of world), but collapse down if only a few sides in the
+game.
+
+K370. Allow many inactive or semi-active sides in a game that have
+less overhead than a fully-participating side.  Move more interface
+bits to player objects?
+
+K372. Implement unit courage effects.
+
+K373. Design a treasury reservations system. This would allow units 
+to reliably depend on getting a certain amount of material from the 
+treasury. When a unit dies, any reservations it has made should be 
+cancelled. Units should reserve before base consumption is run, if 
+they need to.
+
+K374.
+Klast.
+
+--Mplayer AI
+
+M1. If game win is to own a particular type of unit, then set goal to own
+one.  If can build, then start building and defend builder.  If unit
+known to exist (how?), set goals to find and to capture.  If unit is
+mobile, or if might be carried by mobile unit, set up a search pattern, and ?
+
+M3. To do patrolling/picketing, space units so that few or no holes in
+coverage.  In theater being covered, check view dates and send units
+to update oldest information - should be closest unit or one assigned
+to cover.  Could therefore have a patrolling unit that only moves very
+little since its view range covers nearly entire assigned area.
+Only do this if not see-all.
+
+M4. Derive acceptable risks from goals - unit that is crucial to game
+should not risk self, disposable types can be sacrificed.
+
+M5. Construction calculations should prefer multi-purpose units, but
+randomize if values close together.  (Test by making game variants
+with ultra-powerful units, should see mplayer shift to building all
+the time.)  Each goal should be characterized timewise, so mplayer can
+start builds and have units ready when goal becomes relevant.
+
+M6. For each type of goal in game, decide which units help accomplish and how
+well, which units support indirectly, etc.  Also classify by short/long term
+value - short-term is 5-10 turns or 1/10 of game, long-term is length of game.
+
+M8. Prefer to hit or capture transports, especially if easier way to bag
+or destroy the occupants.
+Add estimation of units that might be hidden in transports.
+
+M9. Keep a persistent layer of "sightings" (or linked list if can be short),
+record into when nonempty cell in view array is about to be cleared
+during a turn (need hook from vision code).  Date sightings, clear
+periodically.
+
+M11. Compute desired number of depot types by calculating the spacing
+between necessary to ensure that each can supply another.
+
+M12. If only one builder available, should "timeshare" it properly.
+Make strong preference to capture nearby units that can build.
+Plan should track what has been produced, reduce preferences as more and
+more of a type gets built.
+Test with old-empire.
+
+M13. Add heuristics to try to build bases at key or useful locations.
+Do if can create supply, can xfer from
+further than units can, can protect units in or near base.
+
+M14. If scorekeeper body says something about testing possession on a given
+turn, then make occupation a goal from the start.
+If occupation goal unsatisfied, assign units to occupy, give each
+the same goal, should also attempt to clear the area.
+If satisfied, assign unit to defend the area (need to write "how
+to defend" code?), possibly patrol around if everything not always
+visible.
+
+M16. If contacted more than one side, choose a side to concentrate on
+(closest most likely), act defensively against other sides (but
+still take opportunities).  May need to change emphasis if another
+side turns out to be most threatening (tell this by tracking apparent
+success w.r.t. each side).
+
+M17. Shift from offensive to exploration if everybody disappears.
+Track max # of enemy ever seen and on which turn(s).
+Should be persistent in covering area near last spotting of units.
+
+M20. If moderate-to-high chance of capture by unit surround, put units in
+lines and other formations that can't be surrounded easily.
+
+M21. A side should act primarily defensively if it satisfies a goal,
+but the game is not over and another side could take away.
+
+M22. Guess at likely theater for contacts, carve out of existing theaters,
+reassign/replan *all* units.
+
+M23. Track contacts with other sides on a per-theater basis.
+
+M24. Mplayer should compute which types are mostly likely to be in play
+at present, and at future times.  Can look at initial setup, construction
+times, etc, and ignore types that can't possibly appear.
+Routine could be chance_to_own_one_of_type(side, side2, u) that is the side's
+current estimate of the likelihood of the given side2 owning at least one
+unit of the given type.
+
+M25. Mplayer should attempt to compute numbers of units and material needed
+to achieve a goal, to some level of confidence, then set "buildup" plans -
+some units explore/patrol etc, then when buildup finished, should plan
+large-scale attack, from several directions if possible.  Reserve units
+should hang around transports, but not sit on them unless transport protected.
+
+M28. Could do formations by reshaping theaters.  Units mass on edge,
+don't go past until mplayer directs an offensive.  If offensive
+successful, mplayer adds gains to theater.
+
+M29. If returning to a moving transport, and transport destination is
+further away, push a "wait" or "rendezvous" task onto transport's
+queue.  Rendezvous task should estimate time of expected rendezvous,
+fail only if actual time is 1 1/2 longer than expected time.
+
+M33. Need special code to know how to defend bridgeheads, recent captures,
+etc.  Reduce theater size or focus on immediate vicinity.  Own units
+in "enemy" theater (define) should be defended against the most
+immediate threats.  Look around for threats or potential threats.
+Assign best units to deal with threats.
+
+M34. Have machine player compute general dependency chains for its strategy.
+For instance, "need miners to produce uranium from mountains
+to build nukes to attack cities".
+Should be "lazily" computed, as needed to achieve basic goals.
+Strategy code works by calculating a plan that consists of steps
+to reach the goals.  Plan is sufficiently detailed when side can
+tell each unit what to do, or doctrine has the same effect.
+Not always totally deterministic, how does this work?
+
+M35. Unit type analysis should be based on average outcome, plus
+worst/best-case outcomes if not maybe not expecting enough action to
+let things average out.
+
+M36. To estimate materials, scan world, for each unit image, add survival
+needs to min est, stockpile - avg operating costs to likely est,
+total storage capacity to max est.  Can use actuals for own and allies.
+Similar for terrain and population.
+
+M37. Unit first spotting human enemy should disappear as quickly
+as possible, might escape before human notices. (exploratory plan only)
+Purely exploratory/recon units should generally avoid combat, try to escape
+and stay hidden if possible.
+
+M40. Do base construction as 1) moving to construction site, 2) building, and
+3) carrying to final site.  (Must verify that base or parts of base can
+be carried.)
+
+M42. When enemy unit spotted in a zone, decide if unit is part of larger
+group (like a country), what kinds of units might be present (similar,
+sessile, etc).
+If unit is isolated, decide if it is a threat in any way, if so, make
+a goal "enemy gone from x,y" and assign units to work on this goal,
+with types and numbers sufficient to the job.  Can borrow from nearby
+theater if not too time-consuming.
+If group, decide importance (home country being most important),
+also assign # units, maybe make theater, track strengths, # units
+enroute, and # still needed.
+Distinguish units that are dangerous alone and ones that are carriers.
+An army that is 2 cells away from capturing a self-unit should have
+a maximal threat, since loss of game is certain if threat not counteracted.
+
+M43. Machine player should attempt to infer other sides' strategies.
+side->strategy->other_side_analysis[nsides]
+If no player on other side, record that other side will not do
+anything (and go after to build territory).
+If has a display, record as "more dangerous", use as a reason to
+ally with other AIs in game.
+Sides with displays should also be considered "more unpredictable".
+If AIs ally, should be temporary, since game won't end even if all
+are allied.
+
+M44. Define an "importance" of activities that gets divvied up among
+subcommanders, so overall plans can be set aside temporarily while
+individuals deal with immediate threats.
+
+M45. Mplayer code should look for "choke points" that are standard
+routes between important places and around obstacles.  Calculate from
+world and utypes, share among all machines (don't use if haven't seen
+yet!).
+
+M46. Add code to negotiate for neutrality/ally status.
+
+M47. Mplayer should prefer goals with fewest dependencies (prereqs) and
+quickest time to completion.  Prereqs mean conditions that must be
+true before main goal is worthwhile attempting, but are not formal
+requirements - goals are intrinsically self-contained.
+
+M48. Scorekeeper analysis:
+if keeping score
+  make overall goal to win
+  call make_subgoals
+else amuse self by being random
+if goal is to win
+  for each scorekeeper
+    if last-side-wins, ... (already done)
+	else scan body looking for if's and do's
+	(might be too complicated, should announce the fact as a warning
+	"too complicated for me, don't know how to play" and drop
+	back to simpler if mistaken goals) (or resign?)
+	if body is "(if <test> win/lose)"
+	  make the satisfaction of the test a goal
+if goal is to make a side lose
+  if can be accomplished by eliminating a side's nonzero-value units,
+  set goals to destroy/capture each type
+  if not all visible, set goal to find units
+    if type can move, goal is to keep info about world up-to-date;
+	  no random walking, always move to update oldest spots (but
+	  only in terrain where units could be)
+	if type can't move, goal is to have examined all possible
+	  terrain.
+
+M50. Designer should be able to toggle flags for mplayer,
+force reevaluation etc.
+
+M52. If in a multiplayer game, one side is becoming much stronger, ally with
+other weaker sides.  decide_to_ally - other side + allies > 2 * own allies,
+and > 2 alliance groups, pick strongest and propose alliance.
+
+M55. Don't attempt to return for repair unless there is a known place to get
+repaired at.  If can recover, go into reserve for the turn or move to a safe
+place and then sit.
+
+M56. If multiple move failures (such as because of stacking limits), delay
+rather than cancel.  Count such delays, allow up to 4 before cancelling.
+
+M57. Make AIs be willing to draw anytime during first turn, then go to normal
+behavior thereafter.
+
+M58. Add behavior appropriate for HQ units in ww2-bn - act as mobile support,
+staying close to front line but avoiding direct combat.
+
+M59. Profile AI in large games, fix performance problems.
+
+M60. AI should talk to player more; boast and taunt upon wins, insult
+upon losses.
+
+M61. AI should notice opportunities to upgrade units and take them.
+
+M62. Make AI recognize and move mobile sources of supply correctly.
+
+M63. Eliminate game classes from mplayer.c.
+
+M64.
+Mlast.
+
+--Interface
+
+I11. Add a way to get explanations of action and task failures, needed to
+explain non-functioning in game designs.  Add command "explain-failures"
+to toggle descriptions.
+
+I15. Lists of units should also be able to display glimpses, just omit data
+that is not available (what about names? might be tough to save names
+with glimpses).  Do when view objects implemented.
+
+I20. To indicate slope, draw center of cell with shape for next smaller mag,
+then sloping rects joining adjacent edges of cells, then triangles around
+each 3-way meet (for hexes anyway) to fill in holes.
+
+I21. Should not appear to be able to attack if attack not allowed
+(arty in ww2-bn for example).
+
+I24. Add a side->ready_to_start that each player must enable before actual
+game play starts.  Initially false for all sides, mplayer sets when
+init done, interfaces enable at player's direction.  Could be button
+or implicit when player tries to move.  Note that if multiple humans, and
+one tries to move, move will not actually happen until everybody either
+tries to move or else clicks on the start button (should warn player
+attempting to move).  Important for real-time games(?).
+
+I27. Direction cmds in dir of blocking terrain but adj to a slideable
+border should cause a border slide. (also for move tasks?)
+
+I33. When displaying perspective, show both top and bottom of "thick"
+terrain.
+
+I34. For textual commands, interpret <tab>, extend words, etc.
+
+I40. Add table info to help nodes displayed by both first and second indices
+(so for ut table, info is listed in a unit node and also in a terrain
+node), plus add an additional node for the table alone.  Make node for
+each table, plus one node listing all defaulted tables.
+
+I41. Use long name command "alt <n>" to set altitude explicitly.
+(Do when a game actually uses altitude.)
+
+I42. Allow definitions of images that constitute the border between
+two given ttypes, or t1/t2/border combos, etc.  Store in global
+additional-images or special-terrain-images as list where each element
+is like (<ttype> (<ttype> <dirs...>) ... "image-name") where first
+ttype is main cell type, succeeding indicate either linear in given
+directions, or adjacent cells of given types in given directions.
+image-name is the image or family name to use.  Example? (beach
+(terrain (ne sea) (half (n sea) (s beach)))
+       (border (w nw) river)
+       "beach&sea&river-1")
+Alternatively, use a 6-bit encoding to say what an image contains;
+"beach-33" contains nw and ne borders.  Define generic masks -
+bord.imf and conn.imf - that can be colored in by actual terrain.
+Function to get will be linear_image(imf, w, h, mask).
+
+I43. Add "overhead/isometric" and "facing" image properties that indicate
+approximate orientation and direction being viewed from (side, top, 30
+degrees, etc).
+
+I50. At high mag powers (emblem width < 1/4 cell width), draw people
+emblems on each border of hex next to hex with different people.
+
+I53. Game should be able to spec relative or absolute widths of borders
+and connections (used when solid or a pattern).
+
+I55. Should be able to parse dates in commands, omit parts that are
+same as current value (such as year).  Date string function should
+cache stuff, so not always allocing new strings.
+
+I57. Add a text parser etc for specifying units and types.  parse_[urt]type,
+parse_unit should be able to recognize ambiguous matches, either return
+# results or report of multiple, be able to process each independently,
+put in dialog, etc.  parse_feature to locate geo geatures by name.
+
+I58. Kernel should deliver basic formatting info in help text, let interface
+digest - need line breaks, text fill, tabs/tabstops, emphasis/bold (use
+^B,^P,^I chars? or HTML).  Perhaps some way to name a picture and let interface
+fill in actual picture.
+
+I60. If info is always accurate and up-to-date, calculate display directly
+from state.  If might be unknown at first, but always accurately
+known once discovered, keep a bit/piece of info, display from state
+if bit is on, else show nothing.  Similarly for info that might
+get out of date if observer not present?
+If info might be known/unknown and right or wrong, then must maintain
+full copy, though can forward to real state if internally known to be
+accurate.
+
+I63. Add designer tool to paint theaters for AIs.  Should just be a
+hook to AI that is interpreted as AI prefers.  AI should report range
+of integer values (with optional names) to paint.  AI should detect
+preset theaters, use instead of calculating own.
+
+I64. In isometric view, displace units by both elevation of cell and
+their altitude above it, draw shadow on ground if airborne (compute
+from base image's mask).  Center unit in cell better (?).  Shade
+slopes in isometric view according to time of day.
+
+I65. To support multiple natural languages, associate one of several
+languages with each side, use to invoke nl-specific nlang.c/help.c
+routines.  Also have separate command definitions (de-cmd.def,
+fr-cmd.def, etc) that interface should be able to use instead.  Each
+interface, if configured for it, will have to set up all the command
+tables, so can be chosen by each side at game startup.  Would need
+some sort of function vector setup so as to select the right set of
+routines dynamically.  Language-specific C code should be optional
+enhancement, basic localization should work in any case.
+
+I66. Add interface-independent printable output of all help info.
+Add as "save topic", "save all" commands to help dialogs.
+
+I67. In printed map, make grid be gray, draw only around known-about terrain.
+Draw area edge in light gray if adj cells not known terrain.
+Use halftones or patterns instead of bitmaps possibly, add a
+color -> grayscal translation process.
+General cmd should be "print [window] [width]", where saying "window"
+limits to contents of a window (else whole area is printed), and width
+gives physical width of map, default is to fit on one page.
+Each page should include a legend showing terrain, units, sides, use
+up to four columns at bottom of page, run types together in columns to
+save space. (Ditto for text/ascii view.)
+
+I68. Common printing code handles layout setup, layout checking, and actual
+computation of printed view.  Interface handles any print setup dialog,
+plus final disposal of printed view (to file, to print queue, etc).
+
+I69. All interfaces should have all printing methods available.
+(including skelconq)
+
+I73. Clarify rules of how immobile units get on transports.
+
+I74. When autoscrolling, interfaces should support a brief delay option
+so that players can see the outcome of a unit's last move for the turn.
+Can omit if next unit is close by and no scrolling was needed.
+
+I75. Add ability to supply phrases for table row display in help:
+"[can create] by default, [except for] base,town,city".
+These would be optional non-null args to table display routines.
+
+I82. To describe movement abilities, display both mp and "move range over
+a given terrain type", which may be much less.
+
+I84. Reduce amount of redrawing of unit due to display updates for
+state changes.  Add bitmask encoding change in hp, type, acp, reserve
+status, etc.
+
+I88. Support distinct images for individual units, via an extras property.
+Maintain id->image table (hash table? do sizes as well).  Implies need
+to create images and caches during game, not just at beginning.
+
+I91. Implement agreement-building interface:
+draft [<typename>] [<id>] [<title>] [<short-title], to create, gen id if
+not supplied.
+drafters [<id>] sides, to add sides to drafting committee, id is most
+recently worked-on agreement.
+proposers [<id>] sides, to add sides to list of proposers
+signers [<id>] sides, to add sides to list of signers
+known-to [<id>] sides, to add sides to list of who gets told about agreement
+terms [<id>] [=/-] terms, to add/remove terms to an agreement (only drafters may do)
+propose [<id>], to reveal proposed agreement
+sign <id>, to sign it
+show-agreement <title/id> to display a given agreement
+list-agreements to list all of them known to a side
+Add terms "alliance" that implements trust, "spheres" to
+divide world and warn of violations, "neutrality".
+Add a way to cancel agreements, perhaps by doing a new agreement?
+Allow any participant to reveal a secret agreement publicly.
+Or do commands
+ask <id> <side> <role> to request side's participation in particular
+role for agreement
+accept <id> <role> to agree to participate.
+withdraw <id> <role> to change mind.
+known-to is 1-way, but if withdrawn, won't get updates on details.
+
+I97. Add a search button/command to help.  Search by either substring in
+topic or substring in contents (expensive!).
+
+I99. Add commands to set unit plan types and goals.  Be able to do
+"defend" to defend current location, default radius (5?), "defend
+New York" with specific unit as goal, "defend +" to change plan type
+but not goal(?), "defend 39,10 r 4" to be very specific.
+
+I105. Add support for a graph window that displays up to 4-5 chosen
+statistics against time.  Needs choice of what to display and a subset
+selector for each graph.  Some stats will have records that have been
+kept, others will start only when graph is requested, but then keep
+accumulating even if no longer being displayed.
+
+I107. Add mechanism to specify images of incomplete and damaged units
+and use them to draw if available.
+
+I108. Add a flag that says whether to scroll over to units that have been
+spotted or are passing by.
+
+I110. Fix follow-action to work right in all interfaces, toggle with
+single-key command.  Resolve issues of player control over scrolling
+vs game control while player is in move mode.
+
+I114. Let return command handle returning for repairs also.
+
+I115. Reduce dual attack/capture messages to single message, double message
+is confusing ("misses", then "captures", etc).
+
+I116. Notify player when unit cannot respond immediately to a task that has
+been given, then go into reserve.
+
+I117. Add additional feedback/hints about the current play mode.
+
+I118. Explain MP to enter/leave better in help info.
+
+I119. Distinguish better between single- and multiple-action move tasks;
+if in novice mode (add a preference), add notifications that a task has
+been set up, plus estimate of # turns before completion or some such.
+
+I120. Add more hints about turn change, possibly add a special notice
+when in novice mode.  Highlight turn indicator when just changed, or
+until first move in turn by player.
+
+I121. Scroll to unit at each move within a turn, not just at the beginning
+of the unit's move.  Must recognize when a unit is still the current unit,
+not scroll to just any active unit, might be moving under totally automated
+control.
+
+I122. Add option to scroll to each unit when it moves, not just when it is
+ready to be moved.
+
+I123. If tooling or tech insufficient to build a type, and no way to increase
+it, remove that type from all build prompts etc.  (Should differentiate
+"never available" from "not yet available".)
+
+I124. Fix "throws back" messages (how?).
+
+I125. Add a "fill transport" command (was ^F in 5.x).
+Add a command to move to transport being filled (was E in 5.x).
+
+I126. Add a command to clear task agenda but have no other effect.
+
+I127. Add a patrol command (similar to standing order but more like task).
+
+I128. Add a way for a remote player (such as an AI) to shift to being local.
+
+I130. Suppress "insufficient mp" message if reason is supply exhaustion.
+
+I131. Add a map legend help screen driven by platform-specific drawing.
+
+I134. Use action-narratives in history displays.
+
+I135. Add startup option for the number of (real) seconds to wait
+before declaring the side to be finished with this turn.  Default to
+60 secs for humans in multiplayer games.  If no player action, and all
+other players finished turn, do a finish_turn.
+
+I137. Add concept of message channels, allow both private and public
+"chat lines" to be created.  Retain current message as email-like
+interface.  Add option to create all-parties chat line when first
+remote has been connected.
+
+I138. Move Mac-specific aux (feat) color and preference code into ui.c.
+
+I140. For event list display, maintain buffer of n lines, each pointing to
+event being listed, recalc when window enlarged, etc.
+When list[i] selected, display event description plus ptrs
+to related events.
+Some "events" will be summaries (like total losses),
+be able to change amt of summarization.
+Observer mask is parenthetical remark.
+Include toggles to display events as they come in, and
+to scroll map to show where event is happening.
+
+I144. When unit to be delayed is only one still capable of acting, beep or
+otherwise indicate that this is the case.
+
+I145. Tableize construction dialog info, assume left and right panes.
+
+I146. Add a per-side play rate, use to govern how often AIs move when humans
+are moving.
+
+I147. Genericize by-name search function, define command, make case-sensitive
+and able to match on substrings.
+
+I149. Do a score calculation before first turn of game, so as to get better display?
+
+I150. Transport occupant display should include indication of percent
+full, both "capacity" and per-type if appropriate.
+
+I151. Add a way to describe the location of a unit in terrain or
+transport as "at" or "orbiting" etc instead of always "in".
+
+I153. Add ability to have a larger image (gif?) showing what unit
+would look like in real life, use in help info.  Property would be
+help-image-name.
+
+I154. For each feature type, be able to specify how rendered (color,
+width, etc), in addition to any user configurability.  Similarly
+for name of feature (italics/bold, font size).  Do line breaks in
+long feature names, render with two lines?
+
+I155. Use common location_desc for both oneliner and unit info.
+
+I156. Draw names of large features at multiple times, spacing
+approximately at size of map (a la watermarks on stamps), so
+one copy of name visible at all times.  Use for any feature
+any of whose dimensions are greater than size of the map.
+
+I157. When reporting scores, identify score of just-completed
+game differently (may not always show as most recent game in
+list).
+
+I158. When connecting to remote game, allow request for specific
+advantage.
+
+I160. Implement both randomly-chosen and cycling image sets for the
+map window.
+
+I161. Should be able to define special win/lose sounds (cheers and
+raspberries), attach to interface's handling of events from kernel.
+
+I163. Add long commands to supplement mouse-based design.
+layer <type> [<props>] @ x,y [to x,y] [r radius] [+-] <value>
+Use for large area fills and consistent mods(?)
+
+I165. Draw 4-5 densities of cloud - clear (0), scattered (>0 - 1/3),
+partly (1/3 + 1 - 2/3), overcast (2/3 + 1 - storm), storm (storm - max).
+Draw as either overhead (using only 50% mask at partly & up, so units
+not invisible), or side view in top part of cell, outside unit area.
+
+I171. Add a full command-line interface to all interfaces.  Usual
+single-letter commands work as before, but need return to do;
+so "3w<cr>" and "osides <arg><cr>" work.  Allow mode where single
+letter commands require prefix, while long-name commands do not.
+Add osurv and omove to set modes directly, while z still toggles.
+(used for testing?)
+
+I172. Revive bargraph option for unit info display, set according
+to player preference.
+
+I173. Rules for drawing people and control borders:
+If control different & defined, draw heavy (red?) line.
+Else if one cell unpopulated, draw heavy gray line.
+Else if control undefined and pop different, draw heavy line.
+Else if control same and pop different, draw thin line.
+Option to choose colors according to side?
+
+I174. Add way to draw units differently depending on task currently assigned;
+wood collection draws woodcutter, combat task shows drawn weapon, etc.
+
+I175. If cities can only build, go directly to query about what to build,
+allow idling as option in query.
+
+I176. Draw fire animation before the action, blast images after.  Allow
+definition of per-type animation, so arrows drawn differently from catapult
+stones.  Unit type property "animations"?
+
+I178. Make displays work correctly for mobile units with no vision ability.
+(draws empty box when selected currently).
+
+I179. Issue a "firing path blocked" message when that happens.
+
+I180. If a unit type can't do an action, error message should mention type
+in general, not specific unit.
+
+I181. When multiple images available, choose using a pseudo-random
+sequence based on a per-viewport seed, so same images chosen when
+scrolling, zooming, etc.
+
+I182. At 4x4, draw unit as 3x3 block in nw corner, color according to
+size (also try coloring only center pixel, leave others black).
+
+I183. Make system of preferences include: per-game-module-per-user
+prefs, per-game-module defaults, all-game-per-user prefs, and
+generic defaults.
+
+I185. In help info, report variants in the list of modules.
+
+I186. Add a way to pass a list of selected units to a command, use to
+move unit-manipulating commands from interface-specific code to
+kernel/cmd.c.  Account for both "exactly one" models of tk/curses,
+and 0-all model of Mac interface.  Will need more callbacks to
+interface-specific code?
+
+I188. Add a choice of bord/conn masks to color, indep of of color
+or pattern choice.  "thin irregular", "thick straight", etc.
+
+I189. Make view painting a mode of painting of other layers, with
+values of "unknown" and "accurate" available in addition to usual
+layer values.
+
+I190. Only report name of feature when entire feature (and adjacent
+cells?) seen.
+
+I191. Change feature display options to have 1 of three choices:
+name only, name and "interesting" boundaries, name and all boundaries.
+
+I192. Use special types of images, such a triangle for peak, for
+designated types of features.  Similarly for colors and font sizes.
+
+I193. Add negative display powers -1 -> 1/2, -2 -> 1/4, to shrink
+large maps for world displays, or alter meaning of existing mag numbers.
+
+I195. For civ emulation, subsume build dialog in city dialog?
+
+I197. Add more controls to set game ambience.  Role of player is
+almost always as supreme commander, but details different for
+each game.  Want to do things like "Joe, as General Lee" in
+score list.  Add patterns to dialogs/buttons, color/fonts to text,
+choice of subwindows.  Do for setup windows once game is chosen.
+Make some interface elements go away entirely if not appropriate?
+
+I198. Track player identity across multiple games.
+
+I201. Warn about masks that are not supersets of base image.
+
+I202. Eliminate masks that are identical to base image being offset
+in four directions, or just to base image.
+
+I203. Add option to draw masks to highlight b/w image, or not.
+
+I204. Provide a way to get advice on expected combat outcome when
+considering a particular attack.
+
+I205. Provide a way to compute and highlight all cells reachable in
+the current turn.
+
+I206. Add a template for a web page to set up multi-player games.
+
+I207. Colorize b/w images based on ratio of black & white - first
+color for most common of black or white, second color for less
+common.  Third color only for "counter" shape underneath.
+
+I208. Decide how to handle color settings.  Have GDL default,
+user pref in general, game design, user pref for game design,
+in that order.
+
+I209. Add a way to colorize gray-scale images.
+
+I211. For crowded cells/transports, consider displaying only
+images at 16x16 and providing "..." to indicate more units
+than visible.  Could do at UL and BR to indicate relative
+position in larger array of units not shown.
+
+I212. Make "..." pattern a clickable way to circulate through
+units in stack.
+
+I213. When networking checksums start failing, only display first
+failure, add option to resync somehow.  Try resyncing only units,
+then sides, then world, then game design.  (But how to recalc
+cached info?)
+
+I214. For LOS games like panzer, add a way to determine if a given
+position is visible from another given position.
+
+I215. Add a two-argument predicate to table description routines in
+online help, apply to table entry to decide whether to add to
+histogram and final description string.  Use to eliminate
+meaningless/misleading table entries.
+
+I217. Add ability to specify type of blast to go with detonation
+or combat.
+
+I218. Add display of firing unit's range.
+
+I219. If acp-to-attack of a firing unit is zero, advance_into_cell
+and overrun should happen by fire alone.  But allow or disallow
+counterattack in that case?
+
+I220. Detect when remaining unit acp is too little to do any allowed
+action, automatically go to next unit if autoselecting.  Implement
+by maintaining bitmap of actions still possible during turn?
+
+I221. Add an undelay command, or let delay command toggle.
+
+I222. In mouseover text, display occupants as "in <unit> in <terrain>".
+
+I223. Add way to define how to display occupants, don't always
+subdivide display area.  For occs like city improvements, may
+only be displayed as city properties or similar.
+
+I224. Allow designer to choose which unit(s) to move first in
+a many-units scenario - a center-at side property?
+
+I225. When non-visible unit fires on a visible unit, don't report
+name and position of firing unit.  Use "unknown unit", or "unit
+near x,y" with randomly-varying xy, or "unit in direction dir",
+or "unseen unit in direction dir".  Report firing as well as hit/miss?
+Draw only part of firing line, just the part within a cell or two
+of the victim (or make length dependent on type of unit doing firing?).
+
+I226. In isometric view, use unit image bbox to position bottom of image
+consistently.
+
+I227. Add unit type property to define alternate image families
+selectable as preference.
+
+I229. Add option to draw double-sided people/control borders using
+side colors.
+
+I230. Use feature names when reporting destinations, similar syntax
+to mouseover display.
+
+I231. Add an option to use a 25% red overlay to indicate enemy ZOC,
+or else some sort of boundary to indicate enemy and own ZOC.
+
+I232. Send message to human player when supply low, suggesting
+preferred location for return.  Control warning via doctrine flag.
+
+I234. Consider making city dialog an expanded unit closeup.
+
+I235. Add emblem-name property for individual units.  Scan list of
+units during startup, load imfs for each found.  Display additional
+emblems in side list, underneath main side emblem.
+
+I236. Define and display names for experience levels instead of
+numeric values.
+
+I237. Define a "half-connection" image type that has 6 subimages
+instead of 64.
+
+I238. "Give" command to transport should transfer supply to occupants.
+
+I240. When a unit misses during combat, say "A attacks D, no effect".
+
+I241. Redesign kernel->interface relationship so that all updates
+happen at once, after a single run_game.  Do by making queue of
+update instructions, collapse updates that have no visible effect.
+
+I243. Add a way to suppress turn display and side progress for
+real-time games.
+
+I244. When setting up multi-player game, players should reach
+consensus before going to next screen.  Each screen should show
+number OKing, use chat window player list to indicate which have
+OKed.
+
+I246. Don't draw enemy occupant blasts if not seeing occupants?
+
+I247. Draw occupant blasts at same time as main unit blasts, draw
+counterattack blasts slightly after but overlapping with attack
+blasts.
+
+I248. Define a generic command (';') to find the next awake mover,
+or modify delay command to have different effect in survey mode.
+
+I249. Add pbem.  Do by recording player addresses (player setup
+option), requiring sequential play, checkpoint at start of each
+player's move, log all inputs.  When restoring, restore player's
+move, then replay input effects, so effectively recomputing
+state at end of previous player's turn.
+
+I250. Add ability to switch sides attached to display - use for
+designing, solitaire play, game test, hotseat games.  Move side->ui
+bits to global struct, leave minimal data attached to side.
+
+I251. Add control of unit number display separate from name.
+
+I252. Add a "tips" mechanism.
+
+I253. Add ability to use PNGs instead of gifs.
+
+I254. When creating a unit with a randomly-chosen name, automatically
+bring up dialog to rename.
+
+I255. Make all terrain imagery work at 88x96 magnification.
+
+I257. Construct special terrain imagery as base image plus
+highlight image (aux-image-name?).  Draw over or under linears?
+
+I258. Add ability to sort and renumber geographical features.  Sort
+should be able to put largest types of features (like continents
+and oceans) first in list of sorted features), but sort rest of
+features by typename, then name (or allow choice in interface?).
+
+I259. Change final statistics to display in a window.
+
+I260. Add a mechanism for interfaces to indicate network activity.
+
+I261. Give designer the option to set both unit side and origside.
+
+I262. Add a command to check unit-terrain compat while designing.
+
+I263. Fix where destination_desc says units appear at "self".
+
+I264. Don't report elevation of units on terrain type where elevation
+is fixed (such as sea).
+
+I265. Set up consistent cursors for different mouseovers - crosshairs
+for firing, swords for attack/overrun, arrow for movement.
+
+I266. Add way to record every player input to kernel, use in pbem
+and debugging.  Do by grabbing net_* arguments and dumping out.
+
+I267. Set up unit view painting as a toggle added to terrain view
+painting, choose between "empty" and "accurate".  Also add a "create
+view object" option to create views explicitly, similar to unit
+creation.
+
+I268. Implement feature-colors, use for text names at least.
+@deffn GlobalVariable @code{feature-colors} list
+This variable is a list of feature types and colors to use with them.
+(not implemented)
+@end deffn
+DEF_VAR_L("feature-colors", g_feature_colors, set_g_feature_colors,
+	"definitions of colors of geographical features",
+	gfeaturecolors, NULL)
+
+I269. Add the ability to describe actions in the history.
+DEF_VAR_L("action-narratives", g_action_narratives, set_g_action_narratives,
+	"text to use in describing actions and their outcomes in the past",
+	gactionnarratives, NULL)
+@deffn GlobalVariable @code{action-narratives} patterns
+This variable is similar, but its text is in the past tense.
+Defaults to @code{()}.
+@end deffn
+
+I270. Make the repair command set up a repair task, not just an
+action.
+
+I271. Simplify command-line parsing into a single call that builds
+all data structure before deciding what to do with it.
+
+I272. Draw and use multicolored animated blasts.
+
+I273.
+Ilast.
+
+--Documentation
+
+D12. Describe action-notices etc, move descriptions to better places
+in manual.
+
+D18. Compare contents of refman with designer's guide, add refs to all
+constructs in designer's guide.
+
+D20. In design.texi, mention parameters of unit movement, describe use
+of speed-damage-effect, speed-wind-effect.  Use Normandy landing ship
+example to talk about ferrying.
+
+D22. Sort kwic index better when keywords tied.
+
+D23. Convert old diagrams of cell and map structure from picts to gifs,
+add to hacker's manual.  Add additional pictures showing isometric
+layouts and so forth.
+
+D24. Describe encoding of wind and cloud layers in refman.
+
+D29.
+Dlast.
+
+--Testing
+
+T3. Add testing machinery for the graphical interfaces.
+Could have AIs play each other on multiple screens.
+
+T5. Instead of scanning lib dirs wholesale, make up a list of combinations
+of game and variant options to run (for longer tests only; check-lib should
+still scan entire dir).
+
+T6. test-lib should run all the useful -g options (use game.dir to collect).
+
+T10. Add complete set of test images to test.imf.
+
+T11. Add tests for end-of-game handling; win, loss, draw, etc.
+Set up some lib games with non- or feeble sides, so one side wins
+more quickly, plus heavily lopsided advantages.
+
+T12. To test save/restore, dump out help info separately, save
+game, restore, then compare with help info after restoration.
+
+T14. Run gdl/doc/all.g consistency tests as part of "make check-gdl".
+
+T15. Need special scenarios to be able to test all plan types accurately,
+should set up similar tests for all major parts of planning and AI code,
+each should ensure that all the code bits actually get executed.
+
+T17. Write a library module name analyzer/checker - similar to doschk.
+
+T19. Add tests involving two communicating skelconqs with preset port
+numbers, use to test networking behavior.  Use a skelconq and Xconq
+on Macs to test PPC (or GUSI?)
+
+T21. Add test for side/unit priority machinery.
+
+T24. Build series of test cases that must pass for AI to be considered
+working.  AI must win game against opponent handicapped in some way, so
+no ambiguity about meaning of result.  Must win within given number of
+turns.  Grep skelconq output to ascertain win and turn #.
+
+T25. Add tests for all warnings to warn.g.  Add a comparison of warnings
+output and warnings possible in the code.
+
+T26.
+Tlast.
+
+--Library
+
+L4. WWII scenario should be able to have a "neutrals" side that resists
+involvement.  Attempts to attack neutrals should have some consequences.
+Spain and Turkey should be neutral, but if attacked, will go over to
+other side.  (This should be recorded in the scenario as a preset
+property of those AIs!)  AIs on opposed sides should assess value
+of capturing side's units vs expense & risk of combat.
+
+L8. Make Gettysburg brigades vary in quality and hp.  Use distinct
+images for federal and csa units.  Consider adding units for generals
+(corps and army only).
+
+L19. For Normandy, set up staging areas for German reinforcements to
+arrive from.  Set German AI to be primarily defensive.  Add scripting
+for Allied landings, so player doesn't have to do manually?
+
+L24. Develop modern-day military games, both operational and strategic.
+
+L50. In "space", cruisers should be able to attack planets/planet
+occs, damage shipyards.  All spacecraft should be able to "enter" gas
+giants for refueling.  Earthlike planets should have more fuel.  Add
+scoutship type, long range, low fuel consumption, and battleship or
+dreadnought, very durable and expensive, nova trigger, use to detonate
+stars (and black holes?).  Have colony ships different from fast
+military transport, cheaper and slower.  Colony ships can only
+"capture" uninhabited systems.  Have armies protect planets (and
+stars?).  Add population, use to decide desirability of systems.
+
+L62. Make fantasy game work usefully.  Add mask to serf image, make
+better wizard imf, add better mask to city15, do color image for it.
+
+L64. Add color images for aircraft types in flattop.
+
+L66. In ancient:
+Skeleton should have no effect on stacking.  Ideally, skeleton would be
+drawn *under* other unit(s) in cell.
+In ancient, consider adding steady food/gold consumption for units,
+reduce initial costs to compensate.
+
+L67. Add a new Godzilla game - include national guard (soldiers), army
+(tanks), subs that can fire torpedoes, helicopters that can fire,
+fighter jets. Create three sizes of building (short, medium, tall),
+use to affect visibility.
+
+L72. Add better leader and militia images to beirut.
+
+L73. Add embed-at and flagpoles to rest of standard images.
+Put standard images into a single gif.
+
+L74. In ww2-bn, add air units that are immobile but can attack
+anywhere on map, each should have alt so can be affected by weather.
+Disallow night attacks.  Use different symbol(s) for AT artillery.
+Add non-hyphenated type names for display.  Number more types of
+units.  Use milsyms for flak, CD arty, fortifications.
+
+L75. Add 32x32 color images for all images actually used in a library
+game.
+
+L80. Add correct number of mobilized forces to ww2-39.
+
+L82. Fix where normandy.g is dark during 8am turn.  Fix supply situation
+upon landing.
+
+L83. Make bare/grass distinction more interesting for insects - bare
+has faster movement, better visibility.
+
+L84. In monster, redo set of building images, possibly share with
+beirut.
+
+L87. In greek, add a type of place that is like a base (or rename
+fortifications, which appear unused), change 1/2 of places in pelops
+to be of this type.  Most polises should have food, but no money.
+Consider adding a "citizens" material that regulates hoplite (and
+cavalry?) production.  Put money (as talents) in treasury, have
+polises add to it.
+
+L88. Add more detailed instructions and help to all game.dir scenarios.
+
+L89. Add hills to standard terrain types.  For standard game, effect
+of hills is to slow armor to 1 move/turn.  Add hills to library maps.
+
+L91. In midway, preset formations based on flagships, prompt for flagship
+movement first.
+
+L92. In nw-europe, add British towns for V2s to hit also, affects
+Allied score if British towns damaged or destroyed.
+
+L93. New game, "Nine Nations".  Set in 202x, postulate USA fragmented
+into the nine cultural regions, players attempt to reunite.  Regions
+are Ecotopia in NW (capital SF), Zion in Utah area (capital SLC),
+Mexamerica in SW, Heartland in Midwest (capital Chicago), New Dixie in
+South (capital Atlanta), Alleghenia in Rust Belt (capital Pittsburgh),
+New England (capital Boston), "United States" in mid-Atlantic area
+(capital Wash DC).  NYC could be neutral city perhaps.  Each side
+would have special abilities - Ecotopia and New England have ballistic
+missile subs, etc.  Units should be near-future, highly mobile, etc,
+similar to new standard game.  Use 50km/cell scale.  Use people and
+control layers to track progress.
+
+L95. In gazala, disallow attacks across escarpment.
+
+L96. Convert borders to image types; ww2-div-eur Rhine-river,
+ww2-div-pac reef.
+
+L98. Rewrite panzer to be more like WestFront/EastFront or Steel Panthers.
+
+L100. Make militia image similar to soldiers, but more irregular.
+
+L101. For fred, work up better images, lighten/desaturate countryside
+image, use mountain pass half-connection image for passes.  Always
+show name and title of leader, add unique images when available.
+
+L104. Add roads to ww2s-* scenarios.
+
+L105. In eur-100km, add roads through Ardennes and Alps to allow
+armor access.
+
+L106. To set up ww2s-42, copy OB from ww2s-eur-42.  Make Fusan a base?
+Add Japanese forces.  Add Gibraltar, Helsinki (as indep).
+
+L108. In ww2-eur-42, add Nova Scotia/Labrador/Iceland bases so can
+provide asw coverage for convoys.  Change balance of continental
+forces so SU can't always win alone.
+
+L109. New game, planetary campaigns.  Factions start in near future
+on Mars, progress outward or inward as time passes.  Advances include
+FTL travel, which increases scope to other star systems.  Common tech
+for all planets, common terrain (hard), etc.  Each planet is its own
+scenario, campaign links each to success/fail of previous round.
+(Concept similar to Total Annihilation, but less futuristic.)
+
+L110. Add clouds to ww2-bn games.
+
+L111. For civ2 emulation, add improvement effects:
+Decide how to make airports do airlifts.
+Bank multiplies taxes and luxuries by n%, then adds (define a
+unit-conversion-effect?)
+Barracks adds cxp without engaging in actual combat (unit-cxp-effect?)
+Capitalization is not really an improvement?
+Cathedral, Colosseum, and Temple add to happiness.
+Walls and Fortress add to stack/occ protection (in combat model 1).
+Courthouse reduces corruption.
+Factory set um-production-effect to 150%.
+Harbor adds to production of each ocean being worked (need to account
+for in display).
+Hydro plant has um-production-effect of 150, but only if factory present.
+Library, Research Lab, University similar to bank, each multiply science
+by 1.50 before adding to treasury.
+Manufacturing Plant multiplies shield production by 1.50.
+Marketplace multiplies tax and science by 1.50.
+Mass Transit reduces pollution somehow.
+Nuclear Plant is like Hydro Plant?
+Offshore Platform similar to Harbor, increases shield production.
+Palace reduces corruption.
+Police Station increases happiness.
+Recycling Center reduces pollution somehow.
+SAM Battery provides transport protection.
+SDI provides area protection against nuke missiles (add a radius parameter
+to stack or cellwide protection values).
+Spaceship components handle as unit construction for a large unit.
+Solar Plant multiplies factory output.
+Stock Market similar to Marketplace and Bank.
+Superhighway multiplies road/rail arrow prod by 1.50.
+Supermarket multiplies farmland output by 1.50.
+
+L112. Add names of mountain ranges, swamps, deserts, etc to big
+world maps.
+
+L113. Make ww2-div-eur disallow capture of towns directly from
+transports unless a beach is present.
+
+L114. In ww2-eur-42, make France an active side but with only one
+army or base or some such, or else make it controlled by Germanyk,
+allow Allied capture of Paris to end the control.
+
+L115. (Originally suggested by Klaus Schilling.) Make a Xconq DB 
+tool which can import/export Xconq game files into a database. 
+The database could possibly be manipulated via Perl or else directly 
+via SQL. Might also be useful to have a set of database driver scripts 
+or precompiled queries to instantiate a new Xconq game in a database.
+(Reference: http://sources.redhat.com/ml/xconq7/2003/msg01028.html)
+
+L116.
+Llast.
+
+--X11 (tcl/tk) Interface
+
+X22. Typing text into ask_position switches to prompt, reads a textual spec
+of location.
+
+X39. Implement do_produce. (as generic cmd - start with Mac code)
+
+X58. Implement up/down commands. (as generic cmds)
+
+X65. Convert Mac picts for games into gifs, load into tk interface.
+
+X67. Display designer wind dir/force graphically.
+
+X69. Add design button to first startup dialog.
+
+X71. Add option to ximfapp to magnify individual images by magnifying all
+pixels.  Implement as "-mag" option to imfsample.
+
+X73. If map win bg matches grid, draw bg color and area boundary line.
+
+X74. To sidelist, make entry smaller (no progress bar) if side
+inactive in game.  Add twistout to show more detail, or bring up
+separate display.
+
+X76. Choose country border width independently of feature borders
+(make narrower).  If wider than 1 pixel, use set of masks to lay
+down, but use straight lines not jagged.
+
+X79. Add area rescaling to designer save dialog.
+
+X83. For isometric display, add control for vertical exaggeration.
+
+X85. Draw world shape in world size dialog, use a sort of rounded rect
+plus inset a little at top and bottom to indicate two hemispheres.
+Draw as hexagon inside if no wrap, as rect if wrap.  Limit y to 80 deg
+lat.  De-magnify by 2 if circumf between 200 and 400, by 4 if greater.
+
+X86. Implement doctrine dialog.
+
+X87. Add part (or all?) of tech tree to research dialog.
+Distinguish future and past advances, show current activity,
+expenditure on research.
+
+X88. Add construction dialog a la Mac interface.
+
+X89. Add a unit list window, with options to display own units,
+all trusted-side units, accurate info/tracked units, unit images.
+
+X91. Add display of trust/alliances a la Mac interface.
+
+X94. Make detonation movie into real set of images instead of flash,
+suppress individual damage movies or show all at the same time.
+
+X98. Add preference dialog for colors; include imfsamples for all
+terrain types at once (both color and pattern), grid color, unseen
+color, shoreline color, unit/feature name fg/bg, frontline color,
+meridian color, contour color, feature boundary color.  Create each
+as canvas elements in shapes similar to map usage, but large enough
+to click on.
+
+X99. Make set of masks to draw frontline and feature boundary lines
+instead of drawing fat lines.
+
+X100. Instead of using stipples, precompute darkened and lightened
+images, for all terrain types including conns and bords.  Need 25%
+less for night, 50% less for uncovered.
+
+X105. Reduce number of cell updates when unit is updated, but appearance
+doesn't actually change.
+
+X106. Consider using fuzzout when drawing edges of vision coverage.
+Would have to AND fuzz with x% overlay mask, draw as "inverse" from
+uncovered cells, not covered cells.
+
+X108. Speed up the interface!  Analyze using timeline dumps.
+
+X110. Add introductory notes and instructions as optional separate
+screen, just before variants screen.
+
+X111. Color backgrounds of panes more interestingly.
+
+X112. Give unit type list all the extra space on the right side, don't
+allow gaps between panes. -expand = true?
+
+X114. Set can_embark true if type can occupy some type of unit.
+Ideally only set true of current unit adjacent to a non-full transport;
+or make task to embark?
+
+X115. Only enable disembark if current unit is on a transport, and can
+get off it.
+
+X117. Use an alternate cursor in move mode if no unit selected.
+
+X118. Allow choice of drawing image at 8x8 or just emblem - if no
+image or an indep, draw a 6x6 box.
+
+X122. When designing, show size of feature in cells, when not designing,
+don't include 0-size features in lists.  (Return size as third arg
+in feature info?)  Recalc popup menu when switching in/out of feature
+design (also "goto" menu item, if ever implemented).
+
+X123. Extend mouseover to display construction info for unit types
+relative to current unit.
+
+X125. Precompute minimal transition pixmaps for each terrain type,
+use instead of clipped drawing.
+
+X126. Allow selection of enemy units (as preference?) draw outer line
+in red instead of white.
+
+X127. Allow designer to choose color/appearance of unit selection;
+inner frame, outer frame, colors for acp gone, asleep, etc.
+Also allow choice of highlight style - marquee, blink, blink unit, etc.
+
+X128. Add side colorization option for unit images.
+
+X130. In designer dialog, gray out side selection to exclude disallowed
+sides for the type.
+
+X131. Add a button (and control-click?) for firing.
+
+X132. Add an overlapped display option for unit stacks.
+
+X133. Use unit images to draw stack & occs in unit info pane.
+
+X134. Add toggle for auto-end-turn.
+
+X135. Don't allow linear types to be background when painting.
+
+X139. Add a sampling button for feature painting.
+
+X140. Fix the print command (result is too small).
+
+X141. Bring over spaced/large font feature name drawing from Xt interface.
+
+X143. Add a -i command option that controls indepside behavior.
+
+X144. Produce an immediate response - positive or negative - to
+every key or mouse input.
+
+X145.
+Xlast.
+
+--Macintosh Interface
+
+Mac11. Define and use an "erase-in-the-grid" procedure.
+
+Mac14. Ensure that "computer" and "face" icons updated when side info changes.
+
+Mac17. Change of map magnification should automatically set window to
+user state.  (Is this possible?  Finder changes window to user state
+when it gets too many icons to fit in rightsized zoomed window, but no
+mention of how to do this in IM.)
+
+Mac20. Save/restore window setup with Mac interface data, adjusting for
+possibility that game is restarting on a different size screen.
+
+Mac26. Check for events between every few rows of drawing, be able to
+abort or restart drawing if requested.  Do by splitting offscreen
+calcs into small areas (rows ideally), checking events between each
+area.
+
+Mac28. Do mouse-based actions when mouse *released*.
+
+Mac31. Use drag of unit to indicate waypoints of a path, feedback with
+envelopes of route and only do waypoints when indicating points
+outside shortest route.
+
+Mac32. Be able to double-click in build dialog to set construction .
+
+Mac33. When laying out list window, precompute widths of columns using
+max/expected string widths for type names etc.  Account for width of
+headers and desired spacing between columns.
+
+Mac35. Allow multiple units to be selected in list windows.
+
+Mac36. Express merge by dragging onto unit, express detach by
+supplying an amount in modal dialog (awkward, but rare?)
+
+Mac41. Add new construction-like dialog for material production.
+
+Mac42. Build routines to insert a string into a "field" of a list entry,
+instead of rebuilding entire entry. (generify list handling?)
+
+Mac44. Unhighlight forward/backward arrows when no units to look at.
+Consider eliminating altogether.
+
+Mac49. When listing units by location, add twist-down for occupants,
+group stack members with bar or some such.
+
+Mac50. Be able to draw more unit info on map window when at high mag powers.
+Do num parts/hp, mp/acp, in misc corners a la Empire Master.
+
+Mac54. To indicate available movement, change cursor to reflect accessibility
+and (ETA) or display in control panel or elsewhere on map.
+
+Mac55. Implement doctrine changes with dialogs examining doctrine objects.
+
+Mac58. Be able to hit key to bring up useful data while rubberbanding,
+or else have additional popup or use topline with this info.  Useful
+data includes distance in cells, how much supply unit might need, etc.
+
+Mac73. Reduce amount of redrawing of unit list window.
+
+Mac88. Do variable-width formatting of lists in construction window, don't cut
+anything off short unless absolutely necessary.
+
+Mac93. Add TCP/IP as connection method for remote players.
+
+Mac96. If area has an image, display that instead of terrain/bords/conns.
+
+Mac99. Add display for standing orders.
+
+Mac103. For incomplete units, collect a mask and gray out only the masked area,
+or else when drawing incomplete, only draw 50% of its pixels.
+
+Mac104. Implement removal of players/sides at startup.
+
+Mac106. Draw a small unit icon in top unit info area.
+
+Mac107. Add a help button to construction dialog that connects to
+specific help screen.
+
+Mac108. Reorganize listing of info in construction dialog, use
+fixed-width columns set by maximum width.
+
+Mac110. Fix overrun menu item.
+
+Mac112. Implement up/down menu items.
+
+Mac116. Reduce multiple behavior flags to move/survey mode.
+
+Mac117. When saving on quit, bring up file selection dialog to specify save file name.
+
+Mac119. In construction dialog, only list types that the player's side
+can build.
+
+Mac120. In construction dialog, recalculate contents when constructing
+unit renamed.
+
+Mac121. In construction dialog, arrange top buttons as construct, run
+length, research, help.
+
+Mac122. Use same drawing algorithm for unit images in each kind of window.
+
+Mac123. Add a mode to IMFApp that displays each image separately.
+
+Mac125. Add a menu item for "Wake All".
+
+Mac126. Add unit type images to construction dialog.
+
+Mac127. Unify appearance/interaction with tcl/tk interface.
+
+Mac129. Implement side closeup, or remove menu option.
+
+Mac130. Remove separate Auto Jump Next option.  Make Mac interface
+generally similar to tcl/tk interface.
+
+Mac131. Remove long-obsolete Think C support.
+
+Mac132.
+Maclast.
+
+--Windows Interface
+
+W5. Add program icon.
+
+W6. Implement terrain transition drawing.
+
+W7.
+Wlast.
+
+--Curses Interface
+
+C14. Allow putting up a legend to display chars (such as terrain type chars)
+in list area.  Bring up via '/' or perhaps option to general help.
+
+C15. If can support, add getch() timeout so human can move immediately instead
+of waiting for mplayer to finish.  Indicate that mplayer is "thinking"
+periodically, need kernel callback (?).
+
+C31. Implement up/down commands. (only do after command sets unified)
+
+C32. Fix unit list to update when units change.
+
+C33.
+Clast.

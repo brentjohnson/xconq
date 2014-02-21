@@ -1,0 +1,212 @@
+
+RCS file: /cvs/xconq/xconq/kernel/misc.h,v
+Working file: misc.h
+head: 1.19
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.9
+	xconq-7_4-branch: 1.9.0.2
+	xconq-7_4-branchpoint: 1.9
+	xtconq-pre-removal: 1.8
+	xconq-7_3_3-release: 1.7
+	xconq-7_3_2-release: 1.7
+	xconq-7_3_1-release: 1.7
+	xconq-7_3-branch: 1.7.0.2
+	xconq-7_3-branchpoint: 1.7
+keyword substitution: kv
+total revisions: 19;	selected revisions: 19
+description:
+----------------------------
+revision 1.19
+date: 2004/02/02 04:14:10;  author: mcdonald;  state: Exp;  lines: +4 -4
+Add automatic unit type upgrade feature.
+Add ability to apply new criteria to change-type action.
+Add new safeguard to some materials-related functions.
+Remove redundant checks from materials transfer code.
+Remove extra paramter from some of the "assert_*" family of macros.
+More preparations for more intelligent AI resupply code.
+Update Bellum Aeternum to use automatic upgrades.
+----------------------------
+revision 1.18
+date: 2004/01/19 21:07:36;  author: mcdonald;  state: Exp;  lines: +26 -0
+Improve victim rating computation.
+Improve performance of non-networked games.
+Add new macro routines for debugging.
+Add new search algorithm.
+----------------------------
+revision 1.17
+date: 2003/12/28 23:13:21;  author: mcdonald;  state: Exp;  lines: +13 -1
+Tweak to packed boolean tables implementation.
+Add forgotten ChangeLog entry from 2003-12-27.
+----------------------------
+revision 1.16
+date: 2003/12/28 20:53:24;  author: mcdonald;  state: Exp;  lines: +36 -0
+Remove unneeded subtarget for making tarballs.
+Implement tables of packed booleans.
+Provide a toggle-switch for long-range pathfinding.
+Improve efficiency of movement/pathfinding code on average.
+Improve AI victim-finding to prevent concentrating too many units on 1 target.
+----------------------------
+revision 1.15
+date: 2003/12/26 06:02:35;  author: mcdonald;  state: Exp;  lines: +12 -0
+Rewritten victim-finding code for the AI.
+The start of better resupply logic.
+Improve and add some segfault prevention code.
+Cosmetic improvements to some code.
+Enhancements to Bellum Aeternum.
+----------------------------
+revision 1.14
+date: 2003/12/14 03:37:47;  author: ronne;  state: Exp;  lines: +8 -1
+Add support for network games in file saving code.
+----------------------------
+revision 1.13
+date: 2003/12/02 04:48:49;  author: kingdon;  state: Exp;  lines: +2 -0
+	Fix bug which produced a warning every time one tried to save the
+	game:
+	* kernel/skelconq.c (low_run_warning, low_init_warning): Exit on
+	warnings, so they don't show up as "pass" in autotests.
+	* kernel/autotest.c (test_save): New test, which catches this bug.
+	* kernel/write.c, kernel/misc.h (find_name): Extract the module
+	name code from write_entire_game_state to here.  Allocate the
+	buffer in init_write.
+----------------------------
+revision 1.12
+date: 2003/11/22 22:42:07;  author: mcdonald;  state: Exp;  lines: +11 -10
+Make gettimeofday(2) test work for C++.
+Remove duplicate definitions of 'xconq_libs' variable.
+Take care of last (?) item in timestuff migration.
+----------------------------
+revision 1.11
+date: 2002/07/31 20:40:08;  author: ronne;  state: Exp;  lines: +126 -15
+Add Doxygen comments to kernel includes.
+----------------------------
+revision 1.10
+date: 2002/02/02 05:53:51;  author: kingdon;  state: Exp;  lines: +1 -1
+	First cut at bringing back the Xt interface (goal is a way to play
+	multiplayer games until networking is debugged):
+	* Makefile.in: Add back all-xtconq and install-xtconq.
+	* x11/Makefile.in: Add back X_H, XTOBJS, all-xtconq, xtconq,
+	xtconqad.h, Xtconq, Xtconq-color, xtconq.6, and install-xtconq.
+	* kernel/misc.h, kernel/utils.c (xmalloc):
+	Now returns void* not char*.
+	* x11/Xtconq-co.ad, x11/Xtconq.ad, x11/closeup.notes,
+	x11/xcloseup.c, x11/xcmd.c, x11/xdesign.c, x11/xdraw.c,
+	x11/xhelp.c, x11/xinit.c, x11/xmap.c, x11/xprint.c,
+	x11/xtconq.6in, x11/xtconq.c, x11/xtconq.h, x11/xtconqad.h,
+	x11/xtmain.c: Restore these files.
+	Eliminate use of NUMUTYPES and NUMTTYPES in favor of dynamic
+	allocation (or tmp_u_array or tmp_t_array).
+	* x11/xcmd.c: Update various random routines to match tkcmd.c.
+	Remove do_auto and other commands which were made generic on
+	2000-08-13 and 2000-08-15.
+	Remove obsolete functions side_research_dialog, unit_build_dialog,
+	and unit_plan_dialog.
+	(get_selected_units): New function.
+	* x11/.cvsignore: Add Xtconq Xtconq-color XShowimf
+	XShowimf-color xtconq.6 xtconq.
+----------------------------
+revision 1.9
+date: 2000/11/12 00:39:53;  author: ronne;  state: Exp;  lines: +0 -1
+General cleanup of kernel prototypes - part 1.
+----------------------------
+revision 1.8
+date: 2000/06/20 16:23:43;  author: shebs;  state: Exp;  lines: +2 -5
+	* config.h: Remove ANSI_PROTOTYPES and __STDC__ conditionals.
+	* misc.h (PARAMS): Remove decl.
+	* obstack.h, obstack.c: Remove uses of PARAMS and ANSI_PROTOTYPES.
+	* macinit.c, macmenus.c, macmouse.c: Ditto.
+	* xcmd.c, xdesign.c, xhelp.c, ximf.c, xinit.c, xprint.c, xtmain.c:
+	Ditto.
+
+	* iplayer.c, mkrivers.c, mplayer.c, run.c, util.c, write.c: Remove
+	some redundant function decls.
+	* macwins.c: Ditto.
+	* tkimf.c: Remove unused decl.
+----------------------------
+revision 1.7
+date: 1999/12/01 04:05:04;  author: shebs;  state: Exp;  lines: +0 -13
+	* conq.h: Rearrange randomly. :-)
+	* misc.h: Remove ANSI_PROTOTYPES stuff.
+----------------------------
+revision 1.6
+date: 1999/10/30 14:41:46;  author: shebs;  state: Exp;  lines: +2 -0
+        * combat.c (mobile_enemy_thread): Use side_sees_image instead of
+        unit_actually_visible.
+        * run.c (auto_pick_new_build_task, etc): Ditto.
+        * task.c: Ditto.
+        * side.c (side_sees_unit): Add side->see_all case, remove
+        designer and debugging cases.
+        (side_sees_image): Error if NULL side, add view-matching case.
+        * ui.c (unit_actually_visible): Comment out.
+        (unit_visible, occupants_visible): New function.
+        (cell_terrain): Remove, fold code into oneliner.
+        (oneliner): Test vp->show_all.
+        * ui.h: Declare new functions.
+
+        * conq.h (gameinited, warnings_logged): Declare.
+        (add_remote_players, etc): Ditto.
+        * cmd.c, cmdline.h, init.c, read.c, read2.c, side.c, unit.c,
+        util.c: Remove unneeded decls.
+        * misc.h (log_warning): Declare.
+----------------------------
+revision 1.5
+date: 1999/08/28 23:22:44;  author: shebs;  state: Exp;  lines: +29 -26
+        * configure.in: Add --enable-build-warnings to control extra
+        warnings, choose which subdirs to configure based on Unix vs
+        Windows.
+        * configure: Regenerate.
+        * Makefile.in: Eliminate refs to lib-x11.
+        * x11/Makefile.in: Ditto.
+        * curses/Makefile.in, kernel/Makefile.in, tcltk/Makefile.in,
+        x11/Makefile.in: Change UNIX_CFLAGS to autoconf-using HFLAGS,
+        remove WARNING_CFLAGS.
+        * actions.c, ai.c, ai.h, cmdline.c, cmdline.h, conq.h, generic.c,
+        help.h, imf.c, imf.h, imf2imf.c, lisp.c, lisp.h, misc.h, system.h,
+        imf2x.c, xcutil.h: Remove PARAMS usages.
+        * gif.c, help.c, imf.c, imf2imf.c, lisp.c, unix.c, tkmain.c,
+        wimfapp.c, imf2x.c, x2imf.c, xconq.c, xcutil.c: Remove unused
+        variables, add prototypes, etc.
+        * run2.c, side.c, macconq.c: Remove decl of update_area_display.
+        * skelconq.c: Declare _dialog functions.
+        * tkcmd.c: Remove exit_xconq decl.
+        * wconq.c (check_player_displays): Remove uses.
+        * xconq.c: Include tkconq.h.
+
+        * tkconq.h (IMFLIB): Remove.
+        (exit_xconq): Declare.
+        * tkimf.c, tkinit.c: Remove imflib uses.
+        * xconq.h, xcutil.c: Ditto.
+        * ximf.c, xinit.c: Ditto.
+        * PROJECTS: Remove lib-x11 item.
+----------------------------
+revision 1.4
+date: 1999/08/17 12:29:41;  author: shebs;  state: Exp;  lines: +0 -2
+        Eliminate more compiler warnings.
+        * unit.h (ActionDefn dofn, checkfn): Remove fields.
+        * actions.c (execute_action): Dispatch on action type directly,
+        instead of using checkfn and dofn fields.
+        * actions.c, init.c, task.c: Remove unused vars.
+        * game.h, skelconq.c, unit.h: Convert to pure standard C
+        * kernel.h: Move decls of attack_can_damage_or_capture, etc.
+        * misc.h: Remove decl of getenv.
+        * obstack.h, obstack.c: Prototype fn argument of obstack_begin.
+        * plan.c: Make static vars extern.
+        (find_closest_unit): Prototype fn argument.
+----------------------------
+revision 1.3
+date: 1999/08/12 03:07:30;  author: shebs;  state: Exp;  lines: +4 -0
+	* misc.h (record_activity_start, etc): Declare.
+	* util.c (starting_trace): New global.
+	(record_activity_start): Use it.
+	(dump_activity_trace): Report gaps.
+----------------------------
+revision 1.2
+date: 1999/07/17 14:35:21;  author: ronne;  state: Exp;  lines: +4 -0
+Change fopen to open_file.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:28;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

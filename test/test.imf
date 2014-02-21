@@ -1,0 +1,3 @@
+(imf "test-1"
+  ((16 16 tile) (embed "test-2") "ffff")
+  )

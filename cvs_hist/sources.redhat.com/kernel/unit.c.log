@@ -1,0 +1,1267 @@
+
+RCS file: /cvs/xconq/xconq/kernel/unit.c,v
+Working file: unit.c
+head: 1.95
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.36
+	xconq-7_4-branch: 1.36.0.2
+	xconq-7_4-branchpoint: 1.36
+	xtconq-pre-removal: 1.24
+	xconq-7_3_3-release: 1.17
+	xconq-7_3_2-release: 1.17
+	xconq-7_3_1-release: 1.17
+	xconq-7_3-branch: 1.17.0.2
+	xconq-7_3-branchpoint: 1.17
+keyword substitution: kv
+total revisions: 95;	selected revisions: 95
+description:
+----------------------------
+revision 1.95
+date: 2004/08/22 00:37:41;  author: ronne;  state: Exp;  lines: +4 -4
+Add network functions for new tasks, fix bug in change_unit_type.
+----------------------------
+revision 1.94
+date: 2004/08/22 00:12:26;  author: mcdonald;  state: Exp;  lines: +4 -0
+Reduce buzzing when formations are in use.
+Fix display bug: image would no longer update after a 'change-type'.
+----------------------------
+revision 1.93
+date: 2004/08/19 00:58:57;  author: ronne;  state: Exp;  lines: +57 -13
+Many bug fixes, some new features.
+----------------------------
+revision 1.92
+date: 2004/08/12 10:22:46;  author: ronne;  state: Exp;  lines: +1 -1
+Fixes to command processing.
+----------------------------
+revision 1.91
+date: 2004/07/18 18:49:48;  author: ronne;  state: Exp;  lines: +9 -0
+Add support for multiple and unique unit images.
+----------------------------
+revision 1.90
+date: 2004/06/26 19:38:37;  author: mcdonald;  state: Exp;  lines: +7 -8
+Fix recently introduced segfault-producing bug.
+----------------------------
+revision 1.89
+date: 2004/06/26 15:45:37;  author: ronne;  state: Exp;  lines: +108 -0
+Various bug fixes and improvements to the kernel.
+----------------------------
+revision 1.88
+date: 2004/06/20 17:23:05;  author: mcdonald;  state: Exp;  lines: +3 -3
+Cache results of recently added ACP and MP artithmetic functions.
+Finish replacing 'u_acp' and 'u_speed' calls in the kerenl, where appropriate.
+Minor fix to the help system.
+New option for Wreckreation.
+----------------------------
+revision 1.87
+date: 2004/06/15 04:14:22;  author: mcdonald;  state: Exp;  lines: +232 -103
+Update player documentation.
+Extend night and occupant effects on ACP.
+Provide universal ACP arithmetic.
+Update games in library to use some replacement tables.
+Provide true capture prevention/allowance tables.
+Provide toggle for use of combat protection tables in capture computations.
+Allow units to change type on capture. Add new table for this.
+Improvements and modifications to help system.
+Improvements to and comments about type changing code.
+Some housekeeping of the table definitions.
+Source formatting improvments.
+New version of Wreckreation.
+----------------------------
+revision 1.86
+date: 2004/06/12 20:41:09;  author: ronne;  state: Exp;  lines: +65 -71
+Various build and move related interface fixes.
+----------------------------
+revision 1.85
+date: 2004/06/12 03:29:46;  author: mcdonald;  state: Exp;  lines: +33 -15
+Kill any changed occ which is not compatible with side of its transport.
+----------------------------
+revision 1.84
+date: 2004/06/08 00:49:38;  author: ronne;  state: Exp;  lines: +2 -1
+Add Second Korean War game by Elijah Meeks.
+----------------------------
+revision 1.83
+date: 2004/06/06 21:47:29;  author: mcdonald;  state: Exp;  lines: +79 -60
+Fix bug in change-type of occupant units.
+(Reported by Elijah Meeks.)
+----------------------------
+revision 1.82
+date: 2004/06/06 05:55:51;  author: mcdonald;  state: Exp;  lines: +69 -12
+Add new possibilities for unit wrecking behavior.
+Apply unit starvation patch from Matthew Skala. (Thanks Matthew.)
+Define and handle new event types related to unit destruction.
+Fix serious bug with model 0 attack/fire hit damage computation.
+Improve efficiency of attrition applicator that runs at turn start.
+Address nasty parsing order issue.
+Add simple, new game that showcases the new wrecking functionality.
+----------------------------
+revision 1.81
+date: 2004/05/29 21:50:37;  author: mcdonald;  state: Exp;  lines: +2 -0
+Fix unit type listing bug.
+(Reported by Lincoln Peters.)
+----------------------------
+revision 1.80
+date: 2004/05/22 20:53:01;  author: mcdonald;  state: Exp;  lines: +47 -5
+Better handle changes in the actor state resulting from a 'change-type' action.
+Add new dir for non-automated tests.
+Add actor state test for 'change-type' action to the manual tests.
+----------------------------
+revision 1.79
+date: 2004/05/02 22:19:19;  author: mcdonald;  state: Exp;  lines: +1 -1
+Revert to the pathfinder in use prior to 2003/11/13.
+Add appropriate replacements for useful elements of post-2003/11/13 pathfinder.
+----------------------------
+revision 1.78
+date: 2004/04/25 18:41:15;  author: mcdonald;  state: Exp;  lines: +39 -39
+Be more conservative with resetting the 'creation_id' field.
+Finish fixing misdirected creation/building bug.
+Reformat some code to be readable under 80 columns.
+----------------------------
+revision 1.77
+date: 2004/04/25 04:12:59;  author: mcdonald;  state: Exp;  lines: +1 -0
+Fix "runaway creation spree" bug.
+Fix harmless build glitch which allowed more CP than max.
+Partially fix misdirected builds.
+----------------------------
+revision 1.76
+date: 2004/04/24 06:40:53;  author: mcdonald;  state: Exp;  lines: +12 -4
+Update documentation.
+Transplant a couple of macros to a different header.
+Write comments mentioning new direct treasury access capabilities.
+Support direct treasury access in run_economy and unit base consumption.
+Safen a macro.
+----------------------------
+revision 1.75
+date: 2004/04/23 03:01:13;  author: mcdonald;  state: Exp;  lines: +29 -11
+Fix compilation failure with SDL and Xt/Xaw interfaces.
+Fix incomplete unit list issue.
+Address oversight in change-type code.
+----------------------------
+revision 1.74
+date: 2004/04/21 03:49:29;  author: mcdonald;  state: Exp;  lines: +87 -74
+Change usage of um_to_create to mirror um_to_build.
+Allow direct consumption of materials from treasury sans storage in unit.
+Fix bug that prevented unit creation in a certain case.
+Reformat some code and comments to be readable on 80 col display.
+Update games lib to reflect change in um_to_create usage.
+Add another octal escape for a special Tcl character.
+----------------------------
+revision 1.73
+date: 2004/03/24 19:08:53;  author: ronne;  state: Exp;  lines: +232 -50
+Improve common move-to and build command code.
+----------------------------
+revision 1.72
+date: 2004/01/05 23:36:37;  author: ronne;  state: Exp;  lines: +108 -10
+Add pre-flight checks of move commands to the ui code.
+----------------------------
+revision 1.71
+date: 2004/01/03 15:56:08;  author: ronne;  state: Exp;  lines: +1 -1
+Enable change-type on all platforms.
+----------------------------
+revision 1.70
+date: 2003/12/31 16:48:15;  author: ronne;  state: Exp;  lines: +252 -36
+Improve and generalize build interface code.
+----------------------------
+revision 1.69
+date: 2003/12/26 06:02:35;  author: mcdonald;  state: Exp;  lines: +37 -1
+Rewritten victim-finding code for the AI.
+The start of better resupply logic.
+Improve and add some segfault prevention code.
+Cosmetic improvements to some code.
+Enhancements to Bellum Aeternum.
+----------------------------
+revision 1.68
+date: 2003/12/10 00:37:25;  author: kingdon;  state: Exp;  lines: +0 -5
+	* kernel/unit.c (kill_unit): Get rid of variable
+	recent_dead_flushed; it is set but never consulted.
+----------------------------
+revision 1.67
+date: 2003/12/09 23:49:35;  author: kingdon;  state: Exp;  lines: +63 -54
+	* kernel/unit.c (kill_self_unit): Extract from kill_unit_aux for
+	clarity.
+----------------------------
+revision 1.66
+date: 2003/10/18 16:59:40;  author: ronne;  state: Exp;  lines: +23 -9
+Overhaul of material handling code.
+----------------------------
+revision 1.65
+date: 2003/10/04 04:36:17;  author: mcdonald;  state: Exp;  lines: +2 -0
+Patches from Peter Garrone.
+Add some tabular reporting to the help system.
+Try to help some form of short name get displayed in unit list.
+Fix bug involving escaped backslash character and Tcl/Tk.
+----------------------------
+revision 1.64
+date: 2003/08/24 22:53:31;  author: ronne;  state: Exp;  lines: +33 -40
+Improvements to interfaces and the ai construction code.
+----------------------------
+revision 1.63
+date: 2003/08/11 22:34:16;  author: ronne;  state: Exp;  lines: +67 -0
+Further improvements to resupply and repair code.
+----------------------------
+revision 1.62
+date: 2003/08/09 22:03:24;  author: ronne;  state: Exp;  lines: +3 -0
+Improve side naming and fix player setup bugs.
+----------------------------
+revision 1.61
+date: 2003/08/06 00:18:20;  author: ronne;  state: Exp;  lines: +7 -1
+Improve repair, resupply, AI and namer code.
+----------------------------
+revision 1.60
+date: 2003/07/26 21:54:37;  author: ronne;  state: Exp;  lines: +91 -71
+Various bug fixes and improvements.
+----------------------------
+revision 1.59
+date: 2003/06/28 15:00:24;  author: ronne;  state: Exp;  lines: +23 -7
+Tcltk patches from Eric McDonald. Kernel bug fixes.
+----------------------------
+revision 1.58
+date: 2003/06/22 11:03:16;  author: ronne;  state: Exp;  lines: +20 -11
+Fix self-building transport occupancy bug.
+----------------------------
+revision 1.57
+date: 2003/06/21 23:02:28;  author: ronne;  state: Exp;  lines: +33 -85
+Fix bugs in connection code.
+----------------------------
+revision 1.56
+date: 2003/06/19 00:39:05;  author: ronne;  state: Exp;  lines: +14 -71
+Fix unit build volume checking.
+----------------------------
+revision 1.55
+date: 2003/06/05 23:25:26;  author: ronne;  state: Exp;  lines: +13 -10
+Fixes to terrain transitions and wreck unit code.
+----------------------------
+revision 1.54
+date: 2003/05/07 21:03:21;  author: ronne;  state: Exp;  lines: +9 -7
+Fixes to imfapp, cconq and resignation code.
+----------------------------
+revision 1.53
+date: 2003/01/22 23:01:05;  author: ronne;  state: Exp;  lines: +36 -10
+Fixes to imaging and build code.
+----------------------------
+revision 1.52
+date: 2002/12/30 20:58:20;  author: ronne;  state: Exp;  lines: +0 -1
+Expurgate wrapx from the interfaces.
+----------------------------
+revision 1.51
+date: 2002/10/12 22:25:27;  author: kingdon;  state: Exp;  lines: +15 -15
+	* kernel/autotest.c, kernel/autotest.h: Move autotester
+	from skelconq.c to here.
+	* kernel/Makefile.in: Update accordingly.
+	* kernel/move.c (prep_enter_action, do_enter_action,
+	check_enter_action): Rename unit3 to newtransport for clarity.
+	* kernel/unit.c (type_can_occupy): Rename u2 to utransport.
+	* kernel/autotest.c, test/auto.g: Add tests regarding occupancy:
+	headed for reproducing the
+	http://sources.redhat.com/ml/xconq7/2000/msg00365.html bug (in
+	which tcltk "i" skips a bomber in a certain common case) but
+	aren't there yet.
+----------------------------
+revision 1.50
+date: 2002/09/01 00:34:42;  author: ronne;  state: Exp;  lines: +5 -0
+Fix date line bug and tcltk update bug.
+----------------------------
+revision 1.49
+date: 2002/08/03 20:30:14;  author: ronne;  state: Exp;  lines: +5 -1
+Fix self unit resignation bug.
+----------------------------
+revision 1.48
+date: 2002/07/27 20:32:06;  author: ronne;  state: Exp;  lines: +33 -23
+Fix unit view weirdness bug.
+----------------------------
+revision 1.47
+date: 2002/07/24 23:03:03;  author: ronne;  state: Exp;  lines: +1 -1
+Add improved explorer code. Fixes to unit view code.
+----------------------------
+revision 1.46
+date: 2002/07/21 22:15:24;  author: ronne;  state: Exp;  lines: +50 -67
+More ai bug fixes.
+----------------------------
+revision 1.45
+date: 2002/07/20 13:55:01;  author: ronne;  state: Exp;  lines: +108 -23
+Improve handling of self units.
+----------------------------
+revision 1.44
+date: 2002/07/17 23:05:39;  author: ronne;  state: Exp;  lines: +38 -3
+Fixes to the AI build code.
+----------------------------
+revision 1.43
+date: 2002/06/18 21:20:53;  author: ronne;  state: Exp;  lines: +2 -1
+Fix terrain usage for moving advanced units.
+----------------------------
+revision 1.42
+date: 2002/05/08 23:51:17;  author: ronne;  state: Exp;  lines: +7 -7
+Make sources C++ compatible.
+----------------------------
+revision 1.41
+date: 2002/03/29 17:45:20;  author: ronne;  state: Exp;  lines: +1 -1
+Streamline network code.
+----------------------------
+revision 1.40
+date: 2002/03/23 21:48:13;  author: ronne;  state: Exp;  lines: +1 -0
+Implement low level double-click filter.
+----------------------------
+revision 1.39
+date: 2001/01/01 02:17:43;  author: kingdon;  state: Exp;  lines: +1 -0
+	* actions.c (distribute_material): Also transfer to any units
+	within out-length/in-length range.
+	* unit.c (unit_trusts_unit): Add comment.
+	* tkcmd.c (do_produce): Add implementation.
+	* nlang.c (task_desc): Handle TASK_PRODUCE.
+----------------------------
+revision 1.38
+date: 2000/12/28 16:04:08;  author: shebs;  state: Exp;  lines: +25 -5
+	Streamline handling of can-build testing, add cases for
+	can-develop.
+	* side.h (Side candevelop): New field.
+	(side_can_develop): New macro.
+	* side.c (create_side): Allocate candevelop.
+	* run.c (update_canbuild_vector): Fill in candevelop vector too.
+	* unit.c (unit_can_build_type): New function.
+	* plan.c (plan_offense_support, plan_colonize_support,
+	plan_explorer_support): Use it.
+	* macunit.c (build_construction_menu): Ditto.
+	* tkcmd.c (do_build): Ditto.
+	* ccmd.c (do_build): Ditto.
+
+	* tkcmd.c (do_fire, aux_fire_at): Rewrite to use same code for
+	keyboard and menu select cases.
+	(common_fire_at): New function.
+	(do_fire_into, aux_fire_into, common_fire_into): Similarly.
+
+	* macwins.c (adjust_construction_controls): Use could_create
+	and could_develop.
+----------------------------
+revision 1.37
+date: 2000/12/18 16:50:49;  author: shebs;  state: Exp;  lines: +93 -75
+	Eliminate the macros MAXUTYPES, MAXTTYPES, MAXMTYPES, and
+	MAXATYPES, size all type handling dynamically.
+	* config.h (MAXUTYPES, MAXTTYPES, MAXMTYPES, MAXATYPES): Remove.
+	* game.h (NONUTYPE, NONTTYPE, NONMTYPE, NONATYPE): Define to be -1.
+	(count_terrain_subtypes, numcelltypes, numbordtypes, numconntypes,
+	numcoattypes): Declare here instead of in world.h.
+	(tmp_u_array, tmp_t_array): Declare.
+	* gvar.def (edge-terrain, river-sink-terrain): Don't use type
+	bounds.
+	* table.def (adjacent-terrain-effect, terrain-exhaustion-type): Ditto.
+	* utype.def (obsolete, wrecked-type): Ditto.
+	* generic.c (count_terrain_subtypes, numcelltypes, etc): Move here
+	from world.c.
+	(tmp_u_array, tmp_t_array): New globals.
+	(curmaxutypes, curmaxmtypes, curmaxttypes, curmaxatypes): Set to
+	defaults convenient for the first allocation.
+	(create_unit_type): New function.
+	(disallow_more_unit_types, disallow_more_terrain_types): New functions.
+	(allocate_table): Use them.
+	* help.c (tm_table_row_desc): Remove, never used.
+	* init.c (check_game_validity): Call disallow_* to make sure
+	some type arrays are computed and cached.
+	(calculate_globals): Ditto.
+	(make_initial_materials): Use tmp_t_array.
+	* mkrivers.c (make_up_river_borders): Ditto.
+	* mkterr.c (elev_range, elev_lo, elev_hi, raw_range, raw_lo,
+	raw_hi): New static globals.
+	(compose_area, compose_earthlike_area): Use them.
+	(make_random_terrain, fix_adjacent_terrain,
+	flatten_liquid_terrain): Use tmp_t_array.
+	* mkunits.c (make_countries): Dynalloc local arrays.
+	(country_is_complete, make_independent_units): Use tmp_u_array.
+	* nlang.c (ohd_nums, ohd_incomplete): New static globals.
+	(others_here_desc, occupants_desc): Use them.
+	* plan.c (plan_colonize_support): Use tmp_u_array.
+	(gctc_supply): New static global.
+	(good_cell_to_colonize): Use it.
+	* ps.c (summary_of_seen_units_at): Use tmp_u_array.
+	* read.c (default_supply): Remove, no longer to use.
+	(init_predefined_symbols): Remove its setup.
+	(interp_unit_default): Similarly.
+	(interp_unit): Don't use default_supply.
+	(interp_utype): Remove test for too many types, call
+	create_unit_type.
+	(interp_ttype, interp_mtype, interp_atype): Remove tests
+	for too many types.
+	(too_many_types): Remove, no longer needed.
+	(rd_u_arr): New static global.
+	(interp_standing_order, read_utype_doctrine): Use it.
+	* run.c (rau_incrs): New static global.
+	(run_advanced_units): Use it.
+	(apr_type): New static global.
+	(auto_pick_unit_research, auto_pick_side_research): Use it.
+	(auto_pick_new_build_task): Use tmp_u_array.
+	* run2.c (ttotals, uttotals): New static globals.
+	(run_economy): Use them.
+	* score.c (sum_property): Use tmp_u_array.
+	* side.c (new_doctrine): Call disallow_more_unit_types.
+	* supply.c (mad): New static global.
+	(init_supply_system): Set it up.
+	* unit.c (create_unit): Allocate numlivebytype and completenesses.
+	(oc_numtypes): New static global.
+	(can_occupy_unit): Use it.
+	(toc_numtypes, type_can_occupy_cell): Similarly.
+	(ocw_numtypes, can_occupy_cell_without): Similarly.
+	(tocw_numtypes, type_can_occupy_cell_without): Similarly.
+	(conn_num_types, can_occupy_conn_1): Similarly.
+	(can_carry, type_can_occupy): Use tmp_u_array.
+	(num_each_type, shared_each_type): New static globals.
+	(eject_excess_occupants): Use them.
+	(shortest_unique_name): Dynalloc firstuniq, use it as flag
+	instead of shortestdone.
+	(shortest_generic_name): Similarly.
+	* write.c (write_table): Increase histogram size.
+
+	* ai.c (atc_type): New static global.
+	(assign_to_colonize): Use it.
+	(pbt_prefs, pbt_fringe_terrain, pbt_enemy_types,
+	pbt_num_to_transport): New static globals.
+	(preferred_build_type): Use them.
+	* ai.h (Strategy): Declare strengths etc as arrays of pointers
+	instead of 2D arrays, unitlist and unitlistcount as pointers.
+	(Theater): Similarly for numassigned, numneeded, etc.
+	(strength_est, etc): New macros (not used yet).
+	* iplayer.c (iru_numoffensive, iru_numdefensive): New static globals.
+	(iplayer_review_units): Use them.
+	* mplayer.c (mplayer_create_strategy): Allocate strength arrays.
+	(create_theater): Dynalloc numassigned etc fields.
+	(estimate_strengths, mplayer_read_strengths, mplayer_save_state):
+	Change to pointer-to-pointer refs.
+	(mru_numoffensive, mru_numdefensive): New static globals.
+	(mplayer_review_units): Use them.
+	* oplayer.c: Similarly.
+
+	* cmd.c (gt_amts, gt_rslts): New static globals.
+	(do_one_give, do_one_take): Use them.
+	* ui.h (VP draw_materials): Make into a pointer.
+	* ui.c (new_vp): Allocate draw_materials field.
+
+	* maccmd.c (do_one_add_terrain): Use tmp_t_array.
+	* macwins.c (side_research_dialog): Make participants static global.
+
+	* tkconq.h (UI material_color, etc): Change from array to pointer.
+	(UI cell_color, cell_shades): Rename from cellcolor and cellshades.
+	(UI best_timages): Similarly.
+	(UI unitpics, unitmasks, bestmimages): Remove, not used.
+	(Map uvec, ustr, tvec, tstr): Change from array to pointer.
+	* tkcmd.c (do_add_terrain, do_remove_terrain): Use tmp_t_array.
+	(do_build): Use tmp_u_array.
+	* tkinit.c (utype_indexes, mtype_indexes): Change to pointers.
+	(init_display): Remove inits of unused fields, alloc space for
+	cell_shades and material_color.
+	(init_material_images): Remove setup of bestmimages.
+	(init_terrain_images): Allocate for best_timages and terrpics.
+	(init_shades): Use array-of-array refs to cell_shades.
+	* tkmain.c (last_num_units_in_play, last_num_units_incomplete):
+	Change from arrays to pointers.
+	(init_redraws, update_unit_type_list): Allocate them.
+	(create_map): Alloc map uvec, ustr, etc.
+	* tkmap.c: Update refs to renamed fields.
+	(MapW draw_aux_terrain, draw_materials): Make into pointers.
+
+	* ccmd.c (do_build): Use tmp_u_array.
+	* cconq.c (init_display): Use numutypes to size allocs.
+	(ask_unit_type, ask_terrain_type): Use array of int instead of short.
+	* cdraw.c (draw_type_list_entry): Init lasttypevisible from numutypes.
+
+	* cconq.c (do_dir_2): Fix a variable name.
+	* cconq.h: Use #else instead of #elif.
+----------------------------
+revision 1.36
+date: 2000/12/07 17:08:55;  author: shebs;  state: Exp;  lines: +4 -12
+	* unit.c (max_builds): Delete, no longer used.
+----------------------------
+revision 1.35
+date: 2000/11/26 00:33:47;  author: ronne;  state: Exp;  lines: +66 -0
+General cleanup of kernel prototypes - part 5.
+----------------------------
+revision 1.34
+date: 2000/11/24 01:17:18;  author: ronne;  state: Exp;  lines: +17 -0
+General cleanup of kernel prototypes - part 3.
+----------------------------
+revision 1.33
+date: 2000/11/20 03:54:58;  author: shebs;  state: Exp;  lines: +2 -2
+	* unit.c: Fix a comment termination.
+----------------------------
+revision 1.32
+date: 2000/11/16 23:33:12;  author: ronne;  state: Exp;  lines: +23 -1
+General cleanup of kernel prototypes - part 2.
+----------------------------
+revision 1.31
+date: 2000/11/12 00:39:54;  author: ronne;  state: Exp;  lines: +390 -0
+General cleanup of kernel prototypes - part 1.
+----------------------------
+revision 1.30
+date: 2000/11/06 21:58:47;  author: ronne;  state: Exp;  lines: +0 -3
+Massive cleanup of prototypes.
+----------------------------
+revision 1.29
+date: 2000/10/14 17:49:53;  author: shebs;  state: Exp;  lines: +9 -33
+	Eliminate pointless unit extension property, make unit's possible
+	sides list into a regular property.
+	* unit.h (UnitExtras hook): Replace with field sides.
+	(unit_hook): Remove.
+	(unit_sides): Define.
+	* unit.c (init_unit_extras): Init sides.
+	(get_x_property, get_x_property_by_name): Remove.
+	* read.c (default_unit_hook): Remove.
+	(interp_unit_defaults): Remove K_X case.
+	(interp_unit): Similarly, and add K_SIDES case.
+	* mkunits.c (add_preexisting_units): Use it.
+	* write.c (write_unit_properties): Write sides instead of hook.
+
+	* nat-names.g: Remove useless units properties.
+	* u-e1-1998.g, u-e50-1998.g: Change "x" props to "sides".
+
+	* refman.texi: Update manual.
+----------------------------
+revision 1.28
+date: 2000/10/03 22:11:40;  author: ronne;  state: Exp;  lines: +1 -1
+Define zero cps as unbuildable, fix some bugs.
+----------------------------
+revision 1.27
+date: 2000/10/03 15:41:53;  author: kingdon;  state: Exp;  lines: +4 -0
+	* unit.c (change_unit_side): Cancel the unit's plans when it
+	changes sides.
+----------------------------
+revision 1.26
+date: 2000/09/17 18:25:39;  author: ronne;  state: Exp;  lines: +0 -9
+Fix end-of-turn problems when switching ais.
+----------------------------
+revision 1.25
+date: 2000/09/03 22:52:27;  author: shebs;  state: Exp;  lines: +13 -32
+	* actions.c, read.c, unit.c: Use more new-style function defns.
+	* run.c: Add some comments.
+	* run2.c: Remove unused decls.
+	* world.c, world.h (compute_elevation_bounds): New function, split
+	out from final_init_world.
+	* read.c (fill_in_elevations): Call it.
+	* write.c (write_area_elevations): Change to write only
+	nonnegative values.
+----------------------------
+revision 1.24
+date: 2000/08/21 21:34:35;  author: ronne;  state: Exp;  lines: +2 -2
+Consolidate for_all_sides macros.
+----------------------------
+revision 1.23
+date: 2000/08/18 23:42:55;  author: ronne;  state: Exp;  lines: +4 -3
+Move acp-indep builds to normal execution code.
+----------------------------
+revision 1.22
+date: 2000/08/15 23:42:55;  author: ronne;  state: Exp;  lines: +5 -1
+Clean up and simplify advanced unit code.
+----------------------------
+revision 1.21
+date: 2000/08/13 15:21:00;  author: shebs;  state: Exp;  lines: +1 -0
+	Fix various bugs in unit viewing, especially for see_all case.
+	* iplayer.c (can_see_actual_units): Remove, no longer used.
+	(preferred_build_type): Test side->see_all.
+	* mplayer.c (can_see_actual_units): Remove, no longer used.
+	(review_theaters, estimate_strengths, preferred_build_type): Fix
+	!side->see_all cases.
+	* plan.c (victim_here): Remove a comment.
+	* side.c (become_designer, become_nondesigner): Add notices
+	to all sides.
+	(unit_view_at, unit_view_next): Handle side->see_all case by
+	faking view objects.
+	(add_unit_view): Record the date of the unit view.
+	* side.h: Add some comments.
+	* task.c (do_hit_unit_task): Always use unit views.
+	(parse_unit): Remove redundant see_all test.
+----------------------------
+revision 1.20
+date: 2000/08/08 17:11:52;  author: shebs;  state: Exp;  lines: +77 -172
+	* nlang.c (tooling_desc): New function.
+	(notify_doctrine): List contents of all doctrines.
+	(notify_doctrine_1): List construction run lengths.
+	* plan.c (est_completion_time): Move to here from nlang.c.
+	* read.c (read_default_doctrine): Rename from read_general_doctrine,
+	don't try to handle property values here.
+	(read_utype_doctrine): Similarly.
+	(utype_from_name): Handle empty strings.
+	* read2.c (interp_utype_list): Move to here from unit.c.
+	* side.h (Side numlive): Remove field, never used.
+	(for_all_doctrines): New macro.
+	* side.c (init_sides): Set next_doctrine_id to 1, so save/restore
+	doesn't get confused.
+	(create_side): Don't alloc space for numlive.
+	(become_designer): Don't enable may_set_show_all if see_all.
+	(cover_area): Test side->see_all instead of g_see_all.
+	(new_doctrine): Ensure new doctrine has unique id.
+	(clone_doctrine): Comment out, never used.
+	* unit.c (set_unit_side): Remove adjust of numlive.
+	(find_unit_name): Remove, unused and useless.
+	(num_occupants, num_units_at, get_x_property_by_name): Comment
+	out, never used.
+	* write.c: Cosmetic improvements.
+	* conq.h, unit.h: Update to reflect movements.
+----------------------------
+revision 1.19
+date: 2000/07/30 13:06:43;  author: ronne;  state: Exp;  lines: +0 -19
+Cache research and build vectors, make ai resignation optional.
+----------------------------
+revision 1.18
+date: 2000/07/23 13:55:03;  author: shebs;  state: Exp;  lines: +10 -21
+	Increase unit ids to 32 bits in size.
+	* unit.h (Unit id): Declare as int instead of short.
+	(UnitView id): Ditto.
+	(Action actee, args): Ditto.
+	(Task args): Ditto.
+	* history.h (HistEvent data): Ditto.
+	(PastUnit id): Ditto.
+	* world.h (Area user): Ditto.
+	* tkconq.h (Map curunit_id, argunitid): Ditto.
+	* xtconq.h (Map argunitid): Ditto.
+	* plan.c (make_plausible_random_args): Declare args arg as int.
+	* task.c (do_approach_subtask): Declare statep arg as int.
+	* unit.c (create_unit): Add note about id overflow.
+----------------------------
+revision 1.17
+date: 2000/05/31 16:00:33;  author: shebs;  state: Exp;  lines: +48 -55
+	* combat.c (model_1_attack): Use set_unit_origside.
+	* kernel.h, unit.c (set_unit_side, set_unit_origside): Make return
+	void.
+	* kpublic.h: Remove unused decls.
+----------------------------
+revision 1.16
+date: 2000/05/09 16:55:13;  author: ronne;  state: Exp;  lines: +6 -0
+Fix crashing bug in shortest_unique_name.
+----------------------------
+revision 1.15
+date: 2000/04/17 15:43:30;  author: shebs;  state: Exp;  lines: +22 -11
+	* keyword.def (vanish): New keyword.
+	* utype.def (encounter-result): New property.
+	* combat.c (model_1_attack): Use it.
+	* lisp.c (choose_from_weighted_list): Add a warning.
+	* unit.c (change_unit_type): Make work for changing to
+	an advanced unit.
+
+	* civ2.g: Add village encounter results.
+----------------------------
+revision 1.14
+date: 2000/04/06 13:09:12;  author: shebs;  state: Exp;  lines: +14 -29
+	* game.h (for_all_border_types, for_all_connection_types): Move
+	to here from supply.c.
+	* generic.c (first_bord_type, next_bord_type, first_conn_type,
+	next_conn_type): New globals.
+	* world.c (count_terrain_subtypes): Calculate values for these.
+	* supply.c (optimize_terrain): Remove, no longer needed.
+	* move.c, nlang.c, ps.c, run.c, task.c, ui.c, unit.c, macrow.c:
+	Use the macros everywhere.
+	* nlang.c (linear_desc): Comment out info about directions.
+	(location_desc): Attach linear desc to terrain name only.
+	* ui.c (toggle_user_at): Add error messages for failures.
+----------------------------
+revision 1.13
+date: 2000/04/02 23:32:57;  author: shebs;  state: Exp;  lines: +19 -1
+	* run2.c (run_auto_repair): Let occupants do repairs.
+	* unit.c (add_to_unit_hp): Move to here from run2.c.
+----------------------------
+revision 1.12
+date: 2000/03/12 20:17:00;  author: shebs;  state: Exp;  lines: +18 -30
+	* unit.h (has_acp_left): Test against 0 instead of acp-min.
+	* unit.c (change_unit_type): Make side change to indepside
+	instead of NULL.
+----------------------------
+revision 1.11
+date: 1999/12/01 04:14:44;  author: shebs;  state: Exp;  lines: +7 -8
+	* nlang.c (size_desc): New function.
+	* run.c (run_construction): Handle missing unit plan.
+	(allocate_used_cells): Use main city cell for free, test for
+	independence correctly.
+	* run2.c (run_side_research): New function.
+	(run_turn_start): Call it.
+	* side.h (Side research_topic): New field.
+	* side.c (create_side): Set it.
+	(set_side_research): New function.
+	* ui.c (oneliner): Describe usage of cell.
+	* unit.c (has_advance_to_build): Remove type if obsolete.
+----------------------------
+revision 1.10
+date: 1999/11/10 03:10:31;  author: shebs;  state: Exp;  lines: +18 -9
+	* side.c (side_sees_unit): Remove commented-out code.
+	* ui.c (unit_visible): Add designer case.
+	* unit.c (designer_teleport): Use change_cell to move, add
+	explicit updates for observers.
+----------------------------
+revision 1.9
+date: 1999/10/30 14:41:46;  author: shebs;  state: Exp;  lines: +0 -2
+        * combat.c (mobile_enemy_thread): Use side_sees_image instead of
+        unit_actually_visible.
+        * run.c (auto_pick_new_build_task, etc): Ditto.
+        * task.c: Ditto.
+        * side.c (side_sees_unit): Add side->see_all case, remove
+        designer and debugging cases.
+        (side_sees_image): Error if NULL side, add view-matching case.
+        * ui.c (unit_actually_visible): Comment out.
+        (unit_visible, occupants_visible): New function.
+        (cell_terrain): Remove, fold code into oneliner.
+        (oneliner): Test vp->show_all.
+        * ui.h: Declare new functions.
+
+        * conq.h (gameinited, warnings_logged): Declare.
+        (add_remote_players, etc): Ditto.
+        * cmd.c, cmdline.h, init.c, read.c, read2.c, side.c, unit.c,
+        util.c: Remove unneeded decls.
+        * misc.h (log_warning): Declare.
+----------------------------
+revision 1.8
+date: 1999/10/26 15:32:09;  author: shebs;  state: Exp;  lines: +12 -10
+        Reorganize see-all handling, add separate concept of show-all
+        that only affects display.
+        * side.h (Side show_all): New field.
+        (Side may_set_show_all): Rename from may_set_see_all.
+        * ui.h (VP show_all): Rename from see_all.
+        * init.c (init_all_views): Use new field, don't set all_see_all.
+        * actions.c, ai.c. combat.c, mplayer.c, nlang.c, plan.c, ps.c,
+        read.c, run.c, run2.c, score.c, side.c, side.h, ui.c, unit.c,
+        write.c: Use g_see_all() or side->see_all instead of all_see_all,
+        side->may_set_show_all instead of side->may_set_see_all.
+        * macconq.c, macdesign.c, macmap.c, macmouse.c, macrow.c: Ditto.
+        * tkcmd.c, tkmain.c, tkmap.c: Ditto.
+        * xcmd.c, xmap.c, xtmain.c: Ditto.
+        * run.c (end_the_game): Set side->show_all.
+        * side.c (become_designer, become_nondesigner): Ditto.
+
+        * tkcmd.c (aux_design, really_do_design): Call set_show_all and
+        update_show_all_info.
+        * tkconq.tcl (may_set_show_all): Rename from may_set_see_all.
+        (default_map_options): New global array, use everywhere instead
+        of map_options.
+        (map_options): Index by map widget also.
+        (update_view_controls_info): Don't set may_set_show_all.
+        (update_show_all_info, update_show_all): New procs.
+        * tkinit.c (init_display): Update show_all info.
+        * tkmain.c (update_turn_display): Set show_all.
+        * tkmap.c (m_terrain_visible, m_units_visible): New macros, use
+        everywhere.
+        (set_show_all): New function.
+
+        * combat.c (do_overrun_action): Fix call to do_fire_at_action
+        to not shoot at self(!).
+
+        * side.c (paint_view_1): Add special case to do exact view.
+
+        * unix.c (score_file_pathname): Look for env var XCONQ_SCORES
+        instead of XCONQSCORES.
+
+        * tkconq.h (UI told_outcome): Remove, never used.
+        * tkmain.c (told_outcome): Make static local.
+        * tkconq.tcl (disable_move_mode): New proc.
+        (popup_game_over_dialog): Use it.
+        (popup_design_palette): Add view painting button.
+        (make_view_paint_frame): New proc.
+        (make_terrain_paint_frame): Increase size of terrain samples.
+        (make_people_paint_frame, make_control_paint_frame): Turn on
+        people/control display in all maps.
+        * tkinit.c (init_bitmaps): Add paint_view bitmap.
+        * tkmap.c (handle_designer_mouse_down, paint_on_drag): Rewrite
+        view painting.
+----------------------------
+revision 1.7
+date: 1999/10/25 23:11:05;  author: ronne;  state: Exp;  lines: +3 -3
+Clean out more NULL side stuff.
+----------------------------
+revision 1.6
+date: 1999/10/25 21:10:41;  author: ronne;  state: Exp;  lines: +1 -6
+Clean out NULL side stuff, fix some bugs.
+----------------------------
+revision 1.5
+date: 1999/10/24 11:20:10;  author: ronne;  state: Exp;  lines: +2 -8
+Add new indepside code, fix various bugs.
+----------------------------
+revision 1.4
+date: 1999/08/21 12:16:39;  author: shebs;  state: Exp;  lines: +15 -20
+        Eliminate still more warnings.
+        * cmd.c, help.c, history.c, mknames.c, mkterr.c, mkunits.c,
+        nlang.c, read.c, read2.c, score.c, side.c, supply.c, tp.c, ui.c,
+        unit.c, unit.h, world.c, write.c: Remove PARAMS usages, remove
+        unused variables, add missing function decls, comment out unused
+        functions, etc.
+        * obstack.h (obstack_begin): Add parameter types to fn pointer.
+        * mknames.c (propose_unit_name): Fix "junky" naming method.
+        * read.c (find_unit_spec_by_name, find_unit_spec_by_number):
+        Use PARSE_PROPERTY_RETURN instead of PARSE_PROPERTY.
+        * score.c (all_sides_draw): Assign result of add_side_to_set.
+        * side.c: Include ai.h.
+----------------------------
+revision 1.3
+date: 1999/07/03 12:44:13;  author: ronne;  state: Exp;  lines: +4 -74
+Clean up file, remove old change markers.
+----------------------------
+revision 1.2
+date: 1999/06/01 19:40:08;  author: shebs;  state: Exp;  lines: +111 -16
+Tue Jun  1 18:41:59 1999  Hans Ronne  <ronne@bmc.uu.se>
+	* combat.c, conq.h, game.h, help.c, init.c, keyword.def,
+ 	mkunits.c, move.c, mplayer.c, plan.def, read.c, run.c, run2.c,
+ 	score.c, side.h, supply.c, table.def, ui.c, unit.c, unit.h,
+ 	utype.def, world.c, world.h, write.c, maccmd.c, maccolors.c,
+ 	macconq.h, macdefs.h, macdraw.c, macinit.c. maclist.c, macmap.c,
+ 	macmenus.c, macmouse.c, macprefs.c, macrow.c. macwins.c: Remove
+ 	old change markers.
+	* actions.c (transfer_supply): Disable use of indepside treasury.
+	(do_create_in_action): Make separate call to has_advance_to_build.
+	(do_create_in_action): Use the builders stash of cps if allowed.
+	(do_create_in_action): Fix null side treasury crashes.
+	(check_create_common): Make separate call to has_advance_to_build.
+	(check_create_common): Fix null side treasury crashes.
+	(set_created_unit_props): Turn on automation for indeps & AI
+ 	controlled sides.
+	(do_create_at_action): Make separate call to has_advance_to_build.
+	(do_create_at_action): Use the builders stash of cps if allowed.
+	(do_create_at_action): Fix null side treasury crashes.
+	(make_unit_complete): Fix null actionvector crashes at turn zero.
+	(do_transfer_part_action): Make separate call to
+ 	has_advance_to_build.
+	(check_change_type_action): Add separate call to
+ 	has_advance_to_build.
+	* ai.c (numaitypes): Move to config.h to make it globally
+ 	accessible.
+	(set_side_ai): Turn on automation for indeps & AI controlled
+ 	sides.
+	(ai_update_plan): New function.
+	(goal_truth): Handle GOAL_UNIT_OCCUPIED and GOAL_COLONIZE.
+	(ai_init_shared): Call set_u_is_ground_mobile etc.
+	(ai_init_shared): Set u_colonizer.
+	(ai_init_shared): Call set_u_offensive_worth etc.
+	(ai_init_shared): Set u_naval_mobile, u_ground_mobile and
+ 	u_facility.
+	(offensive_worth): New function.
+	(defensive_worth): New function.
+	(exploring_worth): New function.
+	(colonizing_worth): New function.
+	(facility_worth): New function.
+	(siege_worth): New function.
+	(random_worth): New function.
+	(set_u_offensive_worth): New function.
+	(set_u_defensive_worth): New function.
+	(set_u_explorer_worth): New function.
+	(set_u_colonizer_worth): New function.
+	(set_u_facility_worth): New unction.
+	(set_u_random_worth): New function.
+	(set_u_siege_worth): New function.
+	(set_u_is_ground_mobile): New function.
+	(set_u_is_naval_mobile): New function.
+	(set_u_is_air_mobile): New function.
+	(set_u_is_advanced): New function.
+	(set_u_is_colonizer): New function.
+	(set_u_is_facility): New function.
+	* ai.h (a_ai_op): Add (*to_update_plan).
+	(ai_update_plan): Prototype new function.
+	(offensive_worth, defensive_worth, etc): New prototype.
+	* combat.c (do_overrun_action): Make ovverun after fire possible.
+	(check_overrun_action): Make overrun after fire & into empty cell
+ 	possible.
+	(do_fire_at_action): Use SideMask code to handle fire display.
+	(do_fire_at_action): Permit attempt to capture after fire from
+ 	adjacent cell.
+	(do_fire_into_action): Use SideMask code to handle fire display.
+	(maybe_hit_unit): Support uu_cellwide_protection_against.
+	(maybe_hit_unit): Support uu_cellwide_protection_for.
+	(maybe_hit_unit): Use SideMask code to handle hit display.
+	(maybe_hit_unit): Fix occupant recursion bug.
+	(attempt_to_capture_unit): Support uu_cellwide_protection_against.
+	(attempt_to_capture_unit): Support uu_cellwide_protection_for.
+	(detonate_on_cell): Use for_all_stack_with_occs instead of
+ 	for_all_stack.
+	(can_capture_directly): New function.
+	(type_can_capture_directly): New function.
+	(type_can_carry): New function.
+	(occ_can_defend_transport): New function.
+	* config.h (MAXATYPES): Increase to 254.
+	(numaitypes): Move here from ai.c to make it globally accessible.
+	* conq.h (advanced_utypes etc): Remove.
+	(numadv etc): Remove.
+	(can_extract_at): Prototype.
+	(can_load_at): Prototype.
+	(can_capture_directly): Prototype.
+	(type_can_capture_directly): Prototype.
+	(type_can_carry): Prototype.
+	(occ_can_defend_transport): Prototype.
+	(has_advance_to_build): Prototype.
+	(unit_actually_visible): New prototype.
+	* game.h (for_all_advanced_utypes, etc): Remove.
+	* goal.def (GOAL_UNIT_OCCUPIED, GOAL_COLONIZE): New goals.
+	* gvar.def (g_default_runlength): New name for
+ 	g_ai_build_runlength.
+	(g_disable_standard_economy): New gvar.
+	(g_disband_unfinished_units): New gvar.
+	(g_salvage_unfinished_cps): New gvar.
+	(g_salvage_unfinished_materials): New gvar.
+	(g_ai_advanced_unit_separation): New gvar.
+	(g_ai_badtask_remove_chance): New gvar.
+	(g_ai_badtask_max_retries): New gvar.
+	(g_ai_badtask_reserve_chance): New gvar.
+	(g_units_may_go_into_reserve): New gvar.
+	(g_units_may_go_to_sleep): New gvar.
+	* help.c (may_detonate): Prototype.
+	(describe_utype): Make display of Material Handling conditional.
+	(describe_utype): Add "None" option to required advances code.
+	(u_property_desc, etc): Add spaces after commas to permit new
+ 	lines.
+	(append_help_phrase): Add more dashes and an extra linefeed.
+	* imf.c (interp_image): Disable palette run warning on the Mac.
+	* init.c (advanced_utypes etc): Remove.
+	(final_init): Remove call to setup_utype_vectors.
+	(setup_utype_vectors): Remove function.
+	* kernel.h (go_after_captive): New prototype.
+	(attack_can_damage_or_capture): New prototype.
+	(fire_can_damage_or_capture): New prototype.
+	(real_capture_chance): New prototype.
+	* keyword.def (K_AUTOPLAN): New keyword.
+	(K_CP_STASH): New keyword.
+	* kpublic.h (net_resume_build_task): New extern prototype.
+	* mac.c: Include MacTypes.h ifdef NEW_HEADERS, else include
+ 	Types.h.
+	* mkunits.c (make_countries): Add separate call to
+ 	has_advance_to_build.
+	(place_unit): Add separate call to has_advance_to_build.
+	* move.c (do_move_action): Fix u2->nu2 typo & remove nu2
+ 	declaration.
+	(do_enter_action): Fix u2->nu2 typo & remove nu2 declaration.
+	* mplayer.c: Include kernel.h.
+	(assign_to_defend_unit): Prototype new function.
+	(assign_to_defend_cell): Prototype new function.
+	(assign_to_defend_vicinity): Prototype new function.
+	(mplayer_update_plan): Prototype new function.
+	(defended_by_occupants): Prototype new function.
+	(mplayer_ops): Add mplayer_update_plan.
+	(update_unit_plans_randomly): Support g_units_may_go_into_reserve.
+	(update_unit_plans_randomly): Support g_units_may_go_to_sleep.
+	(mplayer_decide_plan): Skip for advanced units.
+	(mplayer_decide_plan): Use u_colonizer_worth instead of
+ 	u_colonizer.
+	(mplayer_update_plan): New function.
+	(need_this_type_to_build_explorers): Check that we can build the
+ 	desired type.
+	(assign_to_colonize): Rewrite. Use GOAL_COLONIZE and
+ 	PLAN_COLONIZING.
+	(assign_to_improve): Clear task agenda and set NULL goal.
+	(type_can_build_attackers): Check that we can build the desired
+ 	type.
+	(type_can_build_colonizers): Add separate call to
+ 	has_advance_to_build.
+	(type_can_build_colonizers): Use u_colonizer_worth instead of
+ 	u_colonizer.
+	(preferred_build_type): Also count enemy occs by using
+ 	for_all_stack_with_occs.
+	(preferred_build_type): Add separate call to has_advance_to_build.
+	(preferred_build_type): Use u_colonizer_worth instead of
+ 	u_colonizer.
+	(defended_by_occupants): New function.
+	(assign_to_defense): Rewrite. Handle defense of units.
+	(assign_to_defend_unit): New function.
+	(assign_to_defend_cell): New function.
+	(assign_to_defend_vicinity): New function.
+	(assign_to_defend_theater): New function.
+	(mplayer_adjust_plan): Skip for advanced units.
+	(mplayer_adjust_plan): Add PLAN_COLONIZING & PLAN_IMPROVING.
+	(mplayer_adjust_plan): Support g_units_may_go_into_reserve.
+	(build_base_for_self): Check that we can build the desired type.
+	(build_base_for_others): Check that we can build the desired type.
+	(build_depot_for_self): Check that we can build the desired type.
+	(rethink_plan): Support g_units_may_go_into_reserve.
+	* plan.c: (execute_plan): Skip for advanced units.
+	(execute_plan): Mark obsolete try code.
+	(execute_plan): Support g_units_may_go_into_reserve.
+	(execute_plan): Call ai_update_plan before execution.
+	(plan_offense): Handle GOAL_UNIT_OCCUPIED and GOAL_CELL_OCCUPIED.
+	(plan_offense): Support g_units_may_go_into_reserve.
+	(plan_offense): Support g_units_may_go_to_sleep.
+	(self_build_base_for_self): Check that we can build the desired
+ 	type.
+	(plan_offense_support): Check that we can build the desired type.
+	(plan_defense): Handle GOAL_UNIT_OCCUPIED and GOAL_CELL_OCCUPIED.
+	(plan_defense): Call go_after_victim also for unit that can fire.
+	(plan_defense): Use u_ai_tactical_range.
+	(plan_defense): Support g_units_may_go_into_reserve.
+	(plan_colonize): Rewrite. Use GOAL_COLONIZE.
+	(plan_colonizer_support): Add separate call to
+ 	has_advance_to_build (2 times).
+	(plan_colonizer_support): Use u_colonizer_worth instead of
+ 	u_colonizer.
+ 	(plan_improve): Add separate call to has_advance_to_build (2
+ 	times).
+ 	(good_cell_to_colonize): Rewrite. Check for presence of other
+ 	unit.  Check size goal for ALL advanced utypes. Remove check for
+ 	nearby enemy units.
+	(plan_exploration): Support g_units_may_go_into_reserve.
+	(plan_exploration): Handle GOAL_UNIT_OCCUPIED and
+ 	GOAL_CELL_OCCUPIED.
+	(plan_exploration): Support g_units_may_go_to_sleep.
+	(plan_explorer_support): Check that we can build the desired type.
+	(victim_here): Also count with damage by fire and damage to occs.
+	(victim_here): Give large size units higher rating.
+	(victim_here): Give independent units lower rating.
+	(victim_here): Give units that threaten our advanced units higher
+ 	rating.
+	(go_after_captive): New function.
+	(target_here): Also count with damage by fire and damage to occs.
+	(target_here): Give large size units higher rating.
+	(target_here): Give independent units lower rating.
+	(target_here): Give units that threaten our advanced units higher
+ 	rating.
+ 	(capture_indep_if_nearby): Use u_ai_tactical_range.
+ 	(capture_useful_if_nearby): Use u_ai_tactical_range.
+	* read.c (interp_unit): Restore code where ids start at 1 instead
+ 	of 0.
+	(interp_unit): Add K_CP_STASH & K_AUTOPLAN.
+	* run.c (unit_plan_dialog): New extern prototype.
+	(net_resume_build_task): New extern prototype.
+	(has_advance_to_research): New prototype.
+	(select_by_weight): Prototype extern.
+	(unit_build_dialog): Change prototype so that it returns int.
+	(has_advance_to_build): Remove prototype.
+	(create_selected_unit): Remove function and prototype.
+	(auto_pick_new_plan): New function and prototype.
+	(set_new_build_task): Remove function and prototype.
+	(run_advanced_units): Enable run_construction for UNIX again.
+	(run_population): Fix indepside crashes.
+	(run_construction): Completely rewritten & extensively debugged.
+	(auto_pick_new_research): Rewrite so that random task is picked.
+	(auto_pick_new_build_task): Rewrite. Call auto_pick_new_plan.
+	(auto_pick_new_plan): New function.
+	* run2.c (vary_winds): Prototype.
+	(update_area_display): Prototype extern.
+	(run_turn_start): Check g_disable_standard_economy.
+	* side.c (update_area_display): Prototype extern.
+	(create_side): Fix toggle AI bug by initializing
+ 	newside->prefixarg.
+	(side_controls_unit): Give debuggers full control.
+	(side_sees_unit): Include trusted side, debuggers, g_peek_at_enemy
+ 	and endofgame.
+	* side.h (has_advance): Fix null side crashes.
+	* table.def (uu_builder_can_reuse_cp): New table.
+	(uu_cellwide_protection_against): New table.
+	(uu_cellwide_protection_for): New table.
+	* task.c (attack_can_damage_or_capture): Move prototype to
+ 	kernel.h.
+	(do_hit_unit_task): Count with fire and capture at pointblank
+ 	range.
+	(do_hit_unit_task): Fix firing range bug.
+	(do_hit_unit_task): Move in to capture if unit is undefended.
+	(attack_can_damage_or_capture): Do attack if occ can be damaged.
+	(fire_can_damage): Do attack if occ can be damaged.
+	(fire_can_damage_or_capture):New function.
+	(real_capture_chance): New function.
+	(execute_task): Support g_ai_badtask_remove_chance.
+	(execute_task): Support g_ai_badtask_max_retries.
+	(execute_task): Support g_ai_badtask_reserve_chance.
+	(execute_task): Support g_units_may_go_into_reserve.
+	(set_build_task): Rewrite. Optionally disband any salvage
+ 	unfinished unit.
+	(push_build_task): Rewrite. Optionally disband any salvage
+ 	unfinished unit.
+	(set_occupy_task): New function.
+	* tp.c (net_resume_build_task): New function (prototyped in
+ 	kpublic.h).
+	* ui.c: Include MacTypes.h ifdef NEW_HEADERS, else include
+ 	Types.h.
+	(xform_cell): Move core calculations to new function
+ 	xform_cell_flat.
+	(xform_cell_flat): New function.
+	(xform_cell_fractional_flat): New function.
+	(favored_type): Check that we can build the desired type.
+	* ui.h (xform_cell_flat, xform_cell_fractional_flat): New
+ 	prototypes.
+	* unit.c (default_size): Change from 0 to 1.
+	(has_advance_to_build): Remove prototype.
+	(create_unit): Initialize unit->autoplan.
+	(create_unit): Initialize unit->cp_stash.
+	(can_carry): Check for u_facility_total_max & u_mobile_total_max.
+	(type_can_occupy): Check for u_facility_total_max &
+ 	u_mobile_total_max.
+	(type_allowed_on_side): Remove call to has_advance_to_build.
+	(set_unit_side): Turn on autobuild & autoresearch if side is under
+ 	AI control.
+	* unit.h (a_unit): Add unit->cp_stash.
+	(a_unit): Add unit->autoplan.
+	(for_all_occs_with_occs): Define new macro.
+	(type_ever_available): Prototype extern.
+	* utype.def (u_offensive_worth): New utype property.
+	(u_defensive_worth): New utype property.
+	(u_explorer_worth): New utype property.
+	(u_colonizer_worth): New utype property.
+	(u_facility_worth): New utype property.
+	(u_random_worth): New utype property.
+	(u_siege_worth): New utype property.
+	(u_offensive): Change default from 1 to 0.
+	(u_explorer): Change default from 1 to 0.
+	(u_besieger): New utype property.
+	(u_ship): New utype property.
+	(u_ground): New utype property.
+	(u_air): New utype property.
+	(u_facility_total_max): New utype property.
+	(u_mobile_total_max): New utype property.
+	(u_ai_min_defenders) : Ner utype property.
+	(u_ai_tactival_range): New utype property.
+	* world.c (latlong_to_xy): Fix meridian drawing bug.
+	* world.h (cell_is_within_n_steps): Rename to
+ 	cell_is_within_range.
+	(for_all_cells_within_n_steps): Rename to
+ 	for_all_cells_within_range.
+	(for_all_stack_with_occs): Define new macro.
+	* write.c (write_area_users): Change so that nextid starts at 1
+ 	instead of 0.
+	(write_units): Restore old code so that nextid starts at 1 instead
+ 	of 0.
+	(write_unit_properties): Add K_AUTOPLAN & K_CP_STASH.
+	* macadv.c: (MAX_DISPLAYED_FACS): New macro constant.
+	(MAX_DISPLAYED_OCCS): New macro constant.
+	(CLEAR_AGENDA): New macro constant.
+	(unit_build_dialog): Change prototype.
+	(has_advance_to_build): Remove prototype.
+	(create_selected_unit): Remove prototype.
+	(copy_rect_from_gworld): New function and prototype.
+	(city_dialog): Rewrite. Many bug fixes and improvements.
+	Most important ones:  Add conditional call to draw_unit_info.
+	Use backcolor to draw region outside the area in the city map.
+	Use copy_rect_from_gworld to do the offscreen graphics.
+	Disable all auto checkboxes when dside is under AI control.
+	Check that unit has a plan. Add new Plan Type popup menu.
+	Add new Autoplan checkbox. Add new AI control checkbox.
+	Split occupant panel into facilities and garrison panels.
+	Fix runlength bug and limit it to CLEAR_AGENDA.
+	Call net_clear_task_agenda & net_set_unit_asleep for idle units.
+	Add separate call to has_advance_to_build.
+	(draw_city_statistics): Rewrite. Many bug fixes and improvements.
+	Most important ones: Add drawing of unit icon.
+	Fix sporadic name bug by call to side_adjective.
+	Fix parenthesis bug in construction status field.
+	Fix crashing bug in occupant display code.
+	Use u_facility_worth instead of !mobile to identify facilities.
+	Add AI control info text field.	 Add new facilities and garrison
+	panels.
+	Fix bugs in construction status.
+	Use white background color with unit icons.
+	Add cps to occupant names when debugging.
+	(draw_landuse_near_unit): Rename macro to for_all_cells_within_range.
+	(unit_build_dialog): Rewrite. Many bug fixes. return int instead
+	of *unit.
+	Add separate call to has_advance_to_build.
+	(unit_plan_dialog): New function and prototype.
+	(global_advance_dialog): Fix autoresearch bug.
+	Fix crashes due to incorrect oldprojects[] array size.
+	Move SetPort call to position after conditional return.
+	Fix sporadic name bug by two calls to side_adjective.
+	* maccmd.c (do_set_view_angle): Only set vertscale if given a
+ 	valid prefixarg.
+	* maccolors.c (default_draw_ai): Initialize to TRUE.
+	(alert_256_colors): Initialize to TRUE.
+	* macconq.c (main): Move check_screen_depths after get files and
+ 	make conditional.
+	(update_area_display): Prototype extern. Add Side parameter.
+	* macconq.h: Include MacWindows.h ifdef NEW_HEADERS, else include
+ 	Windows.h.
+	(a_map): Add map->draw_ai.
+	(default_draw_ai): New extern.
+	(alert_256_colors): New extern.
+	(xform_fractional): Move prototype here.
+	(xform_flat): New prototype.
+	(xform_fractional_flat): New prototype.
+	* macdefs.h: (mPlanTypePopup): New menu.
+	(miPlanTypeColonizing): New menu item.
+	(miPlanTypeImproving): New menu item.
+	(miPlanTypeRandom): New menu item.
+	(diPrefsAIRegions): New dialog item.
+	(diPrefs256colors): New dialog item.
+	(dCity): All dialog items renumbered and renamed.
+	(dPlan): New dialog with 3 dialog items.
+	* macdraw.c (draw_unit_image): Rewrite. Support sidecolors in
+ 	closeups etc.
+	(draw_unit_image): Restore colors BEFORE calling gray_out_rect (2
+ 	times).
+	(draw_unit_image): Fix emblem bug due to new emblem_position code.
+	* maclist.c (create_list): Use GetNewCWindow if hasColorQD.
+	(draw_unit_list_entry): Fix task_desc prototype error.
+	* macmap.c (xform_fractional): Move prototype to macconq.h.
+	(xform_flat): New function.
+	(xform_fractional_flat): New function.
+	(adjust_latlong_interval): New function and prototype.
+	(create_map): Use default_draw_ai.
+	(create_map): Call adjust_latlong_interval.
+	(set_map_power): Call adjust_latlong_interval.
+	(set_map_angle): Compute a suitable vertscale.
+	(draw_meridians): Fix sporadic longitude top error.
+	(draw_meridians): Call xform_fractional_flat instead of
+ 	xform_fractional.
+	(draw_selections_at): Fix (x,y) bug.
+	(draw_selected_unit): Draw enemy units in red.
+	(draw_selection_animation): Draw enemy units in red.
+	(update_cell): Make DestRect larger to include row below.
+	(update_cell): Use UNWRAP_RECT for meridians & feature names.
+	* macmenus.c: (all_ai_ops): Prototype extern for use in
+ 	build_ai_type_menu.
+	(query_position_modally): Unselect all selected units outside our
+ 	control.
+	(do_closeup_mi): Prototype extern for use in ctrl-clicking of
+ 	unit.
+	(build_ai_type_menu): Load AIs dynamically to the menu.
+	(do_menu_command): Add support for dynamically loaded AIs.
+	(do_menu_command): Support PLAN_COLONIZING & PLAN_IMPROVING.
+	(apply_to_all_selected): Don't apply to selected units that we
+ 	don't control.
+	(do_closeup_mi): Remove static declaration.
+	(adjust_menus): Add support for dynamically loaded AIs.
+	(adjust_menus): Don't enable commands for enemy unit closeups.
+	(enable_commands_for_unit): Support PLAN_COLONIZING &
+ 	PLAN_IMPROVING.
+	(enable_commands_for_unit): Fix menu number bug that disables More
+ 	menu items.
+	* macmouse.c (do_closeup_mi): Prototype extern for use in
+ 	ctrl-clicking of unit.
+	(do_mouse_down_map_content): Disable move and fire cmds for
+ 	selected enemy units.
+	(do_mouse_down_map_content): Rewrite ctrl-clicking code using
+ 	side_sees_unit.  Call do_closeup_mi if ctrl-clicking non-advanced
+ 	unit, else call city_dialog.
+	(select_all_units_in_rect): Always permit this if side_sees_unit.
+	* macprefs.c (interp_mac_ui_data): Support default_draw_ai &
+ 	alert_256_colors.
+	(ui_update_state): Support default_draw_ai & alert_256_colors.
+	(set_preferences): Add case diPrefsAIRegions & diPrefs256colors.
+	(set_preferences): Support default_draw_ai & alert_256_colors.
+	(add_preferences_topic_items): Support default_draw_ai &
+ 	alert_256_colors.
+	* macrow.c (draw_cliffs): Fix ouside-area crashes.
+	(draw_contours): Trigger unwrapping 1 hex from right edge.
+	(draw_gridlines): Trigger unwrapping 1 hex from right edge.
+	(draw_shorelines): Trigger unwrapping 1 hex from right edge.
+	(draw_feature_boundary_simple): Trigger unwrapping 1 hex from
+ 	right edge.
+	* macwins.c (closeupwinwid): Change to 340.
+	(init_construction_lists): Add separate call to
+ 	has_advance_to_build.
+	(adjust_construction_controls): Check that we can build the
+ 	desired type.
+	(side_rename_dialog): Fix colorscheme bug.
+	(preferred_closeup_size): Add 4 pixels at bottom.
+	(draw_unit_closeup): Make sure this is the selected unit on all
+ 	maps.
+	(draw_unit_closeup): Optionally permit peeking at enemy units.
+	(draw_unit_closeup): Fix duplicate goal_desc problem.
+	(draw_unit_closeup): Align goal_desc and remove flanking junk.
+	(draw_unit_closeup): Align task_desc and write "Task".
+	(do_mouse_down_unit_closeup): Make sure this is the selected unit
+ 	on all maps.
+	(destroy_unit_closeup): Make sure this is the selected unit on all
+ 	maps.
+	* XconqProj.rsrc: (DITL 803 "City"): Extensively modified.
+	(DITL 702 "Preferences Map Items"): Add AI regions checkbox.
+	(DITL 704 "Preferences Offscreen Items"): Add recommend 256 colors
+ 	checkbox.
+	(DITL 804 "City Research"): Minor changes.
+	(DITL 805 "Global Science"): Minor changes.
+	(DITL 807 "City Build"): Minor changes.
+	(DITL 808 "City Plan"): New dialog item list.
+	(DLOG 808 "City Plan"): New dialog.
+	(MENU 206 "AI Types"): Remove static AI items.
+	(MENU 249 "Plan Types"): Restore damaged resource. Add 3 new
+ 	items.
+	* Xconq.r: Update from XconqProj.rsrc.
+	* xconq.c (unit_build_dialog): Rewrite. Fix argument error.
+	(unit_plan_dialog): New function.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:35;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

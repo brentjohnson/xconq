@@ -1,0 +1,540 @@
+dnl ### GNU autoconf template for Xconq.
+dnl ### Copyright (C) 1992-1995, 1997, 1999, 2000 Stanley T. Shebs.
+dnl ### Copyright (C) 2003-2005 Eric A. McDonald.
+dnl ### Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.57)
+AC_INIT([Xconq],[7.5.0],[xconq-players@lists.sourceforge.net])
+AC_CONFIG_AUX_DIR([pkg])
+
+AC_CONFIG_HEADERS([kernel/acdefs.h:kernel/acdefs.h.in])
+
+AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
+
+AC_ARG_PROGRAM
+
+AC_PROG_EGREP
+
+dnl ## This blows up if there is no C++ compiler. What should be done?
+AC_PROG_CXX
+AC_PROG_CXXCPP
+
+dnl ## Version numbers and strings.
+XCONQ_VERSION_MAJOR=7
+XCONQ_VERSION_MINOR=5
+XCONQ_VERSION_REVISION=0
+dnl ## Release levels can be 0pre, which signifies CVS snapshots and release 
+dnl #  candidates. Release levels 1 and higher are considered stable.
+XCONQ_VERSION_RELEASELVL="0pre"
+dnl ## Prerelease levels can be which signifies CVS snapshots. Prerelease 
+dnl #  levels 1 and higher are considered to be release candidates.
+XCONQ_VERSION_PRERELEASELVL=0
+XCONQ_VERSION_DATE=0
+case "$host" in
+    *-*-cygwin*|*-*-mingw32*|*-gnu) XCONQ_VERSION_DATE=`date --utc +%Y%m%d` ;;
+    *) ;;
+esac
+XCONQ_VERSION_MAIN="${XCONQ_VERSION_MAJOR}.${XCONQ_VERSION_MINOR}.${XCONQ_VERSION_REVISION}"
+XCONQ_VERSION_RELEASE="${XCONQ_VERSION_RELEASELVL}"
+if test "x0pre" = "x${XCONQ_VERSION_RELEASELVL}"; then
+    XCONQ_VERSION_RELEASE="${XCONQ_VERSION_RELEASE}.${XCONQ_VERSION_PRERELEASELVL}"
+    if test "x0" = "x${XCONQ_VERSION_PRERELEASELVL}"; then
+	XCONQ_VERSION_RELEASE="${XCONQ_VERSION_RELEASE}.${XCONQ_VERSION_DATE}"
+    fi
+fi
+XCONQ_VERSION_FULL="${XCONQ_VERSION_MAIN}-${XCONQ_VERSION_RELEASE}"
+XCONQ_VERSION_FULL_UNDERSCORED=`echo "${XCONQ_VERSION_FULL}" | sed 's/\./_/g'`
+
+AC_CACHE_SAVE
+
+dnl ## Set the compile test lang to C++.
+AC_LANG(C++)
+
+dnl ## Find some other very handy tools.
+AC_PROG_RANLIB
+AC_PROG_INSTALL
+AC_CHECK_TOOL(AR, ar)
+
+dnl ## Where is 'dirent.h' or its equivalent?
+AC_HEADER_DIRENT
+
+dnl ## What integer sizes are we dealing with?
+AC_CHECK_SIZEOF(int)
+AC_CHECK_SIZEOF(long)
+AC_CHECK_SIZEOF([long long])
+
+AC_CACHE_SAVE
+
+dnl ## See if the old bundled 'tcl' and 'tk' dirs are around, and attempt
+dnl ##  to configure them if they are.
+if test -d $srcdir/tcl -a -d $srcdir/tk; then
+  AC_CONFIG_SUBDIRS(tcl tk)
+fi
+
+dnl ## Find and load the Tcl and Tk configurations.
+CY_AC_PATH_TCLCONFIG
+CY_AC_LOAD_TCLCONFIG
+CY_AC_PATH_TKCONFIG
+CY_AC_LOAD_TKCONFIG
+
+dnl ## Find 'sdl-config' and load SDL configuration.
+AM_PATH_SDL(1.2.0)
+
+dnl ## Find 'freetype-config' and load FreeType2 configuration.
+dnl AC_CHECK_FT2(9.3.0)
+
+dnl ## Find 'paragui-config' and load ParaGUI configuration.
+dnl AM_PATH_PARAGUI(1.0.4)
+
+dnl ## Configure X11 related variables.
+AC_PATH_X
+if test "x$x_includes" != "x"; then
+    XINCLUDES=-I$x_includes
+else
+    XINCLUDES="# no special path needed"
+fi
+if test "x${x_libraries}" != "x"; then
+    XLIBS=-L$x_libraries
+else
+    XLIBS="# no special path needed, or else NONE"
+fi
+
+dnl ## All the makefiles that this config script must set up.
+makefiles="Makefile doc/Makefile kernel/Makefile lib/Makefile images/Makefile misc/Makefile tcltk/Makefile test/Makefile curses/Makefile sdl/Makefile" 
+
+dnl ## All the versioned files that have their version info updated by the 
+dnl #  config script.
+versioned_files="kernel/version.h pkg/xconq.spec pkg/xconq.nsi"
+
+dnl ## Force ANSI compliance on systems using a GNU C++ compiler. 
+dnl if test "x$GXX" = "xyes" ; then
+dnl   CXXFLAGS="$CXXFLAGS -ansi"
+dnl fi
+
+dnl ## Backup the preprocessor and compiler flags before starting the tests.
+save_CPPFLAGS="$CPPFLAGS"
+save_CFLAGS="$CFLAGS"
+save_CXXFLAGS="$CXXFLAGS"
+
+dnl ## Uncomment the line below to test failure conditions.
+dnl CPPFLAGS="-nostdinc"
+
+dnl ## Needed for some of the header tests.
+if test "x$x_includes" != "x"; then
+   CPPFLAGS="$CPPFLAGS $XINCLUDES"
+   CFLAGS="$CFLAGS $XINCLUDES"
+fi
+
+dnl ## ActiveTcl and MinGW32 Tcl/Tk have an incomplete native Windows 
+dnl ##   X11 implementation, and we need to fill it out with some dummy 
+dnl ##   functions.
+case "$host" in
+  *-*-cygwin*|*-*-mingw32*)
+    AC_DEFINE(NEED_XLIB_XSETTILE,)
+    AC_DEFINE(NEED_XLIB_XFLUSH,)
+    AC_DEFINE(NEED_XLIB_XSYNCHRONIZE,)
+    ;;
+  *) ;;
+esac
+
+dnl ## Find headers containing 'struct timeval' and 'struct timezone'.
+have_sys_time_h="no"
+AC_MSG_CHECKING([for <sys/time.h>])
+AC_TRY_CPP([#include <sys/time.h>],[have_sys_time_h="yes"])
+AC_MSG_RESULT(${have_sys_time_h})
+have_time_h="no"
+AC_MSG_CHECKING([for <time.h>])
+AC_TRY_CPP([#include <time.h>],[have_time_h="yes"])
+AC_MSG_RESULT(${have_time_h})
+have_winsock_h="no"
+AC_MSG_CHECKING([for <winsock.h>])
+AC_TRY_CPP([#include <winsock.h>],[have_winsock_h="yes"])
+AC_MSG_RESULT(${have_winsock_h})
+
+dnl ## Look for 'struct timeval' in any headers found above.
+have_struct_timeval="no"
+AC_MSG_CHECKING([for struct timeval])
+if test "x${have_struct_timeval}" = "xno" -a "x${have_sys_time_h}" = "xyes";
+then
+    AC_EGREP_HEADER([struct timeval],[sys/time.h],[have_struct_timeval="yes"])
+fi
+if test "x${have_struct_timeval}" = "xno" -a "x${have_time_h}" = "xyes"; then
+    AC_EGREP_HEADER([struct timeval],[time.h],[have_struct_timeval="yes"])
+fi
+if test "x${have_struct_timeval}" = "xno" -a "x${have_winsock_h}" = "xyes"; then
+    AC_EGREP_HEADER([struct timeval],[winsock.h],[have_struct_timeval="yes"])
+fi
+if test "x${have_struct_timeval}" = "xno" ; then
+  AC_DEFINE(NEED_STRUCT_TIMEVAL,)
+fi
+AC_MSG_RESULT(${have_struct_timeval})
+
+dnl ## Look for 'struct timezone' in any headers found above.
+have_struct_timezone="no"
+AC_MSG_CHECKING([for struct timezone])
+if test "x${have_struct_timezone}" = "xno" -a "x${have_sys_time_h}" = "xyes";
+then
+    AC_EGREP_HEADER([struct timezone],[sys/time.h],[have_struct_timezone="yes"])
+fi
+if test "x${have_struct_timezone}" = "xno" -a "x${have_time_h}" = "xyes"; then
+    AC_EGREP_HEADER([struct timezone],[time.h],[have_struct_timezone="yes"])
+fi
+if test "x${have_struct_timezone}" = "xno" ; then
+  AC_DEFINE(NEED_STRUCT_TIMEZONE,)
+fi
+AC_MSG_RESULT(${have_struct_timezone})
+
+dnl ## Figure out if Cconq can be built.
+CCONQ_PRECHECK=""
+have_curses_h="no"
+AC_MSG_CHECKING([for <curses.h>])
+AC_TRY_CPP([#include <curses.h>],[have_curses_h="yes"])
+AC_MSG_RESULT(${have_curses_h})
+have_ncurses_h="no"
+AC_MSG_CHECKING([for <ncurses.h>])
+AC_TRY_CPP([#include <ncurses.h>],[have_ncurses_h="yes"])
+AC_MSG_RESULT(${have_ncurses_h})
+if test "x${have_curses_h}" = "xno" -a "x${have_ncurses_h}" = "xno" ; then
+  CCONQ_PRECHECK="cconq-fail"
+fi
+
+dnl ## Figure out which curses lib to link against.
+CURSES_LIB=""
+case "$host" in
+  *-*-mingw32*)
+    possible_dirs="/mingw/lib /lib/mingw /usr/lib/mingw /lib /usr/lib"
+    possible_dirs="${possible_dirs} ../lib ../curses"
+    ;;
+  *)
+    possible_dirs="/lib /usr/lib /usr/local/lib /opt/lib /opt/local/lib"
+    possible_dirs="${possible_dirs} /opt/share/lib ../lib ../curses"
+    ;;
+esac
+for d in ${possible_dirs}; do
+    AC_CHECK_FILE([$d/libpdcurses.a],[have_pdcurses_lib="yes"],
+		  [have_pdcurses_lib="no"])
+    if test "x${have_pdcurses_lib}" = "xyes"; then break; fi
+    AC_CHECK_FILE([$d/libncurses.a],[have_ncurses_lib="yes"],
+		  [have_ncurses_lib="no"])
+    if test "x${have_ncurses_lib}" = "xyes"; then break; fi
+    AC_CHECK_FILE([$d/libcurses.a],[have_curses_lib="yes"],
+		  [have_curses_lib="no"])
+    if test "x${have_curses_lib}" = "xyes"; then break; fi
+done
+if test "x${have_curses_lib}" != "xyes" -a "x${have_ncurses_lib}" != "xyes" \
+    -a "x${have_pdcurses_lib}" != "xyes"; then
+  CCONQ_PRECHECK="cconq-fail"
+fi
+if test "x${have_ncurses_lib}" = "xyes"; then
+  CURSES_LIB="-lncurses"
+  AC_DEFINE(HAVE_NCURSES_LIB,)
+elif test "x${have_curses_lib}" = "xyes"; then
+  CURSES_LIB="-lcurses"
+  AC_DEFINE(HAVE_CURSES_LIB,)
+elif test "x${have_pdcurses_lib}" = "xyes"; then
+  CURSES_LIB="-lpdcurses"
+  AC_DEFINE(HAVE_PDCURSES_LIB,)
+fi
+
+dnl ## Restore C preprocessor and compiler flags.
+CPPFLAGS="${save_CPPFLAGS}"
+CFLAGS="${save_CFLAGS}"
+CXXFLAGS="${save_CXXFLAGS}"
+
+dnl ## Backup linker flags and libraries.
+save_LDFLAGS="$LDFLAGS"
+save_LIBS="$LIBS"
+
+dnl ## Uncomment the line below to test failure conditions.
+dnl LDFLAGS="-nostdlib"
+
+dnl ## Check for the existence of the 'gettimeofday' function.
+have_gettimeofday="no"
+AC_MSG_CHECKING(for gettimeofday)
+AC_TRY_LINK([
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include <time.h>
+#include <sys/time.h>
+#ifdef __cplusplus
+}
+#endif],[
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+],[have_gettimeofday="yes"],[have_gettimeofday="no"])
+if test "x${have_gettimeofday}" = "xno" ; then
+  AC_DEFINE(NEED_GETTIMEOFDAY,)
+fi
+AC_MSG_RESULT(${have_gettimeofday})
+
+dnl ## Restore linker flags and libraries.
+CFLAGS="${save_CFLAGS}"
+LDFLAGS="${save_LDFLAGS}"
+LIBS="${save_LIBS}"
+
+dnl ## Setup standard platform flags for all interfaces.
+case "${host}" in
+*-*-cygwin*|*-*-mingw32*)
+	if test "x${x_libraries}" != "xNONE"; then
+	    makefiles="$makefiles x11/SelFile/Makefile x11/Makefile"
+	fi
+	HFLAGS="${HFLAGS} -mwin32"
+	HOBJS="win32.o socket.o"
+	PLATFORM_CFLAGS='$(ALL_WIN32_CFLAGS)' 
+	PLATFORM_INCLUDES='$(ALL_WIN32_INCLUDES)'
+	PLATFORM_LDFLAGS='$(ALL_WIN32_LDFLAGS)'
+	PLATFORM_LIBS='$(ALL_WIN32_LIBS)'
+	PLATFORM_XCONQ_OBJS='$(WIN32_XCONQ_OBJS)'
+	PLATFORM_IMFAPP_OBJS='$(WIN32_IMFAPP_OBJS)'
+	PLATFORM_XCONQ_TARGETS='$(WIN32_XCONQ_TARGETS)'
+	PLATFORM_IMFAPP_TARGETS='$(WIN32_IMFAPP_TARGETS)'
+	PLATFORM_ALL_TARGETS='$(WIN32_ALL_TARGETS)'
+	PLATFORM_INSTALL_TARGETS='$(WIN32_INSTALL_TARGETS)'
+dnl	W32API_LIBS="-lwsock32"
+        WIN32_COMMON_LIBS='$(KERNEL_LIB) $(LOW_LIB) $(MISSING_LIB)'
+        WIN32_COMMON_TARGETS="kernel-lib low-lib"
+	;;
+*)
+	AC_DEFINE(UNIX,)
+	makefiles="$makefiles x11/SelFile/Makefile x11/Makefile"
+	HFLAGS="${HFLAGS}"
+	HOBJS="unix.o socket.o"
+	PLATFORM_CFLAGS='$(ALL_UNIX_CFLAGS)' 
+	PLATFORM_INCLUDES='$(ALL_UNIX_INCLUDES)'
+	PLATFORM_LDFLAGS='$(ALL_UNIX_LDFLAGS)'
+	PLATFORM_LIBS='$(ALL_UNIX_LIBS)'
+	PLATFORM_XCONQ_OBJS='$(UNIX_XCONQ_OBJS)'
+	PLATFORM_IMFAPP_OBJS='$(UNIX_IMFAPP_OBJS)'
+	PLATFORM_XCONQ_TARGETS='$(UNIX_XCONQ_TARGETS)'
+	PLATFORM_IMFAPP_TARGETS='$(UNIX_IMFAPP_TARGETS)'
+	PLATFORM_ALL_TARGETS='$(UNIX_ALL_TARGETS)'
+	PLATFORM_INSTALL_TARGETS='$(UNIX_INSTALL_TARGETS)'
+	;;
+esac
+
+dnl ## Choose an appropriate Windows subsystem, when relevant.
+WIN32_GUI_SUBSYS_FLAG=""
+WIN32_CUI_SUBSYS_FLAG=""
+case "${host}" in
+*-*-mingw32*)
+	W32API_LIBS="-lwsock32"
+	WIN32_GUI_SUBSYS_FLAG="-mwindows"
+	WIN32_CUI_SUBSYS_FLAG="-mconsole"
+        ;;
+*) ;;
+esac
+
+dnl ## Process the 'enable-build-warnings' config switch.
+build_warnings=""
+AC_ARG_ENABLE(build-warnings,
+[  --enable-build-warnings      Enable additional build-time warnings],
+[case "${enableval}" in
+yes)	if test "x$GXX" = "xyes"; then
+	    build_warnings="-Wall -Wstrict-prototypes -Wmissing-prototypes" 
+dnl	    build_warnings="${build_warnings} -Wdeclaration-after-statement"
+dnl	    build_warnings="${build_warnings} -Wshadow"
+dnl	    build_warnings="${build_warnings} -Wmissing-declarations"
+dnl build_warnings="${build_warnings} -Werror-implicit-function-declaration"
+	else
+	    echo "Proper warning switches are not known for your compiler."
+	fi
+	;;
+no)	build_warnings="" ;;
+*)	AC_MSG_ERROR(bad value ${enableval} for build-warnings option) ;;
+esac])
+HFLAGS="$HFLAGS ${build_warnings}"
+
+dnl ## Process the 'enable-debugging' config switch.
+if test "x$GXX" = "xyes"; then
+  debugging="-g"
+else
+  debugging=""
+fi
+AC_ARG_ENABLE(debugging,
+[  --enable-debugging          Enable debugging],
+[case "${enableval}" in
+yes)	if test "x$GXX" = "xyes"; then
+	    debugging="-g" 
+	else
+	    echo "Proper debugging switches are not known for your compiler."
+	fi
+	;;
+no)	if test "x$GXX" = "xyes"; then
+	    debugging="-g0"
+	else
+	    echo "Proper debugging switches are not known for your compiler."
+	fi
+	;;
+*)	AC_MSG_ERROR(bad value ${enableval} for debugging option) ;;
+esac])
+HFLAGS="$HFLAGS ${debugging}"
+
+dnl ## Process the 'enable-build-optimizations' config switch.
+build_optimizations=""
+AC_ARG_ENABLE(build-optimizations,
+[  --enable-build-optimizations Enable additional build-time optimizations],
+[case "${enableval}" in
+yes)	if test "x$GXX" = "xyes"; then
+	    build_optimizations="-O2" 
+	else
+	    echo "Proper optimization switches are not known for your compiler."
+	fi
+	;;
+no)	build_optimizations="" ;;
+*)	AC_MSG_ERROR(bad value ${enableval} for build-optimizations option) ;;
+esac])
+HFLAGS="$HFLAGS ${build_optimizations}"
+
+dnl ## Process the 'enable-profiling' config switch.
+profiling=""
+AC_ARG_ENABLE(profiling,
+[  --enable-profiling       Enable profiling support],
+[case "${enableval}" in
+yes)	if test "x$GXX" = "xyes"; then
+	    profiling="-pg" 
+	else
+	    echo "Proper profiling switches are not known for your compiler."
+	fi
+	;;
+no)	profiling="" ;;
+*)	AC_MSG_ERROR(bad value ${enableval} for profiling option) ;;
+esac])
+HFLAGS="$HFLAGS ${profiling}"
+
+dnl ## Process the 'enable-release-build' config switch.
+release_build=""
+AC_ARG_ENABLE(release-build,
+[  --enable-release-build    Configure to build a release],
+[case "${enableval}" in
+yes)	if test "x$GXX" = "xyes"; then
+	    release_build="-O2 -s" 
+	else
+echo "Proper release build switches are not known for your compiler."
+	fi
+	;;
+no)	release_build="" ;;
+*)	AC_MSG_ERROR(bad value ${enableval} for release-build option) ;;
+esac])
+HFLAGS="$HFLAGS ${release_build}"
+
+dnl ## Process the 'enable-default-ui' config switch.
+UI_TARGET=tkconq
+TKCONQ_EXEC_NAME=tkconq
+CCONQ_EXEC_NAME=cconq
+SDLCONQ_EXEC_NAME=sdlconq
+AC_ARG_ENABLE(default-ui,
+[  --enable-default-ui=UI    Choose a default UI to make (default: tcltk)
+                             (choices: tcltk,sdl,curses,xtxaw)],
+[case "${enableval}" in
+tcltk|TclTk|TCLTK|tkconq|TkConq|TKCONQ)
+	UI_TARGET=tkconq
+        TKCONQ_EXEC_NAME=xconq
+        ;;
+curses|Curses|CURSES|cconq|Cconq|CCONQ)
+	UI_TARGET=cconq
+        CCONQ_EXEC_NAME=xconq
+        ;;
+sdl|Sdl|SDL|sdlconq|SdlConq|SDLCONQ)
+	UI_TARGET=sdlconq
+        SDLCONQ_EXEC_NAME=xconq
+        ;;
+yes|Yes|YES|no|No|NO)
+	AC_MSG_ERROR([ui option: must specify one of tcltk,sdl,curses,xtxaw]) ;;
+*)	AC_MSG_ERROR(ui option: unknown UI: ${enableval}) ;;
+esac])
+if test "x${UI_TARGET}" = "xtkconq" ; then
+    TKCONQ_EXEC_NAME=xconq
+fi
+
+dnl ## Process the 'enable-alternate-scoresdir' config switch.
+dnl ## Application data file path recommended by FHS 2.1.
+scoresdir=/var/lib/xconq/scores
+AC_ARG_ENABLE(alternate-scoresdir,
+[  --enable-alternate-scoresdir=DIR   Use dir for scores
+                                      (default: /var/lib/xconq/scores)],
+[case "${enableval}" in
+yes)	AC_MSG_ERROR(Need path for --enable-alternate-scoresdir) ;;
+no)	AC_MSG_ERROR(Need path for --enable-alternate-scoresdir) ;;
+*)	scoresdir=${enableval} ;;
+esac])
+AC_DEFINE_UNQUOTED(XCONQSCORES,"$scoresdir")
+AC_SUBST(scoresdir)
+
+dnl ## Process the 'enable-alternate-gameuser' config switch.
+gameuser=games
+AC_ARG_ENABLE(alternate-gameuser,
+[  --enable-alternate-gameuser=USER   Install game as user (default: games)],
+[case "${enableval}" in
+yes)	AC_MSG_ERROR(Need user for --enable-alternate-gameuser) ;;
+no)	AC_MSG_ERROR(Need user for --enable-alternate-gameuser) ;;
+*)     gameuser=${enableval} ;; 
+esac])
+
+dnl ## Process the 'enable-alternate-gamegroup' config switch.
+gamegrp=bin
+AC_ARG_ENABLE(alternate-gamegroup,
+[  --enable-alternate-gamegroup=GROUP Install game as group (default: bin)],
+[case "${enableval}" in
+yes)	AC_MSG_ERROR(Need group for --enable-alternate-gamegroup) ;;
+no)	AC_MSG_ERROR(Need group for --enable-alternate-gamegroup) ;;
+*)     gamegrp=${enableval} ;; 
+esac])
+
+dnl SDLUI_LIB="../sdl/libsdlui.a"
+dnl AC_SUBST(SDLUI_LIB)
+dnl AC_SUBST(SDL_LIB)
+
+HFLAGS="$HFLAGS -DHAVE_ACDEFS_H"
+
+xconq_data_dir="$datadir/xconq"
+AC_SUBST(xconq_data_dir)
+dnl xconq_data_path=`eval echo ${xconq_data_dir}`
+dnl AC_DEFINE_UNQUOTED(XCONQDATA, "${xconq_data_path}")
+
+AC_SUBST(UI_TARGET)
+AC_SUBST(TKCONQ_EXEC_NAME)
+AC_SUBST(CCONQ_EXEC_NAME)
+AC_SUBST(XTCONQ_EXEC_NAME)
+AC_SUBST(SDLCONQ_EXEC_NAME)
+
+AC_SUBST(gameuser)
+AC_SUBST(gamegrp)
+AC_SUBST(XINCLUDES)
+AC_SUBST(XLIBS)
+
+AC_SUBST(HFLAGS)
+AC_SUBST(HOBJS)
+AC_SUBST(PLATFORM_CFLAGS)
+AC_SUBST(PLATFORM_INCLUDES)
+AC_SUBST(PLATFORM_LDFLAGS)
+AC_SUBST(PLATFORM_LIBS)
+AC_SUBST(PLATFORM_XCONQ_OBJS)
+AC_SUBST(PLATFORM_IMFAPP_OBJS)
+AC_SUBST(PLATFORM_XCONQ_TARGETS)
+AC_SUBST(PLATFORM_IMFAPP_TARGETS)
+AC_SUBST(PLATFORM_ALL_TARGETS)
+AC_SUBST(PLATFORM_INSTALL_TARGETS)
+AC_SUBST(W32API_LIBS)
+AC_SUBST(WIN32_GUI_SUBSYS_FLAG)
+AC_SUBST(WIN32_CUI_SUBSYS_FLAG)
+AC_SUBST(WIN32_COMMON_LIBS)
+AC_SUBST(WIN32_COMMON_TARGETS)
+AC_SUBST(CCONQ_PRECHECK)
+AC_SUBST(CURSES_LIB)
+
+dnl ## Version substitutions.
+AC_SUBST(XCONQ_VERSION_MAJOR)
+AC_SUBST(XCONQ_VERSION_MINOR)
+AC_SUBST(XCONQ_VERSION_REVISION)
+AC_SUBST(XCONQ_VERSION_RELEASELVL)
+AC_SUBST(XCONQ_VERSION_PRERELEASELVL)
+AC_SUBST(XCONQ_VERSION_DATE)
+AC_SUBST(XCONQ_VERSION_MAIN)
+AC_SUBST(XCONQ_VERSION_RELEASE)
+AC_SUBST(XCONQ_VERSION_FULL)
+AC_SUBST(XCONQ_VERSION_FULL_UNDERSCORED)
+
+AC_OUTPUT($makefiles)
+AC_OUTPUT(${versioned_files})

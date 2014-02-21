@@ -1,0 +1,87 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/parambox.h,v
+Working file: parambox.h
+head: 1.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.2
+	BPT_EMCDONALD_AI_15: 1.2
+	SS_7_5_0_0pre_0_20050612: 1.2
+	BPT_MSKALA_IMF_3: 1.2
+	BPT_MSKALA_SUPPLY_12: 1.2
+	BPT_EMCDONALD_AI_14: 1.2
+	MPT_EMCDONALD_AI_7: 1.2
+	BPT_EMCDONALD_AI_13: 1.2
+	SS_7_5_0_0pre_0_20050501: 1.2
+	BPT_EMCDONALD_AI_12: 1.2
+	MPT_EMCDONALD_AI_6: 1.2
+	BPT_EMCDONALD_AI_11: 1.2
+	SS_7_5_0_0pre_0_20050416: 1.2
+	BPT_EMCDONALD_AI_10: 1.2
+	MPT_EMCDONALD_AI_5: 1.2
+	BPT_EMCDONALD_AI_9: 1.2
+	BPT_EMCDONALD_AI_8: 1.2
+	MPT_EMCDONALD_AI_4: 1.2
+	BPT_EMCDONALD_AI_7: 1.2
+	MPT_EMCDONALD_AI_3: 1.2
+	BPT_EMCDONALD_AI_6: 1.2
+	BPT_MSKALA_SUPPLY_11: 1.2
+	BPT_EMCDONALD_AI_5: 1.2
+	MPT_EMCDONALD_AI_2: 1.2
+	SS_7_5_0_0pre_0_20050322: 1.2
+	BPT_MSKALA_SUPPLY_10: 1.2
+	BPT_EMCDONALD_AI_4: 1.2
+	MPT_EMCDONALD_AI_1: 1.2
+	BPT_EMCDONALD_AI_3: 1.2
+	BPT_MSKALA_SUPPLY_9: 1.2
+	MPT_MSKALA_SUPPLY_3: 1.2
+	BPT_EMCDONALD_AI_2: 1.2
+	BPT_MSKALA_SUPPLY_8: 1.2
+	MPT_MSKALA_SUPPLY_2: 1.2
+	BPT_MSKALA_SUPPLY_7: 1.2
+	BRANCH_EMCDONALD_AI: 1.2.0.4
+	BPT_EMCDONALD_AI_1: 1.2
+	BPT_MSKALA_SUPPLY_6: 1.2
+	SS_7_5_0_0pre_0_20050225: 1.2
+	BPT_MSKALA_SUPPLY_5: 1.2
+	MPT_MSKALA_SUPPLY_1: 1.2
+	BPT_MSKALA_SUPPLY_4: 1.2
+	BPT_MSKALA_SUPPLY_3: 1.2
+	BPT_MSKALA_SUPPLY_2: 1.2
+	SS_7_5_0_0pre_0_20050208: 1.2
+	BPT_MSKALA_IMF_2: 1.2
+	BRANCH_MSKALA_SUPPLY: 1.2.0.2
+	BPT_MSKALA_SUPPLY_1: 1.2
+	SS_7_5_0_0pre_0_20050117: 1.1
+	SS_7_5_0_0pre_0_20050108: 1.1
+	SS_7_5_0_0pre_0_20041228: 1.1
+	BRANCH_MSKALA_IMF: 1.1.0.2
+	BPT_MSKALA_IMF_1: 1.1
+	SS_7_5_0_0pre_0_20041211: 1.1
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1.2
+date: 2005/01/23 02:40:47;  author: eric_mcdonald;  state: Exp;  lines: +1 -0
+Unimplement 'last-regular-side-wins' as separate scorekeeper.
+Instead, just make the 'applies-to' property meaningful.
+Another implementation of Lisp boolean evaluator that uses parameter boxes.
+New parambox for sides.
+----------------------------
+revision 1.1
+date: 2004/12/04 22:24:00;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.2;
+Fix building of KWIC pogram with C++ compiler.
+Refine and expand "parambox" system for search functions that take predicates.
+Two new versions of 'search_around' that use paramboxen.
+Begin a namespace for Xconq vars outside of function scope.
+Revise 'see_cell' code. (NOTE: This is not perfected yet.)
+Fix to 3rd Age game. (Thanks to Kevin O'Gorman for reporting the bug.)
+----------------------------
+revision 1.1.2.1
+date: 2005/01/28 03:35:59;  author: eric_mcdonald;  state: Exp;  lines: +1 -0
+Merge in trunk changes between BPT_MSKALA_IMF_1 and BPT_MSKALA_IMF_2.
+=============================================================================

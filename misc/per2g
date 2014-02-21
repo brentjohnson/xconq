@@ -1,0 +1,431 @@
+#!/usr/local/bin/perl
+# eval 'exec /usr/local/bin/perl -S $0 ${1+"$@"}'
+# 	if $running_under_some_shell;
+
+require "getopts.pl";
+&Getopts('o:');
+# die "Usage: per2g [-o outfile] [infile]\n" if @ARGV > 1;
+
+#
+# Get stdout set up and the default module name
+#
+if ( $opt_o ) {
+    #
+    # If they give us an output file name, open it
+    # and use it as the module name (minus path and extension).
+    #
+    open(STDOUT, ">$opt_o") || die "Couldn't open $opt_o for output: $!\n";
+    ($m = $opt_o) =~ s#(.*/)?(.*)\.g$#$2#;
+} elsif (@ARGV) {
+    #
+    # If they give us an input file,
+    # use it as the output file name (minus path and extension plus .g)
+    # and use it as the module name (minus path and extension).
+    #
+    ($m = $ARGV[0]) =~ s#(.*/)?(.*)\.per$#$2#;
+    unless ( -e "$m.g" ) {
+	open(STDOUT, ">$m.g") || die "Couldn't open $m.g for output: $!\n";
+    }
+} else {
+    #
+    # OK, we got nothin', output is stdout and module name is junk.
+    #
+    $m = 'xxx';
+}
+
+$c_prefix = ';FIXME ';
+
+%drop = (
+    'attrition-damage',		1,
+    'dark',			1,
+    'discipline-effect',	1,
+    'first-unit',		1,
+    'first-product',		1,
+    'maker',			1,
+    'named',			1,
+    'neutrality',		1,
+    'random-move',		1,
+    'scale',			1,
+    'nuke-hit',			1,
+    'accident-message',		0,
+    'alt-roughness',		0,
+    'wet-roughness',		0,
+    'attack-worth',		0,
+    'attrition-message',	0,
+    'conceal',			0,
+    'defense-worth',		0,
+    'destroy-message',		0,
+    'disaster-message',		0,
+    'explore-worth',		0,
+    'font-name',		0,
+    'make',			0,
+    'min-region-size',		0,
+    'neutral',			0,
+    'nuked',			0,
+    'research',			0,
+    'siege',			0,
+    'starve-message',		0,
+);
+
+%vars = (
+    'all-seen',			'see-all',
+    'edge-terrain',		'edge-terrain',
+    'country-size',		'country-radius-min',
+    'country-min-distance',	'country-separation-min',
+    'country-max-distance',	'country-separation-max',
+    'spy-chance',		'spy-chance',
+    'spy-quality',		'spy-quality',
+);
+
+%props = (
+    'already-seen',		'already-seen',
+    'always-seen',		'see-always',
+    'changes-side',		'acp-to-change-side',
+    'hold-volume',		'capacity',
+    'hp',			'hp-max',
+    'in-country',		'start-with',
+    'max-alt',			'alt-percentile-max',
+    'max-wet',			'wet-percentile-max',
+    'min-alt',			'alt-percentile-min',
+    'min-wet',			'wet-percentile-min',
+    'revolt',			'revolt-chance',
+    'see-best',			'vision-at-max-range',
+    'see-range',		'vision-at',
+    'see-worst',		'vision-range',
+    'self-destruct',		'acp-to-detonate',
+    'territory',		'point-value',
+    'max-quality',		'cxp-max',
+    'skill-effect',		'cxp-hit-effect',
+    'discipline-effect',	'cxp-hit-effect',
+);
+
+%tables = (
+    'accident',			'accident-hit-chance',
+    'disaster',			'accident-vanish-chance',
+    'alter-mobility',		'mp-per-occupant',
+    'attrition',		'attrition',
+    'bridge',			'ferry-on-entry',
+    'capacity',			'occupant-max',
+    'capture',			'capture-chance',
+    'consume',			'base-consumption',
+    'damage',			'damage',
+    'defense',			'defend-terrain-effect',
+    'enter-time',		'mp-to-enter-unit',
+    'favored',			'favored-terrain',
+    'hit',			'hit-chance',
+    'hit-by',			'hit-by',
+    'hits-with',		'consumption-per-attack',
+    'in-length',		'in-length',
+    'leave-time',		'mp-to-leave-unit',
+    'moves',			'mp-to-enter-terrain',
+    'out-length',		'out-length',
+    'produce',			'base-production',
+    'productivity',		'productivity',
+    'protect',			'protection',
+    'repair',			'hp-per-repair',
+    'stockpile',		'supply-on-completion',
+    'storage',			'unit-storage-x',
+    'to-make',			'material-to-build',
+    'to-move',			'consumption-per-move',
+);
+
+%lists = (
+    'can-counter',		'acp-to-defend',
+    'can-disband',		'hp-per-disband',
+    'combat-time',		'acp-to-attack',
+    'consume-as-occupant',	'consumption-as-occupant',
+    'crippled',			'hp-at-min-speed',
+    'density',			'independent-density',
+    'occupant-produce',		'occupant-base-production',
+    'retreat',			'withdraw-chance-per-attack',
+    'speed',			'speed',
+    'startup',			'tp-to-build',
+    'surrender',		'surrender-chance',
+    'survival',			'hp-per-starve',
+    'visibility',		'visibility',
+    'volume',			'unit-size-as-occupant',
+);
+
+%comments = (
+    'attack-worth',	"dunno if this is still useful for AIs",
+    'defense-worth',	"dunno if this is still useful for AIs",
+    'explore-worth',	"dunno if this is still useful for AIs",
+    'min-region-size',	"dunno if this is still useful for AIs",
+    'alt-roughness',	"this is broken into alt-blob-size, etc. etc.",
+    'wet-roughness',	"this is broken into wet-blob-size, etc. etc.",
+    'accident',		"accident is U T -> .01N chance that an accident happens to U\n; and you can set accident-damage",
+    'acp-to-defend',	"acp-to-defend is U1 U2 -> ACP, set to 0 to disable counter-attacks",
+    'attrition',	"attrition is U T -> .01HP (rate of loss, hp/turn)",
+    'bridge',		"ferry-on-entry is U1 U2 -> FTYPE how much terrain U2 crosses to board U1",
+    'can-disband',	"hp-per-disband is U1 U2 -> HP lost in a disband action performed by U2\n; you might add U1 acp-to-disband U2 as well, U1 U2 -> ACP",
+    'capacity',		"occupant-max is U1 U2 -> N upper limit on occupants by type",
+    'combat-time',	"acp-to-attack U1 U2 -> ACP for U1 to attack U2",
+    'conceal',		"conceal is now visibility, you should subtr these numbers from that table",
+    'crippled',		"in addition you can set hp-to-repair and other things to cripple a unit",
+    'hold-volume',	"capacity is N, upper limit on total occupants by size",
+    'make',		"make is replaced by acp-to-create, cp-per-build and friends",
+    'moves',		"moves is mp-to-{enter|leave}-terrain U T -> MP",
+    'nuked',		"I guess nuked is damaged-terrain now, T1 T2 -> N",
+    'occupant-produce',	"occupant-base-production is U M -> N of M that U produces as occupant",
+    'repair',		"hp-per-repair is U1 U2 -> .01HP that U1 restores to U2 per repair action\n; ...and you have to add...\n; acp-to-repair is U1 U2 -> ACP to do one repair action",
+    'research',		"this is handled by tech level and research now...",
+    'retreat',		"U1 U2 -> % that U2 withdraws before U1 attacks",
+    'see-best',		"vision-at is N, coverage afforded by unit in its own hex",
+    'see-worst',	"vision-at-max-range is N, coverage afforded by unit at max range",
+    'speed',		"don't forget to add acp-per-turn for non-movers!",
+    'spy-chance',	"spy-chance is now on a per unit basis...\n; and spy-range specifies how far a unit can spy",
+    'spy-quality',	"spy-quality is U1 U2 -> % that U1 returns info about U2",
+    'startup',		"tp-to-build is U1 U2 -> TP that U1 needs before building U2\n; you also need UnitProperty acp-to-toolup and Table tp-per-toolup",
+    'stockpile',	"this used to be % now it is a raw number.",
+    'surrender',	"surrender is U1 U2 -> .01N chance that U1 surrenders to U2\n; and surrender-range is distance at which it can occur",
+    'survival',		"survival is now hp-per-starve U M -> HP",
+    'visibility',	"visibility is U T -> N, U's % visibility in T",
+    'volume',		"unit-size-as-occupant is U1 U2 -> N U1's size as occupant of U2",
+);
+
+$\ = "\n";		# automatically add newline on print
+
+LINE:
+while (<>) {
+    # strip leading/trailing whitespace (and the newline).
+    s/^\s+//;
+    s/\s+$//;
+
+    # transform () to []
+    tr/[]/()/;
+    # change r* (resources) to m* (materials)
+    s/r\*/m*/g;
+
+    # Grab the comment off the end of the line...
+    s/\s*(;.*)$//;
+    $trail = "$1";
+
+    # blank line...
+    unless ( $_ ) {
+	# ...it may be a terminator for sname or uname...
+	print('))'), $in_name = 0 if $in_namer;
+	# ...actually it coulda been a comment.
+	print "$trail";
+	next LINE;
+    }
+
+    if (/^Xconq . [\+-]+ (.*)$/) {
+	# This is the file starter.
+	# Now we KNOW we're in the right kinda file.
+	print qq/(game-module "$m"\n  (blurb "$1")\n)/;
+	next LINE;
+
+    } elsif (/(.*) period-name$/) {
+	print qq/(game-module (title $1))/, ($trail)? "\t$trail" : '';
+	next LINE;
+
+    } elsif ( /Period [01]/ ) {
+	next LINE;
+
+    } elsif ( /begin{notes}/ ) {
+	print("(game-module (notes");
+	++$seen_key{'notes'};
+	while (<>) {
+	    print("))"), last if /end{notes}/;
+	}
+	next LINE;
+
+    } elsif (/\s*"(.)"\s+"(.*)"\s+"(.*)"\s+(.)type$/) {
+	if ( $4 eq 'u' ) {
+	    $u = $1;	# ($u = $2) =~ y/A-Z/a-z/;
+	    $utype{$1} = $u;
+	    if ( $defines{'u*'} ) {
+		$defines{'u*'} .= " $1";
+	    } else {
+		$defines{'u*'} = "$1";
+	    }
+	    print "$trail" if $trail;
+	    print qq/(unit-type $u (name "$2") (char "$1")\n  (help "$3")\n)/;
+	} elsif ( $4 eq 'r' ) {
+	    print qq/(material-type |$2| (help "$3"))/, ($trail)? "\t$trail" : '';
+	} elsif ( $4 eq 't' ) {
+	    print qq/(terrain-type |$2| (char "$1") (color "$3"))/, ($trail)? "\t$trail" : '';
+	}
+	next LINE;
+
+    } elsif (/(.*)\s+(.*)\s+icon-name$/) {
+	print "(add $utype{$2} image-name $1)", ($trail)? "\t$trail" : '';
+	next LINE;
+
+    } elsif (/(.*)\s+"(.*)"\s+define$/) {
+	$defines{$2} = $1;
+	print "(define $2 $1)", ($trail)? "\t$trail" : '';
+	next LINE;
+
+    } elsif (/clear-(\S*)-names$/) {
+	print "(namer $1-names (random", ($trail)? "\t$trail" : '';
+	++$in_namer;
+	next LINE;
+
+    } elsif (/[su]name/) {
+	s/[su]name\s?//g;
+	s/\*/ /g;
+	print;
+	next LINE;
+
+    } elsif (/^end$/) {
+	# ain't no mo...
+	last;
+    }
+
+    #
+    # strip the last word off the line and see if we can
+    # find it in our list of keywords.
+    #
+    split;
+    $key = pop(@_);
+    next LINE if $drop{$key};
+
+    print $c_prefix, $comments{$key} if $comments{$key} && !$seen_key{$key}++;
+
+    if ( $vars{$key} ) {
+	m/^(.*) $key$/;
+
+	# These are special cases that don't quite match
+	# or need additional processing...
+	if ($key eq 'spy-chance') {
+	    local($val) = ($1 eq 'true')? 10 : ($1 eq 'false')? 0 : $1;
+	    print "(add u* $vars{$key} $1)", ($trail)? "\t$trail" : '';
+	    next LINE;
+	} elsif ($key eq 'spy-quality') {
+	    local($val) = ($1 eq 'true')? 10 : ($1 eq 'false')? 0 : $1;
+	    print "(table $vars{$key} (u* u* $1))", ($trail)? "\t$trail" : '';
+	    next LINE;
+	}
+
+	print "(set $vars{$key} $1)", ($trail)? "\t$trail" : '';
+	next LINE;
+
+    } elsif ( $props{$key} ) {
+	m/(^[^ ()]*|\(.*\))\s+([^ ()]*|\(.*\))\s+$key$/;
+	local($val) = ($1 eq 'true')? 1 : ($1 eq 'false')? 0 : $1;
+
+	# These are special cases that don't quite match
+	# or need additional processing...
+	if ($key eq 'revolt') {
+	    push(@random_events, 'units-revolt');
+	}
+
+	print "(add $2 $props{$key} $val)", ($trail)? "\t$trail" : '';
+	next LINE;
+
+    } elsif ( $lists{$key} ) {
+	m/(^[^ ()]*|\(.*\))\s+([^ ()]*|\(.*\))\s+$key$/;
+
+	# @vals = split(/\s+/, ($defines{$1})? $defines{$1} : $1);
+	# @typs = split(/\s+/, ($defines{$2})? $defines{$2} : $2);
+	# shift(@vals), pop(@vals) if @vals[0] eq '(';
+	# shift(@typs), pop(@typs) if @typs[0] eq '(';
+
+	# These are special cases that don't quite match
+	# or need additional processing...
+	if ($key eq 'surrender') {
+	    push(@random_events, 'units-surrender') unless $seen_key{$key}++;
+	} elsif ($key eq 'consume-as-occupant' || $key eq 'survival') {
+	    print "(table $lists{$key} add ($2 m* $1))", ($trail)?"\t$trail":'';
+	    next LINE;
+	} elsif ($key eq 'startup' || $key eq 'retreat') {
+	    print "(table $lists{$key} add (u* $2 $1))", ($trail)?"\t$trail":'';
+	    next LINE;
+	} elsif ($key eq 'can-disband') {
+	    print "; (table $lists{$key} add ($2 u* 100))", ($trail)?"\t$trail":'';
+	    next LINE;
+	} elsif ($key eq 'occupant-produce') {
+	    local($v) = ($1 =~ /true/i)? 1 : 0;
+	    print "(table $lists{$key} add ($2 m* $v))", ($trail)?"\t$trail":'';
+	    next LINE;
+	} elsif ($key eq 'visibility' || $key eq 'density') {
+	    print "(table $lists{$key} add ($2 t* $1))", ($trail)?"\t$trail":'';
+	    next LINE;
+	} elsif ($key eq 'crippled') {
+	    print "(add $2 $lists{$key} $1)";
+	    next LINE;
+	} elsif ($key eq 'speed') {
+	    print "(add $2 acp-per-turn $1)\n(add $2 $lists{$key} 100)";
+	    next LINE;
+	}
+
+	print "(table $lists{$key} add ($2 u* $1))", $trail ? "\t$trail" : '';
+	next LINE;
+
+    } elsif ( $tables{$key} ) {
+	m/^([^ ()]*|\(.*\))\s+([^ ()]*|\(.*\))\s+([^ ()]*|\(.*\))\s+$key$/;
+	local($val) = $1;
+
+	# These are special cases that don't quite match
+	# or need additional processing...
+	if ($key eq 'attrition') {
+	    push(@random_events, 'attrition-in-terrain') unless $seen_key{$key}++;
+	} elsif ($key eq 'accident') {
+	    push(@random_events, 'accidents-in-terrain') unless $seen_key{$key}++;
+	} elsif ($key eq 'bridge') {
+	    $val = 'over-all';
+	} elsif ($key eq 'defense' || $key eq 'protect') {
+	    local(@vals, $i);
+	    $val =~ s/\s*[()]\s*//g;
+	    @vals = split(/\s+/, $val);
+	    foreach $i (@vals) {
+		$i = 100 - $i;
+	    }
+	    $val = join(' ', @vals);
+	    $val =~ s/^(.*)$/($1)/ if @vals > 1;
+	} elsif ($key eq 'moves') {
+	    local(@vals, $i);
+	    $val =~ s/\s*[()]\s*//g;
+	    @vals = split(/\s+/, $val);
+	    foreach $i (@vals) {
+		if ( $i < 0 ) {
+		    $i = 99;
+		} else {
+		    ++$i;
+		}
+	    }
+	    $val = join(' ', @vals);
+	    $val =~ s/^(.*)$/($1)/ if @vals > 1;
+	} elsif ($key eq 'repair') {
+	    print "(table acp-to-repair add ($3 $2 1))";
+	    local(@vals, $i);
+	    if ( $val =~ /[()]/ ) {
+		@vals = split(/\s+/, $val);
+		for ($i = 1; $i < @vals - 1; ++$i) {
+		    if ( @vals[$i] == 0 ) {
+		    	@vals[$i] = 1;
+		    }
+		    @vals[$i] = int(100 / @vals[$i]);
+		}
+		$val = join(' ', @vals);
+	    } else {
+		if ( $val == 0 ) {
+		    $val = 1;
+		}
+		$val = int(100 / $val);
+	    }
+	}
+
+	print "(table $tables{$key} add ($3 $2 $val))", ($trail)?"\t$trail":'';
+	next LINE;
+
+    } elsif ( !defined($drop{$key}) ) {
+	print STDERR "Unknown keyword: $key" unless $unkey{$key}++;
+    }
+
+    # turn everything else into a comment,
+    # so that we don't throw any important bits away.
+    print $c_prefix, $_, ($trail)? "\t$trail" : '';
+}
+
+print "\n;(set random-events (@random_events))" if @random_events;
+
+print "
+(game-module (instructions (
+  )))
+(game-module (design-notes (
+  )))";
+print "(game-module (notes (\n)))" unless $seen_key{'notes'};
+
+exit(0);

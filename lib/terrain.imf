@@ -1,0 +1,1005 @@
+(imf "adv-hills" ((1 1) 38250 43095 14025))
+(imf "adv-steppe" ((1 1) 53040 54825 27795))
+(imf "adv-semi-desert" ((1 1) 62475 53550 39270))
+(imf "adv-desert" ((1 1) 65025 59925 37740))
+(imf "adv-plain" ((1 1) 35700 47940 12495))
+(imf "adv-forest" ((1 1) 17595 30345 10455))
+(imf "adv-mountains" ((1 1) 43350 31365 24255))
+(imf "adv-ice" ((1 1) 57375 62475 63495))
+
+(imf "adv-hills" ((12 13 terrain) (x 8 14 0) (file "advt12x13.gif" std 0 0)))
+(imf "adv-steppe" ((12 13 terrain) (x 8 14 0) (file "advt12x13.gif" std 0 1)))
+(imf "adv-semi-desert" ((12 13 terrain) (x 8 14 0) (file "advt12x13.gif" std 0 2)))
+(imf "adv-desert" ((12 13 terrain) (x 8 14 0) (file "advt12x13.gif" std 0 3)))
+(imf "adv-plain" ((12 13 terrain) (x 8 14 0) (file "advt12x13.gif" std 0 4)))
+(imf "adv-forest" ((12 13 terrain) (x 8 14 0) (file "advt12x13.gif" std 0 5)))
+(imf "adv-mountains" ((12 13 terrain) (x 8 14 0) (file "advt12x13.gif" std 0 6)))
+(imf "adv-ice" ((12 13 terrain) (x 8 14 0) (file "advt12x13.gif" std 0 7)))
+
+(imf "adv-hills" ((24 26 terrain) (x 8 26 0) (file "advt24x26.gif" std 0 0)))
+(imf "adv-steppe" ((24 26 terrain) (x 8 26 0) (file "advt24x26.gif" std 0 1)))
+(imf "adv-semi-desert" ((24 26 terrain) (x 8 26 0) (file "advt24x26.gif" std 0 2)))
+(imf "adv-desert" ((24 26 terrain) (x 8 26 0) (file "advt24x26.gif" std 0 3)))
+(imf "adv-plain" ((24 26 terrain) (x 8 26 0) (file "advt24x26.gif" std 0 4)))
+(imf "adv-forest" ((24 26 terrain) (x 8 26 0) (file "advt24x26.gif" std 0 5)))
+(imf "adv-mountains" ((24 26 terrain) (x 8 26 0) (file "advt24x26.gif" std 0 6)))
+(imf "adv-ice" ((24 26 terrain) (x 8 26 0 terrain) (file "advt24x26.gif" std 0 7)))
+
+(imf "adv-hills" ((44 48 terrain) (x 8 46 0) (file "advt44x48.gif" std 0 0)))
+(imf "adv-steppe" ((44 48 terrain) (x 8 46 0) (file "advt44x48.gif" std 0 1)))
+(imf "adv-semi-desert" ((44 48 terrain) (x 8 46 0) (file "advt44x48.gif" std 0 2)))
+(imf "adv-desert" ((44 48 terrain) (x 8 46 0) (file "advt44x48.gif" std 0 3)))
+(imf "adv-plain" ((44 48 terrain) (x 8 46 0) (file "advt44x48.gif" std 0 4)))
+(imf "adv-forest" ((44 48 terrain) (x 8 46 0) (file "advt44x48.gif" std 0 5)))
+(imf "adv-mountains" ((44 48 terrain) (x 8 46 0) (file "advt44x48.gif" std 0 6)))
+(imf "adv-ice" ((44 48 terrain) (x 8 46 0) (file "advt44x48.gif" std 0 7)))
+
+(imf "adv-hills" ((32 32 tile) (file "advt32x32.gif" 2 2)))
+(imf "adv-steppe" ((32 32 tile) (file "advt32x32.gif" 2 36)))
+(imf "adv-semi-desert" ((32 32 tile) (file "advt32x32.gif" 2 70)))
+(imf "adv-desert" ((32 32 tile) (file "advt32x32.gif" 2 104)))
+(imf "adv-plain" ((32 32 tile) (file "advt32x32.gif" 2 138)))
+(imf "adv-forest" ((32 32 tile) (file "advt32x32.gif" 2 172)))
+(imf "adv-mountains" ((32 32 tile) (file "advt32x32.gif" 2 206)))
+(imf "adv-ice" ((32 32 tile) (file "advt32x32.gif" 2 240)))
+
+(imf "atoll" ((1 1) 0 65535 65535))
+(imf "atoll" ((8 8 tile)
+  (color (pixel-size 2)
+   (palette
+    (0 white)
+    (1 577 43860 60159)
+    (2 22016 11421 1316)
+    (3 16384 16384 16384))
+   "5555/554c/5125/1545/4c55/7615/4555/5555")
+  (mono "ff/fa/d7/7b/af/f7/bf/ff")))
+
+(imf "beach" ((1 1) 61184 56832 29440))
+(imf "beach" ((44 48 border) (file "beach44x48.gif")))
+
+(imf "blackhole" ((1 1) black))
+(imf "blackhole" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 black) (1 black))
+   "ff/ff/ff/ff/ff/ff/ff/ff")
+  (mono "ff/ff/ff/ff/ff/ff/ff/ff")))
+
+(imf "bocage" ((1 1) 6069 35995 5069))
+(imf "bocage" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 7969 46995 5169) (1 black))
+   "22/54/88/25/88/51/2a/94")
+  (mono "22/54/88/25/88/51/2a/94")))
+(imf "bocage" ((12 13 terrain) (x 4 14 0) (file "eur12x13.gif" std 0 1)))
+(imf "bocage" ((24 26 terrain) (x 4 26 0) (file "eur24x26.gif" std 0 1)))
+(imf "bocage" ((44 48 terrain) (x 4 46 0) (file "eur44x48.gif" std 0 1)))
+
+(imf "civ-ocean" ((1 1) 0 39321 65535))
+(imf "civ-ocean" ((12 13 terrain) (x 2 14 0) (file "civt12x13.gif" std 0 0)))
+(imf "civ-ocean" ((24 26 terrain) (x 2 26 0) (file "civt24x26.gif" std 0 0)))
+(imf "civ-ocean" ((44 48 terrain) (x 2 46 0) (file "civt44x48.gif" std 0 0)))
+(imf "civ-swamp" ((1 1) 13107 39321 0))
+(imf "civ-swamp" ((12 13 terrain) (x 2 14 0) (file "civt12x13.gif" std 0 1)))
+(imf "civ-swamp" ((24 26 terrain) (x 2 26 0) (file "civt24x26.gif" std 0 1)))
+(imf "civ-swamp" ((44 48 terrain) (x 2 46 0) (file "civt44x48.gif" std 0 1)))
+(imf "civ-desert" ((1 1) 61184 56832 29440))
+(imf "civ-desert" ((12 13 terrain) (x 2 14 0) (file "civt12x13.gif" std 0 2)))
+(imf "civ-desert" ((24 26 terrain) (x 2 26 0) (file "civt24x26.gif" std 0 2)))
+(imf "civ-desert" ((44 48 terrain) (x 2 46 0) (file "civt44x48.gif" std 0 2)))
+(imf "civ-plains" ((1 1) 206 231 57))
+(imf "civ-plains" ((12 13 terrain) (x 2 14 0) (file "civt12x13.gif" std 0 3)))
+(imf "civ-plains" ((24 26 terrain) (x 2 26 0) (file "civt24x26.gif" std 0 3)))
+(imf "civ-plains" ((44 48 terrain) (x 2 46 0) (file "civt44x48.gif" std 0 3)))
+(imf "civ-grassland" ((1 1) 33 222 8))
+(imf "civ-grassland" ((12 13 terrain) (x 2 14 0) (file "civt12x13.gif" std 0 4)))
+(imf "civ-grassland" ((24 26 terrain) (x 2 26 0) (file "civt24x26.gif" std 0 4)))
+(imf "civ-grassland" ((44 48 terrain) (x 2 46 0) (file "civt44x48.gif" std 0 4)))
+(imf "civ-forest" ((1 1) 0 25775 4528))
+(imf "civ-forest" ((12 13 terrain) (x 2 14 0) (file "civt12x13.gif" std 0 5)))
+(imf "civ-forest" ((24 26 terrain) (x 2 26 0) (file "civt24x26.gif" std 0 5)))
+(imf "civ-forest" ((44 48 terrain) (x 2 46 0) (file "civt44x48.gif" std 0 5)))
+(imf "civ-jungle" ((1 1) 41 165 16))
+(imf "civ-jungle" ((12 13 terrain) (x 2 14 0) (file "civt12x13.gif" std 4 0)))
+(imf "civ-jungle" ((24 26 terrain) (x 2 26 0) (file "civt24x26.gif" std 4 0)))
+(imf "civ-jungle" ((44 48 terrain) (x 2 46 0) (file "civt44x48.gif" std 4 0)))
+(imf "civ-hills" ((1 1) 140 156 8))
+(imf "civ-hills" ((12 13 terrain) (x 2 14 0) (file "civt12x13.gif" std 4 1)))
+(imf "civ-hills" ((24 26 terrain) (x 2 26 0) (file "civt24x26.gif" std 4 1)))
+(imf "civ-hills" ((44 48 terrain) (x 2 46 0) (file "civt44x48.gif" std 4 1)))
+(imf "civ-mountains" ((1 1) 156 132 123))
+(imf "civ-mountains" ((12 13 terrain) (x 2 14 0) (file "civt12x13.gif" std 4 2)))
+(imf "civ-mountains" ((24 26 terrain) (x 2 26 0) (file "civt24x26.gif" std 4 2)))
+(imf "civ-mountains" ((44 48 terrain) (x 2 46 0) (file "civt44x48.gif" std 4 2)))
+(imf "civ-tundra" ((1 1) 214 255 231))
+(imf "civ-tundra" ((12 13 terrain) (x 2 14 0) (file "civt12x13.gif" std 4 3)))
+(imf "civ-tundra" ((24 26 terrain) (x 2 26 0) (file "civt24x26.gif" std 4 3)))
+(imf "civ-tundra" ((44 48 terrain) (x 2 46 0) (file "civt44x48.gif" std 4 3)))
+(imf "civ-glacier" ((1 1) white))
+(imf "civ-glacier" ((12 13 terrain) (x 2 14 0) (file "civt12x13.gif" std 4 4)))
+(imf "civ-glacier" ((24 26 terrain) (x 2 26 0) (file "civt24x26.gif" std 4 4)))
+(imf "civ-glacier" ((44 48 terrain) (x 2 46 0) (file "civt44x48.gif" std 4 4)))
+
+(imf "civ-fish" ((1 1) 0 39321 65535))
+(imf "civ-fish" ((12 13 terrain) (file "civt12x13.gif" std 2 0)))
+(imf "civ-fish" ((24 26 terrain) (file "civt24x26.gif" std 2 0)))
+(imf "civ-fish" ((44 48 terrain) (file "civt44x48.gif" std 2 0)))
+(imf "civ-whales" ((1 1) 0 39321 65535))
+(imf "civ-whales" ((12 13 terrain) (file "civt12x13.gif" std 3 0)))
+(imf "civ-whales" ((24 26 terrain) (file "civt24x26.gif" std 3 0)))
+(imf "civ-whales" ((44 48 terrain) (file "civt44x48.gif" std 3 0)))
+(imf "civ-peat" ((1 1) 13107 39321 0))
+(imf "civ-peat" ((12 13 terrain) (file "civt12x13.gif" std 2 1)))
+(imf "civ-peat" ((24 26 terrain) (file "civt24x26.gif" std 2 1)))
+(imf "civ-peat" ((44 48 terrain) (file "civt44x48.gif" std 2 1)))
+(imf "civ-spice" ((1 1) 13107 39321 0))
+(imf "civ-spice" ((12 13 terrain) (file "civt12x13.gif" std 3 1)))
+(imf "civ-spice" ((24 26 terrain) (file "civt24x26.gif" std 3 1)))
+(imf "civ-spice" ((44 48 terrain) (file "civt44x48.gif" std 3 1)))
+(imf "civ-oasis" ((1 1) 61184 56832 29440))
+(imf "civ-oasis" ((12 13 terrain) (file "civt12x13.gif" std 2 2)))
+(imf "civ-oasis" ((24 26 terrain) (file "civt24x26.gif" std 2 2)))
+(imf "civ-oasis" ((44 48 terrain) (file "civt44x48.gif" std 2 2)))
+(imf "civ-oil-d" ((1 1) 61184 56832 29440))
+(imf "civ-oil-d" ((12 13 terrain) (file "civt12x13.gif" std 3 2)))
+(imf "civ-oil-d" ((24 26 terrain) (file "civt24x26.gif" std 3 2)))
+(imf "civ-oil-d" ((44 48 terrain) (file "civt44x48.gif" std 3 2)))
+(imf "civ-buffalo" ((1 1) 206 231 57))
+(imf "civ-buffalo" ((12 13 terrain) (file "civt12x13.gif" std 2 3)))
+(imf "civ-buffalo" ((24 26 terrain) (file "civt24x26.gif" std 2 3)))
+(imf "civ-buffalo" ((44 48 terrain) (file "civt44x48.gif" std 2 3)))
+(imf "civ-wheat" ((1 1) 206 231 57))
+(imf "civ-wheat" ((12 13 terrain) (file "civt12x13.gif" std 3 3)))
+(imf "civ-wheat" ((24 26 terrain) (file "civt24x26.gif" std 3 3)))
+(imf "civ-wheat" ((44 48 terrain) (file "civt44x48.gif" std 3 3)))
+(imf "civ-lush" ((1 1) 33 222 8))
+(imf "civ-lush" ((12 13 terrain) (file "civt12x13.gif" std 2 4)))
+(imf "civ-lush" ((24 26 terrain) (file "civt24x26.gif" std 2 4)))
+(imf "civ-lush" ((44 48 terrain) (file "civt44x48.gif" std 2 4)))
+(imf "civ-pheasant" ((1 1) 0 25775 4528))
+(imf "civ-pheasant" ((12 13 terrain) (file "civt12x13.gif" std 2 5)))
+(imf "civ-pheasant" ((24 26 terrain) (file "civt24x26.gif" std 2 5)))
+(imf "civ-pheasant" ((44 48 terrain) (file "civt44x48.gif" std 2 5)))
+(imf "civ-silk" ((1 1) 0 25775 4528))
+(imf "civ-silk" ((12 13 terrain) (file "civt12x13.gif" std 3 5)))
+(imf "civ-silk" ((24 26 terrain) (file "civt24x26.gif" std 3 5)))
+(imf "civ-silk" ((44 48 terrain) (file "civt44x48.gif" std 3 5)))
+(imf "civ-fruit" ((1 1) 41 165 16))
+(imf "civ-fruit" ((12 13 terrain) (file "civt12x13.gif" std 6 0)))
+(imf "civ-fruit" ((24 26 terrain) (file "civt24x26.gif" std 6 0)))
+(imf "civ-fruit" ((44 48 terrain) (file "civt44x48.gif" std 6 0)))
+(imf "civ-gems" ((1 1) 41 165 16))
+(imf "civ-gems" ((12 13 terrain) (file "civt12x13.gif" std 7 0)))
+(imf "civ-gems" ((24 26 terrain) (file "civt24x26.gif" std 7 0)))
+(imf "civ-gems" ((44 48 terrain) (file "civt44x48.gif" std 7 0)))
+(imf "civ-coal" ((1 1) 41 165 16))
+(imf "civ-coal" ((12 13 terrain) (file "civt12x13.gif" std 6 1)))
+(imf "civ-coal" ((24 26 terrain) (file "civt24x26.gif" std 6 1)))
+(imf "civ-coal" ((44 48 terrain) (file "civt44x48.gif" std 6 1)))
+(imf "civ-wine" ((1 1) 41 165 16))
+(imf "civ-wine" ((12 13 terrain) (file "civt12x13.gif" std 7 1)))
+(imf "civ-wine" ((24 26 terrain) (file "civt24x26.gif" std 7 1)))
+(imf "civ-wine" ((44 48 terrain) (file "civt44x48.gif" std 7 1)))
+(imf "civ-gold" ((1 1) 156 132 123))
+(imf "civ-gold" ((12 13 terrain) (file "civt12x13.gif" std 6 2)))
+(imf "civ-gold" ((24 26 terrain) (file "civt24x26.gif" std 6 2)))
+(imf "civ-gold" ((44 48 terrain) (file "civt44x48.gif" std 6 2)))
+(imf "civ-iron" ((1 1) 156 132 123))
+(imf "civ-iron" ((12 13 terrain) (file "civt12x13.gif" std 7 2)))
+(imf "civ-iron" ((24 26 terrain) (file "civt24x26.gif" std 7 2)))
+(imf "civ-iron" ((44 48 terrain) (file "civt44x48.gif" std 7 2)))
+(imf "civ-furs" ((1 1) 214 255 231))
+(imf "civ-furs" ((12 13 terrain) (file "civt12x13.gif" std 6 3)))
+(imf "civ-furs" ((24 26 terrain) (file "civt24x26.gif" std 6 3)))
+(imf "civ-furs" ((44 48 terrain) (file "civt44x48.gif" std 6 3)))
+(imf "civ-musk-ox" ((1 1) 214 255 231))
+(imf "civ-musk-ox" ((12 13 terrain) (file "civt12x13.gif" std 7 3)))
+(imf "civ-musk-ox" ((24 26 terrain) (file "civt24x26.gif" std 7 3)))
+(imf "civ-musk-ox" ((44 48 terrain) (file "civt44x48.gif" std 7 3)))
+(imf "civ-ivory" ((1 1) white))
+(imf "civ-ivory" ((12 13 terrain) (file "civt12x13.gif" std 6 4)))
+(imf "civ-ivory" ((24 26 terrain) (file "civt24x26.gif" std 6 4)))
+(imf "civ-ivory" ((44 48 terrain) (file "civt44x48.gif" std 6 4)))
+(imf "civ-oil-g" ((1 1) white))
+(imf "civ-oil-g" ((12 13 terrain) (file "civt12x13.gif" std 7 4)))
+(imf "civ-oil-g" ((24 26 terrain) (file "civt24x26.gif" std 7 4)))
+(imf "civ-oil-g" ((44 48 terrain) (file "civt44x48.gif" std 7 4)))
+
+(imf "clear" ((1 1) 7969 46995 5169))
+(imf "clear" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 7969 46995 5169) (1 0 25775 4528))
+   "00/40/00/00/00/04/00/00")
+  (mono "00/40/00/00/00/04/00/00")))
+
+(imf "cliffs" ((1 1) 37016 23421 6016))
+(imf "cliffs" ((44 48 border) (file "cliff44x48.gif")))
+
+(imf "countryside" ((1 1) 7969 46995 5169))
+(imf "countryside" ((8 8 tile)
+  (mono "80/00/00/00/08/00/00/00")))
+(imf "countryside" ((32 32 tile)
+  (color (pixel-size 4)
+   (palette
+    (0 7969 46995 5169)
+    (1 16384 16384 16384)
+    (2 32768 32768 32768)
+    (3 0 25775 4528)
+    (4 577 43860 60159))
+   "00004430000020000000034300001000/00004443000200300000003430021200"
+   "00004444302003000330333430200022/22222214420000003033330432000000"
+   "00044411220000003333444420000000/00440411442222030334000144000030"
+   "00400402004000203340222114403300/04400402004000022222033220444444"
+   "44000402004000000400033202000000/00004302004000004040033202000000"
+   "00304300204000340040000200200000/03004030204003430340000200022200"
+   "00304030200430303400000200000020/00004030020403334000002000300002"
+   "20004000020043330000002003000000/02004400002000333000020003300000"
+   "00244440000200303000020303330300/04200044300020003300200333333330"
+   "44020034433002000300204030334330/40002003343300200000200433040300"
+   "40000200334400020002000403343030/40000020033044002220003403304400"
+   "40033002200004441100003040333400/40000300020002221122000343034444"
+   "44330030002220044244200004444000/04433003300000000204420033000300"
+   "00443033030300000200402000033330/00043033333330000200040200003300"
+   "00044333330000002000040020000000/00044033000000020000044002000000"
+   "00044303300000020003004000200000/00044033000000200030034000020000")))
+
+(imf "desert" ((1 1) 61184 56832 29440))
+(imf "desert" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 64512 62333 1327) (1 black))
+   "80/10/02/20/01/08/40/04")
+  (mono "80/10/02/20/01/08/40/04")))
+(imf "desert" ((12 13 terrain) (x 4 14 0) (file "stdt12x13.gif" std 0 3)))
+(imf "desert" ((24 26 terrain) (x 4 26 0) (file "stdt24x26.gif" std 0 3)))
+(imf "desert" ((44 48 terrain) (x 4 46 0) (file "stdt44x48.gif" std 0 3)))
+(imf "desert" ((88 96 terrain) (x 4 90 0) (file "stdta88x96.gif" std 0 3)))
+(imf "desert" ((13 9 terrain) (x 4 15 0) (file "stdt13x9i.gif"  2 35)))
+(imf "desert" ((48 33 terrain) (x 4 50 0) (file "stdt48x33i.gif" 2 107)))
+(imf "desert" ((64 64 tile)
+  (color (pixel-size 4)
+   (palette
+    (0 61184 56832 29440)
+    (1 59136 54784 27392)
+    (2 56832 52736 25344)
+    (3 63232 59136 31488)
+    (4 54784 46336 23040)
+    (15 50688 42240 18944))
+   "3300033031033010010031000101113131003333300001110103000001000030"
+   "3000030000003310001100011001000012303300033311300000000333001030"
+   "0010100303003300012100000001033330000000333300001000110330110331"
+   "0000003333333000000000000330111000300103313303030000000330311030"
+   "0000000300033113300330303331000110010011111000100033303300300001"
+   "1300110000033000301003303000000210120003014200100200303211011003"
+   "1010311103101100033003301001121100220030011033300f20010200000333"
+   "0310301101f21030020000011021010002241000000000303000000100000300"
+   "00001121012f2033141031100010000030110200011133112101210103303010"
+   "1100111100121101221000003011103100003110032210114201130003000122"
+   "3000210101100303000030010010111033113100001000301122230100300101"
+   "0000111112100330000210000000001033100303003330113011111301301100"
+   "2100000121130001001213033000111000010310000331100030003030110002"
+   "100003012213303001211033011124103300002300001110010100020003302f"
+   "00100314f2033101314132001101113300100241021300000130101f11100030"
+   "02100301111001110010310022110030011110212f2000030103100031110003"
+   "1100001103000100000301101121033301121010311003011210000012412003"
+   "10031121100103011011030030333311011111100030032f1211001011201100"
+   "0003324203000300010003300300100330311111000000023010301010002100"
+   "300002f211100311000010312130113033302100000300303110300301301000"
+   "0100114112410312000030032100100100000001010330010200300010010333"
+   "011011200021030100110101f200011000000011010331101420301221000001"
+   "011010030030303100f413012122103311111103302130032f21002211030010"
+   "3000000011113001331211000101011100001223024110000211011031001100"
+   "3010000031121121111001012f201f2031030100122301100101000014211011"
+   "3100001032110010130000111f200100110001032f2030133000300002103000"
+   "0002212100111110133010033100011010000003010330111100001011010010"
+   "0012422221010103000100030001141303013000330300330100111000011113"
+   "1301221113020100100110031100301011120033010011133010000330001002"
+   "0333100000240010033003030000010020002410100133303303331000310012"
+   "0001100300110020300300000000110100001210130213000200010300300110"
+   "3330222000010010002011103110003220111100030010311220003300101010"
+   "30012ff2300001002242220032030301f4203333033000000000010112111001"
+   "1001242103003202fff201102210310312100330030000010003300100001330"
+   "1111121030000201212111000211000030110100300033000033012133324101"
+   "3000011001301101100010133011330110302f20211003001211144203112031"
+   "3300004202100001101113100010000000330131f42033303030222100001000"
+   "0030314202100021300010101111110333333030120033303330012000000001"
+   "3110002111000011000000100130300323001033010030003000303011131110"
+   "1000330101010030000020110210001220010030111100033001003301000303"
+   "20100030011133024101f1000200033003330031242010033010330011100033"
+   "0000300000010303100010012410030310030331220011100330010000302130"
+   "0101331110113000100100220101100302111120033001111133010010030001"
+   "10003300333110031011001410010002ff211010300112100133013122131000"
+   "3321000313303111003030010300003011101000003121330300221112102100"
+   "3141003300123010103001030030000100100012100140130310110330003003"
+   "01101303004f0331100011101110011033300000100012410031000103101003"
+   "00101222132f030003122f200300012033300033301000111002111130300000"
+   "0003011210120001202411101001001103310003301111103330010111330110"
+   "0333001200110033100103100100012100020000310003003303000003333100"
+   "0033002420100033010030210011020301141001101300022101203013301030"
+   "1003301001030000213030000001141010020001000210014201f20110101101"
+   "3001330330000030010300030111023011003330111410011033011210301100"
+   "0030001010001001110312230110140312100000300000011333001101000313"
+   "1000110142002110000312211111142000000130000030000031220330110303"
+   "330001011002f210030111101311222001011000110003000131241000010330"
+   "3010000110024200000113030012f11030021133112000000001441333333303"
+   "0303312100001f20100300030011210003311203014203000000242003330013"
+   "0333122011000110001330131300110310312210011210010301120033000000"
+   "0110001311033311011000012210121120031111101113301330013000010120"
+   "2000030011100331203330131001241141000100031100310111112011030003"
+   "1003031110330032213000033011113011011033030003000111300103311110"
+   "1100000201033000033130010011000011300003001130133011010003311010"
+   "0001110200030210011201010022011121033300000101100100021130000013")))
+
+(imf "desert-3" ((1 1) 65535 65535 0))
+(imf "desert-3" ((8 8 tile)
+  (color (pixel-size 2)
+   (palette
+    (0 65535 65535 0)
+    (1 65535 52428 39321)
+    (2 13107 39321 26214))
+   "0000/1191/0888/1998/0aa8/4484/0180/1080")
+  (mono "00/00/00/00/00/00/00/00")))
+
+(imf "dirt-road" ((1 1) 53760 46080 35840))
+(imf "dirt-road" ((24 26 connection 2) (file "dirt24x26.gif" 2 2)))
+(imf "dirt-road" ((44 48 connection 2) (file "dirt44x48.gif" 2 2)))
+
+(imf "flagstone" ((1 1) 48640 48640 48640))
+(imf "flagstone" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 43690 43690 43690) (1 34952 34952 34952))
+   "fc/84/84/87/fd/11/11/1f")
+  (mono "fc/84/84/87/fd/11/11/1f")))
+
+(imf "flooded" ((1 1) 44288 55296 58880))
+(imf "flooded" ((8 8 tile)
+  (mono "a2/54/8d/5e/24/51/8a/54")))
+(imf "flooded" ((16 16 tile)
+  (color (pixel-size 2)
+   (palette
+    (0 white)
+    (1 577 43860 60159)
+    (2 7969 46995 5169))
+   "4104a121/10212844/84a84212/12aa144a/48a84110/21210491/44841284/12114a11"
+   "48484844/2a2a1121/a84a84a8/2052112a/1104484a/44a12a12/12a84a84/44a112a1")))
+(imf "flooded" ((12 13 terrain) (x 4 14 0) (file "eur12x13.gif" std 0 0)))
+(imf "flooded" ((24 26 terrain) (x 4 26 0) (file "eur24x26.gif" std 0 0)))
+(imf "flooded" ((44 48 terrain) (x 4 46 0) (file "eur44x48.gif" std 0 0)))
+
+(imf "floor" ((1 1) 54016 54016 54016))
+(imf "floor" ((8 8 tile)
+  (color (pixel-size 2)
+   (palette
+    (0 49152 49152 49152)
+    (1 32768 32768 32768)
+    (2 16384 16384 16384))
+   "aaaa/8000/8040/8000/8000/8400/8004/8000")
+  (mono "ff/80/88/80/80/a0/82/80")))
+
+(imf "forest" ((1 1) 0 25775 4528))
+(imf "forest" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 0 25775 4528) (1 black))
+   "c0/26/29/48/04/61/96/14")
+  (mono "3f/d9/d6/b7/fb/9e/69/eb")))
+(imf "forest" ((12 13 terrain) (x 4 14 0) (file "stdt12x13.gif" std 0 5)))
+(imf "forest" ((24 26 terrain) (x 4 26 0) (file "stdt24x26.gif" std 0 5)))
+(imf "forest" ((44 48 terrain) (x 4 46 0) (file "stdt44x48.gif" std 0 5)))
+(imf "forest" ((88 96 terrain) (x 4 90 0) (file "stdtb88x96.gif" std 0 1)))
+(imf "forest" ((13 9 terrain) (x 4 15 0) (file "stdt13x9i.gif"  2 57)))
+(imf "forest" ((48 33 terrain) (x 4 50 0) (file "stdt48x33i.gif" 2 177)))
+(imf "forest" ((64 64 tile)
+  (color (pixel-size 4)
+   (palette
+    (0 black)
+    (1 8448 42240 10496)
+    (2 6144 29440 12544)
+    (3 14592 44288 18944)
+    (4 4096 25344 6144)
+    (5 12544 44288 16896)
+    (6 12544 42240 12544)
+    (7 6144 29440 6144)
+    (8 10496 35840 14592)
+    (9 14592 46336 12544)
+    (10 16896 50688 18944)
+    (11 4096 18944 6144)
+    (12 2048 18944 4096)
+    (13 6144 35840 8448)
+    (15 10496 35840 8448))
+   "b5681156644444453dd818a388aa6d856f95f42444534cfaaa1994c4b4448fb8"
+   "495396772f7447446dd56f828596147d6382447d2bb2f4b23399334728dd64b3"
+   "b8551f774812474b861d8441335d7c448a682244bb4bb4b29226f3dff71d8bb8"
+   "426dd4b7d688482bb7881bbb239f44c47fbb47241d82b447998fd87477fdf433"
+   "c2bb4bb488828a77cb5862d2da9144c4f8bb7d44d83dbbbb5617f52d7471fb2b"
+   "c444227715ffda57bb5666911886367465f7742473317db7999fb877c7d1144c"
+   "422f4d44b265aa8ffbc74cf4b7ff88d286177cccc261dd72942b4f440c747d24"
+   "c77fd2bb2a95593668ff4c4f87c2f44c151f7747d28372b4f2bcbbccc47f7d33"
+   "4778f8bb4653918f4286f74fdccffccc78dc77c472ff8a32664c47b777d74757"
+   "f558d58d22282d162d233a714cb8ff448544d747424d3a52598b2dd47777cc40"
+   "9a3ff95f42bc1d18d1f33387bbf893828444d742244716f28ff4f27b7df2cc2c"
+   "9a11d6d7f54c7ccb78286f24426196688ff277727474d82f7c74d24b83584c47"
+   "52d716c768cc7cb42fc427774491158a95fb444f5835522d2c42f8224838f7b2"
+   "bb18ddcc32bc4769861938777d99128335fb41f8863858217d1d772f71363685"
+   "cfaa8f4cbbcbbd99d889aa7f72ddd7cc61bb716f153256ff66a5244ff77f33fc"
+   "cf995d77bbbbb53364b268ff7b28ffb492b4f1287774d8f698af7285b472887c"
+   "c888f17774c2fa5882b4fddf4c2df8bb27dd4d7dc4447df38ff77d4bcc7f82bc"
+   "86247d7d77faaa686aa8fd77747f7d427786424ccc4472285ff78884cc2827cc"
+   "95472871f8faa1dd835f287441f827c4dd236d444cccf86a887b44f7822674b7"
+   "6125624fff4b21d7886f2538719844cc77783744444c2996884448616fdd7dd1"
+   "aa5887c83f2bcfbb47fbb88777fdb44ff7266ff7447723a333b42244ff77796f"
+   "647f7cc23f13bfbb47d86f7777862226f2d63777b4477332836852b27777884f"
+   "6cc44c228d18f22bff581227f226111fd88336fdb4c498d7f4cbbc774447722b"
+   "324cc0b28f187fff68ffd247fff4f55688d8fdfd7bc716118bbc7447f8dd4cc7"
+   "98f4ccc77ffdd886f7c2f17168fbf84885dd68774b356615584c744c7dd7cb27"
+   "355477f8833f44c8874442bdd64bf921839d287422a948f618f744f486d7cb27"
+   "11b72f65aa3b4ccbc786f24d6962527877535828585522ff11f0b49826f4cc44"
+   "93b4892f9aab44b4ccf652bb23316f657c88ff78824f2f744dfb4f58f6662bf3"
+   "d38868b4faaf7cb287c73dbb1611588d77dd936aa241354b7d2c4c6568f6f293"
+   "48355874f622fdb3562b7dc47474ffd744ff991a3cb833bfd7fbb4d8ff72df96"
+   "cc47774f44cf8826947fd144cc4c4c44777f55d82cbbdfb48bb27d38f277ddd2"
+   "ccccc77444c28f7264f6684444f18b6277b8fdfd70c0cd77ccf28d822682fbb4"
+   "7c04c4fd1ccc74bf844b7882bbdd1768744f633fd7bbbbd14b638d2796627ccb"
+   "ccd6ff8d241f7444bb44ff6d8d7784b2d4dd8b224474fdfd7755317b9684f7bb"
+   "d7568d83148f22264cc4f74d52d164b62882bb22c296f7f8f72f97f7ff2744b7"
+   "f7f98881dc7dfcff4444f7444cd1524888226354c2fff4584444687cb335fd27"
+   "4bc16581f4ff74599f444f862cf2597fff4765fcc4ff74824266647bb338b982"
+   "2bc21a5d133ddd39894447297cb2581f2f4444f444d1f2744f522fdbb6522d13"
+   "4cc21d8d136d7cdfb88622252bbbd47742638b73f27d1cb27f277458c96824f3"
+   "47c26fd1181d7cb0cb53874b288d7c444d83381a96fd7cb883844f6f7fffcc47"
+   "47c4427d77d2f7bbbb5332bbb777d44775811dd969687c7f832bf44f24b4477c"
+   "71288dc447d1dd42dd73a9fdd4f242f7fa61ddd825fff48d8354847f8bcb8884"
+   "df271124c76181df31f38958d23887f7162177f2fa7fcb8f853bc79a58286887"
+   "447dff274712d1268833338783a97785f22dd782b22f4cb268bb7fa3f247f48f"
+   "7c4dd2274967714f745582177f8144f39aa6f4448f47ff22687336fdd6612bb2"
+   "c72dddd246f474ccc7f4b26ff52824ccfaad7b48f28ff9181475a17d881d44bd"
+   "486dd8774f88874cb168cb7d857f7cf76aa3f2b2f77689927f3a99fdf867c7c4"
+   "739f154fbb83627bb255c47d2bb8244bb29a88f86747448776a56988555ff7cc"
+   "f88f65f955994786223af444b2284782b2335fd66821f5822822166856df7488"
+   "144b1dd1f261f7f72259182bb2b4f7d586831238596991dcc47f585186599d66"
+   "128238ff44dff1fd78d448bb7882477556855d338aaaafccc25831d28331611f"
+   "828832ff222859c4c61442c7288887728f71667f75697f4772556881d33d6ff2"
+   "17f4d8fff44715cccb4bb4447281d172484f937ff2b4cff8d655882741d71858"
+   "b2544dfbd1212bcc4cbbbc247d85ffd822483f47864c46697f858d7ccbd77711"
+   "cc84cbb71331d7cdfb2f4c447789fb427883884727fc716f47727df744dffd29"
+   "c72cccbc7d1d47488a336f774476b27f728624cb77fc81562721772217f6f135"
+   "2f4c844722d4c4ff689321474cc2f2b2ffff44c437742b47774bc44f547f8aa3"
+   "bd7438756d77cd28d26af2412477d3446684482834f8a97f2dd77d7d2bb289a8"
+   "22886f833d8f448fb23aa828822747d86f24474254ff938fd772284b4bc4d15d"
+   "4791ff2728367447bf6aa88f8f83f4d13544fdf2f22ff8b48d12f1f4472827fc"
+   "d4d26ff7bd74cbd316691d22d723889f88f72d2888835975886fbd44b221869f"
+   "677f6a5f44cccb9351dd242dff828fd4b2f7b2285f9a99283884c4cdd12df8ff"
+   "1bc2633f44ccbb851172fc77d288384422fcc2ff388687b265f74ccdd144436d"
+   "1cb4cb242df1d28851727c471dd1a3d46fdd722a335674ba56c48741dd48a334")))
+
+(imf "forest-2" ((1 1) 0 25775 4528))
+(imf "forest-2" ((8 8 tile)
+  (color (pixel-size 2)
+   (palette
+    (0 0 25775 4528)
+    (1 22016 11421 1316)
+    (2 49152 49152 49152))
+   "a2a6/80a6/80aa/0022/0000/a680/2600/2a00")
+  (mono "22/70/70/fa/22/07/07/af")))
+
+(imf "fuzz" ((24 26 border) (file "fuzz24x26.gif")))
+(imf "fuzz" ((44 48 border) (file "fuzz44x48.gif")))
+(imf "fuzz" ((88 96 border) (file "fuzz88x96.gif")))
+
+(imf "grassland" ((1 1) 7969 46995 5169))
+(imf "grassland" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 7969 46995 5169) (1 0 25775 4528))
+   "00/88/aa/a2/02/28/aa/82")
+  (mono "00/88/aa/a2/02/28/aa/82")))
+
+(imf "gully" ((1 1) 52428 39321 26214))
+(imf "gully" ((8 8 tile)
+  (mono "1c/14/58/bf/ec/3b/18/14")))
+(imf "gully" ((16 16 tile)
+  (color (pixel-size 1) (palette (0 52428 39321 26214) (1 black))
+   "0180/0198/0cc8/02c4/01d4/cdd0/2598/c9e7/ffff/3ffc/c1c2/3b9c/0340/03a8/05a0/0580")))
+
+(imf "gully-1" ((1 1) 53760 46080 35840))
+(imf "gully-1" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 52428 39321 26214) (1 black))
+   "c3/24/aa/d6/6c/38/10/00")
+  (mono "00/00/00/00/00/00/00/00")))
+
+(imf "hexagon-w1" ((44 48 terrain) (file "misc44x48.gif" std 1 0)))
+
+(imf "hexagon-w2" ((44 48 terrain) (file "misc44x48.gif" std 2 0)))
+
+(imf "hill" ((1 1) 38250 43095 14025))
+(imf "hill" ((32 32 tile) (file "advt32x32.gif" std 0 0)))
+(imf "hill" ((12 13 terrain) (x 2 14 0) (file "eur12x13.gif" std 0 3)))
+(imf "hill" ((24 26 terrain) (x 2 26 0) (file "eur24x26.gif" std 0 3)))
+(imf "hill" ((44 48 terrain) (x 2 46 0) (file "eur44x48.gif" std 0 3)))
+
+(imf "hills" ((1 1) 48720 34892 11886))
+(imf "hills" ((8 8 tile)
+  (mono "08/04/f3/0c/10/e0/1b/04")))
+(imf "hills" ((16 16 tile)
+  (color (pixel-size 2)
+   (palette
+    (0 48720 34892 11886)
+    (1 40959 29334 9993)
+    (2 25007 22122 9410)
+    (3 black))
+   "00d07bc0/557aad55/ffaffa5a/00f00faf/035015f0/fe95feaf/03ef03f0/00757d00"
+   "555fe555/f556bebf/0faaabc0/01ebfd50/557c03d5/afc0007a/f555015f/0f7fd570")))
+
+(imf "hills-1" ((8 8 tile)
+  (mono "08/04/f3/0c/10/e0/1b/04")))
+(imf "hills-1" ((16 16 tile)
+  (color (pixel-size 1) (palette (0 48720 34892 11886) (1 black))
+   "08d8/0420/f3c0/0c33/100c/e0e3/1b1c/0460/0380/c067/3c18/03e0/0418/3804/c003/3704")))
+
+(imf "hills-2" ((1 1) 48384 46848 27392))
+(imf "hills-2" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 48384 46848 27392) (1 black))
+   "00/00/c1/f2/7d/ba/45/00")
+  (mono "00/00/c1/f2/7d/ba/45/00")))
+
+(imf "ice" ((1 1) white))
+(imf "ice" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 white) (1 43690 43690 43690))
+   "48/36/01/c0/34/0b/a0/50")
+  (mono "08/18/14/e7/e7/44/40/08")))
+(imf "ice" ((12 13 terrain) (x 2 14 0) (file "stdt12x13.gif" std 0 7)))
+(imf "ice" ((24 26 terrain) (file "stdt24x26.gif" std 0 7)))
+(imf "ice" ((44 48 terrain) (file "stdt44x48.gif" std 0 7)))
+(imf "ice" ((88 96 terrain) (file "stdtb88x96.gif" std 0 3)))
+(imf "ice" ((13 9 terrain) (x 2 15 0) (file "stdt13x9i.gif"  2 79)))
+(imf "ice" ((48 33 terrain) (file "stdt48x33i.gif" 2 247)))
+
+(imf "light-woods" ((1 1) 8704 35584 8704))
+(imf "light-woods" ((8 8 tile)
+  (mono "81/30/78/78/32/01/0c/cc")))
+(imf "light-woods" ((16 16 tile)
+  (color (pixel-size 1) (palette (0 0 48059 0) (1 65535 65535 52428))
+   "fe7f/cfef/87c4/85ed/cf3f/ff3f/7fff/bee6/e5c2/c7c3/cf27/ff3f/f9ff/39f3/3373/fe7f")))
+
+(imf "mists" ((1 1) 26880 26880 26880))
+(imf "mists" ((8 8 tile)
+  (mono "aa/55/aa/55/aa/55/aa/55")))
+(imf "mists" ((16 16 tile)
+  (color (pixel-size 1) (palette (0 30583 30583 30583) (1 8738 8738 8738))
+   "cffb/3f47/d2ff/2fc1/ff3e/f0d5/2f7b/73cf/ff33/70dc/8fa7/f47f/cfbc/f34b/bcfc/73f3")))
+
+;(imf "mountains" ((1 1) 37016 23421 6016))
+(imf "mountains" ((1 1) 29440 16896 12544))
+(imf "mountains" ((8 8 tile)
+  (mono "40/e0/71/fa/7d/ba/55/aa")))
+(imf "mountains" ((16 16 tile)
+  (color (pixel-size 1) (palette (0 37016 23421 6016) (1 black))
+   "8c09/4888/31c4/6341/8261/8732/4d5a/3a2c/3226/6413/d208/a205/6460/c1b8/3124/da12")))
+(imf "mountains" ((12 13 terrain) (x 8 14 0) (file "stdt12x13.gif" std 0 6)))
+(imf "mountains" ((24 26 terrain) (x 5 26 0) (file "stdt24x26.gif" std 0 6)))
+(imf "mountains" ((44 48 terrain) (x 5 46 0) (file "stdt44x48.gif" std 0 6)))
+(imf "mountains" ((88 96 terrain) (x 4 90 0) (file "stdtb88x96.gif" std 0 2)))
+(imf "mountains" ((13 9 terrain) (x 3 15 0) (file "stdt13x9i.gif"  2 68)))
+(imf "mountains" ((48 33 terrain) (x 3 50 0) (file "stdt48x33i.gif" 2 212)))
+(imf "mountains" ((64 64 tile)
+  (color (pixel-size 4)
+   (palette
+    (0 20992 6144 2048)
+    (1 23040 6144 2048)
+    (2 27392 14592 6144)
+    (3 12544 4096 4096)
+    (4 27392 20992 16896)
+    (5 27392 20992 12544)
+    (6 27392 12544 4096)
+    (7 27392 10496 4096)
+    (8 16896 2048 2048)
+    (9 27392 18944 10496)
+    (10 27392 16896 10496)
+    (11 8448 6144 6144)
+    (12 27392 18944 8448)
+    (15 6144 6144 6144))
+   "8396332c638bc7cca11c5552a71ccb36bbbf3107101335c3357b44338c9fa101"
+   "31b245071b2bfc076008095226bb3bf0b303c5520c10c7cb73bb4c30bf0560b3"
+   "8053175703bbb35554a2713533b3bbbb55ac11c113b0fcb23bb356bb75221318"
+   "15763b04333b3352659955b70bbb3bbb999abb2563bbb310b3ba53f345221333"
+   "0ccc55333bb152c510254bbb8b1231b39029943b0bbbbb231245bbba27718330"
+   "103423b36a525c0c52253fbff199c5c33bb326bb3bbb3315c48fb30221203b08"
+   "3335303b725708015556fbbb3010359bbbbb13fbbbfbb21952bbb39611133033"
+   "bb13b3b30b39445515c3bb3b2223b310bb311bbbbbbf3056b33bf52701031333"
+   "b303bb3338361694990f303b12903b25c7a5bbbbbbb3b4cf3b301a21123833b2"
+   "313b3bbbb0592cc3003b3318157b235a5952b3bbb33bbbb3b01a5226280b3012"
+   "3752133b3a595c3b3b3033c1b228399cb6b33b3bbbb0bbba5599a27c13133117"
+   "555445235951c0b0331ba25533152c53bf33bbbbbbba3b159a59927211330315"
+   "155555592180333833333c22b30832283bb0bbb3b3b315617c222721101311b0"
+   "10a950815333b08503b41020b35922833b33bbbbbbb359cc962c7c723bb122b0"
+   "07c5c01b2030331a803155233b86a531bbbbb3bbb3bba59accc276821bb1773f"
+   "95552021a738301a1337512803ba18b33bb1b3b3b3591c9c7c77c311bbf0027b"
+   "2099c55c955551100110a43313b04b33bbb5516459c95799922c2713b3bb389b"
+   "555a9a2c79555553130559331bb01bb133b9559955ca926ac72c231bb1bbbb60"
+   "2085561995c22780333203b81b33bb75c31755559959993c6a2200bf1bbfff3f"
+   "83039559513255b812522b3b33b80bb55951294559959c537721ffb33bbbbfba"
+   "313395547332721100453303bbbb133225556467055999902700fbb1bbbbfbf2"
+   "31b05c503088c503123b334c55a95595c7108fbfbf3829cc2c1ffb01c2bbffbb"
+   "bb88727018138713179802999599999555bbfbffbbbff042a7ffff10c5bffb3b"
+   "74252292513b3b72961955992767594133b3bbb3b333b3f23bbbbbbff75bbbf3"
+   "5108a751005c33599033859c713c31bb3b1b0b030319ac221bfbbb3bbf0bbbb2"
+   "99022c527295549556101a9a5c251bb3b183383357b37291bbbfbbbbbfb1bb31"
+   "759c22c959555c20855959c57c9b3b03800b4555996a2c63bbbbbbb3bbbbbb59"
+   "1381c7a62955c13002595c580551b38124450a5c9c5cac6bbb3b3bbb5bbbb13f"
+   "0bb320c9995a3b08322595103743b3a555992cca959ac11bb612bbbb2b33c11f"
+   "301037295733080355c99c33b3b115551252c999c9c528bbbbb81bbbb75599af"
+   "91133c8c33313385512c5180112cc133bb39c95c733bf1b3b3bf13bbb4599c56"
+   "cc4ab10218033015c575c778249921b3b3b494033bbfb3323bbfb7bf0625999a"
+   "67c9919a25254552199c207559c6913b0833cfbbbbbbb1bb30bbbbb32b33795c"
+   "520991265555ca5511992cca99c62603107cbffffbbbb12b333bbb3183bb317c"
+   "855707c7a95a5c6999c527a552754945c521b33bbb6b3bc20bbb3b33bbbb3231"
+   "0099521162331956325999c583033c72911b3311bbbbb3ca9559bb30b3bbb323"
+   "b3332c6101311559c29c7951b11032111bcb3313b3bb3b74956533b33bb32813"
+   "3b3b330272559c85c59954b3083bb83611b03bbbbbb3b31b895555555533c92b"
+   "12145111c5719547992618081b30b36330331330b3b30320321815199c5ca19c"
+   "4459532161ba999c9c23307550b830101333043380218187307137cc599c9261"
+   "2c596371c946c555c7c4918165524c88313bb8500811b33308a575973455cc20"
+   "ca95903a72c5605c9103f251333c99552a1b3b379522000303311330038b021b"
+   "4101257612c9925a11a33359bb3799995998034452718033813218c2c2bbb31b"
+   "3bbbb3b1c6c995cc222251b7954a9952999529b302113803033272810338c662"
+   "13bbb3071772c297233bb33b79926959501260313100302493b318b3b3a2728b"
+   "2b16020027c72c2771b33b0345960995903331332101807723bb633b034528bb"
+   "52c5520027322c11222213349cc53c5212515551111013052b3ba94444032b63"
+   "9c7cc5112172c21015541bb61595725c59555c5611121311218259c175457301"
+   "899b8171111971102a2055c851a599c13b30995911608331555559c31b860fc8"
+   "b9555292279c10b2c299922230619923133995c55903308b308025926110bf01"
+   "b89cc66276ac0f110b299521640b6cc2223959999a5403b3b3595959a554bb3a"
+   "339c027c1a28fbba7559035c13b3329957529c5999ac59803071002995913bb1"
+   "315992c2161bffbffb27a302b34542a2555225c5955aa957453b73399973bbb5"
+   "33299271113bbbbbffb352b6049c0759599929a595259a559501b3bca53083b7"
+   "b3192910133b3b3bbb303c556b333925c6276a595c5959555c23b033c1138033"
+   "0a969121bb6a13b3b33483552b12522c77552295950452830833b3311380b233"
+   "9a221683bbc9493b111cb29c7308c77a595552995183733bc033b01283b833b3"
+   "262112b3bbfb026559334a595550827cc995c59903bbb130852115a533bb413b"
+   "c72028b0b3f33755501a955959552177955a999038030338399999cc0bbb23b3"
+   "883b3302ac45599a10599ac99c5ac2a2cc595c332283327bb352528933333b33"
+   "fb3030fbf334c5c3ca9c55c999c97522c2618330819bbb00b371b3c3303bb353"
+   "b31031ffbbb3b0037599951c95551622a4bbbb3bba53bb433b28b883083b14bb"
+   "80213151bbbb33255995c5129c9c5ca91bb3bb33bb21bb72118b851832a9ac33"
+   "3011b2229bb345cacc2c9292222c99c700bbb170b3b3b3a955c3cc333321bbb3")))
+
+(imf "mountains-3" ((1 1) 22016 11421 1316))
+(imf "mountains-3" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 22016 11421 1316) (1 black))
+   "84/13/3a/2c/44/82/22/58")
+  (mono "00/00/00/00/00/00/00/00")))
+
+(imf "mountains-4" ((1 1) 22016 11421 1316))
+(imf "mountains-4" ((8 8 tile)
+  (color (pixel-size 2)
+   (palette
+    (0 22016 11421 1316)
+    (1 37079 29024 14900)
+    (2 577 43860 60159))
+   "8aaa/42aa/40a9/4025/4015/5015/5455/5555")
+  (mono "40/e0/71/fa/7d/ba/55/aa")))
+
+(imf "orchard" ((1 1) green))
+(imf "orchard" ((8 8 tile)
+  (color (pixel-size 2)
+   (palette
+    (0 0 48059 0)
+    (1 24843 60400 19848)
+    (2 65535 65535 52428))
+   "4a8a/0202/8a8a/aaaa/8a8a/0202/8a8a/aaaa")
+  (mono "44/ee/44/00/44/ee/44/00")))
+
+;(imf "plains" ((1 1) 7969 46995 5169))
+(imf "plains" ((1 1) 29440 52736 18944))
+(imf "plains" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 7969 46995 5169) (1 0 25775 4528))
+   "00/40/00/00/00/04/00/00")
+  (mono "00/40/00/00/00/04/00/00")))
+(imf "plains" ((12 13 terrain) (x 4 14 0) (file "stdt12x13.gif" std 0 4)))
+(imf "plains" ((24 26 terrain) (x 4 26 0) (file "stdt24x26.gif" std 0 4)))
+(imf "plains" ((44 48 terrain) (x 4 46 0) (file "stdt44x48.gif" std 0 4)))
+(imf "plains" ((88 96 terrain) (x 4 90 0) (file "stdtb88x96.gif" std 0 0)))
+(imf "plains" ((13 9 terrain) (x 4 15 0) (file "stdt13x9i.gif"  2 46)))
+(imf "plains" ((48 33 terrain) (x 4 50 0) (file "stdt48x33i.gif" 2 142)))
+(imf "plains" ((64 64 tile)
+  (color (pixel-size 4)
+   (palette
+    (0 26880 52992 16128)
+    (1 35328 57856 18432)
+    (2 21760 48128 14336)
+    (3 24320 50432 15104)
+    (4 32512 57856 17920)
+    (15 29440 55040 16896))
+   "f0311333222f122ff333014f00f44ff0011204f411401110222ff3333f14f444"
+   "f0011302230fff2002220f020ff4f0f22fff44ffff033f1f332203003fff4111"
+   "103f000f0f1f111ff322000303f0fff0000f11ff4f02231ff02200ff30020411"
+   "f323320f1fff1111f03f00ff1f000440302014f04002231440220ff40000004f"
+   "f3333020ff00f11ffff00011111ff440ffff03f44030001fff032041fff11111"
+   "f0000022000ff0f00000f0111111f0001110223111ff00f0ff1f2344f0111111"
+   "030f0f22201f1ff023ff101111144ff3111f23f111f40f10ffff3044030f0011"
+   "330f0f033000f11f33f1111111ff41411111ff111111411ff0ff00001f300333"
+   "f0ff01110ff0ffff00001111111f40ff11111f1f04f4ff1fff112223f1000f00"
+   "10f10ff1ff0f10000ff3202220f41ff1111110fff4ff00f023ff222201ff0111"
+   "f00110f1f03111ff11f02322220f11f111fff1ff041033002202223311103ff1"
+   "10f11111f03f11111100303220f004ff0f20f1f33ff2320000222ffff110ffff"
+   "1f11111f332311f11f030f0220f00f0ff0041ff1111ff033220f1111111011f2"
+   "1ff1111132323f110223333220f4144f0000f0f11111f3220fff11111110f140"
+   "1ff11f1f22220f11f03222330f111140003030f11110022220ff204111f011ff"
+   "f1fff0f300411111033322322311111f00f40011111ff02220f02f111f33fff0"
+   "200ff303f4111410f00002222011111f441f033f111111020f020411f2223002"
+   "2330f300ff4fff02ff0ff032201114044ff0232ff11111f0f02221140223ff02"
+   "0f33030300f00200fff111111111f1f1ff0030f111f11100040224114331f1f2"
+   "000f03033010fff00f1111111110f1f11f0301111f22fff0fff220ff0001f02f"
+   "f3011f400f0011ff0f1f0f1f1f020f330ff0f111402222fff1f320323fff300f"
+   "03f11114f4ff1114f0ff3033ff320f030000f1f30f022204f1f0f1020ff0000f"
+   "221111f0ff041fff323f000010020f003000f11ff1422200f111140344fff320"
+   "22011113333f1ff32201f0ff1fff110ff304ff000ff0220ff0ff103044111fff"
+   "03011111033f111022200f1ff0fff03f030f03033ff0220ff32f0300fffff0ff"
+   "fff133f1ff3f111f0ff0011f022fffff02302200ff002220000fff0ff01f0fff"
+   "03332204f0ff4111fff1ff1ff220fff10303223f41f022300ff11f330f11ff00"
+   "133003ff0000f111ff0fff11fff1f110014f00004fff4044f0f1f02200111102"
+   "40f1101110230f1100f11f11ff11fff3300411111404144403000003030f1112"
+   "4ff1f0f11f030f0003111f111ff1ff02300411111420444f0300001110331111"
+   "11111ff11fffffff00fff111f2311140000411111100ff02302222111ff01114"
+   "111f11f11f111ff11003302f222f111103004111111fff0320320f1110030111"
+   "144111ff11111ff1f000032222201111f03300f1111110f00f30ff11100f1111"
+   "441111f0f0f110300000ff20fff1111f3fff032f1111103300f0ff14f20111f0"
+   "14441ff2230143300202ff332011111320f440341114f22201403204fff03ff3"
+   "1f330f000231f3201022f11030111ff230ff4f0f414ff02330333020f0f023f3"
+   "14323fff033030041ff30111f0f0223220301f0f30f0ff002222322200000ff0"
+   "1f03ffff0030011f11f031ff1002232044f41f0020ffff0222220222200f0002"
+   "f00110011110300ffff00003300033341111100ff11411ff323ff33222f1fff3"
+   "23111f0f114f0ffff00f0f000f0333341141f33f11111f1114414ff02211111f"
+   "20f11111111f0000033001ff1ff330f14ff1f32111111031f414ff3301111110"
+   "0f1111ff111400f0030ff100ff033ff0001112201110032ff03ff033f11f0ff0"
+   "fffffff11114f11ff0000f00300320002fff0331111ff03f0322000041f23f11"
+   "fff00ff1f14fff1f1f330f11ffff0220f1f30f111100111f00320030f1f20111"
+   "441f0ff0000041f111f322f111ff022f1ff0004114f11111111ffff0f1020ff0"
+   "411ff11030f0011ffff330f111ff0220f0ff4f440f01110000f1ff0301222fff"
+   "411f114f30f00fffff0f0ff1111f002f0000f11f330f11fff000000220220011"
+   "4411114f0f10fff0ff0f00ff11411f1102222fffffff0f111ffff111f0020f11"
+   "1111403233f3fff0f33f03f111111f11202221f1111f111111f1f111f03ffff1"
+   "144f003223f0f1111f1f3011fff41f1123022000fff011111110f11ff001f141"
+   "0300330220002ff0ff132200033f1f1f33f20f33000f1111111321f033002344"
+   "233003003f02201111f22311f03fff1133004103320f111ff1120ff3303333f4"
+   "22f1f30301f020f11ff32f1f1f300f4f001f110330020111f11f0113322003f4"
+   "000f023011144ff1111f300fff0000f1fff01400030322f111ffff1033000011"
+   "1f20230f1111110f1f110200f0f1111111f3ff03f322220fff0f1f10223003f4"
+   "1ff0ff01111111fffff10ff0f1111111111f1f233322000011111ff0233323ff"
+   "f220ff0011111111f0ff00ff11111111f1f0110222204f00ff111f0fff1000f1"
+   "00000f030f1144f30f1ff000f111111111ff114f33204f0fff111f30111f300f"
+   "04fff4f30040f02230ff000f1111111111f111140330f111f0011f0011f2330f"
+   "04f4f11f111ff0022000201111111111103f00ff000030fff330f1f0f103000f"
+   "411411111110030032f330ff111f011f22222220000030f033330ff0f1f11103"
+   "ff1111f341023f11ff03000f1f103202230223ff00ff00333f020ffff1f11432"
+   "22ff14f0f032f11144f2300f1f1f02ff01123f14220fff32111f0f1ff0f41022"
+   "2f1111111122f11111f22020220f1311111111110220ff01111111fff33f1322")))
+
+(imf "plains-2" ((1 1) 7969 46995 5169))
+(imf "plains-2" ((8 8 tile)
+  (color (pixel-size 2)
+   (palette
+    (0 0 48059 0)
+    (1 34952 34952 34952)
+    (2 21845 21845 21845))
+   "0100/0100/0980/5555/0980/0100/0100/0100")
+  (mono "00/00/00/00/00/00/00/00")))
+
+(imf "plains-3" ((1 1) 7969 46995 5169))
+(imf "plains-3" ((8 8 tile)
+  (color (pixel-size 2)
+   (palette
+    (0 0 48059 0)
+    (1 52428 39321 26214)
+    (2 65535 65535 52428))
+   "5400/5400/5400/aa00/aa00/0155/0155/0155")
+  (mono "00/00/00/00/00/00/00/00")))
+
+(imf "railroad" ((1 1) 0 0 0))
+(imf "railroad" ((24 26 connection 2) (file "rr24x26.gif" 2 2)))
+(imf "railroad" ((44 48 connection 2) (file "rr44x48.gif" 2 2)))
+
+(imf "river" ((1 1) 0 0 54272))
+(imf "river" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 0 0 54272))
+   "00/00/00/00/00/00/00/00")
+  (mono "dd/77/dd/77/dd/77/dd/77")))
+(imf "river" ((24 26 border) (file "river24x26.gif")))
+(imf "river" ((44 48 border) (file "river44x48.gif")))
+(imf "river" ((88 96 border) (file "river88x96.gif")))
+
+(imf "river-conn" ((1 1) 0 0 54272))
+(imf "river-conn" ((24 26 connection 2) (file "riverc24x26.gif" 2 2)))
+(imf "river-conn" ((44 48 connection 2) (file "riverc44x48.gif" 2 2)))
+
+(imf "road" ((1 1) 32768 32768 32768))
+(imf "road" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 white) (1 32768 32768 32768))
+   "ff/33/ff/ff/ff/99/ff/ff")
+  (mono "aa/11/aa/55/aa/44/aa/55")))
+(imf "road" ((24 26 connection 2) (file "road24x26.gif" 2 2)))
+(imf "road" ((44 48 connection 2) (file "road44x48.gif" 2 2)))
+(imf "road" ((48 33 connection 2) (file "road48x33i.gif" 2 2)))
+
+(imf "rock" ((1 1) 16384 16384 16384))
+(imf "rock" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 16384 16384 16384) (1 49152 49152 49152))
+   "00/38/46/00/00/83/0c/00")
+  (mono "ff/c7/b9/ff/ff/7c/f3/ff")))
+
+(imf "sea" ((1 1) 0 39321 65535))
+(imf "sea" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 40000 50000 65535) (1 0 39321 65535))
+   "e7/cf/af/70/ff/ff/ff/ff")
+  (mono "e7/cf/af/70/ff/ff/ff/ff")))
+(imf "sea" ((12 13 terrain) (x 2 14 0) (file "stdt12x13.gif" std 0 0)))
+(imf "sea" ((24 26 terrain) (x 2 26 0) (file "stdt24x26.gif" std 0 0)))
+(imf "sea" ((44 48 terrain) (x 2 46 0) (file "stdt44x48.gif" std 0 0)))
+(imf "sea" ((88 96 terrain) (x 2 90 0) (file "stdta88x96.gif" std 0 0)))
+(imf "sea" ((13 9 terrain) (x 2 15 0) (file "stdt13x9i.gif"  2 2)))
+(imf "sea" ((48 33 terrain) (x 2 50 0) (file "stdt48x33i.gif" 2 2)))
+(imf "sea" ((32 32 tile) (file "sea.gif")))
+
+(imf "sec-road" ((1 1) 32768 32768 32768))
+(imf "sec-road" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 32768 32768 32768))
+   "00/00/00/00/00/00/00/00")
+  (mono "aa/55/aa/55/aa/55/aa/55")))
+
+(imf "shallows" ((1 1) 0 54784 65535))
+(imf "shallows" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 40000 50000 65535) (1 0 39321 65535))
+   "ff/ff/cf/30/ff/ff/7e/81")
+  (mono "ff/ff/cf/30/ff/ff/7e/81")))
+(imf "shallows" ((12 13 terrain) (x 2 14 0) (file "stdt12x13.gif" std 0 1)))
+(imf "shallows" ((24 26 terrain) (x 2 26 0) (file "stdt24x26.gif" std 0 1)))
+(imf "shallows" ((44 48 terrain) (x 2 46 0) (file "stdt44x48.gif" std 0 1)))
+(imf "shallows" ((88 96 terrain) (x 2 90 0) (file "stdta88x96.gif" std 0 1)))
+(imf "shallows" ((13 9 terrain) (x 2 15 0) (file "stdt13x9i.gif"  2 13)))
+(imf "shallows" ((48 33 terrain) (x 2 50 0) (file "stdt48x33i.gif" 2 37)))
+(imf "shallows" ((64 64 tile)
+  (color (pixel-size 4)
+   (palette
+    (0 6912 39424 53504)
+    (1 12544 46080 56320)
+    (2 12544 44544 56320)
+    (3 6912 37888 52224)
+    (4 9728 42752 54784)
+    (15 12544 41216 54784))
+   "44044002010303443011400111011343042110110141400122ff334300144231"
+   "41412404f14011412044f234240313333f143023224130123432311423424414"
+   "0102141410034f2221434433f244144341323332333333241044143131043144"
+   "41414441111433333ff1f231f3213433ff104313f443313030440343234133f3"
+   "130110010001344f33f3f331f4ff3221144f31404434423123331f3313311440"
+   "1342033023431f04413133f313114f333333f434113333333133ffff34333311"
+   "0441101f32ff31032441f433433423433f33f3333333134422432f3343433200"
+   "1111341003ff3331f241f33f33334243f33333fff4113403f4334321f2341110"
+   "03344441242334334131433ff14432f3233f1f3f34342233f213431333332344"
+   "3f33f31f4412f3143f33f43ff4133333233313333113333341323f423432f433"
+   "24f4414341f321134411f1f21331f41444f331333f3231400343233331f34344"
+   "f2314f331f34434341f3f1314031133f4334034113f23f413321223344f34333"
+   "fff3f3f23f13f22341f33f31441f423f43f443334041ff3432331f11131f43f1"
+   "ff3f332333f3ff344231ff3f3f33314113f3433f24332f333f43f1114f4333f2"
+   "40141323333f132f33133343f33134140134343f313433ff3323f3332333ff23"
+   "00322433ff34332ff232f13f3333ff3343112223f3f1444f143341334431ff33"
+   "100244113144143f3f133433321ff33333f33f33433fff333ff334433f3323f4"
+   "00220123111131312442312f3321431013f2fff3f34133333f3f1ff3f313322f"
+   "11434f44211044443141ff32223f3f443f33323f3ff3444f1333314343413112"
+   "00443f114030310103ff210343432104222f3213fff13444441412231114f14f"
+   "443114144f434134010101444044143331f34342f1ff3243332f43f34344f3ff"
+   "4433f323344114f12213044222333343233134404333342f34f313333142312f"
+   "2344ff3324304011244044214440f13f3f333f3f1211223443144313f3113134"
+   "ff41333403312f2334340233444033133f2f3333f333f1444234343132fff3f3"
+   "0333131414123f431443132ff4341113223f333433333ff343f42334ff4f323f"
+   "1234011411f3f3333ff230404014313444434334223ff3f34341313f22041114"
+   "41111133231f3333323ff31241334320013f243224f1f2f331311f43f314f141"
+   "00f404421201113103ff333333313333323432443422f3343f232321f233fff3"
+   "3221111440f4222203424f423ff4f334f2443431144ff31123333323fff3ff32"
+   "30ff12031441224142234031234312fff123233343343f41f3122f33f3313f23"
+   "f3f13233fff140414001f1f3433f4233f3f333f33f311103104322f44f344430"
+   "3f23f0f44230f11401411132124f344334421143f1ff134114f13f1313f133ff"
+   "4200fff0222103333320311144333131432221044333fff3342334124fff4442"
+   "4f0f1111144114414433311241101430432f44432412ff3f232f2f33332ff03f"
+   "33214113040214434fff20fff442343142333f433333ff13443f131113f32233"
+   "4033f43302114111ff3fff3ff014431033f1333f3ff22304343343f34f41f04f"
+   "420011f41f4201111114414223ff33042032fff3f2333333342f34f33f312ff2"
+   "1111141143223043f32f10134ff0f33000f4f33ff233f33ff3334f3334132f04"
+   "22f11433412f333f3333432ffff01f3f3f0202ff4332ffff41f33443f3332f3f"
+   "2f002214444f00f4f2f33333ff24443fff2f32422121f143332343f3ffff3f04"
+   "11400042ff02f24133ff4fff4020f2ff42f3ff4f3f32331434314f3f32434412"
+   "222f044ff3f34f032f33f3ff413f033f3f333f3f133f332430132ff232343f2f"
+   "4ff114030f3032ff4ff3333333433f3332313333423fff3330ff3423232011ff"
+   "44042444244002041f3f0332f332133f331f200232ff3311f0333ff32433ffff"
+   "10f00441204f2f00ff14323f4ff223f2f3f4144f11f2f33f3f303333fff23033"
+   "1044f2111443f33f032000141ff041300111ff43f230131f32f33ff33f331f32"
+   "422f41403200f41f2140222322f422421014432fff21421f3342323f43f4ff40"
+   "120142021421440f00f044242003f12f03031314413402f3332f33fff3f332f0"
+   "221114421212443f2f110f042ff133300001f3ff33f113f4f3014343f1234f3f"
+   "0442011244401111221144122130ffff0ff0f012132f21f4f21f2130fff33333"
+   "4041122124111111111ff0020ff202f2f21ff1022113f03124ff01ffff0f1110"
+   "4202202ff0444441340f004f1124110004200f42f01100200434f33f230142f2"
+   "211241111442f0401011244f44ff001002f2033ff3f30f30fff021f3431f032f"
+   "112240242044414424144ff42403333321111403f4f00033333f341411133f3f"
+   "10111442420040000034f224f0f000340f220440f00f34ff03242033ffffff14"
+   "04ff2f21044f0302f004ff44444ff222ff0023324432344f1400020f13ff2043"
+   "2fff43f02f21f4ff30ff440f04f2f0421f20f102321114033330330120f44010"
+   "12120f444244f2ff402fff230ff22112f42ff23f40f20ff02fff030f2f444044"
+   "f42414f0014412404030f240302f42414444014f42f10fff0f4f22ff333f3f2f"
+   "421402210ff421124212200002020304fff111100ff033201100ff2012f0003f"
+   "4f1411441111112444111220100fff20f4f202221f3033333f3220120ff4ff0f"
+   "f2444000341240f24242211112f2f40f1f0f33f3021211f32003f22f00022fff"
+   "4f44ff4f3100f2f0f1ff4121114f4212f0f20302243f2211ff43f0003f2f3ff4"
+   "4ffff0f0111111fff21421411141104f3201ff410212f4400041333024144ff4")))
+
+(imf "slope" ((1 1) 55808 42240 8192))
+(imf "slope" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 55808 42240 8192) (1 25007 22122 9410))
+   "11/22/44/88/11/22/44/88")
+  (mono "11/22/44/88/11/22/44/88")))
+
+(imf "straw" ((1 1) 65535 65535 52428))
+(imf "straw" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 65535 65535 52428))
+   "00/00/00/00/00/00/00/00")
+  (mono "00/40/00/00/00/04/00/00")))
+
+(imf "swamp" ((1 1) 13107 39321 0))
+(imf "swamp" ((8 8 tile)
+  (mono "00/6c/fe/92/90/57/10/fe")))
+(imf "swamp" ((16 16 tile)
+  (color (pixel-size 2)
+   (palette
+    (0 0 8738 0)
+    (1 13107 39321 0)
+    (2 0 13107 0))
+   "50055555/55540005/55955555/65965540/59994055/59995555/55555005/00005555"
+   "55555555/40055655/55559659/40556665/55406665/55555555/54000155/15555540")))
+(imf "swamp" ((12 13 terrain) (x 4 14 0) (file "stdt12x13.gif" std 0 2)))
+(imf "swamp" ((24 26 terrain) (x 4 26 0) (file "stdt24x26.gif" std 0 2)))
+(imf "swamp" ((44 48 terrain) (x 4 46 0) (file "stdt44x48.gif" std 0 2)))
+(imf "swamp" ((88 96 terrain) (x 4 90 0) (file "stdta88x96.gif" std 0 2)))
+(imf "swamp" ((13 9 terrain) (x 2 15 0) (file "stdt13x9i.gif"  2 24)))
+(imf "swamp" ((48 33 terrain) (x 2 50 0) (file "stdt48x33i.gif" 2 72)))
+
+(imf "swamp-2" ((1 1) 39424 52480 12800))
+(imf "swamp-2" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 39424 52480 12800) (1 0 25775 4528))
+   "02/8a/8a/8a/20/a8/a8/a8")
+  (mono "02/8a/8a/8a/20/a8/a8/a8")))
+
+(imf "trail" ((1 1) 42240 10752 10752))
+(imf "trail" ((8 8 tile)
+  (color (pixel-size 2)
+   (palette
+    (0 white)
+    (1 49152 49152 49152)
+    (3 black))
+   "4444/3d3d/4444/d3d3/4444/3d3d/4444/d3d3")
+  (mono "00/66/00/99/00/66/00/99")))
+
+(imf "transition" ((24 26 transition) (file "tran24x26.gif" 2 2)))
+(imf "transition" ((44 48 transition) (file "tran44x48.gif" 2 2)))
+(imf "transition" ((88 96 transition) (file "tran88x96.gif" 2 2)))
+
+(imf "urban" ((1 1) 48640 48640 48640))
+(imf "urban" ((8 8 tile)
+  (mono "6f/67/00/6e/6e/0e/60/6f")))
+(imf "urban" ((16 16 tile)
+  (color (pixel-size 1) (palette (0 32768 32768 32768) (1 black))
+   "6c00/6df6/01f6/6c00/6dbb/01bb/7583/71b8/003c/ef01/ef6d/e06d/0f60/0f0b/603b/6dbb")))
+(imf "urban" ((12 13 terrain) (x 4 14 0) (file "eur12x13.gif" std 0 2)))
+(imf "urban" ((24 26 terrain) (x 4 26 0) (file "eur24x26.gif" std 0 2)))
+(imf "urban" ((44 48 terrain) (x 4 46 0) (file "eur44x48.gif" std 0 2)))
+
+(imf "vacuum" ((1 1) 0 0 32768))
+(imf "vacuum" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 black) (1 0 0 32768))
+   "7f/ff/fb/ff/bf/ff/ff/ff")
+  (mono "7f/ff/fb/ff/bf/ff/ff/ff")))
+
+(imf "water" ((1 1) 34560 52736 60160))
+(imf "water" ((8 8 tile)
+  (color (pixel-size 1) (palette (0 0 39321 65535))
+   "00/00/00/00/00/00/00/00")
+  (mono "dd/77/dd/77/dd/77/dd/77")))
+
+(imf "wooded-hills" ((1 1) 21760 27392 12032))
+(imf "wooded-hills" ((8 8 tile)
+  (mono "3f/d9/d6/b7/fb/9e/69/eb")))
+(imf "wooded-hills" ((16 16 tile)
+  (color (pixel-size 2)
+   (palette
+    (0 0 25775 4528)
+    (1 22016 11421 1316)
+    (3 black))
+   "f114f000/0c5c0c3c/0d430cc3/554030c5/00550014/3c037c53/c33c457c/03305714"
+   "f0157005/0d554c3c/05c35cc3/14c014c0/10300530/7c035555/533d433c/07310330")))

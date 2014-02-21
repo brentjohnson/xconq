@@ -1,0 +1,45 @@
+A World Lost Slowly Changelog:
+
+7-8-2004
+*awls.g: changed name from korea-rules.g to awls.g
+added long backstory
+(define) delineated units by damage typing: wrecked-types damaged-types base-types reinforced-types
+(acp-to-attack) changed ACP cost to attack wrecked-type units to 2 for army/corps and 1 for armor
+(acp-to-build) caf can now build adn, which seems to enable the AI to build wing units
+(material) added 'manpower', 'electronics' and 'tech'
+(consumption-on-creation) changed the of army/corps/armor/brigade to include manpower, changed wing/squadron to cost electronics
+(treasury) each side has different treasury values for the base game, so each side has a different emphasis
+(unit-type) added two new tech classes of carriers and graphics for each
+(image-name) 'Advanced Fighter Squadron' now uses 'ko-advanced-fighter'
+(image-name) coastsub now uses 'ko-coastsub'
+(unit-storage-x) reduced materiel capacity for coastal vessels to keep them from roaming the high seas
+(gives-to-treasury) (base-production) units produce tech materials, more materials for higher-tech units, to simulate improved technology as a result of producing hi-tech units
+(side-can-research) research turned on for the base game, still off for the Korea-2006 module
+(see-chance) sea units cannot see inland, land units cannot see out to sea, except fighters
+(action-notices) added a little flair and sensibility to unit interaction
+(fire-damage) (fire-hit-chance) changed the damage and hit chances for the new carriers
+*korea-2006: (treasury) Changed starting materials to reflect new materials
+(variant) aggressive-china now available, which sets most Chinese units along the PRC/DPRK border
+*u-korea: Named some units, changed one American carrier and the Chinese carrier into Tech1 carriers, changed the other American carrier into a Tech2 carrier
+*korea.gif: Added images for Tech1 and Tech2 carriers, coastal subs and advanced fighter squadrons
+*u-korea-2.g: new .g file for the 'aggressive-china' variant
+
+7-14-2004
+*awls.g: (unit-type) Added Carrier Air Wings, which can board but not leave carriers
+(fire-hit-chance) (fire-damage) changed carriers to give a very weak but 100% chance to hit, this forces the AI to treat carriers as offensive units.
+(unit-type) added nukes, but haven't activated them yet.
+(hp-max) changed naval units to have less hp, changed coastal to have more.
+(see-chance) (see-chance-adjacent) Added more nuance to ASW rules
+(protection) Carrier Air Wings have a 25% chance of being hit when their Carrier is hit.
+(fire-hit-chance) removed the old "Squadron u* 90" because Squadrons have experience
+(variant) removed ZOC from options, made it standard because it works fine, only causes hangs in combination with (withdraw-chance)
+(wrecked-type-if-killed) Fighters and SAMs all suffer double from infantry and armor
+(consumption-per-move) nuclear-powered vessels use no supply to move
+(build-range) increased build-range for naval units to 1
+(imf) linked to new graphics in korea.gif
+*u-korea.g added carrier air wings and a nuclear sub for the Chinese, which they have
+Named the cities on the Korean peninsula.
+Removed a city from North Korea
+*u-korea-2.g same as u-korea.g
+*korea-2006.g added carrier air wings
+*korea.gif added graphics for nukes and carrier air wings

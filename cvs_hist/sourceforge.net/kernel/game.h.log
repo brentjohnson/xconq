@@ -1,0 +1,152 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/game.h,v
+Working file: game.h
+head: 1.6
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.6
+	BPT_EMCDONALD_AI_15: 1.6
+	SS_7_5_0_0pre_0_20050612: 1.5
+	BPT_MSKALA_IMF_3: 1.5
+	BPT_MSKALA_SUPPLY_12: 1.5
+	BPT_EMCDONALD_AI_14: 1.5
+	MPT_EMCDONALD_AI_7: 1.2.2.4
+	BPT_EMCDONALD_AI_13: 1.4
+	SS_7_5_0_0pre_0_20050501: 1.4
+	BPT_EMCDONALD_AI_12: 1.4
+	MPT_EMCDONALD_AI_6: 1.2.2.2
+	BPT_EMCDONALD_AI_11: 1.4
+	SS_7_5_0_0pre_0_20050416: 1.4
+	BPT_EMCDONALD_AI_10: 1.4
+	MPT_EMCDONALD_AI_5: 1.2.2.2
+	BPT_EMCDONALD_AI_9: 1.3
+	BPT_EMCDONALD_AI_8: 1.3
+	MPT_EMCDONALD_AI_4: 1.2.2.1
+	BPT_EMCDONALD_AI_7: 1.3
+	MPT_EMCDONALD_AI_3: 1.2.2.1
+	BPT_EMCDONALD_AI_6: 1.3
+	BPT_MSKALA_SUPPLY_11: 1.3
+	BPT_EMCDONALD_AI_5: 1.3
+	MPT_EMCDONALD_AI_2: 1.2.2.1
+	SS_7_5_0_0pre_0_20050322: 1.2
+	BPT_MSKALA_SUPPLY_10: 1.2
+	BPT_EMCDONALD_AI_4: 1.2
+	MPT_EMCDONALD_AI_1: 1.2
+	BPT_EMCDONALD_AI_3: 1.2
+	BPT_MSKALA_SUPPLY_9: 1.2
+	MPT_MSKALA_SUPPLY_3: 1.1.1.1.4.1
+	BPT_EMCDONALD_AI_2: 1.2
+	BPT_MSKALA_SUPPLY_8: 1.2
+	MPT_MSKALA_SUPPLY_2: 1.1.1.1.4.1
+	BPT_MSKALA_SUPPLY_7: 1.2
+	BRANCH_EMCDONALD_AI: 1.2.0.2
+	BPT_EMCDONALD_AI_1: 1.2
+	BPT_MSKALA_SUPPLY_6: 1.2
+	SS_7_5_0_0pre_0_20050225: 1.2
+	BPT_MSKALA_SUPPLY_5: 1.2
+	MPT_MSKALA_SUPPLY_1: 1.1.1.1.4.1
+	BPT_MSKALA_SUPPLY_4: 1.1.1.1
+	BPT_MSKALA_SUPPLY_3: 1.1.1.1
+	BPT_MSKALA_SUPPLY_2: 1.1.1.1
+	SS_7_5_0_0pre_0_20050208: 1.1.1.1
+	BPT_MSKALA_IMF_2: 1.1.1.1
+	BRANCH_MSKALA_SUPPLY: 1.1.1.1.0.4
+	BPT_MSKALA_SUPPLY_1: 1.1.1.1
+	SS_7_5_0_0pre_0_20050117: 1.1.1.1
+	SS_7_5_0_0pre_0_20050108: 1.1.1.1
+	SS_7_5_0_0pre_0_20041228: 1.1.1.1
+	BRANCH_MSKALA_IMF: 1.1.1.1.0.2
+	BPT_MSKALA_IMF_1: 1.1.1.1
+	SS_7_5_0_0pre_0_20041211: 1.1.1.1
+	SS_7_5_0_0pre_0_20041126: 1.1.1.1
+	GENESIS: 1.1.1.1
+	PRIVATE_TREE_1: 1.1.1
+keyword substitution: kv
+total revisions: 16;	selected revisions: 16
+description:
+----------------------------
+revision 1.6
+date: 2005/06/18 23:50:07;  author: eric_mcdonald;  state: Exp;  lines: +6 -4
+Alter the way dice specs work.
+Honor dice specs for unit explosion damage.
+Move another game to the bitrot archive.
+----------------------------
+revision 1.5
+date: 2005/06/06 03:03:45;  author: eric_mcdonald;  state: Exp;  lines: +7 -35
+Merge from 'MPT_EMCDONALD_AI_6' to 'MPT_EMCDONALD_AI_7'.
+----------------------------
+revision 1.4
+date: 2005/04/16 01:17:11;  author: eric_mcdonald;  state: Exp;  lines: +7 -15
+Merge from 'MPT_EMCDONALD_AI_4' to 'MPT_EMCDONALD_AI_5'.
+----------------------------
+revision 1.3
+date: 2005/03/28 03:56:50;  author: eric_mcdonald;  state: Exp;  lines: +35 -0
+Merge from 'MPT_EMCDONALD_AI_1' to 'MPT_EMCDONALD_AI_2'.
+----------------------------
+revision 1.2
+date: 2005/02/23 05:06:04;  author: eric_mcdonald;  state: Exp;  lines: +4 -4
+branches:  1.2.2;
+Merge in changes from root of 'BRANCH_MSKALA_SUPPLY' to 'MPT_MSKALA_SUPPLY_1'.
+----------------------------
+revision 1.1
+date: 2004/11/21 03:01:05;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.1;
+Initial revision
+----------------------------
+revision 1.1.1.1
+date: 2004/11/21 03:01:05;  author: eric_mcdonald;  state: Exp;  lines: +0 -0
+branches:  1.1.1.1.2;  1.1.1.1.4;
+Initial import from private repo into SF repo.
+----------------------------
+revision 1.1.1.1.4.3
+date: 2005/06/06 03:18:20;  author: eric_mcdonald;  state: Exp;  lines: +14 -50
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_11' and 'BPT_MSKALA_SUPPLY_12'.
+----------------------------
+revision 1.1.1.1.4.2
+date: 2005/03/28 04:17:55;  author: eric_mcdonald;  state: Exp;  lines: +35 -0
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_10' and 'BPT_MSKALA_SUPPLY_11'.
+----------------------------
+revision 1.1.1.1.4.1
+date: 2005/01/28 03:17:56;  author: eric_mcdonald;  state: Exp;  lines: +4 -4
+Applied patch from Matthew.
+----------------------------
+revision 1.1.1.1.2.1
+date: 2005/06/06 03:39:34;  author: eric_mcdonald;  state: Exp;  lines: +53 -54
+Merged in all trunk changes between BPT_MSKALA_IMF_2 and BPT_MSKALA_IMF_3.
+----------------------------
+revision 1.2.2.5
+date: 2005/07/10 15:42:51;  author: eric_mcdonald;  state: Exp;  lines: +6 -4
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_14' and 'BPT_EMCDONALD_AI_15'.
+----------------------------
+revision 1.2.2.4
+date: 2005/06/03 02:32:43;  author: eric_mcdonald;  state: Exp;  lines: +0 -23
+Make creation and building ACP-less.
+Rework build task.
+Some more repair-related tests.
+Improvement task management. Include support for enqueuing ops.
+Fix crashing bug in SDL interface.
+Fix apparent bug in net receive code.
+Cleanup code.
+----------------------------
+revision 1.2.2.3
+date: 2005/05/21 17:29:29;  author: eric_mcdonald;  state: Exp;  lines: +7 -12
+Archive or delete some unmaintained games that do not work well.
+Implement new construction and repair features.
+Improve support for operational roles.
+Add tatical-level calculations for AI.
+Enhance materials consumption code.
+----------------------------
+revision 1.2.2.2
+date: 2005/04/13 01:55:20;  author: eric_mcdonald;  state: Exp;  lines: +7 -15
+More treasury-checking functions.
+Many AI tweaks, plus foundation for further enhancements.
+Fix bug in my earlier bugfix in the economy code.
+----------------------------
+revision 1.2.2.1
+date: 2005/03/25 17:37:42;  author: eric_mcdonald;  state: Exp;  lines: +35 -0
+Move some useful functions to a more common location.
+Start laying groundwork for new set of designer-specifiable AI worth functions.
+Fix warning in Default and related games.
+=============================================================================

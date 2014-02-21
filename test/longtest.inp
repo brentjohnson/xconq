@@ -1,0 +1,56 @@
+finall
+finall
+
+(* 100 move randomly)
+(* 100 enter randomly)
+(* 100 attack randomly)
+(* 100 overrun randomly)
+(* 100 fire-at randomly)
+(* 100 fire-into randomly)
+(* 100 detonate randomly)
+(* 100 capture randomly)
+(* 100 produce randomly)
+(* 100 transfer randomly)
+(* 100 research randomly)
+(* 100 toolup randomly)
+(* 100 create-in randomly)
+(* 100 create-at randomly)
+(* 100 build randomly)
+(* 100 repair randomly)
+(* 100 disband randomly)
+(* 100 move-parts randomly)
+(* 100 change-type randomly)
+(* 100 change-side randomly)
+(* 100 alter-terrain randomly)
+(* 100 add-terrain randomly)
+(* 100 remove-terrain randomly)
+
+finall
+
+(* 100 move randomly)
+(* 100 enter randomly)
+(* 100 attack randomly)
+(* 100 overrun randomly)
+(* 100 fire-at randomly)
+(* 100 fire-into randomly)
+(* 100 detonate randomly)
+(* 100 capture randomly)
+(* 100 produce randomly)
+(* 100 transfer randomly)
+(* 100 research randomly)
+(* 100 toolup randomly)
+(* 100 create-in randomly)
+(* 100 create-at randomly)
+(* 100 build randomly)
+(* 100 repair randomly)
+(* 100 disband randomly)
+(* 100 move-parts randomly)
+(* 100 change-type randomly)
+(* 100 change-side randomly)
+(* 100 alter-terrain randomly)
+(* 100 add-terrain randomly)
+(* 100 remove-terrain randomly)
+
+save
+finall
+quit

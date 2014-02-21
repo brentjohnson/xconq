@@ -1,0 +1,690 @@
+/* Definitions of the unit type properties in Xconq GDL.
+   Copyright (C) 1991-2000 Stanley T. Shebs.
+   Copyright (C) 2004-2005 Eric A. McDonald.
+
+Xconq is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.  See the file COPYING.  */
+
+DEF_UPROP_L("acp-damage-effect", u_acp_damage_effect,
+	"effect of reduced hp on acp per turn",
+	acpdamageeffect)
+
+DEF_UPROP_I("acp-max", u_acp_max,
+	"maximum acp that can be accumulated from turn to turn",
+	acpmax, -1, -1, PROPHI)
+
+DEF_UPROP_I("acp-min", u_acp_min,
+	"amount by which unit acp may go negative during a turn",
+	acpmin, PROPLO, 0, PROPHI)
+
+DEF_UPROP_L("acp-morale-effect", u_acp_morale_effect,
+	"effect of morale on acp per turn",
+	acpmoraleeffect)
+
+DEF_UPROP_I("acp-per-turn", u_acp,
+	"base number of actions that this type can do in one turn",
+	acp, 0, 0, PROPHI)
+
+DEF_UPROP_I("acp-per-turn-max", u_acp_turn_max,
+	"maximum acp after modification by damage etc effects",
+	acpturnmax, -1, -1, PROPHI)
+
+DEF_UPROP_I("acp-per-turn-min", u_acp_turn_min,
+	"minimum acp after modification by damage etc effects",
+	acpturnmin, 0, 0, PROPHI)
+
+DEF_UPROP_L("acp-season-effect", u_acp_season_effect,
+	"effect of season on acp",
+	acpseasoneffect)
+
+DEF_UPROP_L("acp-temperature-effect", u_acp_temp_effect,
+	"effect of temperature on acp",
+	acptempeffect)
+
+DEF_UPROP_I("acp-to-change-side", u_acp_to_change_side,
+	"action points used up by side change",
+	acptochangeside, 0, 0, PROPHI)
+
+DEF_UPROP_I("acp-to-detonate", u_acp_to_detonate,
+	"action points used up by detonating",
+	acptodetonate, 0, 0, PROPHI)
+
+DEF_UPROP_I("acp-to-disband", u_acp_to_disband,
+	"action points used up by disbanding",
+	acptodisband, 0, 0, PROPHI)
+
+DEF_UPROP_I("acp-to-fire", u_acp_to_fire,
+	"action points used up by firing",
+	acptofire, 0, 0, PROPHI)
+
+DEF_UPROP_I("acp-to-move", u_acp_to_move,
+	"action points used up by one move",
+	acptomove, 0, 1, PROPHI)
+
+DEF_UPROP_I("action-priority", u_action_priority,
+	"relative order in which the unit acts",
+	actionpriority, 0, 0, PROPHI)
+
+DEF_UPROP_I("ai-base-worth", u_ai_base_worth,
+	    "worth to AI as a base",
+	    aibaseworth, -1, -1, PROPHI)
+
+DEF_UPROP_I("ai-depot-worth", u_ai_depot_worth,
+	    "worth to AI as a depot",
+	    aidepotworth, -1, -1, PROPHI)
+
+DEF_UPROP_I("ai-distributor-worth", u_ai_distributor_worth,
+	    "worth to AI as a distributor of materials",
+	    aidistributorworth, -1, -1, PROPHI)
+
+DEF_UPROP_I("ai-explorer-worth", u_ai_explorer_worth,
+	    "worth to AI as an explorer",
+	    aiexplorerworth, -1, -1, PROPHI)
+
+DEF_UPROP_I("ai-minimal-size-goal", u_ai_minimal_size_goal,
+	    "AI's minimal size goal for advanced unit",
+	    aiminimalsizegoal, 0, 12, PROPHI)
+
+DEF_UPROP_I("ai-mover-worth", u_ai_mover_worth,
+	    "worth to AI as a mobile unit",
+	    aimoverworth, -1, -1, PROPHI)
+
+DEF_UPROP_I("ai-prod-enhancer-worth", u_ai_prod_enhancer_worth,
+	    "worth to AI as an enhancer of materials production",
+	    aiprodenhancerworth, -1, -1, PROPHI)
+
+DEF_UPROP_I("ai-producer-worth", u_ai_producer_worth,
+	    "worth to AI as a producer of materials",
+	    aiproducerworth, -1, -1, PROPHI)
+
+DEF_UPROP_I("ai-seer-worth", u_ai_seer_worth,
+	    "worth to AI as a seer",
+	    aiseerworth, -1, -1, PROPHI)
+
+DEF_UPROP_I("already-seen", u_already_seen,
+	"chance the unit is seen initially if its cell is seen",
+	alreadyseen, 0, 0, 100)
+
+DEF_UPROP_I("already-seen-independent", u_already_seen_indep,
+	"chance the independent unit is seen initially if its cell is seen",
+	alreadyseenindep, 0, 0, 100)
+
+DEF_UPROP_I("assign-number", u_assign_number,
+	"true if unit should be given a number",
+	assignnumber, 0, 1, 1)
+
+DEF_UPROP_I("attack", u_attack,
+	"strength of attacks",
+	attack, 0, 0, PROPHI)
+
+DEF_UPROP_I("auto-upgrade-to", u_auto_upgrade_to,
+	"utype that a unit can automatically be upgraded to",
+	autoupgradeto, NONUTYPE, NONUTYPE, PROPHI)
+
+DEF_UPROP_I("available", u_available,
+	"true if this type may be used",
+	available, PROPLO, 1, PROPHI)
+
+DEF_UPROP_I("can-be-self", u_can_be_self,
+	"true if this type can be a self-unit",
+	canbeself, 0, 0, 1)
+
+DEF_UPROP_I("capacity", u_capacity,
+	"space for occupants shared by all types of occupants",
+	capacity, 0, 0, PROPHI)
+
+DEF_UPROP_I("can-see-behind", u_can_see_behind,
+	"can an unit see behind things",
+	canseebehind, 0, 1, 1)
+
+/* Note that this function cannot be named u_char, because certain
+   &^$%&^%! OSes, like AIX, typedef it to be an unsigned char. */
+
+DEF_UPROP_S("char", u_uchar,
+	"single character to use in displays",
+	uchar, "")
+
+DEF_UPROP_S("construction-border-color", u_construction_border_color,
+	    "border color when unit of this type is under construction",
+	    uconstructionbordercolor, "SandyBrown")
+
+DEF_UPROP_S("construction-fill-color", u_construction_fill_color,
+	    "border color when unit of this type is under construction",
+	    uconstructionfillcolor, "brown")
+
+DEF_UPROP_L("consumption-temperature-effect", u_consume_temp_effect,
+	"effect of temperature on base consumption",
+	consumetempeffect)
+
+DEF_UPROP_I("country-units-max", u_country_units_max,
+	"maximum number of units in the entire country",
+	countryunitsmax, -1, -1, PROPHI)
+
+DEF_UPROP_I("courage-max", u_courage_max,
+	"maximum of type's courage vs other sides",
+	couragemax, -100, 0, 100)
+
+DEF_UPROP_I("courage-min", u_courage_min,
+	"minimum of type's courage vs other sides",
+	couragemin, -100, 0, 100)
+
+DEF_UPROP_I("cp", u_cp,
+	"number of construction points to complete a new unit",
+	cp, 0, 1, PROPHI)
+
+DEF_UPROP_I("cp-attrition", u_cp_attrition,
+	"chance that an incomplete unit will lose cp",
+	cpattrition, 0, 0, 10000)
+
+DEF_UPROP_I("cp-per-self-build", u_cp_per_self_build,
+	"number of construction points per self completion",
+	cpperselfbuild, 0, 0, PROPHI)
+
+DEF_UPROP_I("cp-to-self-build", u_cp_to_self_build,
+	"number of construction points to enable self completion",
+	cptoselfbuild, 0, 0, PROPHI)
+
+DEF_UPROP_I("cxp-max", u_cxp_max,
+	"upper bound on combat experience",
+	cxpmax, 0, 0, PROPHI)
+
+DEF_UPROP_I("cxp-on-capture-effect", u_cxp_on_capture,
+	"change in combat experience of a captured unit",
+	cxponcapture, 0, 100, PROPHI)
+
+DEF_UPROP_I("defend", u_defend,
+	"strength of defense",
+	defend, 0, 0, PROPHI)
+
+DEF_UPROP_L("description-format", u_desc_format,
+	"formatting info for textual descriptions of a unit",
+	descformat)
+
+DEF_UPROP_L("destruction-result", u_destruction_result,
+	"possible outcomes of a unit's destruction",
+	destructionresult)
+
+DEF_UPROP_I("detonate-with-attack", u_detonate_with_attack,
+	"chance that a unit will detonate when it makes an attack",
+	detonatewithattack, 0, 0, 100)
+
+DEF_UPROP_I("detonate-on-death", u_detonate_on_death,
+	"chance that a unit will detonate when about to die",
+	detonateondepth, 0, 0, 100)
+
+DEF_UPROP_I("direct-control", u_direct_control,
+	"true if the type can be controlled directly by the player",
+	directcontrol, 0, 1, 1)
+
+DEF_UPROP_L("encounter-result", u_encounter_result,
+	"possible outcomes of an encounter",
+	encounterresult)
+
+DEF_UPROP_I("fire-angle-max", u_fire_angle_max,
+	"maximum elevation of firing weapons, as percentage",
+	fireanglemax, 0, 0, PROPHI)
+
+DEF_UPROP_I("free-acp", u_free_acp,
+	"extra action points available if an action needs them",
+	freeacp, 0, 0, PROPHI)
+
+DEF_UPROP_I("free-mp", u_free_mp,
+	"extra mp available if a move action needs them",
+	freemp, 0, 0, PROPHI)
+
+DEF_UPROP_S("generic-char", u_gchar,
+	"a non-unique character for the type",
+	gchar, "")
+
+DEF_UPROP_S("generic-name", u_generic_name,
+	"a non-unique name for the type",
+	genericname, "")
+
+DEF_UPROP_S("help", u_help,
+	"brief description of this type",
+	help, "")
+
+DEF_UPROP_I("hit-falloff-range", u_hit_falloff_range,
+	"",
+	hitfalloffrange, 0, PROPHI, PROPHI)
+
+DEF_UPROP_I("hp-max", u_hp_max,
+	"maximum number of hit points",
+	hpmax, 1, 1, PROPHI)
+
+DEF_UPROP_I("hp-per-disband", u_hp_per_disband,
+	"hit points lost by one disband action",
+	hpperdisband, 0, 0, PROPHI)
+
+DEF_UPROP_I("hp-per-detonation", u_hp_per_detonation,
+	"hit points lost by one detonate action",
+	hpperdetonation, 0, 0, PROPHI)
+
+DEF_UPROP_I("hp-recovery", u_hp_recovery,
+	"number of hit points restored automatically each turn",
+	hprecovery, 0, 0, PROPHI)
+
+DEF_UPROP_I("hp-to-recover", u_hp_to_recover,
+	"minimum hp for hp recovery to work",
+	hptorecover, 0, 0, PROPHI)
+
+DEF_UPROP_L("image-name", u_image_name,
+	"ways to specify what a unit looks like",
+	imagename)
+
+DEF_UPROP_I("independent-growth-chance", u_indep_growth,
+	"chance that an independent unit will be created during country growth",
+	indepgrowth, 0, 0, 10000)
+
+DEF_UPROP_I("independent-near-start", u_indep_near_start,
+	"number of independent units within the min radius of the country",
+	indepnearstart, 0, 0, PROPHI)
+
+DEF_UPROP_I("independent-takeover-chance", u_indep_takeover,
+	"chance that an existing independent unit will be given to a growing country",
+	indeptakeover, 0, 0, 10000)
+
+DEF_UPROP_I("initial-seen-radius", u_seen_radius,
+	"radius around initial units that is seen initially",
+	seenradius, 0, 1, PROPHI)
+
+DEF_UPROP_S("long-name", u_long_name,
+	"completely expanded-out name for the type",
+	longname, "")
+
+DEF_UPROP_I("lost-revolt-chance", u_lost_revolt,
+	"chance that a unit on a losing side will revolt",
+	lostrevolt, 0, 0, 10000)
+
+DEF_UPROP_I("lost-vanish-chance", u_lost_vanish,
+	"chance that a unit on a losing side will vanish",
+	lostvanish, 0, 10000, 10000)
+
+DEF_UPROP_I("lost-wreck-chance", u_lost_wreck,
+	"chance that a unit on a losing side will be wrecked",
+	lostwreck, 0, 0, 10000)
+
+DEF_UPROP_I("match-transport-side", u_match_transport_side,
+	    "attempt to match transport's side whenever that changes",
+	    matchtransportside, 0, 0, 1)
+
+DEF_UPROP_I("morale-max", u_morale_max,
+	"upper bound on morale",
+	moralemax, 0, 0, PROPHI)
+
+DEF_UPROP_I("morale-recovery", u_morale_recovery,
+	"morale regained each turn",
+	moralerecovery, 0, 0, PROPHI)
+
+DEF_UPROP_I("move-range", u_move_range,
+	"distance that a unit can jump in one move",
+	moverange, 0, 1, PROPHI)
+
+DEF_UPROP_I("mp-to-leave-world", u_mp_to_leave_world,
+	"movement points needed to leave the world entirely",
+	mptoleaveworld, -1, -1, PROPHI)
+
+DEF_UPROP_S("namer", u_namer,
+	"namer or naming method for this type",
+	namer, "")
+
+DEF_UPROP_S("name", u_type_name,
+	"basic name of the type",
+	name, "")
+
+DEF_UPROP_S("name-internal", u_internal_name,
+	"",
+	iname, "")
+
+DEF_UPROP_L("notes", u_notes,
+	"player notes about the unit type",
+	notes)
+
+DEF_UPROP_I("obsolete", u_obsolete,
+	"the advance that makes this type obsolete",
+	obsolete, NONATYPE, NONATYPE, PROPHI)
+
+DEF_UPROP_I("occupant-total-max", u_occ_total_max,
+	"maximum number of all types of occupants added together",
+	occtotalmax, -1, -1, PROPHI)
+
+DEF_UPROP_I("opinion-max", u_opinion_max,
+	"maximum of type's opinion about other sides",
+	opinionmax, -100, 0, 100)
+
+DEF_UPROP_I("opinion-min", u_opinion_min,
+	"minimum of type's opinion about other sides",
+	opinionmin, -100, 0, 100)
+
+DEF_UPROP_I("point-value", u_point_value,
+	"an arbitrary number that assigns a value to a unit type",
+	pointvalue, 0, 1, PROPHI)
+
+DEF_UPROP_L("possible-sides", u_possible_sides,
+	"side(s) (class(es)) to which this type can belong",
+	possiblesides)
+
+DEF_UPROP_I("range", u_range,
+	"maximum possible distance to fire",
+	range, 0, 1, PROPHI)
+
+DEF_UPROP_I("range-min", u_range_min,
+	"minimum possible distance to fire",
+	rangemin, 0, 0, PROPHI)
+
+DEF_UPROP_I("reach", u_reach,
+	"maximum distance of locations used by the unit",
+	ureach, 0, 0, PROPHI)
+
+DEF_UPROP_I("revolt-chance", u_revolt,
+	"basic chance that a unit will revolt",
+	revolt, 0, 0, 10000)
+
+DEF_UPROP_I("revolt-at-opinion-min", u_revolt_opinion_min,
+	"chance that a unit will revolt when at its lowest opinion of its side",
+	revoltopinionmin, 0, 0, 10000)
+
+DEF_UPROP_I("road-to-edge-chance", u_road_to_edge_chance,
+	"chance for a road running from unit to edge of the world",
+	roadtoedgechance, 0, 0, 100)
+
+DEF_UPROP_I("see-always", u_see_always,
+	"true if others' view of unit is always up-to-date",
+	seealways, 0, 0, 1)
+
+DEF_UPROP_I("see-occupants", u_see_occupants,
+	"true if occupants seen whenever unit is seen",
+	seeoccs, 0, 0, 1)
+
+DEF_UPROP_I("see-terrain-if-captured", u_see_terrain_captured,
+	"chance to see other side's terrain view if unit captured",
+	seeterrcap, 0, 0, 100)
+
+DEF_UPROP_I("self-changeable", u_self_changeable,
+	"true if self-unit may be changed by player at will",
+	selfchangeable, 0, 0, 1)
+
+DEF_UPROP_I("self-resurrects", u_self_resurrects,
+	"true if self-unit switches automatically if current one dies",
+	selfresurrects, 0, 0, 1)
+
+DEF_UPROP_S("short-name", u_short_name,
+	"abbreviated but still informative name string",
+	shortname, "")
+
+DEF_UPROP_I("size-min", u_size_min,
+        "minimum size for unit",
+        sizemin, 0, 0, PROPHI)
+
+DEF_UPROP_I("size-max", u_size_max,
+        "maximum size for unit",
+        sizemax, 0, PROPHI, PROPHI)
+
+DEF_UPROP_I("speed", u_speed,
+	"normal acp/move ratio",
+	speed, 0, 100, PROPHI)
+
+DEF_UPROP_L("speed-damage-effect", u_speed_damage_effect,
+	"effect of damage on speed",
+	speeddamageeffect)
+
+DEF_UPROP_I("speed-max", u_speed_max,
+	"maximum possible acp/move ratio",
+	speedmax, 0, PROPHI, PROPHI)
+
+DEF_UPROP_I("speed-min", u_speed_min,
+	"minimum possible acp/move ratio",
+	speedmin, 0, 0, PROPHI)
+
+DEF_UPROP_L("speed-wind-effect", u_speed_wind_effect,
+	"effect of wind (force and angle) on speed",
+	speedwindeffect)
+
+DEF_UPROP_I("spot-action", u_spot_action,
+	"true if unit might be spotted if it acts",
+	spotaction, 0, 0, 1)
+
+DEF_UPROP_I("spur-chance", u_spur_chance,
+	"chance for a road spur",
+	spurchance, 0, 0, 100)
+
+DEF_UPROP_I("spur-range", u_spur_range,
+	"maximum length for a road spur",
+	spurrange, 0, 0, PROPHI)
+
+DEF_UPROP_I("spy-chance", u_spy_chance,
+	"chance that a unit's spying will succeed",
+	spychance, 0, 0, 10000)
+
+DEF_UPROP_I("spy-range", u_spy_range,
+	"distance around which a unit's spying will yield information",
+	spyrange, -1, 0, PROPHI)
+
+DEF_UPROP_I("stack-order", u_stack_order,
+	"relative priority of unit within stack (0 = highest)",
+	stackorder, 0, 0, PROPHI)
+
+DEF_UPROP_I("start-with", u_start_with,
+	"number of units within the initial area",
+	startwith, 0, 0, PROPHI)
+
+DEF_UPROP_I("tech-from-ownership", u_tech_from_ownership,
+	"tech guaranteed by owning a unit of this type",
+	techfromownership, 0, 0, PROPHI)
+
+DEF_UPROP_I("tech-leakage", u_tech_leakage,
+	"",
+	techleakage, 0, 0, PROPHI)
+
+DEF_UPROP_I("tech-max", u_tech_max,
+	"maximum possible tech for this type",
+	techmax, 0, 0, PROPHI)
+
+DEF_UPROP_I("tech-per-turn-max", u_tech_per_turn_max,
+	"limit on tech gains from development and acquisition",
+	techperturnmax, 0, PROPHI, PROPHI)
+
+DEF_UPROP_I("tech-to-build", u_tech_to_build,
+	"minimum tech required to be able to create and complete this type",
+	techtobuild, 0, 0, PROPHI)
+
+DEF_UPROP_I("tech-to-change-type-to", u_tech_to_change_type_to,
+	    "minimum tech require to be able to change into this type",
+	    techtochangetypeto, 0, 0, PROPHI)
+
+DEF_UPROP_I("tech-to-own", u_tech_to_own,
+	"minimum tech required to be able to have this type on one's side",
+	techtoown, 0, 0, PROPHI)
+
+DEF_UPROP_I("tech-to-see", u_tech_to_see,
+	"minimum tech required to be able to see this type",
+	techtosee, 0, 0, PROPHI)
+
+DEF_UPROP_I("tech-to-use", u_tech_to_use,
+	"minimum tech required to be able to use this type",
+	techtouse, 0, 0, PROPHI)
+
+DEF_UPROP_L("temperature-attrition", u_temp_attrition,
+	"effect of temperature on hp",
+	tempattrition)
+
+DEF_UPROP_I("type-in-game-max", u_type_in_game_max,
+	"maximum number (for all sides summed) units of this type allowed",
+	typeingamemax, -1, -1, PROPHI)
+
+DEF_UPROP_I("type-per-side-max", u_type_per_side_max,
+	"maximum number of this type for each side",
+	typepersidemax, -1, -1, PROPHI)
+
+DEF_UPROP_I("unit-growth-chance", u_unit_growth,
+	"chance that a new unit will be created during country growth",
+	unitgrowth, 0, 0, 10000)
+
+DEF_UPROP_I("unit-takeover-chance", u_unit_takeover,
+	"chance for existing unit to be given to side during country growth",
+	unittakeover, 0, 0, 10000)
+
+DEF_UPROP_I("use-own-cell", u_use_own_cell,
+	"true if city uses own cell automatically",
+	uuseowncell, 0, 0, 1)
+
+DEF_UPROP_I("vision-range", u_vision_range,
+	"range out to which a unit sees everything",
+	visionrange, -1, 1, PROPHI)
+
+DEF_UPROP_I("wrecked-type", u_wrecked_type,
+	"unit type to turn into if unit loses all of its HP",
+	wreckedtype, NONUTYPE, NONUTYPE, PROPHI)
+
+/* Used by AIs only. */
+
+DEF_UPROP_I("zz-b", u_is_base,
+	"",
+	is_base, 0, 0, 0)
+
+DEF_UPROP_I("zz-bb", u_is_base_builder,
+	"",
+	is_base_builder, 0, 0, 0)
+
+DEF_UPROP_I("zz-transport", u_is_transport,
+	"",
+	is_transport, 0, 0, 0)
+
+DEF_UPROP_I("zz-c", u_is_carrier,
+	"",
+	is_carrier, 0, 0, 0)
+
+DEF_UPROP_I("zz-cm", u_can_make,
+	"",
+	can_make, 0, 0, 0)
+
+DEF_UPROP_I("zz-cc", u_can_capture,
+	"",
+	can_capture, 0, 0, 0)
+
+/* Precomputed unit worths used by the AI. */
+
+DEF_UPROP_I("zz-bw", u_bw,
+	"precomputed basic unit worth for AI",
+	bw, 0, 0, 0)
+	
+DEF_UPROP_I("zz-ow", u_offensive_worth,
+	"precomputed offensive worth for AI",
+	ow, 0, 0, 0)
+	
+DEF_UPROP_I("zz-osw", u_offensive_support_worth,
+	"precomputed offensive support worth for AI",
+	osw, 0, 0, 0)
+	
+DEF_UPROP_I("zz-dw", u_defensive_worth,
+	"precomputed defensive worth for AI",
+	dw, 0, 0, 0)
+	
+DEF_UPROP_I("zz-dsw", u_defensive_support_worth,
+	"precomputed defensive support worth for AI",
+	dsw, 0, 0, 0)
+
+DEF_UPROP_I("zz-esw", u_exploration_support_worth,
+	    "precomputed exploration support worth for AI",
+	    esw, 0, 0, 0)
+	
+DEF_UPROP_I("zz-cw", u_colonizer_worth,
+	"precomputed colonizing worth for AI",
+	cw, 0, 0, 0)
+
+DEF_UPROP_I("zz-csw", u_colonization_support_worth,
+	    "precomputed colonization support worth for AI",
+	    csw, 0, 0, 0)
+
+DEF_UPROP_I("zz-bcow", u_base_construction_worth,
+	    "precomputed base construction worth for AI",
+	    bcow, 0, 0, 0)
+	
+DEF_UPROP_I("zz-fw", u_facility_worth,
+	"precomputed improving worth for AI",
+	fw, 0, 0, 0)
+	
+DEF_UPROP_I("zz-rw", u_random_worth,
+	"precomputed random worth for AI",
+	rw, 0, 0, 0)
+	
+DEF_UPROP_I("zz-sw", u_siege_worth,
+	"precomputed siege worth for AI",
+	sw, 0, 0, 0)
+	
+
+/* Flags for special types of units. */
+
+DEF_UPROP_I("advanced", u_advanced,
+	"true if unit is advanced",
+	is_advanced, 0, 0, 1)
+	
+DEF_UPROP_I("colonizer", u_colonizer,
+	"true if unit can build advanced units",
+	is_colonizer, 0, 0, 1)
+
+DEF_UPROP_I("facility", u_facility,
+	"true if unit is a facility",
+	is_facility, 0, 0, 1)
+
+DEF_UPROP_I("ground", u_ground_mobile,
+	"true if unit can move on the ground",
+	is_ground_mobile, 0, 0, 1)
+
+DEF_UPROP_I("naval", u_naval_mobile,
+	"true if unit can move on water",
+	is_naval_mobile, 0, 0, 1)
+
+DEF_UPROP_I("air", u_air_mobile,
+	"true if unit can move in the air",
+	is_air_mobile, 0, 0, 1)
+
+/* Other advanced unit properties. */
+
+DEF_UPROP_I("minimal-sea-for-docks", u_minimal_sea_for_docks,
+	"minimal adjacent liquid region that will merit contruction of naval units",
+	minimalseafordocks, 0, 30, PROPHI)
+
+DEF_UPROP_I("facility-total-max", u_facility_total_max,
+	"maximum number of all types of facilities added together",
+	facilitytotalmax, -1, -1, PROPHI)
+
+DEF_UPROP_I("mobile-total-max", u_mobile_total_max,
+	"maximum number of all mobile occupants added together",
+	mobiletotalmax, -1, -1, PROPHI)
+
+DEF_UPROP_I("ai-tactical-range", u_ai_tactical_range,
+	"range that the AI checks out before making a tactical decision for a unit",
+	aitacticalrange,  0, 12, PROPHI)
+
+DEF_UPROP_I("ai-enemy-alert-range", u_ai_enemy_alert_range,
+	"range within which the AI will consider a mobile enemy unit a threat",
+	aienemyalertrange,  0, 6, PROPHI)
+
+DEF_UPROP_I("ai-peace-garrison", u_ai_peace_garrison,
+	"number of defenders the AI should assign to unit in the absence of threat",
+	aipeacegarrison, 0, 0, PROPHI)
+	
+DEF_UPROP_I("ai-war-garrison", u_ai_war_garrison,
+	"number of defenders the AI should assign to unit under enemy threat",
+	aiwargarrison, 0, 1, PROPHI)
+
+DEF_UPROP_I("acp-independent", u_acp_independent,
+	"units actions are limited only by available materials, not by acps",
+	acpindependent, 0, 0, 1)
+
+DEF_UPROP_I("can-research", u_can_research,
+	"unit can do its own research at the start of each turn",
+	canresearch, 0, 0, 1)
+
+/* Added to handle combat experience in combat model 1. */
+
+DEF_UPROP_I("full-cxp-affects-attack", u_full_cxp_affects_attack,
+	"effect on unit's attack value at max combat experience",
+	fullcxpaffectsattack, 0, 100, PROPHI)
+
+DEF_UPROP_I("full-cxp-affects-defense", u_full_cxp_affects_defense,
+	"effect on unit's defense value at max combat experience",
+	fullcxpaffectsdefense, 0, 100, PROPHI)

@@ -1,0 +1,204 @@
+BUILDING AND INSTALLING XCONQ
+
+0. A package with an already-built version may be available for your
+system.  If you have one, follow that package's instructions for
+installation.  You install a Linux RPM with "rpm -i", while for
+Windows and Mac it suffices to unpack the .zip or .hqx files and
+run the programs from wherever you unpack them.
+
+The following instructions are for people building and installing
+Xconq starting from source code.
+
+1. Decide what the kind of system you want to build for.  For Mac,
+read INSTALL-mac.  For Windows 95/98/SE/ME/NT4/2K/XP, read 
+INSTALL-win. For Linux/Unix, keep reading here.
+
+2. Provide the required supporting software.
+
+The default Unix graphical interface is based on Tcl/Tk 8.x, so if 
+you are planning on building this one, both the tcl and tk libraries 
+must be already built and available.  Many recent systems, such as 
+Linux, have Tcl/Tk preinstalled, and you can just use those.
+
+If you don't have Tcl/Tk installed, and don't have permissions to
+install it in a standard place, build them with --prefix set to a
+place that you can write to, and install there.  Then use the Xconq
+configure options --with-tclconfig and --with-tkconfig to point to
+the location of the tclConfig.sh and tkConfig.sh scripts, which are
+installed in the lib dir (/usr/lib by default).
+
+Interfaces based on curses, Xt/Xaw, and SDL are also available.  The 
+SDL interface is still quite primitive, and the Xt/Xaw interface is 
+outdated (but still works).  If you do attempt to build the Xt/Xaw 
+interface, you will need to have the X Athena Widget set library 
+installed (most X11 systems do).  If you wish to try the SDL 
+interface, you will need to have the Simple Direct media Layer 
+libraries installed (you can get them at http://www.libsdl.org).
+
+You must have an ANSI/ISO C compiler, such as GCC.
+
+3. Type "./configure".
+
+If you want to be able to read XPM (X PixMap) files, and the XPM
+library is available on your system, add the argument "--with-xpm" to
+your configure command.  (This is mainly of interest to people
+designing new games and using X paint programs.)
+
+If you want to install into different place, such as /usr/games, add
+the argument "--prefix=/usr/games".  This will put executables into
+/usr/games/bin, and game library files into /usr/games/share/xconq.  The
+default is to install everything under /usr/local; executables in
+/usr/local/bin, library files in /usr/local/share/xconq.
+
+In either case, scorefiles will end up in /var/lib/xconq/scores.  To
+change this, configure with "--enable-alternate-scoresdir=<path>".
+
+If you do not have root, then you may wish to add the arguments 
+"--enable-alternate-gameuser=<user>" and 
+"--enable-alternate-gamegroup=<group>" to reflect your username and 
+primary group.  These will make sure that the install process tries 
+to make you the owner of the installed program(s).
+
+As mentioned previously, the Tcl/Tk interface builds by default.  To 
+change the default interface, use the "--enable-ui=<ui>" option, 
+where valid choices are: tcltk, xtxaw, sdl, and curses.
+
+4. Type "make".
+
+If you need to specify special compilation flags, set the variable
+CFLAGS on the make command line.  If you need special linktime flags,
+such as a path to library directories, use LDFLAGS.
+
+If you want to install, but don't have root, set the prefix and
+scoresdir to be places you can write into, and on the make command
+line, set the variables GAMEUID and GAMEGRP to your own uid and group.
+Or handle these tasks through configure options in the previous step.
+
+5. If you want test things out before installing, just cd to the 
+'tcltk' directory, and issue the "./xconq" command.  You will need to 
+add an argument like "-L ../lib" if you want to get the game libraries 
+in this distribution; otherwise Xconq will load whatever games have 
+been installed already, or fail if no game library has been installed 
+previously.
+
+6. If you want to install Xconq in your system, type "make install".
+The default installation is into /usr/local/bin for xconq and design
+tools, and into /usr/local/share/xconq for the game modules and
+support files.
+
+If you want to put the executables into the traditional /usr/games
+instead of /usr/local/bin, add "bindir=/usr/games" to the make install
+command.
+
+If you need to install X application defaults somewhere other than
+/usr/lib/X11/app-defaults, add "appdefaultsdir=<dir>" to the make
+install command. (This can also be handled through the 
+"--enable-alternate-x11-app-defaults-dir=<dir>" configure option.
+
+If you do not have a program or script "install" on your path,
+you can use the "install.sh" in this directory by adding
+"INSTALL=<abspath>install.sh" to the "make install", or you can
+even use "cp" by saying "INSTALL=cp INSTALL_DATA=cp".
+
+7. The man pages just tell how to start up the programs; the full
+Xconq manual has complete details on everything.  A lot of behavior
+can be figured out by experimentation and by using the extensive
+online help; you can always get to it by typing '?'.
+
+All of the manuals are written in ``Texinfo'', which is based on TeX
+but is like HTML in many ways.  Texinfo files are readable text files
+themselves, and there are tools to translate them into various viewing
+formats.
+
+The standard distribution comes with preformatted documentation in the
+form of HTML files, which you can look at using your favorite Web
+browser.  You can also print them out using the browser.  These files
+are to be found in the directory 'doc'.
+
+The next easiest option is to look at the ``info'' files, ideally with
+the 'info' program or 'Emacs' so as to get the hypertext abilities, but 
+any other text viewer will do.
+
+To make a nicely printed manual from the sources, you will need a
+version of TeX.  TeX is widely available.  Under Unix or Windows
+with cygwin, you can make DVI files by going to the doc subdir and
+saying "make dvi", then using dvi2ps or similar tool to send to
+the printer.
+
+8. If installed in a public place on a multi-user system, announce
+availability.  The library file "news.txt" provides a convenient place
+to put in any notes about changes, new games/scenarios, and so forth.
+
+Congratulations!  You're ready to go forth and conquer!
+
+
+* Addendum to build instructions for Solaris with Forte compiler:
+
+You'll need the GNU Make to use the Makefiles, and you'll need to use
+
+CC=cc CFLAGS=-xCC ./configure
+
+in addition to any other configure options you need to use.
+
+
+VARIATIONS
+
+The curses interface is still available, if you're nostalgic for the
+old days of text console games.  Do "make all-cconq" and "make
+install-cconq" to get it.
+
+To get the SDL interface when the Tcl/Tk one is configured as the 
+default, do "make all-sdlconq".  Be warned that the SDL interface is 
+a very unfinished product (as of this writing).  Do 
+"make install-sdlconq" if you really want to install it.
+
+To get the old Xt/Xaw interface when the Tcl/Tk is configured as the 
+default, do "make all-xtconq".  Do "make install-xtconq" if you 
+really want to install it.
+
+
+GUIDE TO SUBDIRECTORIES:
+
+"lib" contains the game designs and image families.
+
+"doc" contains Xconq manuals and supporting documentation, mostly in
+Texinfo form.
+
+"images" contains pictures in standard image formats (GIF, etc).
+
+"kernel" contains the source code for the kernel, which is the part of
+Xconq shared by all interfaces.
+ 
+"bitmaps" contains bitmaps used by some interfaces.
+
+"mac" contains the source code specific to the Mac interface.
+
+"tcltk" contains the portable source code specific to the tcl/tk
+interface.
+
+"x11" contains the source code specific to the X11 interface.
+
+"curses" contains the source code specific to the curses interface.
+
+"SelFile" contains a file selection dialog for X11 programs.
+
+"Ad2C" contains a tool to generate fallback resources for X11 programs.
+
+"misc" contains scripts that do a partial conversions of 5.x period
+and other files to 7.x game designs.
+
+"test" includes scripts and game modules oriented towards testing.
+The test scripts should be run after hacking on anything in the
+"kernel" directory (this is important).
+
+"tcl" and "tk", if present, contain copies of the tcl and tk packages.
+
+"libcurses", if present, contains a copy of a DOS & Mac implementation
+of curses.
+
+The directories "lib-mac", if present, contains optional library files
+for the Mac version.
+
+CONTACT INFORMATION:
+
+Xconq Mailing List <xconq7 [at] sources [dot] redhat [dot] com>

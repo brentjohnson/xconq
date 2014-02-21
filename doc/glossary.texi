@@ -1,0 +1,326 @@
+@b{accident}: A random event that damages or destroys a unit.
+
+@b{acp}: See ``action points''.
+
+@b{action}: A single thing that a unit can do.  Examples include movement
+to an adjacent cell, detonation, and repair.
+
+@b{action points (acp)}: The basic number of actions available to a unit
+during the turn.
+
+@b{advance}: A scientific or social improvement achieved by a side.
+
+@b{agreement}: A treaty or deal made between players, consisting of a
+number of terms defining each player's part in the agreeement.
+
+@b{AI}:  See ``Artificial Intelligence''.
+
+@b{Artificial Intelligence (AI)}: A player that is run by code
+internal to @i{Xconq}.
+
+@b{altitude}: the z-coordinate of a unit, relative to its cell's elevation.
+
+@b{area}: A section of the world that you play on.  An area may be
+a polygon, or a cylinder if it is large enough to go all the way
+around the world.
+
+@b{attack}: An action where a unit attempts to damage another unit.
+
+@b{attrition}: A gradual loss of a unit's hp, usually due to a harmful
+environment.
+
+@b{backdrop}: The set of activities that proceeds independently of
+units and sides.  Backdrop activities include material production,
+revolts, and attrition.
+
+@b{border}: A special type of terrain that occurs between two cells.
+
+@b{border slide}: A special kind of unit move that traverses a border
+rather than crossing it.
+
+@b{capture}: An action in which a unit attempts to bring another unit
+over to its own side.
+
+@b{cell}: A single location in an area, typically a hex or square shape.
+
+@b{class}: See ``side class''.
+
+@b{closeup}: A part of an interface that displays detailed information
+about a side or unit.
+
+@b{coating}: A layer that temporarily modifies terrain, such as snow.
+
+@b{combat experience points (cxp)}: A property of a unit that indicates
+how much combat the unit has engaged in previously.
+
+@b{completeness points (cp)}:  The degree to which a unit is ready to
+do things.  Newly-created units usually fall short of completeness.
+
+@b{completion}: An action that brings a given unit closer to
+being complete.
+
+@b{connection}: A special type of terrain that negates the effects
+of cell and border terrain between two adjacent cells.  Examples would be
+roads and canals.
+
+@b{construction}: A general term referring to the combination of creation
+and completion actions that result in a usable unit.
+
+@b{consumption}: The process by which units and terrain use up materials.
+
+@b{control}: a) the ability of a side to direct a unit's activities, or
+b) a layer in the world indicating which side is in charge of each cell.
+
+@b{country}: The initial region of a side's units.
+
+@b{coverage}: A set of numbers representing the quality of a side's
+vision at each point in the world.
+
+@b{cp}: See ``completeness points''.
+
+@b{cxp}: See ``combat experience points''.
+
+@b{creation}: An action by which a unit creates another unit.
+Creation actions can specify that the newly-created unit is to be
+at a given location or inside a given unit.
+
+@b{designer}: A special kind of side/player that is permitted to 
+examine and alter the entire state of the game directly, typically
+for the purpose of designing new games.
+
+@b{detach}: An action by which a variable-size units splits into
+two units.
+
+@b{detonation}: An action that results in hits on every unit near the
+detonation.
+
+@b{development}: The process of acquiring sufficient technology to
+build or use a type of unit.
+
+@b{disband}: An action that results in the orderly destruction of a unit.
+
+@b{doctrine}: A set of flags and parameters that individual units of a
+side use to help decide what to do, typically to fill in details that
+are not specified explicitly by the units' orders.
+
+@b{economy}: General term for the backdrop activities of material
+production, distribution, and consumption.
+
+@b{elevation}: The height of a cell above some arbitrary point.
+
+@b{emblem}: An iconic image used by interfaces to represent a side.
+
+@b{event}: See ``historical event''.
+
+@b{extraction}: A type of action, by which a unit gets a material
+from the terrain at a specific location.
+
+@b{feature}: see ``geographical feature''.
+
+@b{game design}: The set of type definitions and rules of a game,
+usually composed from several game modules.
+
+@b{Game Design Language (GDL)}: The language used to define @i{Xconq} games.
+
+@b{game module}: A group of game-related definitions and information, not
+necessarily a complete game design.
+
+@b{geographical feature}: A named region in the world.
+
+@b{goal}: A state or situation that units and/or sides can plan to
+achieve.
+
+@b{grammar}: A set of rules that define how a name or phrase will
+be constructed from letters and/or syllables.
+
+@b{hex}: A cell in a world where each cell is adjacent to exactly six others.
+
+@b{historical event}: A single occurrence of a unit action or other state
+change.
+
+@b{history}: The record of historical events in a game.
+
+@b{hit points (hp)}: The amount of damage that a unit can sustain before it
+dies or is otherwise destroyed.
+
+@b{hp}: See ``hit points''.
+
+@b{image}: A visual icon or pattern used by interfaces to display units and
+terrain.
+
+@b{image family}: A collection of images, of various sizes,
+orientations, colors, etc, all of which represent a single visual concept.
+
+@b{independent unit}: A unit that does not belong to any side.
+
+@b{interface}: The part of @i{Xconq} that manages interaction between
+players and the kernel.  Interfaces draw maps, report action results,
+interpret mouse clicks, and so forth.
+
+@b{kernel}: The part of @i{Xconq} that manages the action of the game
+itself.
+
+@b{layer}: General name for a property that can have a distinct value
+for each cell in the world, such as terrain, elevation, and ambient
+temperature.
+
+@b{list}: A linear list of units or sides displayed by an interface.
+(Not available in all interfaces.)
+
+@b{map}: An interface's visual display of part or all of a world.
+
+@b{material}: A quantity of a material type.
+
+@b{material type}:  A type of mass stuff, such as food or fuel.
+
+@b{meridians}: Lines of latitude and longitude drawn on a map by an
+interface.
+
+@b{morale}: How a unit feels about itself and its abilities.
+
+@b{move mode}: An interaction mode in which keystrokes and mouse clicks
+direct units to do things, and the interface selects the next unit to
+which these commands will apply.
+
+@b{movement}: An action in which a unit changes its location.
+The destination of movement may be either a cell or another unit.
+
+@b{movement points (mp)}: The basic amount of mobility available to
+a unit during a turn.  This is basically @code{(speed * acp)}.
+
+@b{mp}: See ``movement points''.
+
+@b{namer}: An object that generates names using a naming method.
+
+@b{naming method}: An algorithm for generating names.
+
+@b{occupant}: A unit that is contained in another unit.  See ``transport''.
+
+@b{pattern}: A special kind of image that can be repeated many times in
+a regular fashion.  Usually used to display terrain.
+
+@b{people}: Special ``material types'' that are actually considered
+to represent groups of individuals.
+
+@b{plan}: The information that a unit uses to decide what to do next.
+Both human-run and AI-run units have plans.
+
+@b{player}: A participant in a game.  Can be a human or a computer.
+
+@b{production}: The process by which units and terrain make amounts of
+materials appear.
+
+@b{property}: An attribute or value associated with a type or object,
+such as a unit type's speed or a side's name.
+
+@b{region}: A set of cells in the world.  It can be any size or shape.
+
+@b{repair}: An action by which a unit adds to the hp of another unit.
+
+@b{research}: The process by a side achieves an advance.
+
+@b{reserve}: A unit's state, in which it does nothing for the
+remainder of the current turn, but acts normally during the next
+turn.
+
+@b{revolt}: A random backdrop event in which a unit spontaneously
+changes to another side.
+
+@b{savefile}: A special game module that contains an exact replica of a game
+in progress.
+
+@b{scorekeeper}: An object that manages (part of) the standings of players
+in a game, and also handles recording of final scores.
+
+@b{self-unit}: A unit that represents the whole side.
+
+@b{side}: The representation of a single player within the game.
+
+@b{side class}: A group of sides with common characteristics, often
+used to restrict the sides to which units can belong.
+
+@b{sleep}: A unit's state, in which it does nothing at all.
+
+@b{speed}: The ratio of movement points to action points.
+
+@b{spying}: A backdrop process where units collect information about units
+on other sides.
+
+@b{stack}: A group of units at the same location, none of which are
+inside another.
+
+@b{standing orders}: A task that is attached to a set of conditions,
+such as location and/or unit type, and which is given to any unit
+satisfying the conditions.
+
+@b{supply}: The materials being carried by a unit.
+
+@b{supply line}: A path by which a unit can get supplies automatically
+from another unit.
+
+@b{surrender}: A random backdrop event in which a unit spontaneously
+changes to the side of units that are nearby.
+
+@b{survey mode}: An interaction mode in which keystrokes and mouse clicks
+change the focus or scrolling of a map, and the player selects which unit
+to move next.
+
+@b{synthesis method}: An algorithm that can build part of the initial game
+setup, usually randomly.
+
+@b{table}: A two-dimensional array of numbers that define some
+interaction between pairs of types.  Tables may be indexed by unit
+types, material types, and terrain types, in various combinations.
+
+@b{task}: A single element of a unit's plan.  A task usually results in one
+or a few unit actions.
+
+@b{task agenda}: A list of tasks that a unit plans to do.
+
+@b{tech level}: An abstract number representing a side's ability to use
+and/or construct a type of unit.
+
+@b{terrain type}: One of a set of possible terrains.
+
+@b{terrain subtype}: The specific role played by a terrain type.
+Subtypes currently include open terrain, borders, connections, and coatings.
+
+@b{tooling points (tp)}:  A unit's amount of preparation towards the
+construction of a particular unit type.
+
+@b{toolup}: The action by which a unit increases its tooling points
+for some type.
+
+@b{tp}: See ``tooling points''.
+
+@b{transfer}: The process by which supplies/materials are moved from one
+unit or cell to another.
+
+@b{transport}: A unit that may contain other units.  See ``occupant''.
+
+@b{turn}: A single cycle of unit actions and backdrop operation.
+
+@b{unit}: A single distinct object, like a playing piece.
+
+@b{unit type}: One of a set of possible types for the units in a game.
+
+@b{vanish}:  The process whereby a unit is removed entirely from the game.
+
+@b{variant}: A predefined option by which players can alter a game
+before starting it.
+
+@b{view}: A record of what a side has seen in the world.
+
+@b{vision}: The mechanism by which a side's units collect and report
+information about the world and about other units.
+
+@b{world}: The entire space within which units move around.
+
+@b{wreck}: The process whereby a unit that loses all of its hp changes
+into another type of unit instead of disappearing.
+
+@b{zoc}: See ``zone of control''.
+
+@b{zone of control (zoc)}: A region around which a unit can affect the
+behavior of other units.
+

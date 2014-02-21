@@ -1,0 +1,57 @@
+
+RCS file: /cvs/xconq/xconq/kernel/obstack.c,v
+Working file: obstack.c
+head: 1.4
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.3
+	xconq-7_4-branch: 1.3.0.2
+	xconq-7_4-branchpoint: 1.3
+	xtconq-pre-removal: 1.3
+	xconq-7_3_3-release: 1.2
+	xconq-7_3_2-release: 1.2
+	xconq-7_3_1-release: 1.2
+	xconq-7_3-branch: 1.2.0.2
+	xconq-7_3-branchpoint: 1.2
+keyword substitution: kv
+total revisions: 4;	selected revisions: 4
+description:
+----------------------------
+revision 1.4
+date: 2002/05/08 23:51:17;  author: ronne;  state: Exp;  lines: +22 -32
+Make sources C++ compatible.
+----------------------------
+revision 1.3
+date: 2000/06/20 16:23:43;  author: shebs;  state: Exp;  lines: +2 -8
+	* config.h: Remove ANSI_PROTOTYPES and __STDC__ conditionals.
+	* misc.h (PARAMS): Remove decl.
+	* obstack.h, obstack.c: Remove uses of PARAMS and ANSI_PROTOTYPES.
+	* macinit.c, macmenus.c, macmouse.c: Ditto.
+	* xcmd.c, xdesign.c, xhelp.c, ximf.c, xinit.c, xprint.c, xtmain.c:
+	Ditto.
+
+	* iplayer.c, mkrivers.c, mplayer.c, run.c, util.c, write.c: Remove
+	some redundant function decls.
+	* macwins.c: Ditto.
+	* tkimf.c: Remove unused decl.
+----------------------------
+revision 1.2
+date: 1999/08/17 12:29:42;  author: shebs;  state: Exp;  lines: +4 -4
+        Eliminate more compiler warnings.
+        * unit.h (ActionDefn dofn, checkfn): Remove fields.
+        * actions.c (execute_action): Dispatch on action type directly,
+        instead of using checkfn and dofn fields.
+        * actions.c, init.c, task.c: Remove unused vars.
+        * game.h, skelconq.c, unit.h: Convert to pure standard C
+        * kernel.h: Move decls of attack_can_damage_or_capture, etc.
+        * misc.h: Remove decl of getenv.
+        * obstack.h, obstack.c: Prototype fn argument of obstack_begin.
+        * plan.c: Make static vars extern.
+        (find_closest_unit): Prototype fn argument.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:30;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

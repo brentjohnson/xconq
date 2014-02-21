@@ -1,0 +1,163 @@
+# Makefile for curses interface to Xconq.
+# Copyright (C) 1991-1995, 1997, 1999-2000 Stanley T. Shebs.
+
+# Xconq is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+prefix = @prefix@
+
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+datadir = @xconq_data_dir@
+mandir = @mandir@
+man6dir = $(mandir)/man6
+infodir = @infodir@
+docdir = $(datadir)/doc
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+krnsrcdir = $(srcdir)/../kernel
+
+GAMEUID = @gameuser@
+GAMEGRP = @gamegrp@
+
+GAMEPERM = 04755
+
+SHELL = /bin/sh
+
+INSTALL = install -c
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL)
+
+CC = @CXX@
+CXX = @CXX@
+
+CFLAGS = @CXXFLAGS@
+CXXFLAGS = @CXXFLAGS@
+
+CCONQ_EXEC_NAME = @CCONQ_EXEC_NAME@
+
+CURSES_LIB = @CURSES_LIB@
+
+KERNEL_LIB = ../kernel/libconq.a
+LOW_LIB = ../kernel/libconqlow.a
+
+NET_EXTRA_LIBS = @W32API_LIBS@
+
+# Host and target-dependent makefile fragments come in here.
+####
+# End of host and target-dependent makefile fragments.
+
+GAME_H = $(krnsrcdir)/game.h \
+	 $(krnsrcdir)/gvar.def \
+	 $(krnsrcdir)/utype.def \
+	 $(krnsrcdir)/mtype.def \
+	 $(krnsrcdir)/ttype.def \
+	 $(krnsrcdir)/table.def
+
+UNIT_H = $(krnsrcdir)/unit.h \
+	 $(krnsrcdir)/action.def \
+	 $(krnsrcdir)/plan.def \
+	 $(krnsrcdir)/task.def
+
+ALL_H = $(krnsrcdir)/conq.h \
+	$(krnsrcdir)/config.h \
+	$(krnsrcdir)/misc.h \
+	$(krnsrcdir)/dir.h \
+	$(krnsrcdir)/lisp.h \
+	$(krnsrcdir)/module.h \
+	$(GAME_H) \
+	$(krnsrcdir)/player.h \
+	$(krnsrcdir)/side.h \
+	$(UNIT_H) \
+	$(krnsrcdir)/goal.def \
+	$(krnsrcdir)/world.h \
+	$(krnsrcdir)/score.h \
+	$(krnsrcdir)/history.h \
+	$(krnsrcdir)/ai.h
+
+C_H = $(srcdir)/cconq.h
+
+OBJS = cconq.o cdraw.o ccmd.o
+
+# -Dcbreak=crmode
+
+CCONQ_PRECHECK = @CCONQ_PRECHECK@
+
+HFLAGS = @HFLAGS@ @WIN32_CUI_SUBSYS_FLAG@
+
+ALL_CFLAGS = $(CFLAGS) $(HFLAGS) -I$(srcdir) -I$(krnsrcdir) 
+
+.c.o:
+	$(CC) -c $(ALL_CFLAGS) $<
+
+all:	$(CCONQ_EXEC_NAME) cconq.6
+
+# The game itself.
+
+$(CCONQ_EXEC_NAME): $(CCONQ_PRECHECK) $(OBJS) kernel-lib low-lib
+	rm -f xconq xconq.exe cconq cconq.exe
+	$(CC) -o $(CCONQ_EXEC_NAME) $(ALL_CFLAGS) $(LDFLAGS) $(OBJS) $(KERNEL_LIB) $(LOW_LIB) $(CURSES_LIB) $(EXTRA_LIB) -lm $(NET_EXTRA_LIBS)
+
+cconq-fail:
+	@echo "Cconq is not configured to build."
+	@exit 1
+
+kernel-lib:
+	(cd ../kernel && $(MAKE) $(FLAGS_TO_PASS) libconq.a)
+
+low-lib:
+	(cd ../kernel && $(MAKE) $(FLAGS_TO_PASS) libconqlow.a)
+
+# Man pages.
+
+cconq.6:	cconq.6in ../kernel/cmdline.6in
+	sed -e '/.so ...kernel.cmdline.6in/r $(srcdir)/../kernel/cmdline.6in' -e '/.so ...kernel.cmdline.6in/d' $(srcdir)/cconq.6in >cconq.6.new
+	$(srcdir)/../move-if-change cconq.6.new cconq.6
+
+# Installation.
+
+install: all install-only
+
+install-only:
+
+install-cconq:
+	srcroot=`cd $(srcroot); pwd`; export srcroot; \
+	if [ -f $(CCONQ_EXEC_NAME).exe ] ; then \
+		progname="$(CCONQ_EXEC_NAME).exe" ; \
+	else \
+		progname="$(CCONQ_EXEC_NAME)" ; \
+	fi; \
+	$(INSTALL_PROGRAM) $${progname} $(bindir); \
+	chown $(GAMEUID) $(bindir)/$${progname}; \
+	chgrp $(GAMEGRP) $(bindir)/$${progname}; \
+	chmod $(GAMEPERM) $(bindir)/$${progname}; \
+	$(INSTALL_DATA) cconq.6 $(man6dir)
+
+# Cleanliness support.
+
+clean:
+	rm -f *.o core
+	rm -f xconq cconq *.exe cconq.6 *.conq *.xconq
+
+distclean: clean
+	rm -f Makefile config.status
+
+extraclean: distclean
+	rm -f *~* .*~*
+
+realclean: distclean
+
+Makefile: Makefile.in $(host_makefile_frag) $(target_makefile_frag)
+        cd .. \
+          && CONFIG_FILES=curses/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+# Dependencies.
+
+cconq.o:	$(ALL_H) $(C_H)
+ccmd.o:		$(ALL_H) $(C_H)
+cdraw.o:	$(ALL_H) $(C_H)

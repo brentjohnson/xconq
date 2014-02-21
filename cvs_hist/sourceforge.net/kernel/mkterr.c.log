@@ -1,0 +1,95 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/mkterr.c,v
+Working file: mkterr.c
+head: 1.3
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.3
+	BPT_EMCDONALD_AI_15: 1.3
+	SS_7_5_0_0pre_0_20050612: 1.3
+	BPT_MSKALA_IMF_3: 1.3
+	BPT_MSKALA_SUPPLY_12: 1.3
+	BPT_EMCDONALD_AI_14: 1.3
+	MPT_EMCDONALD_AI_7: 1.3
+	BPT_EMCDONALD_AI_13: 1.3
+	SS_7_5_0_0pre_0_20050501: 1.3
+	BPT_EMCDONALD_AI_12: 1.3
+	MPT_EMCDONALD_AI_6: 1.3
+	BPT_EMCDONALD_AI_11: 1.3
+	SS_7_5_0_0pre_0_20050416: 1.3
+	BPT_EMCDONALD_AI_10: 1.3
+	MPT_EMCDONALD_AI_5: 1.3
+	BPT_EMCDONALD_AI_9: 1.3
+	BPT_EMCDONALD_AI_8: 1.3
+	MPT_EMCDONALD_AI_4: 1.3
+	BPT_EMCDONALD_AI_7: 1.3
+	MPT_EMCDONALD_AI_3: 1.3
+	BPT_EMCDONALD_AI_6: 1.3
+	BPT_MSKALA_SUPPLY_11: 1.3
+	BPT_EMCDONALD_AI_5: 1.3
+	MPT_EMCDONALD_AI_2: 1.3
+	SS_7_5_0_0pre_0_20050322: 1.3
+	BPT_MSKALA_SUPPLY_10: 1.3
+	BPT_EMCDONALD_AI_4: 1.3
+	MPT_EMCDONALD_AI_1: 1.3
+	BPT_EMCDONALD_AI_3: 1.3
+	BPT_MSKALA_SUPPLY_9: 1.3
+	MPT_MSKALA_SUPPLY_3: 1.1.1.1.4.1
+	BPT_EMCDONALD_AI_2: 1.3
+	BPT_MSKALA_SUPPLY_8: 1.3
+	MPT_MSKALA_SUPPLY_2: 1.1.1.1.4.1
+	BPT_MSKALA_SUPPLY_7: 1.3
+	BRANCH_EMCDONALD_AI: 1.3.0.2
+	BPT_EMCDONALD_AI_1: 1.3
+	BPT_MSKALA_SUPPLY_6: 1.3
+	SS_7_5_0_0pre_0_20050225: 1.3
+	BPT_MSKALA_SUPPLY_5: 1.3
+	MPT_MSKALA_SUPPLY_1: 1.1.1.1.4.1
+	BPT_MSKALA_SUPPLY_4: 1.3
+	BPT_MSKALA_SUPPLY_3: 1.3
+	BPT_MSKALA_SUPPLY_2: 1.3
+	SS_7_5_0_0pre_0_20050208: 1.3
+	BPT_MSKALA_IMF_2: 1.1.1.1
+	BRANCH_MSKALA_SUPPLY: 1.1.1.1.0.4
+	BPT_MSKALA_SUPPLY_1: 1.1.1.1
+	SS_7_5_0_0pre_0_20050117: 1.1.1.1
+	SS_7_5_0_0pre_0_20050108: 1.1.1.1
+	SS_7_5_0_0pre_0_20041228: 1.1.1.1
+	BRANCH_MSKALA_IMF: 1.1.1.1.0.2
+	BPT_MSKALA_IMF_1: 1.1.1.1
+	SS_7_5_0_0pre_0_20041211: 1.1.1.1
+	SS_7_5_0_0pre_0_20041126: 1.1.1.1
+	GENESIS: 1.1.1.1
+	PRIVATE_TREE_1: 1.1.1
+keyword substitution: kv
+total revisions: 6;	selected revisions: 6
+description:
+----------------------------
+revision 1.3
+date: 2005/02/07 05:48:01;  author: matthewskala;  state: Exp;  lines: +4 -2
+Fix bug in adjacent-terrain-border/connection that prevented make-roads from working.
+----------------------------
+revision 1.2
+date: 2005/02/07 01:33:55;  author: matthewskala;  state: Exp;  lines: +31 -7
+Automated generation of connections based on adjacent terrain.
+----------------------------
+revision 1.1
+date: 2004/11/21 03:01:10;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.1;
+Initial revision
+----------------------------
+revision 1.1.1.1
+date: 2004/11/21 03:01:10;  author: eric_mcdonald;  state: Exp;  lines: +0 -0
+branches:  1.1.1.1.2;  1.1.1.1.4;
+Initial import from private repo into SF repo.
+----------------------------
+revision 1.1.1.1.4.1
+date: 2005/02/09 18:11:27;  author: matthewskala;  state: Exp;  lines: +34 -8
+Merge in changes from trunk, fix bug by allowing unit material stores to go negative during economy phase.
+----------------------------
+revision 1.1.1.1.2.1
+date: 2005/06/06 03:39:35;  author: eric_mcdonald;  state: Exp;  lines: +34 -8
+Merged in all trunk changes between BPT_MSKALA_IMF_2 and BPT_MSKALA_IMF_3.
+=============================================================================

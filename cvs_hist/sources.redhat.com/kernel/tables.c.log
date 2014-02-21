@@ -1,0 +1,29 @@
+
+RCS file: /cvs/xconq/xconq/kernel/tables.c,v
+Working file: tables.c
+head: 1.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.1
+	xconq-7_4-branch: 1.1.0.4
+	xconq-7_4-branchpoint: 1.1
+	xtconq-pre-removal: 1.1
+	xconq-7_3_3-release: 1.1
+	xconq-7_3_2-release: 1.1
+	xconq-7_3_1-release: 1.1
+	xconq-7_3-branch: 1.1.0.2
+	xconq-7_3-branchpoint: 1.1
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1.2
+date: 2002/05/08 23:51:17;  author: ronne;  state: Exp;  lines: +9 -9
+Make sources C++ compatible.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:33;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

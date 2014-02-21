@@ -1,0 +1,730 @@
+*****************************************************************************
+              How to Build, Install, and Run Xconq on Windows
+*****************************************************************************
+(Last Updated: 2004/07/04)
+
+  Welcome to Xconq!
+
+  If you are reading this document, it is assumed that you have an interest 
+in building Xconq from its source code. If you are just interested in 
+playing Xconq, then please see the following documentation:
+	(1) The README and README-win.txt files, which should be located in 
+the same directory as this INSTALL-win.txt file.
+	(2) The Xconq Player's Manual at:
+		http://sources.redhat.com/xconq/manual/xconq_1.html
+	(3) The Xconq Player's Manual may also be available under Start Menu |
+Programs | Xconq, if you used an installer program to install Xconq on your 
+system. Note that a shortcut to the Xconq program should also be available in 
+the same menu.
+
+  Xconq should run on most Microsoft Windows operating systems, including 
+Windows 95, 98, 98SE, ME, NT 4, 2000, and XP (hereafter collectively referred 
+to as "Windows", "Windows platform", "Win32", or the "Win32 platform"). 
+Three different interfaces are available for Xconq in Windows. The Tcl/Tk 
+(Tool Command Language / Tool Kit) one is the most full-featured and mature  
+at the time of this writing (2003/11/08). The SDL (Simple DirectMedia Layer) 
+is a new and upcoming (yet very incomplete) interface. And there is also 
+a venerable Curses (screen and cursor control library) interface for playing 
+Xconq in a console window.
+
+Notes
+===========================================
+(1) Program names and directory names will be indicated in single quotes.
+(2) "Fill-in-the-blank" type of things are indicated with angle brackets 
+	("<>"), unless otherwise noted.
+(3) Optional arguments are indicated with square brackets ("[]"), unless 
+	otherwise noted.
+
+0. Table of Contents
+===========================================
+1. Preparation
+1.1. Acquiring Xconq Sources
+1.1.1. Dowloading a Tarball
+1.1.2. Sources from Installer
+1.1.3. Retrieving with CVS
+1.1.3.1. Retrieving with Cygwin 'cvs'
+1.1.3.2. Retrieving with WinCVS
+1.1.3.3. Retrieving with TortoiseCVS
+1.2. Choosing a Subplatform
+1.2.1. Cygwin
+1.2.2. MinGW32
+1.2.3. Microsoft Visual Studio
+1.2.4. Metrowerks CodeWarrior
+1.3. Choosing a Primary Interface
+1.3.1. Tcl/Tk
+1.3.2. SDL
+1.3.3. Curses (Text Console)
+1.4. Preparing Supporting Libraries
+1.4.1. Installing Tcl/Tk
+1.4.2. Installing SDL
+2. Building on the Subplatforms
+2.1. Cygwin
+2.2. MinGW32
+2.3. Microsoft Visual Studio
+2.4. Metrowerks CodeWarrior
+3. Installing on the Subplatforms
+3.1. Cygwin
+3.2. MinGW32
+3.3. Microsoft Visual Studio
+3.4. Metrowerks CodeWarrior
+4. Running Xconq
+5. Becoming a Xconq Contributor
+6. Questions? Comments?
+
+1. Preparation
+
+  Prior to building Xconq on Windows, one obviously needs to have a copy 
+of the sources. Also, you will need to choose a subplatform to build on. 
+You may also want to choose which interface to build; by default, the 
+Tcl/Tk interface is chosen. Depending on the subplatform and inteface 
+chosen, you may need to do some additional preparation, such as 
+installing certain libraries on your system.
+
+1.1. Acquiring Xconq Sources
+
+  Xconq sources for Windows can be gotten in up to three different ways: 
+by downloading a compressed archive, by having a installer program 
+provide them to you, or by retrieving from the Xconq project's CVS 
+(Concurrent Versions System) repository.
+
+1.1.1. Downloading a Tarball
+
+  A "tarball" is a file that has been archived with the 'tar' program, and 
+compressed. Usually tarballs have a ".tar.gz" or ".tgz" extension, which 
+indicate that they were compressed with the 'gzip' program or some sort of 
+'zlib'-based compressor. The Xconq project currently distributes sources 
+as ".tar.gz" tarballs, as tools exist for dealing with these on almost 
+every system. (Aladdin Expander and Winzip have capabilities for dealing 
+with these on Windows). The older ".tar.Z" (made with 'compress') tarballs, 
+and the newer ".tar.bz2" (made with bzip2) tarballs are not being 
+distributed at this time.
+
+  Generally, the Xconq project only releases tarballs in the event of a 
+release in which the major or minor version number is incremented. Thus, 
+you may find that one of the other two methods is more desirable. Perhaps 
+at some future point, we will begin automatically creating tarballs from 
+the sources in the CVS repository.
+
+  To get a Xconq tarball, please go to:
+	http://sources.redhat.com/xconq/ftp.html
+
+  After you have downloaded your desired source package, unpack it with a 
+program (or combination of programs) that support ".tar.gz". For example, 
+on the command line of a typical Cygwin installation, one could do:
+	tar xzvf <name-of-package-you-dowloaded>
+
+1.1.2. Sources from Installer
+
+  If you use the Xconq installer for Windows which we provide, you can tell 
+it to install the Xconq sources that were most recent when we last created the 
+install program. To do this, just run the installer and select the "Everything" 
+installation type. The sources will then be located in your chosen Xconq 
+installation directory along with the other Xconq things.
+
+1.1.3. Retrieving with CVS
+
+  You can get the very latest Xconq sources via CVS. To do this, you will 
+need to run a CVS implementation. The 'cvs' program is available under Cygwin; 
+you may need to install this by rerunning the Cygwin setup program, and 
+selecting the appropriate package. There are also GUI CVS clients available.
+To use WinCVS, please see:
+	http://www.wincvs.org/
+for details. To use TortoiseCVS, please see:
+	http://www.tortoisecvs.org/
+for details. To use MSYS CVS, please see the "Msys Developer Toolkit" at:
+	http://www.mingw.org/download.shtml
+
+1.1.3.1. Retrieving with Cygwin or MSYS 'cvs'
+
+  Once you have the CVS package installed and working on Cygwin or MSYS, you 
+can use it per the CVS instructions at:
+	http://sources.redhat.com/xconq/cvs.html
+or which may have a shortcut under Start Menu | Programs | Xconq, if used an 
+installer.
+
+1.1.3.2. Retreiving with WinCVS
+
+  Here are some steps that may help you successfully use WinCVS:
+
+  (1) If you have just installed WinCVS and are running it for the first time, you 
+may be presented with the "WinCVS Preferences" dialog window. If not, you should 
+go to Admin | Preferences... in the CVS application so that you get this Window.
+  (2) In the "WinCVS Preferences" window, enter:
+	anoncvs@sources.redhat.com:/cvs/xconq
+as your CVSROOT.
+  (3) For "Authentication", you will need to select something that either says 
+":pserver" or else "'passwd' file in the cvs server", perhaps depending on which 
+version of WinCVS you have installed.
+  (4) If you have not already done so, you may wish to go to the "WinCVS" tab in 
+the same dialog. There, you may wish to set up the HOME folder, which is where 
+your CVS password for accessing the Xconq sources will be stored. This is also the 
+default location for where to put the files on your system. (If this is your 
+first time running WinCVS and you choose not to set HOME now, you will be given an 
+opportunity later.) Click "OK" when you are finished in this window.
+  (5) Next you will probably want to login. To do this, go to Admin | Login.... 
+When prompted for the password, give:
+	anoncvs
+Click "OK" to accept the password.
+  (6) And now for the moment of truth. Go to Create | Checkout module.... For 
+the name of the module to checkout, give:
+	xconq
+Then make sure that the module is going to be checked out to the location you 
+want it to go on your system ("Local folder to checkout to:"), perhaps 
+'C:\CVS', for example. Also, while you are in the "Checkout settings..." 
+dialog window, go to the "General" tab and make sure that the CVSROOT you 
+provided in step (2) is mentioned. Click "OK" and see what happens.
+  (7) If you did everything correctly in steps 1 through 6, you should see the 
+checkout process scrool by (perhaps after a slight delay). Once done, it should 
+tell you that:
+	*****CVS exited normally with code 0*****
+This is good. Zero (0) means success. If you had success, then go to the checkout 
+directory that you chose, inspect it and make sure that you have an 'xconq' 
+directory with a bunch of files and directories in it. If so, then you are 
+probably ready to move on to the next stage. Go to File | Save, if you were 
+successful.
+
+  If you want to update your sources at a later time, you can explore to the 
+directory where you checked out the 'xconq' module. You explore by using the 
+"Explore" tab on the WinCVS main window. If you select the checkout directory 
+(probably named 'xconq'), then the "Modify" menu should become available. Go to 
+Modify | Update selection....
+
+1.1.3.3. Retreiving with TortoiseCVS
+
+[ This section not yet written. Contributions welcome. ]
+
+1.2. Choosing a Subplatform
+
+  Xconq for the Windows platform can be built on different subplatforms. As of 
+this writing (2004/04/27), it is known to build on Cygwin and MinGW32, and with 
+Codewarrior.
+
+1.2.1. Cygwin
+
+  Although Cygwin is no longer needed as a portability layer, it can still be 
+useful to build Xconq on. One can use Cygwin to take advantage of the Xconq 
+configuration system and automatic generation of makefiles. Plus there is a 
+full suite of standard Unix tools available.
+
+  Cygwin can be obtained from:
+	http://www.cygwin.com
+This document does not address how to setup Cygwin. Please read the Cygwin 
+documentation and mailing list for details you might need to know. (And if 
+you plan on posting to the main Cygwin list, beware of CGF, the junkyard dog. 
+In other words, research your issues (Cygwin doesn't have problems) carefully 
+before going public with them.)
+
+  Make sure that your package selection during Cygwin setup includes 'gcc', 
+'make', and 'binutils'.
+
+1.2.2. MinGW32
+
+  MinGW32 (Minimalist GNU for Win32) is a native Windows set of the popular 
+GNU compiler and binutils. Although it can be ued by itself to build native 
+Win32 apps, you would be better off using it in conjunction with MSYS 
+(Minimalist System), which is a pared down, somewhat altered Cygwin-like 
+environment. The advantage to using MinGW32 is that is does not inject a 
+portability layer into your app; it builds native Win32 apps just as much as 
+Microsoft Visual C++ does.
+
+  Both MinGW32 and MSYS can be obtained from:
+	http://www.mingw.org
+and it is better to install MSYS after you install MinGW32.
+
+1.2.3. Microsoft Visual Studio
+
+  Xconq can also be built natively with Microsoft Visual Studio.
+  Thanks to Stanley Sutton and Martin Fehlhaber for contributing the 
+instructions.
+
+1.2.4. Metrowerks/Motorola CodeWarrior
+
+  [ Someone could contribute a project file, and document what needs to be 
+done with it. ]
+
+1.3. Choosing a Primary Interface
+
+  If you are using the Xconq configuration system on Cygwin or MSYS, this 
+section may provide you with useful information.
+
+  As mentioned at the beginning of this document, Xconq on Windows can run in 
+three different interfaces: Tcl/Tk, SDL, and Curses. The default interface that 
+is configured to build is the Tcl/Tk interface.
+
+1.3.1. Tcl/Tk
+
+  If you elect to stay with the Tcl/Tk interface as the default build, you will 
+need to tell it where to find the Tcl/Tk configuration files: tclConfig.sh and 
+tkConfig.sh. You do this by supplying the '--with-tclconfig=<your path to 
+tclConfig.sh>' and '--with-tkconfig=<your path to tkConfig.sh>' options to 
+'./configure'. The two files mentioned above contain information that the Xconq 
+configuration system uses to find your Tcl/Tk headers and libraries. Of course, 
+all of this means that you must actually have Tcl/Tk properly installed on 
+your system. The section "Installing Tcl/Tk" libraries provides some coverage of 
+this.
+
+1.3.2. SDL
+
+  If you choose the SDL interface as the default one to build, then you should 
+not need to do much except make sure that SDL is actually installed on your 
+system (partially covered in "Installing SDL"). The Xconq configuration system 
+searches for a program called 'sdl-config' in the standard search paths for 
+executables. The 'sdl-config' program is interrogated for information about your SDL 
+libraries and headers. You will need to tell the configure script that you want 
+SDL by default; this is done with the '--enable-ui=sdl' option.
+
+1.3.3. Curses (Text Console)
+
+  If you choose the Curses interface as the default, then you likely do not need to 
+do anything except give './configure' the '--enable-ui=curses' option.
+
+1.4. Preparing Supporting Libraries
+
+  Both the Tcl/Tk and SDL interfaces require supporting libraries (and the headers 
+corresponding to those libraries). The Curses interface will use your system's 
+curses libs and headers, if it provides them and they are in a standard place; if 
+your system doesn't provide them, then Xconq will use its own internal implementation 
+of curses.
+
+1.4.1. Installing Tcl/Tk
+
+  You have a number of options regarding Tcl/Tk. You can:
+	(1) Download the nicely packaged version for Windows from ActiveState. This is 
+called ActiveTcl and is available at:
+		http://www.activestate.com/Products/Download/Download.plex?id=ActiveTcl
+This package includes prebuilt DLL's plus a full suite of headers, static libraries, 
+and Tcl scripts.
+	(2) Download the master source tarball from:
+		http://www.tcl.tk/software/tcltk/downloadnow84.tml
+Then you can unpack and build it, per the documentation with that package.
+	(3) If you are using MinGW32 and MSYS, you can install the Tcl/Tk binaries that 
+are available on the MinGW32 downloads page:
+		http://www.mingw.org/download.shtml
+  You could also try one of the following:
+	(4) Download the Cygwin Tcl/Tk devel package and attempt to use that. (Juergen 
+Ruehle once provided instructions on how to do this with an old Cygwin (c. 2000 or 
+2001) and old Tcl/Tk packages for it.)
+	(5) Download the Tcl/Tk sources for MinGW32 and MSYS and attempt to build them 
+and use the resulting libs.
+
+  If you are new to Xconq, your safest bet is probably to use ActiveTcl. (Note that 
+if you are using Cygwin and install ActiveTcl outside the Cygwin filesystem hierarchy, 
+then you will either want to create a mount point (using the 'mount' command), or else 
+access its config scripts using "/cygdrive/<drive letter>/<path>" notation.) (Note that 
+if you are using MSYS and install ActiveTcl outside the Cygwin filesystem hierarchy, 
+then you will want to add an entry to your '/etc/fstab' to create an appropriate mount 
+point.)
+
+  Since this has been an issue in the past: _You_ are responsible for correctly 
+installing (and building, if you chose that route) Tcl/Tk. _You_ are responsible for 
+telling Xconq where tclConfig.sh and tkConfig.sh are. The Xconq configuration 
+system can only make a limited number of intelligent guesses about where you might 
+have "hidden" things. Please do not come whining to the list if you installed 
+Tcl/Tk on 'M:\ongolia\outer', and you didn't tell './configure' to look there. Or, if 
+you did tell './configure' to look there, but tk.h does not even exist in 
+'M:\ongolia\outer\include'. Please accept some personal responsibility in this 
+regard. Thank you.
+
+1.4.2. Installing SDL
+
+  SDL is not currently maintained on Cygwin (as of this writing, 2003/11/08), but does 
+build on MinGW32. You can build it from sources on MSYS and MinGW32 or on Cygwin by 
+carefully using the MinGW32 subsystem. But building it from sources is not necessary; 
+you can download the MinGW32 development bundle and install that.
+
+  Both the sources and the x86 development package (for SDL 1.2) can be found at:
+	http://www.libsdl.org/download-1.2.php
+
+  To use the prebuilt libs and headers from the development package under MSYS and 
+MinGW32, one will likely need to do the following:
+	(1) Find the 'sdl-config' script in the 'bin' directory of the SDL 
+distribution. The file likely has some additional target platform information 
+preceding the "sdl-config" part of its name. Simply rename it to 'sdl-config'.
+	(2) Edit the 'sdl-config' script. Change the 'prefix' variable to '/mingw', 
+assuming that "/mingw" is the mountpoint for your MinGW32 distribution in an MSYS 
+environment.
+	(3) Install the executables (the SDL DLL and 'sdl-config') to '/mingw/bin' 
+(or wherever you have MinGW32 bin directory mounted). Install the libraries to 
+'/mingw/lib' (or wherever). Install the headers to '/mingw/include/SDL' (or 
+wherever); you will likely need to create the SDL subdirectory; note that these 
+headers do NOT go in the main includes directory.
+
+  If you build SDL from sources, but do not create the shared library, SDL.dll, then 
+you will need to download it from the same page as mentioned above. Look for the SDL 
+runtime library for Windows.
+
+2. Building on the Subplatforms
+
+2.1. Cygwin
+
+  The Xconq configuration system is aware of the Cygwin subplatform, and makes good 
+efforts to accomodate it. Do './configure --help' to get an idea of what options are 
+available with the configure script. When you are ready to have the makefiles 
+generated, simply do:
+	'./configure [plus whatever options you need/want]'
+  If the configuration process is successful, it will report that it generated 
+Makefiles in a number of directories in your Xconq source tree. If the configure 
+script failed for some reason or realize that you gave it wrong options, you then 
+address the issue, and need to rerun it, you will probably be best served by doing:
+	'make distclean'
+This will fail if some of your makefiles were never generated in the first place, but 
+it is nonetheless a good practice.
+  Assuming the configuration was successful, you can then simply do:
+	'make'
+to build the default interface. You still have the option of building the other 
+interfaces. Do:
+	'make all-tkconq'
+to build the Tcl/Tk interface, if it is not default. Do:
+	'make all-sdlconq'
+to build the SDL interface, if it is not default. Do:
+	'make all-cconq'
+to build the Curses interface, if it is not default.
+
+  (Note that 'sdlconq' is really a MinGW32 app, and that Cygwin uses its MinGW32 
+subsystem to build it.)
+
+2.2. MinGW32
+
+  If you are using MSYS in conjunction with MinGW32, then follow the instructions on 
+the "Building on the Subplatforms: Cygwin" section above.
+
+  If you are using raw MinGW32, then you will likely need to create your own 
+makefiles. You can use the makefile templates (Makefile.in files) to guide you in 
+this endeavor. If you make a generic enough set of makefiles for raw MinGW32, feel 
+free to contribute these to the Xconq project. :-)
+
+2.3. Microsoft Visual Studio
+
+  [ Contributed by Stanley Sutton on 2002/11/07 via mailing list. ]
+  [ EDITOR'S NOTE: Be sure to look at the amendments and additional info from 
+Martin Fehlhaber, immediately following these instructions from Stanley. ]
+  [ EDITOR'S NOTE: The 'win' directory referred to in these 
+instructions is now defunct. Everything pertaining to the Windows Tcl/Tk 
+app is now kept in the 'tcltk' directory. ]
+  [ EDITOR'S NOTE: These instructions assume that you already have a 
+working version of Tcl/Tk installed, presumably the ActiveState 
+ActiveTCL. However, they do not explicitly mention adding this to your 
+project. Please make sure that you do so. ]
+
+  I'm assuming that you have a properly instally MSVC 5 or 6.
+For this example, I have a CVS version of xconq in 
+C:\cygwin\home\sutton\xconq.  I also have a copy of Active TCL
+in C:\Tcl.
+
+  So Create a new Workspace (File->New, select Workspace Tab), and 
+Create a workspace "WinXconq" in C:\Cygwin\home\sutton.  It's 
+easiest to create in in a directory parallel to xconq, but you can
+put it anywhere you want, of course.
+
+  Now open the kernel Makefile.in.  (File->Open) (Select All files option,
+and go to your xconq/kernel directory).
+
+  Now we're going to create a dummy project file, WconqTCL.  Create
+a new Win32app (File->New, Project Tab, and select Win32 Application).
+Set the radio button to "Add to current workspace", and click on Next.
+Select "Create Empty Project" then "Finish".  Click "OK" on the 
+confirmation screen.  Select the "File View" tab on the Workspace Area.
+
+  Now to build the libraries.  Look for OBJS in Makefile.in.  That is the
+list of .c files you will need for the first project (replace the .o with
+.c to get the filename).  So Create a project "libconq". (File-New,
+Projects Tab, "Win32 static library", "libconq" for name of project, 
+"Add to workspace", "Depndancy of", "WconqTCL", "Next";  Don't check
+any boxes on next screen, "Finish", and "OK" on confirmation screen.
+
+  Now we add the files in "OBJS" to the source file list.  I leave them
+in the xconq direcotry, for two reasons.  It's easier to maintain 
+CVS that way, and I can build both Cygwin and Win32 version off 
+the same files.  So right click on the libconq files -> Source files
+or Project->Set Active Project -> libconq and 
+Project -> Add to Project -> Files.  This will be a file broser window.
+Use the control key to select the .c files in the OBJ list. ( Or 
+select the C++ Source files on the type list, select all the .c files
+and use the Ctrl Key to unselect autotest.c, imf.c, imf2imf.c, lisp.c, 
+mac.c skelcomp.c, socket.c, unix.c, util.c, and win32.c).  If you want,
+you can test at this point by right clicking on libconq, and select
+"Build (selection only)" to build the library.
+
+  Now we create another subroject, libconqlow, using the same procedure 
+as for libconq, but using the list "LOBJS".  In addition, add socket.c
+and win32.c.
+
+  You can now build libconqlow.
+
+  Now we go to the tcltk libraries.  Now we'll be looking at
+tcltk\Makefile.in.  We'll create another Win32 static library,
+libtkui.lib.  Use the files in OBJS, tkmain.c, tkinit.c,
+tkcmd.c, and tkmap.c.  We'll need to go the settings, C/C++ tab,
+Preprocessor dropdown. and put 
+"..\..\xconq,..\..\xconq\kernel,C:\Tcl\include" in the "Additional
+Include Directories" field.  If your Active Tcl is installed 
+somewhere else, use your location.  If the path has blanks in it,
+don't forget quotes.
+
+  You can compile and build libtkui.lib now.  You'll get over
+3700 warnings with the default settings.
+
+  Now do the same thing for libtkimf.lib, using tkisamp.c 
+and tkimf.c.
+
+  Now do the same thing for libtkiapp.lib, using tkiapp.c.
+
+  Finally, go back to the WconqTCL project, and add
+tcltk/tkwin32.c as the source file.  Add the same Additional 
+Include Directories as the previous 3 libraries.
+Now go to  tab "Link", dropdown "Input". Add
+"libtkui.lib libtkimf.lib libconq.lib libconqlow.lib wsock32.lib "
+before kernel32.lib in the "Object/Library Modules" field.  Then add
+"..\libtkui\Debug;..\libtkimf\Debug;..\libconq\debug;..\libconqlow\Debug
+;C:\Tcl\lib"
+to the "Additional Library Path" field.
+
+  Now go to the end of the file and change:
+
+/* Dummy versions of functions not emulated by Windows tk. */
+int XSetTile(Display *dpy, GC gc, Pixmap pm) {}
+int XFlush(Display *dpy) {}
+
+/* Probably wrong, but makes cygwin b20 linking happy. */
+int (*XSynchronize(Display *dpy, Bool b))(Display *dpy) { return NULL; }
+
+  to:
+
+#ifdef _MSC_VER
+
+/* Dummy versions of functions not emulated by Windows tk. */
+void XSetTile(Display *dpy, GC gc, Pixmap pm) {}
+void XFlush(Display *dpy) {}
+
+#else 
+
+/* Dummy versions of functions not emulated by Windows tk. */
+int XSetTile(Display *dpy, GC gc, Pixmap pm) {}
+int XFlush(Display *dpy) {}
+
+#endif
+
+  Now add win/xconq.RC to the Resource Files and build.  For
+Debug runs, add "-L ..\..\xconq\lib -x" to the argument list in
+the Debug tab of the settings, or copy the WconqTCL.exe file to
+your xconq directory for playing.
+
+  [ Contributed by Martin Fehlhaber on 2003/12/21 via private email. ]
+  [ EDITOR'S NOTE: The following is a mixture of supplemental and alternative 
+material to Stanley's contribution above. ]
+
+  I'm assuming that you have a properly installed MSVC 6.0 (it might work with
+previous versions of MSVC just as well) besides ActiveTcl 8.4 (see above on how
+to obtain this).
+
+  For this example, I have a created a directory "Xconq" to later hold the
+workspace. This is also where I stored the head version of xconq from the CVS
+repository (module "xconq-win" is enough). If you don't have a favourite CVS
+client, yet, I suggest you use TortoiseCVS
+(http://tortoisecvs.sourceforge.net/) which is open source and easy to use.
+This creates a directory "xconq" within. This will make sure it does not get
+littered with all the files MSVC creates.
+
+  I installed ActiveTCL in "C:\Program Files\Tcl", but any other place would work
+just as well. It might even be most suitable to install it in "Xconq" if you
+don't use it for any other project.
+
+  So Create a new Workspace (File->New, select Workspaces Tab), and create a
+"Blank Workspace" named "Xconq". As you have created the "Xconq" directory
+before (for the sources), make sure you choose the directory level right above
+in "Location".
+
+  Now create a project "WconqTCL". Highlight Workspace "Xconq", right click,
+select "Add New Project to Workspace...". Choose "Projects" tab and select
+"Win32 Application" and name it "WconqTCL". Leave the radio button to "Add to
+current workspace", and click on "OK". Select "Create Empty Project" then
+"Finish". Confirm with another "OK".  Select the "File View" tab on the
+Workspace Area. 
+
+  Let's build the libraries. So create the project "libconq" as described above,
+but make sure you select "Win32 static library" in the Projects tab and click
+on "Dependency of" and select "WconqTCL" in the listbox. "OK", don't check any
+boxes on next screen, "Finish", and "OK" on the confirmation screen.
+
+  Now open the kernel Makefile.in. (Menu:File->Open) (Select All files option,
+and go to your xconq/kernel directory). Look for OBJS in Makefile.in.  That is
+the list of .c files you will need for the first project (replace the .o with
+.c to get the filename). Highlight "libconq" and "Add Files to Project" via
+your right mouse button.
+
+  Open the "Project Settings" for this project and in the tab C/C++ choose
+"Preprocessor" from the listbox and enter "..\xconq\missing" in "Additional
+include directories".
+
+  Now you should be able to build "libconq". Right click it and select "Build
+(selection only)".
+
+  Go ahead and create another subroject, "libconqlow", using the same procedure
+as for libconq, but using the list "LOBJS".  In addition, add socket.c and
+win32.c from the xconq kernel directory as well as timestuff.c from the missing
+(yeah, that's its name) directory. Don't forget to do the "..\xconq\missing"
+thig again. You may build it.
+
+  Now we procede with the tcltk libraries.  We'll create another Win32 static
+library, "libtkui". Open tcltk\Makefile.in. Use the files in OBJS, tkmain.c,
+tkinit.c, tkcmd.c, and tkmap.c.  We'll need to go the settings, C/C++ tab,
+Preprocessor dropdown. and put
+"..\xconq,..\xconq\kernel,..\xconq\missing,c:\Progra~1\Tcl\include" in the
+"Additional include directories" field.  If your Active Tcl is installed
+somewhere else, use your location.  If the path has blanks in it,
+don't forget quotes or the DOS compatible notation I used here.
+
+  You can compile and build libtkui.lib now.  You'll get over 3700 warnings with
+the default settings.
+
+  Now do the same thing for libtkimf.lib, using tkisamp.c and tkimf.c.
+
+  Now do the same thing for libtkiapp.lib, using tkiapp.c.
+
+  Finally, go back to the WconqTCL project, and add tcltk/tkwin32.c as one source
+file and snprintf.c from missing/snprintf as the second one. Add the same
+"Additional include directories" as the previous 3 libraries.
+
+  Now go to  tab "Link", dropdown "Input". Add "libtkui.lib libtkimf.lib
+libconq.lib libconqlow.lib wsock32.lib tk84.lib tcl84.lib" before kernel32.lib
+in the "Object/Library Modules" field.  Then add
+"..\libtkui\Debug,..\libtkimf\Debug,..\libconq\debug,..\libconqlow\Debug,\Progra
+~1\Tcl\lib"
+to the "Additional Library Path" field.
+
+[ EDITOR'S NOTE: Martin also included a patch in his instructions. I do not 
+believe that the patch is needed any longer. ]
+
+  Basically you are all set now and the original directories from CVS were not
+altered besides by the patch above. I chose to do one more ting to the settings
+of "WconqTCL". Tab "Link" category "General" in the field "Output file name" I
+entered "..\xconq\WconqTCL.exe". This creates the files "WconqTCL.exe" and
+"WconqTCL.ilk" in the "xconq" root. This ensures you have the right environment
+(i.e. config and game files) to start playing with the sources - just hit F5.
+
+2.4. Metrowerks/Motorola CodeWarrior
+
+  [ Someone could contribute a project file, and document what needs to be 
+done with it. ]
+
+3. Installing on the Subplatforms
+
+3.1. Cygwin
+
+  You can install Xconq on Cygwin, if you wish, but it can also be played from the 
+top-level build directory. Simply copy up the 'xconq.exe' file from a particular 
+interface's source/build directory. The executables for the various interfaces may 
+be found as follows (accurate as of 2003/11/09):
+	Tcl/Tk	tcltk/xconq.exe tcltk/imfapp.exe
+	SDL		sdl/xconq.exe
+	Curses	curses/cconq.exe
+  To install under Cygwin, do:
+	'make install'
+for the default interface. For non-default interfaces, do:
+	'make install-tkconq'
+for Tcl/Tk, do:
+	'make install-sdlconq'
+for SDL, and do:
+	'make install-cconq'
+for Curses.
+
+3.2. MinGW32
+
+  If you are using MinGW32 in conjunction with MSYS, then you can follow the 
+instructions in the "Installing on the Subplatforms: Cygwin" section above.
+
+  If you are using raw MinGW32, then you get to decide whether an installation 
+process is available (by including adding it to the makefiles or not).
+
+3.3. Microsoft Visual Studio
+
+  Please see the instructions in the "Building on the Subplatforms: Microsoft 
+Visual Studio" section above.
+
+3.4. Metrowerks/Motorola CodeWarrior
+
+  [ Someone could contribute a project file, and document what needs to be 
+done with it. ]
+
+4. Running Xconq
+
+  Xconq can be run either from its installed location or from the top-level 
+source/build directory. In either case, it may necessary to provide some 
+additional runtime DLL's. If you are seeing failure messages about missing 
+DLL's, you should copy the requested DLL('s) to the same directory where 
+xconq.exe (or cconq.exe) resides. Some commonly requested files 
+(depending on whether xconq.exe was invoked from an Explorer window or from 
+inside Cygwin or MSYS) are cygwin1.dll, cygncurses6.dll or cygncurses7.dll, 
+SDL.dll, tcl84.dll, tk84.dll. Hopefully some of these annoyances will go away 
+once Xconq's treatment of dynamic and static linking on the Windows platform 
+matures.
+
+  In the case of Tcl/Tk, depending on how you have it setup on your system, you 
+may also need to provide a 'lib' directory which resides at the same directory 
+level as your 'xconq' directory. This 'lib' directory should contain the folders 
+tcl8.<minor version> and tk8.<minor version> copied from your installed Tcl/Tk 
+package. These folders should have a number of Tcl scripts in them which are 
+necessary for Tcl/Tk to function correctly. The correct placement of the 'lib' 
+directory _is important_ as Tcl/Tk only looks for the scripts in certain 
+paths relative to the invoking executable.
+
+  If you experience problems, you should view the 'Xconq.Warnings' file to 
+see if it gives any useful clues. If it complains that it cannot find 'init.tcl' 
+you have to set the 'TCL_LIBRARY' environment variable to the directory of the 
+'init.tcl' file (i.e. '/usr/share/tcl8.4'). If it cannot find other Tcl scripts 
+you could try to add them to the 'TCLLIBPATH' environment variable.
+
+5. Becoming a Xconq Contributor
+
+  So you want to help out with the Xconq project? Great!
+
+  Not only are coders welcome, but also graphics designers, game module 
+developers, and documentation writers.
+
+  A good place to start is the Xconq mailing list:
+	http://sources.redhat.com/xconq/lists.html
+
+  If you plan on developing game modules, another good place to look is the 
+Game Design Manual:
+	http://sources.redhat.com/xconq/manual/xcdesign_1.html
+This manual may also be available on your system, if you installed Xconq with 
+an installer. Check under Start Menu | Programs | Xconq.
+
+  If you plan on developing Xconq code, another good place to look is the 
+Xconq Hacking Manual:
+	http://sources.redhat.com/xconq/manual/hacking_1.html
+This manual may also be available on your system, if you installed Xconq with 
+an installer. Check under Start Menu | Programs | Xconq. Yet another document 
+to read is the 'PROJECTS' file in the 'doc' directory.
+
+  There a many possibilities with Xconq: graphical interfaces, game modules, 
+images, new and improved AI's, and new and improved combat systems, more and 
+better documentation, just to name some.
+
+6. Questions? Comments?
+
+  If you feel that you have exhausted all possible information resources 
+(documentation, mailing lists, etc...) and you think that Xconq is at fault for 
+some problematic behavior you are experiencing, you can send an inquiry to the 
+Xconq mailing list. Please be sure to give the specifics of your system, clearly 
+state what you were trying to do, and give solid evidence that it was not 
+working. The more relevant details you can give us, the better.
+
+  Constructive feedback on all aspects of Xconq is always welcome. You can also 
+send this to the Xconq mailing list. The mailing list is a catch-all 
+environment that includes both gamer discussions and developer discussions.
+
+=====================================================
+
+Document Authors:
+  (circa 2000, Original)		Juergen Ruehle
+  (2003/10/05, Revision)		Eric McDonald
+  (2003/11/09, Complete Rewrite)	Eric McDonald
+  (2003/11/22, New Material)		Eric McDonald (editor),
+					Stanley Sutton (author)
+  (2004/04/27, New Material)		Eric McDonald (editor),
+					Martin Fehlhaber (author)
+  (2004/07/04, Revision)		Eric McDonald
+
+Contact:
+  Xconq Mailing List <xconq7 [at] sources [dot] redhat [dot] com>

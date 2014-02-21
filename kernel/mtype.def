@@ -1,0 +1,43 @@
+/* Definitions of the material type properties in Xconq GDL.
+   Copyright (C) 1992-1999 Stanley T. Shebs.
+
+Xconq is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.  See the file COPYING.  */
+
+DEF_MPROP_S("char", m_char,
+	"preferred char to display",
+	mchar, "")
+
+DEF_MPROP_S("help", m_help,
+	"brief description",
+	mhelp, "")
+
+DEF_MPROP_S("image-name", m_image_name,
+	"preferred image",
+	imagename, "")
+
+DEF_MPROP_I("initial-treasury", m_initial_treasury,
+	"amount in each side's treasury at beginning of game",
+	initialtreasury, 0, 0, PROPHI)
+
+DEF_MPROP_S("name", m_type_name,
+	"basic name",
+	name, "")
+
+DEF_MPROP_L("notes", m_notes,
+	"player notes",
+	notes)
+
+DEF_MPROP_I("people", m_people,
+	"actual number of individuals per count of material",
+	people, 0, 0, PROPHI)
+
+DEF_MPROP_I("resource-icon", m_resource_icon,
+	"resource icon used for material type in advanced unit landuse display",
+	resourceicon, 0, 0, 4)
+
+DEF_MPROP_I("treasury", m_treasury,
+	"true if material can be stored in globally available treasury",
+	treasury, 0, 0, 1)

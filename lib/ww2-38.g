@@ -1,0 +1,265 @@
+(game-module "ww2-38"
+  (title "WWII World 1938")
+  (version "1.0")
+  (blurb "The world in January 1938. Strategic level game.")
+  (base-module "ww2-adv")
+  (variants
+   (world-seen true)
+   (see-all true)
+   (sequential false)
+   )
+  (instructions (
+   "In this game you play the national leader of your country during WWII."
+   ))
+  )
+
+;;; Define basic terrain.
+
+(include "earth-1deg")
+
+;; We want the rivers.
+
+(include "t-e1-river")
+
+(set synthesis-methods '(name-units-randomly))
+
+(include "ww2-sides")
+
+;;; Define the nationalities of the people.
+
+(include "p-e1-1938")
+
+;;; Define the cities.
+
+(include "u-e1-1938")
+
+(infantry 123 117 uk)
+(infantry 122 117 uk)
+(infantry 121 117 uk)
+(infantry 122 119 uk)
+(infantry 121 116 uk)
+(infantry 120 121 uk)
+(infantry 119 120 uk)
+(infantry 121 118 uk)
+
+(infantry 126 115 fr)
+(infantry 128 115 fr)
+(infantry 129 114 fr)
+(infantry 130 114 fr)
+(infantry 131 114 fr)
+(infantry 132 113 fr)
+(infantry 133 112 fr)
+(infantry 133 111 fr)
+(infantry 134 110 fr)
+(infantry 132 110 fr)
+(infantry 131 109 fr)
+(infantry 128 110 fr)
+(infantry 126 112 fr)
+(infantry 127 113 fr)
+(infantry 140 102 fr)
+(infantry 134 101 fr)
+
+(infantry 148 128 su)
+(infantry 148 127 su)
+(infantry 148 126 su)
+(infantry 150 124 su)
+(infantry 150 121 su)
+(infantry 150 120 su)
+(infantry 150 118 su)
+(infantry 151 115 su)
+(infantry 152 114 su)
+(infantry 155 113 su)
+(infantry 153 118 su)
+(infantry 154 122 su)
+(infantry 260 109 su)
+
+(infantry 131 115 de)
+(infantry 131 118 de)
+(infantry 133 114 de)
+(infantry 134 114 de)
+(infantry 138 113 de)
+(infantry 138 114 de)
+(infantry 139 115 de)
+(infantry 134 119 de)
+(infantry 137 119 de)
+(infantry 136 117 de)
+(infantry 132 116 de)
+(infantry 143 119 de)
+
+;; Japanese had actually captured some cities by 1938.
+
+(unit "Peiping" (s jp))
+(unit "Shanghai" (s jp))
+(unit "Tientsin" (s jp))
+
+;; (add minor countries also?)
+
+;; (set up agreements applying to particular dates)
+
+(side uk (trusts (uk 1) (fr 1) (zh 1) (us 1)))
+(side fr (trusts (uk 1) (fr 1) (zh 1)))
+; China should fight Japan and not invade India or Indochina.
+(side zh (trusts (uk 1) (fr 1) (zh 1)))
+; The Americans, though neutral, are anglofiles and will not attack Canada.
+(side us (trusts (uk 1)))
+
+(side de (trusts (de 1) (it 1) (jp 1) (su 1)))
+(side it (trusts (de 1) (it 1) (jp 1) (su 1)))
+(side jp (trusts (de 1) (it 1) (jp 1) (su 1)))
+; The Molotov-Ribbentrop treaty had not been signed yet in 1938, 
+; but this makes for a more interesting game.
+(side su (trusts (de 1) (it 1) (jp 1) (su 1)))
+
+(scorekeeper (do last-alliance-wins))
+
+;; Default to setting up at the beginning of 1938.
+
+(set initial-date "Jan 1938")
+
+(set initial-year-part 12)
+
+(area (control-sides
+  (by-name ( 1 1) ( 2 2) ( 3 3) ( 4 4)
+    ( 5 5) ( 6 6) ( 7 7) ( 8 8) ( 9 9)
+    ( 10 10))
+  "360X"
+  "9X4b157X4h19X46h121X"
+  "6b5X2b3Xb4X20b127X4h17X53h5X13h98X2b"
+  "10b5X3b7X19b92X9a2h20X3h16X57h2X26h47X3d38Xb"
+  "10bX2bX5b5Xb8X13b88X11a7h30X104h25X13d3X4d4b23X2b"
+  "14X7b2X5b10X15b80X13a7h22X116h19X21d23b6X"
+  "7b7X14b12X15b77X14ah21X129h13X22d28b"
+  "27b17X13b75X7a2X6a2h6X5h3X139h9X21d28b"
+  "25b17X11b3X2b73X7a4X5a3hXhX153h9X17d28b"
+  "24b15X16b74X9a4X6a159h4X22d27b"
+  "24b22X13b68X10a4X7a147h5X6h5X22d27b"
+  "24b16X4b5X7b70X11a4X7a134h4X7h11X2h10X21d23b"
+  "25b16X7b6X4b68X12a4X6a128h2X5h4X3h24X26d20b"
+  "25b17X8b76X12a10X126h5X4h31X28d18b"
+  "25b18X8b4Xb70X12a13X124h5X3h32X11d2X3d9X6d14b"
+  "26b17X10b2X3b58X2b9X3a3X5a5XaX4a113h16X5h35X10d16XdX2d12b"
+  "28b16X15b56X4b12XaX5a5XaX4a110h18X7h25Xd13X2d20Xd2Xd11b"
+  "34b8Xb2X16b56X2b12X2a2X3a5X6a108h21X7h37X4d2X2d19Xd10b"
+  "36b8X18b52X2bX4b10X4a8X5a109h2Xh17X7h35X4d27X10b"
+  "41b3X21b49Xa2b2X4b9Xa6X3eXe5a110h19X6h4XhXh27X2d32X8b"
+  "41b3X23b47X3a3X3b6X12e2ae5a115hXh12X5h31XdXd33Xb2X7b"
+  "43b2X23b46X3a2X5b4X2a10e10a115hXh12X3h15Xd11XdXdXd38Xb3X4b"
+  "44bX22b48Xa4X5b2X3a10e9a87h2a27hXh13Xh22XdXdXd48X4b"
+  "66b2Xb50X3b5X4a8e11a83h6a10g16h2X2h11Xh76X3b"
+  "36b3X18b10X4b52XcX4c2a9e10a81h8a17g9h2X2h89X2b"
+  "4X31d5X16b2X4bXb3X5b50X10c7e12a76h12a19g8h2Xh91X"
+  "2XdX31d2Xd4X12b3X4b6X6b50X10ce3a2e13a75h12a19g7h3Xh9Xh81X"
+  "3X39d2X9b2X8b3Xc58X9c3a4f13a5hX2h3X12h3X47h12a19g7h4Xh90X"
+  "3X41d3X5bX3bd4bX4b60X8c6fX15a4X3h2X10h5X31h2i14h12a19g6h13Xg82X"
+  "4X40d2X6bX5d2b2X2b63X8c6f2X14a4Xh2X11h5X32h3i4h4i15a2i18g6h5X2g4X2g83X"
+  "4X41dX4b3X5d4Xb57X8j7c4X3f2X13a10X9h5X28h4iX3ih6i13a3i19g4h6X5g86X"
+  "5X41d2b2X8d62X11jc5Xc3X3f3X10a12X8h5X27h2i4X10i11a5i19g10X3g87X"
+  "5X41d3X10d62X2a9j10X4f2X10a3X4a5X8h5X27hi3X12i10a5i18g101X"
+  "6X51d64X2a8j7X2f4X4fX5a2XaX18a3h4X27h18i7a7i8g2X7g11X2g88X"
+  "6X50d65X2a7j2Xj6X2f5Xf3X3a5X20a2h4X25h34i6g2X2g2X3g12X2g88X"
+  "8X48d47Xa17X2a8j16Xf4X3a2X23a5X18h2X3h36i5g7X3g11X2g88X"
+  "8X48d49Xa17X7j17Xf4X2a2XaX10a3c9a5X7a12h2X2hX8i5X23i5gXg5X3g9X3g88X"
+  "10X46d69Xb8X9c2X2f7Xa5XaXaX2a2X4c5b17a6h5a20X21i9g3X3g7X5g87X"
+  "11X45d76X11c13X2aXa8X2c9b16a4h4a2Xa22X19i5g6X3g2X10g87X"
+  "12X44d70X17c5Xb16X2a2X11b24a4b21X19i5g6Xg5X2gX2g90X"
+  "15X39d71X19c25X12b23a5b20X20i5g9X2gX2g92X"
+  "14Xd2X37d15Xb47Xj7X19c5f5X3f12X3b4a6b21a11b16X20i5g9X2g94X"
+  "18XdX33d71X10c7X4c4f5X5f5X2b3X3ba2X3a5b20a12bXb14X20i5g8Xg95X"
+  "18X2a2Xa31d71X7c11X2c17f9b2a4X3a4b18a17b13X19ig3ig104X"
+  "19X2a2X9a8d3Xd8X2d63Xj7X6c15X16f9b2a6X3ab2X17a19bXb2Xb6X25i103X"
+  "21X2a2X8a7d13X2d64XjXj3Xj3c35X5bXbXa8X3a3X12a33b26i7Xg52Xd41X"
+  "21X3a2X10a3d15X2d67X4j38X5b2X2a9X2a4X10a35b23i103X"
+  "24X2aX11a2d14X3d66X4j39X5b2X2a9X3a7X6a35b22i7Xg95X"
+  "25Xa2X11ad15X2dXb63X4j41X5b2X2a10XaXb3Xa3X4a36b21i73Xd29X"
+  "26X2a2X10a20Xb8Xd52X4j42X5b2Xa11X3a2X3a10X32b20iX2g2Xg16Xg80X"
+  "27X2a2X9a22Xb59X3j43X5b3X2a10X9a9X32b16i4X2g100X"
+  "33X8a14X5a5Xb57X2j43X6b3X2a16X4a9X22bX9b2c9iaXb5Xg79Xd20X"
+  "34X8a17X6a58X3c43X6b3X3a16X2a10X2bX15b4X9b6ci2Xi92Xd17X"
+  "35X8a6X4a10X3a58X3c42X7b4Xa16X2a14X14b5X6b3a6c97Xd15X"
+  "29Xa5X9a5X4a14X3a54X4c41X8b4Xa15X2a14X13b7X5b4a4c3X2i94X2d13X"
+  "37X9a3X3ab10X2b3X5aX2dXb47X5c39X10b3X2a12X2a16X11b10X4b5a3c3X2i10Xd82X3d12X"
+  "40X12ab72X8c24X2c10X10bf3X2a11Xa17X10b11X4b6a3c13X3d96X"
+  "43X9ab27Xb36Xa8X8c14X6c2X6c6X11b2f4X12a18X9b12X2bXb6a4c12X3d95X"
+  "49X9a67X10c9X23c12b3f3X7b2a22Xa5b18Xb6a4c11X2d22Xd73X"
+  "51X9a21Xc37Xa5X20cX18cX2c12b5f2X6b25X6b18Xb5a5c11X2d95X"
+  "53X7a23Xb42X42c12b5fX3b29X5b18Xb4a6c13X2d20Xd72X"
+  "57X4a14Xa6Xa44X2b38cXc11b6f33X5b18XbaXa7c11X3dXd91X"
+  "58X3a10XaXa10Xb43X14c3b3c8b13c11b7f6X2f3Xb20X4bc18Xba3X6c16Xd90X"
+  "59X3a7X4aX5a2XaXa46X2c2b9c3b2c9b13c11b6f2b2X3b2f20Xb4X3b19Xa5X4c11XdXdXd91X"
+  "61Xa4Xa2X4aX10a47Xc3b8c4bc9b13c11b7f6b2f25X3b2Xb16Xa6Xc12X2d5Xd89X"
+  "62X4aX19a47X2ba8c4bc8b14c10b9f4b2f26X2b2X2b16X2a17Xd4X4d88X"
+  "65Xa2X18ab46Xab2a7c4bc8b14c11b10f2b2f30X2b17X2b21X5d87X"
+  "70X16a3b47X2a7c4bc7b16c10b13f31X2b18X2b15Xb6X2d87X"
+  "70X17a3b2c45X2a6c2b5X5b17c10b12f48Xa2X3b12X4b94X"
+  "71X19a2cX3a44Xc12X2b2X10c11a7b11f48X3aX3b11Xb2X2a93X"
+  "71X26a61X8c14a11b4f50X3aX3b9X2b2Xa94X"
+  "71X27a61X7c15a9b5f52X2a2X2b8X2b3Xa93X"
+  "70X29a60X2j5c15a9b4f54X3aXb5X4a11Xa86X"
+  "70X30a60Xj6c14a9b3f56X3a7Xa7Xa2X5a85X"
+  "58XaXa9X31aXa53Xj3X7c14a9b2f58X4a5X2a6Xa2Xa5Xa5X2aXa74X"
+  "70X36a54X7c15a9bf59X5a5Xa4X2a2X5a3Xa3X3a75X"
+  "71X37a48Xj4X6c15a9b61X5a4X6a3X3a10X2a2X5a6Xa2Xa58X"
+  "71X41a51X3c16a10b62X4a8X2a3XaXa6X2a3X3a4X3a65X"
+  "71X43a5Xa44X18a10b63X3a13XaX2a13X3a3X3a6Xa56X"
+  "72X46a47X17a10b16Xb48X2a13Xa3Xa14Xa4Xa2b2X4a3Xb51X"
+  "73X45a49X15aX9b68Xa3X2a31X4b7XbXb49X"
+  "74X45a48X16aX9b68X7a20Xa9X4b58X"
+  "75X44a19Xb28X16a2X9b73X2aXaXa3Xa2X2a4Xa14X4b7Xb48X"
+  "76X43a49X16abX9b80Xa3Xa23X2b10Xb44X"
+  "77X42a50X15a12b109Xb11Xb42X"
+  "78X41a51X15a7b5a56Xb32XbXb9Xb61X"
+  "79X39a52X15a7b5a3Xc4Xc81X6b5X2b60X"
+  "81X37a52X11a12b5a7X2c80X6b6X2b59X"
+  "82X36a52X11a8b2a2b5a7X2c76X2bX7b6X3b58X"
+  "83X36a33Xb18X11a6b4a2b4a6X4c75X11b6X3b57X"
+  "85X34a52X11a7b4ab4a5X5c73X15b3X4b57X"
+  "88X31a53X11a8b5a7X5c73X17b2X5b55X"
+  "89X2aX27a53X20b3a8X5c72X25b55X"
+  "90X2a2X26a53X20b2a9X5c70X28b53X"
+  "90X2a2X26a54X18b3a9X5c8Xb60X31b15X2c34X"
+  "91X3aX25a55X18b3a8X5c7Xb59X34b50X"
+  "91X2aX25a56X18b4a8X4c67X35b49X"
+  "91X3aX22a59X18b3a9X3c67X37b47X"
+  "91X3aX20a62X17b3a10X2c67X38b46X"
+  "92X2a2X19a63X16b2a12Xc68X39b44X"
+  "92X2aX19a64X17ba81X39b44X"
+  "93X2aX19a64X17b82X39b43X"
+  "93X22a65X16b82X40b42X"
+  "94X21a67X14b84X39b41X"
+  "94X20a68X14b84X38b42X"
+  "94X20a70X12b85X38b41X"
+  "94X19a71X11b87X9b9X19b41X"
+  "87Xa7X14aX3a72X10b87X9b11X16b42X"
+  "95X15a76X2b95X3b16XbX14b42X"
+  "95X16a196X11b23X2b17X"
+  "95X16a197X10b24Xb17X"
+  "95X16a198X10b24X2b15X"
+  "95X12a205XbX2b27X4b13X"
+  "96X12a235X4b13X"
+  "96X10a207Xb31X2b13X"
+  "97X10a208X4b24X2bXb13X"
+  "97XaX4aX3a209X4b22X4b14X"
+  "99X8a210X3b21X4b15X"
+  "99X8a211X2b20X4b16X"
+  "99XaX5a234X4b16X"
+  "98XaX6a235X2b17X"
+  "100X7a234Xb18X"
+  "99X8a253X"
+  "99XaX6a253X"
+  "100X6a254X"
+  "100XaX5a8XbXb242X"
+  "102X5a253X"
+  "105Xa2Xa251X"
+  "104Xa2X4a249X"
+  "106X4a30Xb219X"
+  "360X"
+  "360X"
+  "360X"
+  "360X"
+  "360X"
+  "360X"
+  "360X"
+  "360X"
+  "360X"
+  "360X"
+  ))

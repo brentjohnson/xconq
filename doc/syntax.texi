@@ -1,0 +1,643 @@
+@c Syntax chart for GDL
+@c This might be standalone or an appendix, so don't say which here,
+@c rely on including file to do the right thing.
+
+Whitespace is never significant, except to separate two symbols or within
+a string or escaped symbols.
+
+Regular expression for symbol is @code{[-a-z0-9A-Z]*} or @code{|[^|]*|}.
+
+Number is @code{[-]*[0-9][0-9]*} optional @code{[d]*[0-9][0-9]*},
+@code{[+]*[0-9][0-9]*}.
+
+String is @code{"[^"]*"}.
+
+Comments extend from @code{;} to end of the line, or may be everything
+enclosed between @code{#|} and @code{|#} (which nest properly).
+
+@smallexample
+@i{form} ::= @i{module-form}
+        | ( include @i{module-name} [ @i{variant-setting} ]* )
+        | ( if @i{test-form} [ @i{symbol} ] )
+        | ( else [ @i{symbol} ] )
+        | ( end-if [ @i{symbol} ] )
+        | @i{world-form}
+        | @i{area-form}
+        | @i{side-form}
+        | @i{side-defaults-form}
+        | @i{independent-units-form}
+        | @i{doctrine-form}
+        | @i{player-form}
+        | @i{agreement-form}
+        | @i{unit-form}
+        | @i{unit-defaults-form}
+        | @i{scorekeeper-form}
+        | @i{exu-form}
+        | @i{evt-form}
+        | @i{unit-type-form}
+        | @i{terrain-type-form}
+        | @i{material-type-form}
+        | @i{advance-type-form}
+        | @i{namer-form}
+        | @i{table-form}
+        | @i{add-form}
+        | @i{imf-form}
+        | @i{palette-form}
+        | @i{color-form}
+        | ( define @i{symbol} @i{value} )
+        | ( set @i{symbol} @i{value} )
+        | ( undefine @i{symbol} @i{value} )
+        | ( print @i{value} )
+        | @i{value}
+@end smallexample
+
+
+@smallexample
+@i{module-form} ::= ( game-module [ @i{module-name} ]
+        [ @i{game-module-property-binding} ]* )
+
+@i{module-name} ::= @i{string}
+
+@i{game-module-property-binding} ::= ( @i{game-module-property-name} @i{value} )
+
+@i{game-module-property-name} ::=
+          base-game | title | blurb | picture-name | instructions
+        | notes | design-notes | program-version
+        | base-module | default-base-module | variants | version
+
+@i{variant-definition} ::=
+        ( [ @i{string} ] @i{var-type} [ @i{var-default} ] [ @i{var-range} ] [ @i{var-clause} ]* )
+
+@i{var-type} ::= world-size | world-seen | see-all
+        | sequential | real-time | @i{symbol}
+
+@i{var-default} ::= @i{value}
+
+@i{var-range} ::= ( @i{value} @i{value} )
+
+@i{var-clause} ::= ( [ @i{string} ] @i{value} [ @i{form} ]* )
+@end smallexample
+
+
+@smallexample
+@i{variant-setting} ::= ( @i{var-type} @i{value} )
+@end smallexample
+
+
+@smallexample
+@i{world-form} ::= ( world [ @i{circumference} ] [ @i{world-property-binding} ]* )
+
+@i{world-property-binding} ::= ( @i{world-property-name} @i{value} )
+
+@i{world-property-name} ::=
+        axial-tilt | circumference | day-length | year-length
+
+@i{circumference} ::= @i{value}
+@end smallexample
+
+
+@smallexample
+@i{area-form} ::= ( area [ @i{width} [ @i{height} ] ] [ @i{area-restriction} ]
+        [ @i{area-property-binding} ]* )
+
+@i{area-restriction} ::= ( restrict @i{width} @i{height} @i{a-x} @i{a-y} )
+
+@i{area-property-binding} ::= ( @i{area-property-name} @i{value} )
+        | ( terrain [ @i{layer-subform} ]* [ @i{string} ]* )
+        | ( aux-terrain @i{terrain-type} [ @i{layer-subform} ]* [ @i{string} ]* )
+        | ( features @i{feature-list} [ @i{layer-subform} ]* [ @i{string} ]* )
+        | ( material @i{material-type} [ @i{layer-subform} ]* [ @i{string} ]* )
+        | ( people-sides [ @i{layer-subform} ]* [ @i{string} ]* )
+        | ( control-sides [ @i{layer-subform} ]* [ @i{string} ]* )
+        | ( elevations [ @i{layer-subform} ]* [ @i{string} ]* )
+        | ( temperatures [ @i{layer-subform} ]* [ @i{string} ]* )
+        | ( winds [ @i{layer-subform} ]* [ @i{string} ]* )
+        | ( clouds [ @i{layer-subform} ]* [ @i{string} ]* )
+        | ( cloud-bottoms [ @i{layer-subform} ]* [ @i{string} ]* )
+        | ( cloud-heights [ @i{layer-subform} ]* [ @i{string} ]* )
+
+@i{area-property-name} ::= width | height | latitude | longitude | cell-width
+
+@i{layer-subform} ::= ( constant @i{n} )
+        | ( subarea @i{a-x} @i{a-y} @i{width} @i{height} )
+        | ( xform @i{mul} @i{add} )
+        | ( by-bits )
+        | ( by-char @i{string} )
+        | ( by-name @i{name-list} )
+
+@i{width} ::= @i{value}
+
+@i{height} ::= @i{value}
+
+@i{a-x} ::= @i{value}
+
+@i{a-y} ::= @i{value}
+
+@i{n} ::= @i{value}
+
+@i{mul} ::= @i{value}
+
+@i{add} ::= @i{value}
+@end smallexample
+
+
+@smallexample
+@i{side-form} ::= ( side [ @i{side-id} ] [ @i{side-property-binding} ]* )
+
+@i{side-defaults-form} ::= ( side-defaults [ @i{side-property-binding} ]* )
+
+@i{side-property-binding} ::= ( @i{side-property-name} @i{value} )
+
+@i{side-property-name} ::=
+          name | long-name | short-name | noun | plural-noun
+        | adjective | color | emblem-name | names-locked
+        | class | active | status
+        | advantage | advantage-min | advantage-max
+        | controlled-by | trusts | trades | next-numbers | unit-namers
+        | feature-namers | tech | init-tech | terrain-view | unit-view
+        | unit-view-dates | turn-time-used | total-time-used | timeouts
+        | timeouts-used | finished-turn | willing-to-draw
+        | doctrines | doctrines-locked
+        | self-unit | priority | scores | ui-data | ai-data | player
+@end smallexample
+
+
+@smallexample
+@i{doctrine-form} ::= ( doctrine ... )
+@end smallexample
+
+
+@smallexample
+@i{player-form} ::= ( player [ @i{player-id} ] [ @i{player-property-binding} ]* )
+
+@i{player-id} ::= @i{number}
+
+@i{player-property-binding} ::= ( @i{player-property-name} @i{value} )
+
+@i{player-property-name} ::= name | config-name | display-name | ai-type-name
+        | password | initial-advantage
+@end smallexample
+
+
+@smallexample
+@i{agreement-form} ::= ( agreement [ @i{agreement-id} ] [ @i{agree-prop-bdg} ]* )
+
+@i{agreement-id} ::= @i{value}
+
+@i{agree-prop-bdg} ::= ( @i{agreement-property-name} @i{value} )
+
+@i{agreement-property-name} ::= type-name | title | terms | drafters
+        | proposers | signers | willing-to-sign | known-to | enforcement
+        | state
+@end smallexample
+
+
+@smallexample
+@i{unit-form} ::= ( unit [ @i{unit-id} ] [ @i{unit-property-bdg} ]* )
+        | ( @i{unit-type-name} @i{u-x} @i{u-y} @i{u-side} [ @i{unit-property-bdg} ]* )
+
+@i{unit-defaults-form} ::= ( unit-defaults [ reset ] [ @i{unit-property-bdg} ]* )
+
+@i{unit-property-bdg} ::=
+          ( @i{unit-property-name} @i{value} )
+        | ( act @i{action-type-name} [ @i{action-property-binding} ]* )
+        | ( plan @i{plan-type-name} [ @i{plan-property-binding} ]* )
+        | ( task @i{task-type-name} [ @i{task-property-binding} ]* )
+        | ( x [ @i{unit-x-property-binding} ]* )
+
+@i{unit-property-name} ::=
+          @@ | # | cp | cxp | hp | in | m | mo | n | nb
+        | opinions | s | tp | z
+
+@i{unit-id} ::= @i{value}
+
+@i{u-x} ::= @i{value}
+
+@i{u-y} ::= @i{value}
+
+@i{u-side} ::= @i{value}
+
+@i{unit-x-property-binding} ::=
+          ( @i{unit-x-property-name} @i{value} )
+          ( @i{symbol} @i{value} )
+
+@i{unit-x-property-name} ::= appear | disappear
+@end smallexample
+
+
+@smallexample
+@i{action-type-name} ::=
+          add-terrain | alter-terrain | attack | build
+        | capture | change-side
+        | change-type | create-at | create-in | detonate | disband
+        | enter
+        | fire-at | fire-into | move | none | overrun | produce
+        | remove-terrain | repair | research | toolup | transfer
+        | transfer-part
+
+@i{action-property-binding} ::=
+          ( @i{action-property-name} @i{value} )
+
+@i{action-property-name} ::= a | aa | acp | acp0 | am
+@end smallexample
+
+
+@smallexample
+@i{plan-type-name} ::=
+          defensive | exploratory | none | offensive | passive | random
+
+@i{plan-property-binding} ::=
+          ( @i{plan-property-name} @i{value} )
+        | ( goal @i{goal-type-name} ... )
+
+@i{plan-property-name} ::=
+          ai-control | asleep | delayed | formation | goal | reserve
+        | supply-alarm | supply-is-low
+@end smallexample
+
+
+@smallexample
+@i{goal-type-name} ::=
+          cell-is-occupied | has-material-type | has-unit-type
+        | has-unit-type-near | keep-formation | lost-game
+        | no-goal | positions-known | vicinity-is-held
+        | vicinity-is-known | won-game | world-is-known
+@end smallexample
+
+
+@smallexample
+@i{task-type-name} ::=
+          build | capture | do-action | hit-position | hit-unit
+        | move-dir
+        | move-to | none | occupy | pickup | repair | research
+        | resupply | sentry
+@end smallexample
+
+
+@smallexample
+@i{scorekeeper-form} ::= ( scorekeeper [ @i{sk-id} ] [ @i{sk-property-binding} ]* )
+
+@i{sk-id} ::= @i{value}
+
+@i{sk-property-binding} ::= ( @i{sk-property-name} @i{value} )
+
+@i{sk-property-name} ::=
+          applies-to | do | initial | known-to | messages | title
+        | trigger | triggered | when
+
+@i{sk-when} ::= after-action | after-event | after-turn | before-turn
+@end smallexample
+
+
+@smallexample
+@i{exu-form} ::= ( exu @i{id} @i{type} @i{x} @i{y} @i{side} [ @i{exu-property-binding} ]* )
+
+@i{exu-property-binding} ::= ( @i{exu-property-name} @i{value} )
+
+@i{exu-property-name} ::= n | nb | z
+
+@i{evt-form} ::= ( evt turn @i{evt-type-name} @i{observers} [ @i{value} ]* )
+@end smallexample
+
+
+@smallexample
+@i{evt-type-name} ::= 
+          action-done | action-error | action-ok
+        | cannot-do | cannot-leave-world | capture-failed
+        | capture-succeeded | destination-full | fire-into-outside-world
+        | game-ended | game-restarted | game-saved
+        | game-started | insufficient-acp | insufficient-material
+        | insufficient-mp | log-ended | log-started
+        | overrun-failed | overrun-succeeded | side-joined
+        | side-lost | side-withdrew | side-won
+        | too-far | too-near | unit-acquired
+        | unit-assaulted | unit-captured | unit-completed
+        | unit-created | unit-damaged | unit-disbanded
+        | unit-garrisoned | unit-killed | unit-left-world
+        | unit-moved | unit-name-changed | unit-started-with
+        | unit-starved | unit-type-changed | unit-vanished
+        | unit-wrecked
+@end smallexample
+
+@smallexample
+@i{unit-type-form} ::=
+        ( unit-type @i{unit-type-name} [ @i{unit-type-property-binding} ]* )
+
+@i{unit-type-name} ::= @i{symbol}
+
+@i{unit-type-property-binding} ::= ( @i{unit-type-property-name} @i{value} )
+
+@i{unit-type-property-name} ::=
+          acp-damage-effect | acp-max | acp-min
+        | acp-per-turn | acp-per-turn-max | acp-per-turn-min
+        | acp-season-effect | acp-temperature-effect
+        | acp-to-change-side
+        | acp-to-detonate | acp-to-disband | acp-to-fire
+        | acp-to-move | acp-to-transfer-part | action-priority
+        | already-seen | already-seen-independent | assign-number
+        | available | can-be-self | capacity | char | color
+        | consumption-temperature-effect | country-units-max
+        | cp | cp-per-self-build | cp-to-self-build | cxp-max
+        | cxp-on-capture-effect
+        | description-format | detonate-on-death | direct-control
+        | elevation-at-max-range | free-acp
+        | free-mp | generic-name | has-opinions | help
+        | hit-falloff-range
+        | hp-max | hp-per-detonation | hp-per-disband | hp-recovery
+        | image-name
+        | independent-growth-chance | independent-near-start
+        | independent-takeover-chance | initial-seen-radius | long-name
+        | move-range | mp-to-leave-world | name | name-internal | namer
+        | notes | occupant-total-max | parts-max | point-value
+        | possible-sides | range | range-min
+        | revolt-chance | see-always | see-occupants
+        | self-changeable | self-resurrects | short-name
+        | speed | speed-damage-effect | speed-max
+        | speed-min | speed-wind-angle-effect | speed-wind-effect
+        | spot-action | spy-chance | spy-range
+        | stack-order | start-with | tech-from-ownership
+        | tech-leakage | tech-max | tech-per-turn-max
+        | tech-to-build | tech-to-own | tech-to-see
+        | tech-to-use | temperature-attrition | type-in-game-max
+        | type-per-side-max | unit-growth-chance | unit-takeover-chance
+        | vision-bend | vision-range | wrecked-type
+        | zz-b | zz-bb | zz-bw | zz-c | zz-cc | zz-cm | zz-transport
+@end smallexample
+
+
+@smallexample
+@i{terrain-type-form} ::=
+        ( terrain-type @i{terrain-type-name} [ @i{terrain-type-property-bdg} ]* ) )
+
+@i{terrain-type-name} ::= @i{symbol}
+
+@i{terrain-type-property-bdg} ::= ( @i{terrain-type-property-name} @i{value} )
+
+@i{terrain-type-property-name} ::=
+          alt-percentile-max | alt-percentile-min
+        | capacity | char | clouds-max | clouds-min
+        | country-growth-chance
+        | country-people-chance | country-takeover-chance
+        | country-terrain-max | country-terrain-min
+        | elevation-max | elevation-min
+        | help | image-name | independent-people-chance
+        | liquid | maze-passage-occurrence | maze-room-occurrence
+        | name | notes | occurrence | people-max
+        | river-chance | subtype | subtype-x
+        | temperature-average | temperature-max | temperature-min
+        | temperature-variability | thickness | wet-percentile-max
+        | wet-percentile-min | wind-force-average | wind-force-max
+        | wind-force-min | wind-force-variability | wind-variability
+        | zz-fr
+@end smallexample
+
+
+@smallexample
+@i{material-type-form} ::=
+        ( material-type @i{material-type-name} [ @i{m-type-property-binding} ]* ) )
+
+@i{material-type-name} ::= @i{symbol}
+
+@i{m-type-property-binding} ::= ( @i{m-type-property-name} @i{value} )
+
+@i{m-type-property-name} ::=
+          char | help | image-name | initial-treasury
+        | name | notes | people | resource-icon | treasury
+@end smallexample
+
+
+@smallexample
+@i{advance-type-form} ::=
+        ( advance-type @i{advance-type-name} [ @i{m-type-property-binding} ]* ) )
+
+@i{advance-type-name} ::= @i{symbol}
+
+@i{a-type-property-binding} ::= ( @i{a-type-property-name} @i{value} )
+
+@i{a-type-property-name} ::=
+          char | help | image-name | name | notes | occurrence | rp
+@end smallexample
+
+
+@smallexample
+@i{namer-form} ::= ( namer [ @i{namer-id} ] @i{naming-method} @i{state} )
+
+@i{namer-id} ::= @i{value}
+
+@i{naming-method} ::=
+          junky
+        | ( random [ @i{string} ]* )
+        | ( in-order [ @i{string} ]* )
+        | ( grammar @i{symbol} @i{number} [ @i{grammar-rule} ]* )
+
+@i{grammar-rule} ::= ( @i{symbol} ( [ @i{rule-type} ] [ @i{weight} ] @i{data} )
+
+@i{rule-type} ::= any | or | reject | capitalize
+
+@i{state} ::= @i{value}        
+@end smallexample
+
+
+@smallexample
+@i{table-form} ::= ( table @i{table-name} [ add ] [ @i{table-clause} ]* )
+
+@i{table-clause} ::=
+          @i{value}
+        | ( @i{type-or-types} @i{type-or-types} @i{value} )
+
+@i{table-name} ::=
+          @i{uu-table-name} | @i{ut-table-name} | @i{um-table-name}
+        | @i{tt-table-name} | @i{tm-table-name} | @i{mm-table-name}
+@end smallexample
+
+@smallexample
+@i{uu-table-name} ::=
+        | acp-for-retreat | acp-occupant-effect | acp-to-attack
+        | acp-to-be-fired-on | acp-to-build | acp-to-capture
+        | acp-to-change-type | acp-to-create | acp-to-defend
+        | acp-to-enter-unit | acp-to-repair | acp-to-research
+        | acp-to-toolup | attack-range | attack-range-min
+        | bridge | build-range | can-enter-independent
+        | capture-chance | control-chance | control-chance-adjacent
+        | control-chance-at | control-range | cp-on-creation
+        | cp-per-build | create-range | cxp-per-capture
+        | cxp-per-combat | damage | damage-cxp-effect
+        | detonate-on-approach-range | detonate-on-capture
+        | detonate-on-hit | detonation-damage-adjacent
+        | detonation-damage-at | detonation-unit-range
+        | ferry-on-departure | ferry-on-entry | hit-at-max-range-effect
+        | hit-chance | hit-cxp-effect | hp-min
+        | hp-per-repair | hp-to-garrison | hp-to-repair
+        | independent-capture-chance
+        | mp-to-enter-unit | mp-to-enter-zoc
+        | mp-to-leave-unit | mp-to-leave-zoc | mp-to-traverse-zoc
+        | occupant-can-construct | occupant-combat
+        | occupant-escape-chance | occupant-max | occupant-vision
+        | protection | retreat-chance | road-chance
+        | scuttle-chance | see-chance | see-chance-adjacent
+        | see-chance-at | speed-occupant-effect | spy-quality
+        | stack-protection
+        | surrender-chance | surrender-chance-per-attack
+        | surrender-range | tech-crossover | tech-per-research
+        | temperature-protection | tp-attrition | tp-crossover
+        | tp-max | tp-per-toolup | tp-to-build
+        | unit-capacity-x | unit-size-as-occupant
+        | withdraw-chance-per-attack
+        | zoc-range | zz-basic-capture-worth | zz-basic-hit-worth
+        | zz-basic-transport-worth
+@end smallexample
+
+
+@smallexample
+@i{ut-table-name} ::=
+          accident-damage | accident-hit-chance | accident-vanish-chance
+        | acp-night-effect | acp-to-add-terrain | acp-to-remove-terrain
+        | alter-terrain-range | altitude-max | altitude-min
+        | attack-terrain-effect | attrition | defend-terrain-effect
+        | detonation-accident-chance
+        | detonation-terrain-damage-chance | detonation-terrain-range
+        | eye-height | favored-terrain | independent-density
+        | mp-to-enter-terrain | mp-to-leave-terrain | mp-to-traverse
+        | people-surrender-chance | productivity | terrain-capacity-x
+        | unit-size-in-terrain | vanishes-on | visibility
+        | vision-night-effect | wrecks-on | zoc-from-terrain-effect
+        | zoc-into-terrain
+@end smallexample
+
+
+@smallexample
+@i{um-table-name} ::=
+          acp-to-load | acp-to-produce | acp-to-unload
+        | base-consumption | base-production | consumption-as-occupant
+        | consumption-on-creation
+        | consumption-per-attack | consumption-per-build
+        | consumption-per-move | consumption-per-repair | hit-by
+        | hp-per-starve | in-length | load-max
+        | material-per-production | material-to-act | material-to-build
+        | material-to-change-type | material-to-create
+        | material-to-fight
+        | material-to-move | material-to-produce | material-to-repair
+        | occupant-base-production | out-length | people-see-chance
+        | people-surrender-effect | productivity-max | productivity-min
+        | recycleable-material
+        | supply-on-completion | supply-on-creation
+        | supply-per-disband | unit-initial-supply | unit-storage-x
+        | unload-max
+@end smallexample
+
+
+@smallexample
+@i{tt-table-name} ::=
+          adjacent-terrain-effect
+        | coating-depth-max | coating-depth-min
+        | drawable-terrain | road-into-chance | terrain-damaged-type
+@end smallexample
+
+
+@smallexample
+@i{tm-table-name} ::=
+          change-on-exhaustion-chance | consumption-per-add-terrain
+        | material-per-remove-terrain | see-material-always
+        | terrain-consumption | terrain-exhaustion-type
+        | terrain-initial-supply | terrain-production
+        | terrain-storage-x
+@end smallexample
+
+
+@smallexample
+@i{mm-table-name} ::= people-consumption | people-production
+@end smallexample
+
+
+@smallexample
+@i{add-form} ::= ( add @i{type-or-types} @i{property-name} @i{value} )
+@end smallexample
+
+
+@smallexample
+@i{imf-form} ::= ( imf @i{string} [ @i{imf-property-binding} ]* [ @i{image} ]* )
+
+@i{imf-property-binding} ::= ...
+
+@i{image} ::= ( ( @i{w} @i{h} [ tile ] ) [ @i{image-property-binding} ]*
+        [ @i{subimage} * ] )
+
+@i{image-property-binding} ::= ( @i{image-property-name} @i{value} )
+
+@i{image-property-name} ::= actual | embed | embed-at | palette | pixel-size
+        | row-bytes
+
+@i{subimage} ::= ( @i{subimage-type} @i{string} * )
+
+@i{subimage-type} ::= color | mono | mask
+
+@i{palette-form} ::= ( palette ... )
+
+@i{color-form} ::= ( color @i{string} @i{r} @i{g} @i{b} )
+@end smallexample
+
+@smallexample
+@i{type-or-types} ::= @i{type} | @i{symbol} | ( [ @i{type} | @i{symbol} ]* )
+
+@i{value} ::=
+          @i{number}
+        | @i{symbol}
+        | @i{global-variable}
+        | @i{predefined-symbols}
+        | ( [ @i{value} ]* )
+        | ( @i{operation-name} [ @i{value} ]* )
+
+@i{operation-name} ::=
+          quote | list | append | remove | /= | < | <= | = | > | >=
+
+@i{global-constant} ::=
+          true | false
+        | u* | t* | m*
+        | non-unit | non-terrain | non-material
+        | border | cell | coating | connection
+        | over-all | over-border | over-nothing | over-own
+        | no-x | river-x | road-x | valley-x
+@end smallexample
+
+@smallexample
+@i{global-variable} ::=
+          action-messages | advantage-default | advantage-max
+        | advantage-min | alt-blob-density | alt-blob-height
+        | alt-blob-size | alt-smoothing | calendar
+        | country-radius-max | country-radius-min
+        | country-separation-max
+        | country-separation-min | edge-terrain | elapsed-real-time
+        | event-messages | extra-turn-chance | feature-namers
+        | feature-types | grid-color | growth-stop-chance
+        | initial-date | initial-day-part | initial-year-part
+        | last-turn | maze-passage-density | maze-room-density
+        | player-sides-locked | random-events | random-state
+        | real-time-for-game | real-time-per-side | real-time-per-turn
+        | river-sink-terrain | scorefile-name | season-names
+        | see-all | see-terrain-always | see-weather-always
+        | self-required | side-library | sides-max
+        | sides-min | sides-wanted | synthesis-methods
+        | temperature-floor | temperature-floor-elevation
+        | temperature-moderation-range | temperature-year-cycle
+        | terrain-seen | turn | units-in-game-max
+        | units-per-side-max | unseen-char | unseen-color
+        | unseen-image-name | use-side-priority | wet-blob-density
+        | wet-blob-height | wet-blob-size | wet-smoothing
+        | wind-mix-range
+@end smallexample
+
+@smallexample
+@i{synthesis-methods} ::=
+          make-countries | make-earthlike-terrain
+        | make-fractal-percentile-terrain | make-independent-units
+        | make-initial-materials | make-maze-terrain
+        | make-random-date | make-random-terrain | make-rivers
+        | make-roads | make-weather | name-geographical-features
+        | name-units-randomly
+@end smallexample
+
+@smallexample
+@i{random-event-method} ::=
+          accidents-in-terrain | attrition-in-terrain
+        | units-revolt | unit-surrender
+@end smallexample

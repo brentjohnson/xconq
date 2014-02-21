@@ -1,0 +1,287 @@
+# Makefile for SDL interface code in Xconq.
+# Copyright (C) 2000, 2001 Stanley T. Shebs.
+# Copyright (C) 2004-2005 Eric A. McDonald.
+
+# Xconq is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+prefix = @prefix@
+
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+datadir = @xconq_data_dir@
+mandir = @mandir@
+man6dir = $(mandir)/man6
+infodir = @infodir@
+docdir = $(datadir)/doc
+
+scoresdir=@scoresdir@
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+krnsrcdir = $(srcdir)/../kernel
+x11srcdir = $(srcdir)/../x11
+
+GAMEUID = @gameuser@
+GAMEGRP = @gamegrp@
+
+GAMEPERM = 04755
+DIRPERM  = 0755
+FILEPERM = 0644
+
+SHELL = /bin/sh
+
+INSTALL = install -c
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL)
+
+CC = @CXX@
+CXX = @CXX@
+
+CFLAGS = @CXXFLAGS@
+CXXFLAGS = @CXXFLAGS@
+
+AR = @AR@
+
+AR_FLAGS = rcu
+
+RANLIB = @RANLIB@
+
+WINDRES = windres
+
+LDFLAGS =
+
+LIB_RUNTIME_DIR = $(libdir)
+
+ALLTARGET = all-@CONFIGTARGET@
+INSTALLTARGET = install-@CONFIGTARGET@
+
+SDLCONQ_EXEC_NAME = @SDLCONQ_EXEC_NAME@
+
+XPM_CFLAGS =
+XPM_INCLUDE_FLAGS =
+#XPM_LIB = -lXpm
+XPM_LIB =
+
+X11_CFLAGS = $(XPM_CFLAGS)
+#X11_INCLUDE_FLAGS = @TK_XINCLUDES@ @XINCLUDES@ $(XPM_INCLUDE_FLAGS)
+X11_INCLUDE_FLAGS = @XINCLUDES@ $(XPM_INCLUDE_FLAGS)
+X11_LDFLAGS = @XLIBS@
+X11_LIBS = -lXext -lXmu -lX11 $(XPM_LIB)
+
+W32API_LIBS = -lwsock32
+
+SDL_CFLAGS = @SDL_CFLAGS@
+SDL_LIBS = @SDL_LIBS@
+
+#FT2_CFLAGS = @FT2_CFLAGS@
+#FT2_LIBS = @FT2_LIBS@
+
+#PARAGUI_CFLAGS = @PARAGUI_CFLAGS@
+#PARAGUI_LIBS = @PARAGUI_LIBS@
+
+WITH_LIBS =
+NET_EXTRA_LIBS =
+
+KERNEL_LIB = ../kernel/libconq.a
+LOW_LIB = ../kernel/libconqlow.a
+
+SDLUI_LIB = ./libsdlui.a
+
+UNIX_XCONQ_OBJS = sdlunix.o
+ALL_UNIX_CFLAGS = $(X11_CFLAGS)
+ALL_UNIX_INCLUDES = $(X11_INCLUDE_FLAGS)
+ALL_UNIX_LDFLAGS = $(X11_LDFLAGS)
+ALL_UNIX_LIBS = $(KERNEL_LIB) $(LOW_LIB) $(X11_LIBS)
+UNIX_XCONQ_TARGETS = $(UNIX_XCONQ_OBJS) $(SDLUI_LIB) kernel-lib low-lib
+UNIX_ALL_TARGETS = all-libs $(SDLCONQ_EXEC_NAME) manpages
+UNIX_INSTALL_TARGETS = all-xconq install-libs install-xconq-only install-manpages-only
+
+WIN32_XCONQ_OBJS = sdlwin32.o xcqicon.o
+ALL_WIN32_CFLAGS = @WIN32_GUI_SUBSYS_FLAG@
+ALL_WIN32_INCLUDES =
+ALL_WIN32_LDFLAGS =
+ALL_WIN32_LIBS = @WIN32_COMMON_LIBS@ $(W32API_LIBS)
+WIN32_XCONQ_TARGETS = $(WIN32_XCONQ_OBJS) $(SDLUI_LIB) @WIN32_COMMON_TARGETS@
+WIN32_ALL_TARGETS = all-libs $(SDLCONQ_EXEC_NAME)
+WIN32_INSTALL_TARGETS = all-xconq install-libs install-xconq-only
+
+PLATFORM_CFLAGS = @PLATFORM_CFLAGS@
+PLATFORM_INCLUDES = @PLATFORM_INCLUDES@
+PLATFORM_LDFLAGS = @PLATFORM_LDFLAGS@
+PLATFORM_LIBS = @PLATFORM_LIBS@
+PLATFORM_XCONQ_OBJS = @PLATFORM_XCONQ_OBJS@
+PLATFORM_XCONQ_TARGETS = @PLATFORM_XCONQ_TARGETS@
+PLATFORM_ALL_TARGETS = @PLATFORM_ALL_TARGETS@
+PLATFORM_INSTALL_TARGETS = @PLATFORM_INSTALL_TARGETS@
+
+HFLAGS = @HFLAGS@
+
+ALL_COMMON_CFLAGS = $(CXXFLAGS) $(HFLAGS) -I$(srcdir) -I$(srcdir)/.. -I$(krnsrcdir) $(SDL_CFLAGS)
+ALL_COMMON_LDFLAGS = $(LDFLAGS)
+ALL_COMMON_LIBS = $(SDL_LIBS) $(WITH_LIBS) $(NET_EXTRA_LIBS)
+
+ALL_CFLAGS = $(ALL_COMMON_CFLAGS) $(PLATFORM_CFLAGS)
+ALL_INCLUDES = $(PLATFORM_INCLUDES)
+ALL_LDFLAGS = $(ALL_COMMON_LDFLAGS) $(PLATFORM_LDFLAGS)
+ALL_LIBS = $(ALL_COMMON_LIBS) $(PLATFORM_LIBS)
+
+# Host and target-dependent makefile fragments come in here.
+####
+# End of host and target-dependent makefile fragments.
+
+GAME_H = $(krnsrcdir)/game.h \
+	 $(krnsrcdir)/gvar.def \
+	 $(krnsrcdir)/utype.def \
+	 $(krnsrcdir)/mtype.def \
+	 $(krnsrcdir)/ttype.def \
+	 $(krnsrcdir)/atype.def \
+	 $(krnsrcdir)/table.def
+
+UNIT_H = $(krnsrcdir)/unit.h \
+	 $(krnsrcdir)/action.def \
+	 $(krnsrcdir)/plan.def \
+	 $(krnsrcdir)/task.def
+
+ALL_H = $(krnsrcdir)/conq.h \
+	$(krnsrcdir)/config.h \
+	$(krnsrcdir)/misc.h \
+	$(krnsrcdir)/dir.h \
+	$(krnsrcdir)/lisp.h \
+	$(krnsrcdir)/dir.h \
+	$(krnsrcdir)/lisp.h \
+	$(krnsrcdir)/keyword.def \
+	$(krnsrcdir)/module.h \
+	$(GAME_H) \
+	$(krnsrcdir)/player.h \
+	$(krnsrcdir)/side.h \
+	$(UNIT_H) \
+	$(krnsrcdir)/goal.def \
+	$(krnsrcdir)/world.h \
+	$(krnsrcdir)/score.h \
+	$(krnsrcdir)/history.h \
+	$(krnsrcdir)/history.def \
+	$(krnsrcdir)/ai.h \
+	$(krnsrcdir)/kpublic.h
+
+SDL_H =	$(srcdir)/sdlconq.h \
+	$(srcdir)/sdlpreconq.h \
+	$(krnsrcdir)/imf.h \
+	$(krnsrcdir)/ui.h \
+	$(krnsrcdir)/cmd.def
+
+# SDL-specific object files.
+
+OBJS = \
+	sdlmain.o \
+	sdlinit.o \
+	sdlcmd.o \
+	sdlscreen.o \
+	sdlmap.o \
+	sdlimf.o \
+	sdluact.o \
+	sdlcltbl.o
+
+.c.o:
+	$(CC) -c $(ALL_CFLAGS) $<
+
+.cc.o:
+	$(CXX) -c $(ALL_CFLAGS) $<
+
+# Default target builds nothing.
+all:
+
+# Build the SDL app.
+all-xconq: $(PLATFORM_ALL_TARGETS)
+
+$(SDLCONQ_EXEC_NAME): $(PLATFORM_XCONQ_TARGETS)
+	rm -f xconq xconq.exe sdlconq sdlconq.exe
+	$(CXX) -o $(SDLCONQ_EXEC_NAME) $(ALL_CFLAGS) $(ALL_LDFLAGS) $(PLATFORM_XCONQ_OBJS) $(SDLUI_LIB) $(ALL_COMMON_LIBS) $(PLATFORM_LIBS)
+
+manpages:
+	(cd $(x11srcdir) && $(MAKE) $(FLAGS_TO_PASS) xconq.6)
+
+xcqicon.o: Xconq.RC Xconq.ico Xcdoc.ico
+	$(WINDRES) -I rc Xconq.RC xcqicon.o
+
+# Common Libraries
+
+kernel-lib:
+	(cd ../kernel && $(MAKE) $(FLAGS_TO_PASS) libconq.a)
+
+low-lib:
+	(cd ../kernel && $(MAKE) $(FLAGS_TO_PASS) libconqlow.a)
+
+# UI Library
+
+all-libs: libsdlui.a
+
+libsdlui.a: $(OBJS)
+	rm -f libsdlui.a
+	$(AR) $(AR_FLAGS) libsdlui.a $(OBJS)
+	$(RANLIB) libsdlui.a
+
+# Installation
+
+install: install-libs
+
+install-only: install-libs-only
+
+install-libs: all-libs install-libs-only
+
+install-xconq: $(PLATFORM_INSTALL_TARGETS)
+
+install-libs-only:
+
+install-xconq-only: $(SDLCONQ_EXEC_NAME)
+	srcroot=`cd $(srcroot); pwd`; export srcroot; \
+	if [ -f $(SDLCONQ_EXEC_NAME).exe ] ; then \
+		progname="$(SDLCONQ_EXEC_NAME).exe" ; \
+	else \
+		progname="$(SDLCONQ_EXEC_NAME)" ; \
+	fi; \
+	$(INSTALL_PROGRAM) $${progname} $(bindir); \
+	chown $(GAMEUID) $(bindir)/$${progname}; \
+	chgrp $(GAMEGRP) $(bindir)/$${progname}; \
+	chmod $(GAMEPERM) $(bindir)/$${progname};
+
+install-manpages-only:
+	(cd $(x11srcdir) && $(MAKE) $(FLAGS_TO_PASS) install-manpages-only)
+
+# Usual cleaning, and flushing of anything junk-like.
+
+clean:
+	rm -f *.o lint.out core
+	rm -f *.log $(SDLUI_LIB)
+	rm -f *conq *imfapp *.exe
+
+distclean: clean
+	rm -f Makefile config.status config.cache
+
+realclean: distclean
+
+extraclean: distclean
+	rm -f *~* .*~*
+
+Makefile: $(srcdir)/Makefile.in
+        cd .. \
+          && CONFIG_FILES=sdl/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+# All the .h dependencies.
+
+sdlmain.o:		$(ALL_H) $(SDL_H)
+sdlinit.o:		$(ALL_H) $(SDL_H)
+sdlcmd.o:		$(ALL_H) $(SDL_H)
+sdlscreen.o:		$(ALL_H) $(SDL_H)
+sdlmap.o:		$(ALL_H) $(SDL_H)
+sdlimf.o:		$(ALL_H) $(SDL_H)
+sdluact.o:		$(ALL_H) $(SDL_H)
+sdlcltbl.o:		$(ALL_H) $(SDL_H)
+
+sdlunix.o:		$(ALL_H) $(SDL_H)
+
+sdlwin32.o:		$(ALL_H) $(SDL_H)

@@ -1,0 +1,441 @@
+
+RCS file: /cvs/xconq/xconq/kernel/score.c,v
+Working file: score.c
+head: 1.27
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.20
+	xconq-7_4-branch: 1.20.0.2
+	xconq-7_4-branchpoint: 1.20
+	xtconq-pre-removal: 1.17
+	xconq-7_3_3-release: 1.15.2.1
+	xconq-7_3_2-release: 1.15.2.1
+	xconq-7_3_1-release: 1.15.2.1
+	xconq-7_3-branch: 1.15.0.2
+	xconq-7_3-branchpoint: 1.15
+keyword substitution: kv
+total revisions: 28;	selected revisions: 28
+description:
+----------------------------
+revision 1.27
+date: 2004/08/19 00:58:57;  author: ronne;  state: Exp;  lines: +7 -8
+Many bug fixes, some new features.
+----------------------------
+revision 1.26
+date: 2003/12/22 01:08:10;  author: ronne;  state: Exp;  lines: +9 -6
+Fixes to startup and game over dialogs.
+----------------------------
+revision 1.25
+date: 2003/12/13 18:03:16;  author: mcdonald;  state: Exp;  lines: +2 -0
+Start conversion to new file naming schema.
+Fix typos in aclocal.m4.
+----------------------------
+revision 1.24
+date: 2003/08/23 23:17:09;  author: ronne;  state: Exp;  lines: +30 -0
+Improve scorekeeper output.
+----------------------------
+revision 1.23
+date: 2002/08/03 20:30:14;  author: ronne;  state: Exp;  lines: +3 -0
+Fix self unit resignation bug.
+----------------------------
+revision 1.22
+date: 2002/05/08 23:51:17;  author: ronne;  state: Exp;  lines: +5 -5
+Make sources C++ compatible.
+----------------------------
+revision 1.21
+date: 2000/12/18 16:50:48;  author: shebs;  state: Exp;  lines: +5 -5
+	Eliminate the macros MAXUTYPES, MAXTTYPES, MAXMTYPES, and
+	MAXATYPES, size all type handling dynamically.
+	* config.h (MAXUTYPES, MAXTTYPES, MAXMTYPES, MAXATYPES): Remove.
+	* game.h (NONUTYPE, NONTTYPE, NONMTYPE, NONATYPE): Define to be -1.
+	(count_terrain_subtypes, numcelltypes, numbordtypes, numconntypes,
+	numcoattypes): Declare here instead of in world.h.
+	(tmp_u_array, tmp_t_array): Declare.
+	* gvar.def (edge-terrain, river-sink-terrain): Don't use type
+	bounds.
+	* table.def (adjacent-terrain-effect, terrain-exhaustion-type): Ditto.
+	* utype.def (obsolete, wrecked-type): Ditto.
+	* generic.c (count_terrain_subtypes, numcelltypes, etc): Move here
+	from world.c.
+	(tmp_u_array, tmp_t_array): New globals.
+	(curmaxutypes, curmaxmtypes, curmaxttypes, curmaxatypes): Set to
+	defaults convenient for the first allocation.
+	(create_unit_type): New function.
+	(disallow_more_unit_types, disallow_more_terrain_types): New functions.
+	(allocate_table): Use them.
+	* help.c (tm_table_row_desc): Remove, never used.
+	* init.c (check_game_validity): Call disallow_* to make sure
+	some type arrays are computed and cached.
+	(calculate_globals): Ditto.
+	(make_initial_materials): Use tmp_t_array.
+	* mkrivers.c (make_up_river_borders): Ditto.
+	* mkterr.c (elev_range, elev_lo, elev_hi, raw_range, raw_lo,
+	raw_hi): New static globals.
+	(compose_area, compose_earthlike_area): Use them.
+	(make_random_terrain, fix_adjacent_terrain,
+	flatten_liquid_terrain): Use tmp_t_array.
+	* mkunits.c (make_countries): Dynalloc local arrays.
+	(country_is_complete, make_independent_units): Use tmp_u_array.
+	* nlang.c (ohd_nums, ohd_incomplete): New static globals.
+	(others_here_desc, occupants_desc): Use them.
+	* plan.c (plan_colonize_support): Use tmp_u_array.
+	(gctc_supply): New static global.
+	(good_cell_to_colonize): Use it.
+	* ps.c (summary_of_seen_units_at): Use tmp_u_array.
+	* read.c (default_supply): Remove, no longer to use.
+	(init_predefined_symbols): Remove its setup.
+	(interp_unit_default): Similarly.
+	(interp_unit): Don't use default_supply.
+	(interp_utype): Remove test for too many types, call
+	create_unit_type.
+	(interp_ttype, interp_mtype, interp_atype): Remove tests
+	for too many types.
+	(too_many_types): Remove, no longer needed.
+	(rd_u_arr): New static global.
+	(interp_standing_order, read_utype_doctrine): Use it.
+	* run.c (rau_incrs): New static global.
+	(run_advanced_units): Use it.
+	(apr_type): New static global.
+	(auto_pick_unit_research, auto_pick_side_research): Use it.
+	(auto_pick_new_build_task): Use tmp_u_array.
+	* run2.c (ttotals, uttotals): New static globals.
+	(run_economy): Use them.
+	* score.c (sum_property): Use tmp_u_array.
+	* side.c (new_doctrine): Call disallow_more_unit_types.
+	* supply.c (mad): New static global.
+	(init_supply_system): Set it up.
+	* unit.c (create_unit): Allocate numlivebytype and completenesses.
+	(oc_numtypes): New static global.
+	(can_occupy_unit): Use it.
+	(toc_numtypes, type_can_occupy_cell): Similarly.
+	(ocw_numtypes, can_occupy_cell_without): Similarly.
+	(tocw_numtypes, type_can_occupy_cell_without): Similarly.
+	(conn_num_types, can_occupy_conn_1): Similarly.
+	(can_carry, type_can_occupy): Use tmp_u_array.
+	(num_each_type, shared_each_type): New static globals.
+	(eject_excess_occupants): Use them.
+	(shortest_unique_name): Dynalloc firstuniq, use it as flag
+	instead of shortestdone.
+	(shortest_generic_name): Similarly.
+	* write.c (write_table): Increase histogram size.
+
+	* ai.c (atc_type): New static global.
+	(assign_to_colonize): Use it.
+	(pbt_prefs, pbt_fringe_terrain, pbt_enemy_types,
+	pbt_num_to_transport): New static globals.
+	(preferred_build_type): Use them.
+	* ai.h (Strategy): Declare strengths etc as arrays of pointers
+	instead of 2D arrays, unitlist and unitlistcount as pointers.
+	(Theater): Similarly for numassigned, numneeded, etc.
+	(strength_est, etc): New macros (not used yet).
+	* iplayer.c (iru_numoffensive, iru_numdefensive): New static globals.
+	(iplayer_review_units): Use them.
+	* mplayer.c (mplayer_create_strategy): Allocate strength arrays.
+	(create_theater): Dynalloc numassigned etc fields.
+	(estimate_strengths, mplayer_read_strengths, mplayer_save_state):
+	Change to pointer-to-pointer refs.
+	(mru_numoffensive, mru_numdefensive): New static globals.
+	(mplayer_review_units): Use them.
+	* oplayer.c: Similarly.
+
+	* cmd.c (gt_amts, gt_rslts): New static globals.
+	(do_one_give, do_one_take): Use them.
+	* ui.h (VP draw_materials): Make into a pointer.
+	* ui.c (new_vp): Allocate draw_materials field.
+
+	* maccmd.c (do_one_add_terrain): Use tmp_t_array.
+	* macwins.c (side_research_dialog): Make participants static global.
+
+	* tkconq.h (UI material_color, etc): Change from array to pointer.
+	(UI cell_color, cell_shades): Rename from cellcolor and cellshades.
+	(UI best_timages): Similarly.
+	(UI unitpics, unitmasks, bestmimages): Remove, not used.
+	(Map uvec, ustr, tvec, tstr): Change from array to pointer.
+	* tkcmd.c (do_add_terrain, do_remove_terrain): Use tmp_t_array.
+	(do_build): Use tmp_u_array.
+	* tkinit.c (utype_indexes, mtype_indexes): Change to pointers.
+	(init_display): Remove inits of unused fields, alloc space for
+	cell_shades and material_color.
+	(init_material_images): Remove setup of bestmimages.
+	(init_terrain_images): Allocate for best_timages and terrpics.
+	(init_shades): Use array-of-array refs to cell_shades.
+	* tkmain.c (last_num_units_in_play, last_num_units_incomplete):
+	Change from arrays to pointers.
+	(init_redraws, update_unit_type_list): Allocate them.
+	(create_map): Alloc map uvec, ustr, etc.
+	* tkmap.c: Update refs to renamed fields.
+	(MapW draw_aux_terrain, draw_materials): Make into pointers.
+
+	* ccmd.c (do_build): Use tmp_u_array.
+	* cconq.c (init_display): Use numutypes to size allocs.
+	(ask_unit_type, ask_terrain_type): Use array of int instead of short.
+	* cdraw.c (draw_type_list_entry): Init lasttypevisible from numutypes.
+
+	* cconq.c (do_dir_2): Fix a variable name.
+	* cconq.h: Use #else instead of #elif.
+----------------------------
+revision 1.20
+date: 2000/11/12 00:39:54;  author: ronne;  state: Exp;  lines: +3 -4
+General cleanup of kernel prototypes - part 1.
+----------------------------
+revision 1.19
+date: 2000/09/25 15:39:40;  author: shebs;  state: Exp;  lines: +2 -7
+	* init.c (final_init): Display size of history objects.
+	(calculate_globals): Make first call to
+	update_canbuild_vector here...
+	* side.c (create_side): ... instead of here.
+
+	* side.c, side.h (actual_advantage): New function.
+	* mkunits.c (make_countries): Use it, also remove incorrect call
+	to side_can_build (breaks no-building games).
+	(place_units): Simplify, remove side_can_build test.
+	* score.c (record_into_scorefile): Use actual_advantage.
+----------------------------
+revision 1.18
+date: 2000/08/25 22:19:11;  author: ronne;  state: Exp;  lines: +0 -3
+Fix indepside-related research hangs.
+----------------------------
+revision 1.17
+date: 2000/07/23 13:58:28;  author: shebs;  state: Exp;  lines: +91 -76
+	* score.c (inactive_indepside): New macro, tests whether
+	indepside is a participant in the game.
+	(eval_sk_last_side_wins, eval_sk_last_alliance_wins): Use it,
+	also fix to test consistently in all cases.
+----------------------------
+revision 1.16
+date: 2000/06/13 12:57:37;  author: shebs;  state: Exp;  lines: +10 -6
+	* score.c (eval_sk_last_side_wins, eval_sk_last_alliance_wins):
+	Let indepside win if played by AI.
+----------------------------
+revision 1.15
+date: 2000/06/09 14:57:30;  author: shebs;  state: Exp;  lines: +5 -2
+branches:  1.15.2;
+	* score.c (record_into_scorefile): Skip player-less sides.
+----------------------------
+revision 1.14
+date: 2000/06/04 16:19:03;  author: shebs;  state: Exp;  lines: +33 -36
+	More rewriting of variant handling and player setup.
+	* keyword.def (indepside-has-ai, indepside-can-build,
+	indepside-can-research, indepside-has-treasury): Comment out,
+	will no longer define as variants.
+	* ai.c, ai.h (next_ai_type_name): Rename from next_ai_type.
+	(find_ai_type): New function.
+	* cmdline.c (unixify_variant_name): Remove.
+	(game_usage_info): Use variant ids as argument names.
+	* kernel.h (set_ai_for_player, etc): Move here from conq.h.
+	* init.c (make_up_a_side): Remove set of ingame, redundant.
+	(set_ai_for_player): Warn about invalid AI types.
+	* iplayer.c, mplayer.c: Remove decls now in ai.h.
+	* kpublic.h: Rearrange some decls.
+	* module.c (do_one_variant): Remove indepside variants.
+	* read.c (force_all_variants): New global.
+	(add_std_var): New function.
+	(interp_variant_defns): Rewrite to use it for all variant
+	setup.
+	(add_more_variants): Remove, no longer needed.
+	(interp_game_module): Call interp_variant_defns.
+	* run.c (init_movement): Simplify code.
+	* score.c (eval_sk_last_side_wins, eval_sk_last_alliance_wins):
+	Don't require indepside to lose.
+	(record_into_scorefile): Use a switch statement for variants.
+	(score_variant_desc): Remove indepside variants.
+
+	* macinit.c (interpret_variants, implement_variants): Remove
+	indepside variants.
+	(hit_player_setup_dialog): Use net_exchange_players.
+
+	* tkconq.tcl (add_variants_dialog_items): Wrap help text by
+	words.
+	(add_player_dialog_items): Always create indepside entry but
+	conditionalize packing, add indepside button, improve test of
+	random/sidelib name button enabling.
+	(popup_indepside, ok_indepside): New procs.
+	* tkinit.c (init_display): Seed indepside globals.
+	* tkmain.c (tk_set_indepside_options): New tcl command.
+	(tk_set_ai_for_player): Interpret AI name passed directly.
+	(interpret_variants): Remove indepside variants.
+----------------------------
+revision 1.13
+date: 2000/05/30 15:48:18;  author: shebs;  state: Exp;  lines: +2 -2
+	* score.c (side_loses): Tweak syntax to elim warning.
+----------------------------
+revision 1.12
+date: 2000/05/30 00:17:29;  author: ronne;  state: Exp;  lines: +18 -18
+Fix problems with indepside winning and losing games.
+----------------------------
+revision 1.11
+date: 1999/12/25 13:58:40;  author: shebs;  state: Exp;  lines: +1 -1
+        * score.c (eval_sk_last_side_wins): Disable test added by HR 10-28,
+        seems no longer necessary because indepside not included in loop.
+----------------------------
+revision 1.10
+date: 1999/11/10 03:02:08;  author: shebs;  state: Exp;  lines: +13 -4
+	* module.h (Module hook, read_only, fill_type): Remove fields,
+	never used.
+	* module.c (copy_module): New function.
+	(create_game_module): Use it instead of random field inits.
+	(init_module_reshape): Remove unused setting of fill_type.
+	* score.c (get_scores): Display game's title if possible.
+	* tp.c (download_game_module): Simplify by using copy_module.
+	(DOWNLOADPACKETSIZE): Also use 200 if on Windows.
+	* write.c (write_entire_game_state): Simplify module handling.
+----------------------------
+revision 1.9
+date: 1999/10/30 14:37:26;  author: shebs;  state: Exp;  lines: +29 -28
+       * score.c: Make various statics and externs, iterate all
+        scorekeepers over real sides only, don't involve indepside.
+        * side.h (for_all_real_sides): Put sidelist test into for loop.
+----------------------------
+revision 1.8
+date: 1999/10/28 23:19:49;  author: ronne;  state: Exp;  lines: +4 -2
+Add iplayer.
+----------------------------
+revision 1.7
+date: 1999/10/26 15:32:09;  author: shebs;  state: Exp;  lines: +1 -1
+        Reorganize see-all handling, add separate concept of show-all
+        that only affects display.
+        * side.h (Side show_all): New field.
+        (Side may_set_show_all): Rename from may_set_see_all.
+        * ui.h (VP show_all): Rename from see_all.
+        * init.c (init_all_views): Use new field, don't set all_see_all.
+        * actions.c, ai.c. combat.c, mplayer.c, nlang.c, plan.c, ps.c,
+        read.c, run.c, run2.c, score.c, side.c, side.h, ui.c, unit.c,
+        write.c: Use g_see_all() or side->see_all instead of all_see_all,
+        side->may_set_show_all instead of side->may_set_see_all.
+        * macconq.c, macdesign.c, macmap.c, macmouse.c, macrow.c: Ditto.
+        * tkcmd.c, tkmain.c, tkmap.c: Ditto.
+        * xcmd.c, xmap.c, xtmain.c: Ditto.
+        * run.c (end_the_game): Set side->show_all.
+        * side.c (become_designer, become_nondesigner): Ditto.
+
+        * tkcmd.c (aux_design, really_do_design): Call set_show_all and
+        update_show_all_info.
+        * tkconq.tcl (may_set_show_all): Rename from may_set_see_all.
+        (default_map_options): New global array, use everywhere instead
+        of map_options.
+        (map_options): Index by map widget also.
+        (update_view_controls_info): Don't set may_set_show_all.
+        (update_show_all_info, update_show_all): New procs.
+        * tkinit.c (init_display): Update show_all info.
+        * tkmain.c (update_turn_display): Set show_all.
+        * tkmap.c (m_terrain_visible, m_units_visible): New macros, use
+        everywhere.
+        (set_show_all): New function.
+
+        * combat.c (do_overrun_action): Fix call to do_fire_at_action
+        to not shoot at self(!).
+
+        * side.c (paint_view_1): Add special case to do exact view.
+
+        * unix.c (score_file_pathname): Look for env var XCONQ_SCORES
+        instead of XCONQSCORES.
+
+        * tkconq.h (UI told_outcome): Remove, never used.
+        * tkmain.c (told_outcome): Make static local.
+        * tkconq.tcl (disable_move_mode): New proc.
+        (popup_game_over_dialog): Use it.
+        (popup_design_palette): Add view painting button.
+        (make_view_paint_frame): New proc.
+        (make_terrain_paint_frame): Increase size of terrain samples.
+        (make_people_paint_frame, make_control_paint_frame): Turn on
+        people/control display in all maps.
+        * tkinit.c (init_bitmaps): Add paint_view bitmap.
+        * tkmap.c (handle_designer_mouse_down, paint_on_drag): Rewrite
+        view painting.
+----------------------------
+revision 1.6
+date: 1999/10/24 11:20:10;  author: ronne;  state: Exp;  lines: +44 -5
+Add new indepside code, fix various bugs.
+----------------------------
+revision 1.5
+date: 1999/10/22 00:31:01;  author: shebs;  state: Exp;  lines: +44 -6
+	* score.c (record_into_scorefile): Add a warning message if open
+	fails.
+	(read_scorefile): Clear records list.
+	(only_checking, we_have_a_winner): New globals.
+	(eval_sk_form, eval_sk_last_side_wins,
+ 	eval_sk_last_alliance_wins): Look at only_checking.
+	(side_loses): Check post-turn scorekeepers to see if any would
+	declare a winner, if so, finish everybody's turns early.
+----------------------------
+revision 1.4
+date: 1999/09/16 02:47:45;  author: shebs;  state: Exp;  lines: +37 -63
+	* conq.h, init.c, module.c, tp.c (typesdefined): Remove, never
+ 	actually used.
+
+	* conq.h (enum setup_stage): New enum.
+	(current_stage): New global.
+
+	* imf.c, imf.h (get_img): Remove unused argument.
+	* imf.c, ui.c, xcutil.c, ximf.c, maccolors.c, macimf.c, macinit.c,
+ 	tkimf.c: Fix all callers.
+
+	* init.c, mac.c, mkrivers.c, mkroads.c, module.c. ps.c, score.c,
+ 	task.c: Remove PARAMS usages.
+
+	* mac.c, win32.c (tmprid): Remove decl, never used.
+	* cconq.c (hosting): Remove decl, never used.
+
+	* tp.c (download_game_module): New function, split out from
+	download_to_player.
+	(broadcast_game_module): New function.
+	(broadcast_variants_chosen, broadcast_players_assigned): New
+ 	functions.
+	(receive_packet): Don't do trial assignments here, interpret
+	'a' and 'v' packets.
+
+	* tkconq.tcl (selected_game_title): Init to a default value.
+	* tkmain.c (tk_start_new_game): Broadcast game module to other
+	programs.
+	(tk_launch_game): Broadcast that variants have been chosen.
+	(tk_launch_game_2): Broadcast that players have been assigned.
+	(last_stage): New global.
+	(check_network): Call tcl commands to move dialogs through
+	stages of game setup.
+----------------------------
+revision 1.3
+date: 1999/08/21 12:16:39;  author: shebs;  state: Exp;  lines: +6 -7
+        Eliminate still more warnings.
+        * cmd.c, help.c, history.c, mknames.c, mkterr.c, mkunits.c,
+        nlang.c, read.c, read2.c, score.c, side.c, supply.c, tp.c, ui.c,
+        unit.c, unit.h, world.c, write.c: Remove PARAMS usages, remove
+        unused variables, add missing function decls, comment out unused
+        functions, etc.
+        * obstack.h (obstack_begin): Add parameter types to fn pointer.
+        * mknames.c (propose_unit_name): Fix "junky" naming method.
+        * read.c (find_unit_spec_by_name, find_unit_spec_by_number):
+        Use PARSE_PROPERTY_RETURN instead of PARSE_PROPERTY.
+        * score.c (all_sides_draw): Assign result of add_side_to_set.
+        * side.c: Include ai.h.
+----------------------------
+revision 1.2
+date: 1999/06/02 18:55:47;  author: shebs;  state: Exp;  lines: +1 -4
+Remove some old change comments
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:31;  author: shebs;  state: Exp;
+Initial checkin.
+----------------------------
+revision 1.15.2.1
+date: 2000/06/13 14:57:15;  author: shebs;  state: Exp;  lines: +10 -6
+Bring over trunk patches.
+	* configure.in: Add --enable-alternate-scoresdir.
+	* configure: Regenerate
+	* Makefile.in (scoresdir): Get from configure.
+	* INSTALL: Mention new configure option.
+
+	* score.c (eval_sk_last_side_wins, eval_sk_last_alliance_wins):
+	Let indepside win if played by AI.
+
+	* macconq.h: Include kpublic.h here...
+	* maccmd.c, maccolors.c, macconq.c, macconq.h, macdesign.c,
+	macgworld.c, macmenus.c, macmouse.c, macprefs.c, macunit.c,
+	macwins.c: ...instead of here.
+	* Xconq.r: Tweak version resources.
+	* IMFApp.r: Update from current resource file.
+
+	* README: Rewrite to describe Xconq better.
+	* xconq.spec: Update.
+=============================================================================

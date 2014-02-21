@@ -1,0 +1,41 @@
+/* Definitions of all the goal types in Xconq.
+   Copyright (C) 1993-1995, 1999 Stanley T. Shebs.
+   Copyright (C) 2005 Eric A. McDonald.
+
+Xconq is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.  See the file COPYING.  */
+
+DEF_GOAL("no-goal", "No goal", GOAL_NO, "")
+
+DEF_GOAL("vicinity-is-known", "Vicinity is known", GOAL_VICINITY_KNOWN, "xywh")
+
+DEF_GOAL("positions-known", "Positions known", GOAL_POSITIONS_KNOWN, "S")
+
+/* True if the side has any unit at the given cell. */
+
+DEF_GOAL("cell-is-occupied", "Cell is occupied", GOAL_CELL_OCCUPIED, "xy")
+
+/* True if our unit is inside the given unit. Used as unit maingoal. */
+
+DEF_GOAL("occupy", "Occupy", GOAL_UNIT_OCCUPIED, "U")
+
+/* Our unit is colonizing by building type u. Used as unit maingoal. */
+
+DEF_GOAL("find-spot-to-build", "Find spot to build", GOAL_COLONIZE, "u")
+
+/* True if the side generally controls the given region. */
+
+DEF_GOAL("vicinity-is-held", "Vicinity is held", GOAL_VICINITY_HELD, "xywh")
+
+DEF_GOAL("has-unit-type", "Has unit type", GOAL_HAS_UNIT_TYPE, "un")
+
+DEF_GOAL("has-unit-type-near", "Has unit type near", GOAL_HAS_UNIT_TYPE_NEAR, "unxyr")
+
+DEF_GOAL("has-material-type", "Has material type", GOAL_HAS_MATERIAL_TYPE, "mn")
+
+/* True if the unit is at the correct position relative to
+   another unit. */
+
+DEF_GOAL("keep-formation", "Keep formation", GOAL_KEEP_FORMATION, "Uxydf")

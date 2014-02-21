@@ -1,0 +1,269 @@
+
+RCS file: /cvs/xconq/xconq/kernel/util.c,v
+Working file: util.c
+head: 1.38
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.14
+	xconq-7_4-branch: 1.14.0.2
+	xconq-7_4-branchpoint: 1.14
+	xtconq-pre-removal: 1.13
+	xconq-7_3_3-release: 1.11
+	xconq-7_3_2-release: 1.11
+	xconq-7_3_1-release: 1.11
+	xconq-7_3-branch: 1.11.0.2
+	xconq-7_3-branchpoint: 1.11
+keyword substitution: kv
+total revisions: 38;	selected revisions: 38
+description:
+----------------------------
+revision 1.38
+date: 2004/05/02 22:19:19;  author: mcdonald;  state: Exp;  lines: +2 -4
+Revert to the pathfinder in use prior to 2003/11/13.
+Add appropriate replacements for useful elements of post-2003/11/13 pathfinder.
+----------------------------
+revision 1.37
+date: 2003/12/28 20:53:24;  author: mcdonald;  state: Exp;  lines: +39 -0
+Remove unneeded subtarget for making tarballs.
+Implement tables of packed booleans.
+Provide a toggle-switch for long-range pathfinding.
+Improve efficiency of movement/pathfinding code on average.
+Improve AI victim-finding to prevent concentrating too many units on 1 target.
+----------------------------
+revision 1.36
+date: 2003/11/29 06:25:04;  author: mcdonald;  state: Exp;  lines: +4 -2
+Patch from Peter Garrone (modified) to better handle transports and b-slides.
+----------------------------
+revision 1.35
+date: 2003/11/28 20:41:38;  author: ronne;  state: Exp;  lines: +22 -2
+Separate master and client debug output.
+----------------------------
+revision 1.34
+date: 2003/11/22 22:42:07;  author: mcdonald;  state: Exp;  lines: +6 -0
+Make gettimeofday(2) test work for C++.
+Remove duplicate definitions of 'xconq_libs' variable.
+Take care of last (?) item in timestuff migration.
+----------------------------
+revision 1.33
+date: 2003/11/22 12:34:28;  author: ronne;  state: Exp;  lines: +0 -32
+More timestuff fixes.
+----------------------------
+revision 1.32
+date: 2003/11/19 05:00:07;  author: mcdonald;  state: Exp;  lines: +3 -5
+Move time-related missing implementations to new 'missing/util' dir.
+Miscellaneous improvements to the configure system.
+Minor tweak to Bellum Aeternum.
+----------------------------
+revision 1.31
+date: 2003/11/12 04:04:43;  author: mcdonald;  state: Exp;  lines: +6 -0
+Handle exotic Tk includes case in configuration system.
+Make sure that snprintf build always overrides system snprintf.
+Fix casting problem with snprintf implementation.
+Fix g++ build problems.
+Make sure that 'missing' makefile invokes cleaning on subdirs.
+----------------------------
+revision 1.30
+date: 2003/11/10 00:28:31;  author: mcdonald;  state: Exp;  lines: +10 -10
+Finish hooking in missing functions support.
+Provide buffer overflow protection in Xconq's tprintf() functions.
+Cosmetic fix to configure.in.
+----------------------------
+revision 1.29
+date: 2003/10/06 03:32:02;  author: mcdonald;  state: Exp;  lines: +1 -1
+Simplify and enhance configury and build system.
+Improve chances of building for Windows apps.
+New Windows build/install documentation.
+----------------------------
+revision 1.28
+date: 2003/09/08 04:08:04;  author: kingdon;  state: Exp;  lines: +0 -10
+	* kernel/util.c: Don't comment out K&R-style function
+	declarations; just remove them.
+----------------------------
+revision 1.27
+date: 2003/09/08 03:26:49;  author: mcdonald;  state: Exp;  lines: +9 -0
+Make Windows Tcl/Tk apps build in tcltk dir instead of win dir.
+Help Windows apps build under some Cygwin environments.
+----------------------------
+revision 1.26
+date: 2003/06/16 23:07:47;  author: ronne;  state: Exp;  lines: +11 -40
+Fix network code for Mac OSX.
+----------------------------
+revision 1.25
+date: 2003/06/10 21:28:09;  author: ronne;  state: Exp;  lines: +1 -3
+Minor fixes.
+----------------------------
+revision 1.24
+date: 2003/06/08 18:22:36;  author: ronne;  state: Exp;  lines: +4 -9
+Add support for preview pictures to the tcltk interface.
+----------------------------
+revision 1.23
+date: 2002/11/10 00:42:02;  author: ronne;  state: Exp;  lines: +9 -2
+Win32 patches from Stanley Sutton.
+----------------------------
+revision 1.22
+date: 2002/10/26 15:59:47;  author: shebs;  state: Exp;  lines: +2 -0
+Carbonization of the Mac interface, see the ChangeLog for gory details.
+----------------------------
+revision 1.21
+date: 2002/07/31 20:40:08;  author: ronne;  state: Exp;  lines: +2 -1
+Add Doxygen comments to kernel includes.
+----------------------------
+revision 1.20
+date: 2002/05/20 05:45:19;  author: ronne;  state: Exp;  lines: +1 -1
+Fix Windows compile problems.
+----------------------------
+revision 1.19
+date: 2002/05/08 23:51:18;  author: ronne;  state: Exp;  lines: +26 -26
+Make sources C++ compatible.
+----------------------------
+revision 1.18
+date: 2002/04/07 08:48:12;  author: ronne;  state: Exp;  lines: +27 -0
+Make SDL code build under Windows.
+----------------------------
+revision 1.17
+date: 2002/03/18 23:37:33;  author: kingdon;  state: Exp;  lines: +0 -4
+	* kernel/util.c (idifftime): Just assume we have difftime (it is
+	in C89).
+----------------------------
+revision 1.16
+date: 2002/02/02 05:53:51;  author: kingdon;  state: Exp;  lines: +1 -1
+	First cut at bringing back the Xt interface (goal is a way to play
+	multiplayer games until networking is debugged):
+	* Makefile.in: Add back all-xtconq and install-xtconq.
+	* x11/Makefile.in: Add back X_H, XTOBJS, all-xtconq, xtconq,
+	xtconqad.h, Xtconq, Xtconq-color, xtconq.6, and install-xtconq.
+	* kernel/misc.h, kernel/utils.c (xmalloc):
+	Now returns void* not char*.
+	* x11/Xtconq-co.ad, x11/Xtconq.ad, x11/closeup.notes,
+	x11/xcloseup.c, x11/xcmd.c, x11/xdesign.c, x11/xdraw.c,
+	x11/xhelp.c, x11/xinit.c, x11/xmap.c, x11/xprint.c,
+	x11/xtconq.6in, x11/xtconq.c, x11/xtconq.h, x11/xtconqad.h,
+	x11/xtmain.c: Restore these files.
+	Eliminate use of NUMUTYPES and NUMTTYPES in favor of dynamic
+	allocation (or tmp_u_array or tmp_t_array).
+	* x11/xcmd.c: Update various random routines to match tkcmd.c.
+	Remove do_auto and other commands which were made generic on
+	2000-08-13 and 2000-08-15.
+	Remove obsolete functions side_research_dialog, unit_build_dialog,
+	and unit_plan_dialog.
+	(get_selected_units): New function.
+	* x11/.cvsignore: Add Xtconq Xtconq-color XShowimf
+	XShowimf-color xtconq.6 xtconq.
+----------------------------
+revision 1.15
+date: 2000/12/14 19:27:28;  author: ronne;  state: Exp;  lines: +1 -1
+Fix so that socket.c compiles with GUSI on the mac.
+----------------------------
+revision 1.14
+date: 2000/11/12 00:39:54;  author: ronne;  state: Exp;  lines: +5 -2
+General cleanup of kernel prototypes - part 1.
+----------------------------
+revision 1.13
+date: 2000/08/01 16:25:46;  author: shebs;  state: Exp;  lines: +3 -13
+	* ui.c (xform_cell_flat): Comment out error test, fix some
+	isometric formulas.
+	(nearest_cell): Similarly.
+	(nearest_unit_view, find_unit_view_at): Fix handling of
+	wrapping areas.
+	(calc_view_misc): Ditto for isometric viewports.
+
+	* tkmap.c (draw_area_background): Rewrite to handle overhead
+	and isometric views uniformly.
+	(draw_map_isometric): Rewrite to simplify, make solid color
+	terrain drawing work again.
+	(draw_map_outline): Draw outline off-area.
+
+	* help.c, util.c, ui.c (error_is_bug): Remove, never used.
+----------------------------
+revision 1.12
+date: 2000/06/20 16:23:43;  author: shebs;  state: Exp;  lines: +4 -11
+	* config.h: Remove ANSI_PROTOTYPES and __STDC__ conditionals.
+	* misc.h (PARAMS): Remove decl.
+	* obstack.h, obstack.c: Remove uses of PARAMS and ANSI_PROTOTYPES.
+	* macinit.c, macmenus.c, macmouse.c: Ditto.
+	* xcmd.c, xdesign.c, xhelp.c, ximf.c, xinit.c, xprint.c, xtmain.c:
+	Ditto.
+
+	* iplayer.c, mkrivers.c, mplayer.c, run.c, util.c, write.c: Remove
+	some redundant function decls.
+	* macwins.c: Ditto.
+	* tkimf.c: Remove unused decl.
+----------------------------
+revision 1.11
+date: 1999/12/07 21:01:09;  author: ronne;  state: Exp;  lines: +10 -0
+Various bug fixes.
+----------------------------
+revision 1.10
+date: 1999/10/30 14:41:46;  author: shebs;  state: Exp;  lines: +0 -2
+        * combat.c (mobile_enemy_thread): Use side_sees_image instead of
+        unit_actually_visible.
+        * run.c (auto_pick_new_build_task, etc): Ditto.
+        * task.c: Ditto.
+        * side.c (side_sees_unit): Add side->see_all case, remove
+        designer and debugging cases.
+        (side_sees_image): Error if NULL side, add view-matching case.
+        * ui.c (unit_actually_visible): Comment out.
+        (unit_visible, occupants_visible): New function.
+        (cell_terrain): Remove, fold code into oneliner.
+        (oneliner): Test vp->show_all.
+        * ui.h: Declare new functions.
+
+        * conq.h (gameinited, warnings_logged): Declare.
+        (add_remote_players, etc): Ditto.
+        * cmd.c, cmdline.h, init.c, read.c, read2.c, side.c, unit.c,
+        util.c: Remove unneeded decls.
+        * misc.h (log_warning): Declare.
+----------------------------
+revision 1.9
+date: 1999/10/07 02:35:34;  author: shebs;  state: Exp;  lines: +63 -36
+	* util.c [MAC]: Add TickCount-based version of gettimeofday.
+	(record_activity_start, etc): Remove UNIX conditionals.
+	(dump_activity_trace): Comment out gap writing.
+	(log_warning): Make ewfp static, open and close file for each
+	warning.
+----------------------------
+revision 1.8
+date: 1999/10/02 00:49:34;  author: shebs;  state: Exp;  lines: +16 -121
+	* ccmd.c, cconq.c, help.c, history.c, read.c, util.c, xinit.c:
+ 	Remove __STDC__ conditionals.
+----------------------------
+revision 1.7
+date: 1999/09/30 17:35:35;  author: ronne;  state: Exp;  lines: +1 -2
+Fix log_warning again so that it works on both mac and unix.
+----------------------------
+revision 1.6
+date: 1999/09/26 15:56:08;  author: ronne;  state: Exp;  lines: +3 -1
+Close the file in log_warning when done.
+----------------------------
+revision 1.5
+date: 1999/08/30 16:45:23;  author: shebs;  state: Exp;  lines: +9 -9
+        * util.c: Remove PARAMS usages.
+        (log_warning): Check file pointer before using.
+----------------------------
+revision 1.4
+date: 1999/08/12 03:07:30;  author: shebs;  state: Exp;  lines: +20 -8
+	* misc.h (record_activity_start, etc): Declare.
+	* util.c (starting_trace): New global.
+	(record_activity_start): Use it.
+	(dump_activity_trace): Report gaps.
+----------------------------
+revision 1.3
+date: 1999/08/10 11:13:46;  author: shebs;  state: Exp;  lines: +118 -0
+        Add a timeline collection and display mechanism.
+        * util.c (TimelineBlock): New structure, storage for collected
+        timeline info.
+        (record_activity_start, record_activity_end, dump_activity_trace):
+        New functions.
+        * run.c (run_game, run_local_ai): Record start/end times.
+        * tkcmd.c (do_trace): Toggle activity tracing.
+----------------------------
+revision 1.2
+date: 1999/07/17 14:35:22;  author: ronne;  state: Exp;  lines: +3 -3
+Change fopen to open_file.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:35;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

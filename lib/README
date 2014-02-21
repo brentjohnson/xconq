@@ -1,0 +1,23 @@
+This file documents library maintenance; it is for the guidance of game
+designers and system administrators.
+
+imf.dir is the directory of all images in this library.  It is merely
+a list of image names along with the filenames where their data is kept.
+The purpose is to speed up image loading by reading only a subset of
+the image files.
+
+There are two ways to rebuild imf.dir; by running
+
+	makedir.sh *.imf >imf.dir
+
+or
+
+	makedir.pl *.imf >imf.dir
+
+The first is a Bourne shell script, and the second a Perl script; every
+system that can run Xconq has either /bin/sh or Perl.
+
+game.dir is a list (in GDL syntax) of games that should appear in new
+game dialogs for players.  These games should be real games that have
+been somewhat tested, so the casual browser doesn't get thrown into
+some sort of horrible alpha-quality experiment.

@@ -1,0 +1,31 @@
+.TH SKELCONQ 6
+.SH NAME
+skelconq - test harness for Xconq
+.SH SYNOPSIS
+.B
+skelconq
+[ options ] ...
+.SH DESCRIPTION
+\fIskelconq\fP is a tty-only version of Xconq.
+It is useful for testing, but is not normally installed.
+
+.so ../kernel/cmdline.6in
+
+.SH AUTHOR
+Stan Shebs (shebs@cygnus.com)
+(with help from many)
+.SH FILES
+\fIsave.xconq\fP	saved game
+.br
+\fI/usr/local/lib/xconq/*.g\fP	predefined games
+.br
+\fI/usr/local/lib/xconq/news.txt\fP	news about features and additions
+.br
+.SH "SEE ALSO"
+.br
+.IR xconq(6), cconq(6)
+.br
+.IR "Xconq - the School for Strategy"
+.SH BUGS
+.PP
+Should look for images and warn about those not found.

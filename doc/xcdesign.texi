@@ -1,0 +1,220 @@
+\input texinfo
+@setfilename xcdesign.info
+
+@c @set DOUBLEDENSITY
+@clear DOUBLEDENSITY
+
+@settitle Designing Games with Xconq
+@setchapternewpage odd
+
+@ifinfo
+This file documents the design of games for @i{Xconq}.
+
+Copyright (C) 1987-1989, 1991-2000 Stanley T. Shebs
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+@ignore
+Permission is granted to process this file through Tex and print the
+results, provided the printed document carries copying permission notice
+identical to this one except for the removal of this paragraph (this
+paragraph not being relevant to the printed manual).
+@end ignore
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided also that the
+section entitled ``GNU General Public License'' is included exactly as
+in the original, and provided that the entire resulting derived work is
+distributed under the terms of a permission notice identical to this
+one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that the section entitled ``GNU General Public License'', and
+this permission notice, may be included in translations approved by the
+Free Software Foundation instead of in the original English.
+@end ifinfo
+
+@c This is one way to make a double-density printout.  Another
+@c way is to use the mpage utility on postscript.
+@c
+@c @ifset DOUBLEDENSITY
+@c @iftex
+@c @magnification = 833
+@c @smallbook
+@c @c from @afourpaper:
+@c @global@tolerance=700
+@c @global@hfuzz=1pt
+@c @setleading{12pt}
+@c @global@parskip 2pt plus 1pt
+@c @global@vsize= 65@baselineskip
+@c @advance@vsize by @topskip
+@c @global@hsize= 20cm
+@c @global@outerhsize=@hsize
+@c @global@advance@outerhsize by 0.5in
+@c @global@outervsize=@vsize
+@c @global@advance@outervsize by 0.6in
+@c @global@pagewidth=@hsize
+@c @global@pageheight=@vsize
+@c @end iftex
+@c @end ifset
+
+@titlepage
+@sp 6
+@ifhtml
+<h1>
+@end ifhtml
+@center @titlefont{Designing Games with Xconq}
+@ifhtml
+</h1>
+@end ifhtml
+@sp 4
+@ifhtml
+<h3>
+@end ifhtml
+@center The School for Strategy
+@sp 4
+@center Version 7.4
+@sp 4
+@center December 2000
+@sp 5
+@center Stanley T. Shebs
+@ifhtml
+</h3>
+@end ifhtml
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 1987-1989, 1991-2000
+Stanley T. Shebs
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided also that the
+section entitled ``GNU General Public License'' is included exactly as
+in the original, and provided that the entire resulting derived work is
+distributed under the terms of a permission notice identical to this
+one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that the section entitled ``GNU General Public License'', and
+this permission notice, may be included in translations approved by the
+Free Software Foundation instead of in the original English.
+@end titlepage
+
+@iftex
+
+@headings off
+@everyheading @thistitle @| @thischapter @| @thispage
+@everyfooting Version 7.4 @| December 2000 @| (printed @today{})
+
+@end iftex
+
+@ifinfo
+
+@node Top
+@top Top
+
+This manual is a full description of how to design games for @i{Xconq}.
+We will assume that you are already familiar with playing games in
+@i{Xconq}; if not, you should try a few different games in the standard
+library, so as to get more of a feel for the game system.
+
+@menu
+* Introduction::
+* Game Design::
+* Reference Manual::
+* Summary of GDL Syntax::
+* Permuted Index of GDL Symbols::
+* Glossary::
+* Index::
+@end menu
+
+@end ifinfo
+
+@node Introduction
+
+@chapter Introduction
+
+In this manual, you'll learn how to design new kinds of games with
+@i{Xconq}.  @i{Xconq} has been designed to support the use of a variety
+of techniques to design, construct, and test your game idea.  These
+techniques range from text file editing to online painting; in most
+cases, you will use a combination of techniques to build a complete
+game.
+
+As the person customizing @i{Xconq}, you will be called the
+@dfn{designer}.  This term also indicates the primary activity, which
+will be to Design The Game.  The capabilities described in this manual
+are merely tools; it is up to you the designer to exercise discretion
+and judgement in using them.
+
+You design games using @i{Xconq}'s Game Design Language (GDL).  GDL is
+@i{Xconq}'s common language for defining all parts of a game, from the
+entry in the menu that players select games from, down to the last tiny
+detail of a saved game.  GDL resembles Lisp, although (at the present
+time) it is not a procedural language; there are no functions and very
+few control constructs.  Instead, the contents of a file guide the
+creation or modification of @i{Xconq} objects representing types,
+tables, units, and so forth.  While a game is being played, @i{Xconq}
+uses this data to decide what to do and what to allow players to do.
+Players never actually see GDL directly.
+
+In this manual, ``you'' always means you the designer, and players will
+be referred to as ``players'' or ``users''.  The distinction is
+important; as the game designer, you will encounter and deal with many
+technical issues relating to the inner workings of @i{Xconq}, but if you
+master those issues, your players will see only a fun game to play.
+
+A final caveat before plunging in: @i{Xconq} is an experiment in the
+design and construction of configurable games.  This means I have had
+limited prior art on which to build, and there are lots of odd corners
+that have never been tested or even thought about.  In this spirit, I
+would like to hear about weird cases, and ideas for how to handle them.
+
+Chapter 2, ``Designing Games with Xconq'' is an explanatory guide for
+building and modifying @i{Xconq} game designs, using both Game Design
+Language (GDL) and online editing tools.
+
+Chapter 3, ``Reference Manual'' is the complete definition of GDL.  It
+includes the syntax and semantics of all parts of the language.
+
+Appendices include a summary of GDL syntax, a permuted index of
+GDL symbols, and a glossary of terms.
+
+@include design.texi
+
+@include refman.texi
+
+@node Summary of GDL Syntax
+
+@appendix Summary of GDL Syntax
+
+@include syntax.texi
+
+@node Permuted Index of GDL Symbols
+
+@appendix Permuted Index of GDL Symbols
+
+@include syms.texi
+
+@node Glossary
+
+@appendix Glossary
+
+@include glossary.texi
+
+@node Index
+
+@appendix Index
+
+@printindex fn
+
+@contents
+
+@bye

@@ -1,0 +1,45 @@
+
+RCS file: /cvs/xconq/xconq/kernel/mtype.def,v
+Working file: mtype.def
+head: 1.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.2
+	xconq-7_4-branch: 1.2.0.4
+	xconq-7_4-branchpoint: 1.2
+	xtconq-pre-removal: 1.2
+	xconq-7_3_3-release: 1.2
+	xconq-7_3_2-release: 1.2
+	xconq-7_3_1-release: 1.2
+	xconq-7_3-branch: 1.2.0.2
+	xconq-7_3-branchpoint: 1.2
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1.2
+date: 1999/05/04 05:08:54;  author: shebs;  state: Exp;  lines: +0 -4
+        * atype.def, mtype.def, ttype.def (available): Remove.
+        * utype.def (available): Allow negative values, as doc'ed.
+        * keyword.def (battle, silhouette): Remove.
+        * actions.c (distribute_material): Check for unit trust.
+        * imf.h (Image style): Remove.
+        (ImageFamily preferred_style): Remove.
+        * imf.c: Remove style references everywhere.
+        (interp_image): No longer recognize silhouette keyword.
+        * ui.c: Ditto.
+        * init.c (check_game_validity): Remove availability checks,
+        add test of u_wrecked_type value.
+        * nlang.c (task_desc): Describe pickup task.
+        * read.c: Remove recognition of K_BATTLE.
+        * run2.c (run_economy): Rewrite to scan needy units in second
+        pass.
+        (need_left, try_sharing_need): New functions.
+        * world.c (search_and_apply): Terminate early if pred fails.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:29;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

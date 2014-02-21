@@ -1,0 +1,2343 @@
+2005-09-17  17:25  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Long overdue fix to game design manual.
+	(Thanks to Roger Martin.)
+	* design.texi: Mention the need to change the ZOC table in order 
+	to get a monster to cross rubble.
+
+2005-09-17  16:17  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix non-adjacent movement from transport bug.
+	(Reported by Matthew.)
+	* task.c (do_approach_subtask): Comment out a piece of code 
+	intended to cause units to use mobile transports to go places 
+	rather than going there themselves. This change will likely have 
+	some side effects on AI play, but those will be dealt with 
+	separately.
+
+2005-09-17  15:41  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix construction bug in UI.
+	(Bug reported by Matthew.)
+	* ui.c (impl_build): An UI may pass a "transport" as the target in 
+	which to build; however the target unit may not actually be a valid 
+	transport in which to build. If this is the case, be sure to actually 
+	try building in the cell that the target unit is located in.
+
+2005-08-28  00:44  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	Fix segfault with "idle" command
+	* task.c (do_sentry_task): check that next task isn't null
+
+2005-08-13  20:04  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	Remove superfluous "Done" button from tkconq design palette
+	* tkconq.tcl (popup_design_palette, ok_preferences): comment out
+	references to "Done" button
+
+2005-08-06  19:55  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	Fix tkconq crash on examining non-unit cell
+	* tkmap.c (move_look): Initialize "unit" variable to NULL
+
+	Fix "incomplete units participate in economy" bug
+	* economy.c (make_mh_from_unit): Exclude incomplete units.
+
+	Add Delta Clipper image to SRE
+	* solar.g: imf definition
+	* solunits.gif: added unit image
+
+2005-08-06  19:25  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Mention when and why an unit's task agenda is being canceled.
+	(Issue brought up by Matthew.)
+	* plan.c (plan_passive): Notify unit's side when task agenda is 
+	being cleared due to a low supply.
+
+2005-08-06  15:29  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix UI bug that caused new units to be prefered over incomplete ones.
+	(Reported by Matthew.)
+	* ui.c (impl_build): Iterate through occs in container or units 
+	at given location, seeking incomplete one that matches type of 
+	what we wish to build.
+
+	Update to terrain images.
+	(From Elijah.)
+	* castle-terr32x32.gif: Update.
+	* castle-terr44x48.gif: Update.
+
+2005-07-28  03:22  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	New version of SRE
+	* solar.g: several new features and improvements.
+	* solunits.gif: added some unit images.
+
+	Quick-and-dirty fix to ZOC code
+	* move.c (check_move_action): include ZOC-related extra cost when
+	computing cost of the move; correctly compute extra ACP.
+	* refman.texi (mp-to-enter-zoc): clarify current behaviour
+	  (mp-to-leave-zoc): clarify current behaviour
+	  (mp-to-traverse-zoc): clarify current behaviour
+
+2005-07-10  02:52  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Update and extend image library.
+	(Update from Elijah.)
+	* battles1.gif: Update.
+	* blank-border44x48.gif: New image file.
+	* castle-terr32x32.gif: New image file.
+	* castle-terr44x48.gif: New image file.
+
+	Improvement of AI tactical response.
+	(Note: These changes probably should have been made on a branch.)
+	* config.h (Z8): Typedef 'signed char'.
+	* conq.h (max_u_detonate_effect_range): Delete.
+	  (fire_range): New function decl.
+	Maximum fire range of u against u2.
+	  (fire_range_best): New function decl.
+	Best fire range of u against u2.
+	  (fire_range_max): New function decl.
+	Maximum fire range of u.
+	  (attack_range): New function decl.
+	Attack range of u against u2.
+	  (attack_range_max): New function decl.
+	Maximum attack range of u.
+	  (could_detonate): New function decl.
+	Could u detonate?
+	  (could_damage_by_0dist_detonation): New function decl.
+	Could u damage u2 by a detonation in same cell?
+	  (could_damage_by_ranged_detonation): New function decl.
+	Could u damage u2 by a detonation at range?
+	  (could_damage_by_detonation): New function decl.
+	Could u damage u2 by a detonation?
+	  (detonate_urange): New function decl.
+	Blast radius of detonation from u against u2.
+	  (detonate_urange_max): New function decl.
+	Max blast radius of detonation from u.
+	  (detonate_urange_max): New function decl.
+	Max blast radius of detonation from any utype.
+	  (hit_range): New function decl.
+	Hit range of u against u2.
+	  (hit_range_max): New function decl.
+	Maximum hit range of u.
+	  (hit_range_max): New function decl.
+	Maximum hit range of all utypes.
+	  (direct_capture_range): New function decl.
+	Direct capture range of u against u2.
+	* aitact.h (choose_best_hit_method): New function decl.
+	Given various combat stats, which hit method is preferred?
+	  (choose_best_hit_method): New function decl.
+	Which hit method should given unit use to hit given uview?
+	  (guess_best_hit_method_used_by): New function decl.
+	Which hit method should given uview use to hit given unit?
+	  (choose_best_capture_method): New function decl.
+	Given various combat stats, which capture method is preferred?
+	  (choose_best_capture_method): New function decl.
+	Which capture method should given unit use to capture given uview?
+	  (guess_best_capture_method_used_by): New function decl.
+	Which capture method should given uview use to hit given unit?
+	  (seems_safe_against): New function decl.
+	Does given unit seem safe from given uview?
+	  (is_frightened_by): New function decl.
+	Is given unit deathly afraid of given uview?
+	  (is_harassed_by): New function decl.
+	Is given unit possibly being harassed by given uview?
+	  (choose_flee_direction): New function decl.
+	Choose best direction, if any, to flee from fears.
+	* aitact.cc: Include 'kpublic.h'.
+	  (choose_best_hit_method): New function.
+	  (choose_best_hit_method): New function, second variant.
+	  (guess_best_hit_method_used_by): New function.
+	  (choose_best_capture_method): New function.
+	  (choose_best_capture_method): New function, second variant.
+	  (guess_best_capture_method_used_by): New function.
+	  (turns_to_defeat_best_ratio): New function.
+	  (seems_safe_against): New function.
+	  (is_frightened_by): New function.
+	  (is_harassed_by): New function.
+	  (choose_flee_direction): New function.
+	  (handle_immediate_danger): Fill out.
+	  (handle_tactical_situation): Couple of tweaks.
+	* aiunit.h: Change '*_by_explosions' to '*_by_detonations'.
+	  (fire_damage_mean): New function decl.
+	Mean fire damage that u does to u2.
+	  (attack_damage_mean): New function decl.
+	Mean attack damage that u does to u2.
+	  (detonate_0dist_damage_mean): New function decl.
+	Mean detonate damage that u does to u2 in same cell.
+	  (detonate_ranged_damage_mean): New function decl.
+	Mean detonate damage that u does to u2 at range.
+	  (detonate_damage_mean): New function decl.
+	Mean detonate damage that u does to u2.
+	  (n_detonations_available): New function decl.
+	Number of detonations available to u before expiring.
+	* aiunit.cc: Use 'Xconq' and 'Xconq::AI' namespaces.
+	Change '*_by_explosions' to '*_by_detonations' 
+	in all places.
+	  (fire_damage_mean): New function.
+	  (attack_damage_mean): New function.
+	  (detonate_0dist_damage_mean): New function.
+	  (detonate_ranged_damage_mean): New function.
+	  (detonate_damage_mean): New function.
+	  (n_detonations_available): New function.
+	* aiunit.h (firings_per_turn_est): New function decl.
+	Estimated number of times u can fire at u2 in a turn.
+	  (attacks_per_turn_est): New function decl.
+	Estimated number of times u can attack u2 in a turn.
+	  (detonations_per_turn_est): New function decl.
+	Estimated number of times u can detonate against u2 in a turn.
+	  (capture_attempts_per_turn_est): New function decl.
+	Estimated number of times u can attempt capture of u2 in a turn.
+	  (firings_mean_to_destroy): New function decl.
+	Mean number of firings for u to destroy u2 with given modifiers.
+	  (firings_mean_to_destroy): New function decl.
+	Mean number of firings for u to destroy given uview.
+	  (firings_mean_to_destroy): New function decl.
+	Mean number of firings for u2 to destroy given unit.
+	  (fire_turns_mean_to_destroy): New function decl.
+	Mean number of turns for u to destroy given uview by firing.
+	  (fire_turns_mean_to_destroy): New function decl.
+	Mean number of turns for u2 to destroy given unit by firing.
+	  (attacks_mean_to_destroy): New function decl.
+	Mean number of attacks for u to destroy u2 with given modifiers.
+	  (attacks_mean_to_destroy): New function decl.
+	Mean number of attacks for u to destroy given uview.
+	  (attacks_mean_to_destroy): New function decl.
+	Mean number of attacks for u2 to destroy given unit.
+	  (attack_turns_mean_to_destroy): New function decl.
+	Mean number of turns for u to destroy given uview by attacks.
+	  (attack_turns_mean_to_destroy): New function decl.
+	Mean number of turns for u2 to destroy given unit by attacks.
+	  (detonations_mean_to_destroy): New function decl.
+	Mean number of detonations for u to destroy u2 with given modifiers.
+	  (detonations_mean_to_destroy): New function decl.
+	Mean number of detonations for u to destroy given uview.
+	  (detonations_mean_to_destroy): New function decl.
+	Mean number of detonations for u2 to destroy given unit.
+	  (detonate_turns_mean_to_destroy): New function decl.
+	Mean number of turns for u to destroy given uview by detonations.
+	  (detonate_turns_mean_to_destroy): New function decl.
+	Mean number of turns for u2 to destroy given unit by detonations.
+	  (firings_mean_to_capture): New function decl.
+	Mean number of attempts u needs to capture u2 by firing.
+	  (firings_mean_to_capture): New function decl.
+	Mean number of attempts u needs to capture given uview by firing.
+	  (firings_mean_to_capture): New function decl.
+	Mean number of attempts u2 needs to capture given unit by firing.
+	  (fire_turns_mean_to_capture): New function decl.
+	Mean number of turns u needs to capture given uview by firing.
+	  (fire_turns_mean_to_capture): New function decl.
+	Mean number of turns u2 needs to capture given unit by firing.
+	  (attacks_mean_to_capture): New function decl.
+	Mean number of attempts u needs to capture u2 by attacks.
+	  (attacks_mean_to_capture): New function decl.
+	Mean number of attempts u needs to capture given uview by attacks.
+	  (attacks_mean_to_capture): New function decl.
+	Mean number of attempts u2 needs to capture given unit by attacks.
+	  (attack_turns_mean_to_capture): New function decl.
+	Mean number of turns u needs to capture given uview by attacks.
+	  (attack_turns_mean_to_capture): New function decl.
+	Mean number of turns u2 needs to capture given unit by attacks.
+	  (attempts_mean_to_capture): New function decl.
+	Mean number of attempts u needs to directly capture u2.
+	  (attempts_mean_to_capture): New function decl.
+	Mean number of attempts u needs to directly capture given uview.
+	  (attempts_mean_to_capture): New function decl.
+	Mean number of attempts u2 needs to directly capture given unit.
+	  (capture_turns_mean_to_capture): New function decl.
+	Mean number of turns u needs to directly capture given uview.
+	  (capture_turns_mean_to_capture): New function decl.
+	Mean number of turns u2 needs to directly capture given unit.
+	* aiunit2.cc: Use 'Xconq' and 'Xconq::AI' namespaces.
+	  (firings_per_turn_est): New function.
+	  (attacks_per_turn_est): New function.
+	  (detonations_per_turn_est): New function.
+	  (capture_attempts_per_turn_est): New function.
+	  (firings_mean_to_destroy): New function.
+	  (firings_mean_to_destroy): New function, second variant.
+	  (firings_mean_to_destroy): New function, third variant.
+	  (fire_turns_mean_to_destroy): New function.
+	  (fire_turns_mean_to_destroy): New function, second variant.
+	  (attacks_mean_to_destroy): New function.
+	  (attacks_mean_to_destroy): New function, second variant.
+	  (attacks_mean_to_destroy): New function, third variant.
+	  (attack_turns_mean_to_destroy): New function.
+	  (attack_turns_mean_to_destroy): New function, sceond variant.
+	  (detonations_mean_to_destroy): New function.
+	  (detonations_mean_to_destroy): New function, second variant.
+	  (detonations_mean_to_destroy): New function, third variant.
+	  (detonate_turns_mean_to_destroy): New function.
+	  (detonate_turns_mean_to_destroy): New function, second variant.
+	  (firings_mean_to_capture): New function.
+	  (firings_mean_to_capture): New function, second variant.
+	  (firings_mean_to_capture): New function, third variant.
+	  (fire_turns_mean_to_capture): New function.
+	  (fire_turns_mean_to_capture): New function, second variant.
+	  (attacks_mean_to_capture): New function.
+	  (attacks_mean_to_capture): New function, second variant.
+	  (attacks_mean_to_capture): New function, third variant.
+	  (attack_turns_mean_to_capture): New function.
+	  (attack_turns_mean_to_capture): New function, second variant.
+	  (attempts_mean_to_capture): New function.
+	  (attempts_mean_to_capture): New function, second variant.
+	  (attempts_mean_to_capture): New function, third variant.
+	  (capture_turns_mean_to_capture): New function.
+	  (capture_turns_mean_to_capture): New function, second variant.
+	* aiutil.h (type_attack_range_max): Delete.
+	  (type_fire_range_max): Delete.
+	* aiutil.c (type_attack_range_max): Delete.
+	  (type_fire_range_max): Delete.
+	  (type_hit_range_max): Call 'attack_range' and 'fire_range', instead 
+	of 'type_attack_range_max' and 'type_fire_range_max'.
+	  (type_ideal_attack_range): Call 'attack_range' instead of 
+	'type_attack_range'.
+	* combat.c (max_u_detonate_effect_range): Delete.
+	  (could_fire_at_any): Add caching.
+	  (fire_range): New function.
+	  (fire_range_best): New function.
+	  (fire_range_max): New function.
+	  (could_attack_any): Add caching.
+	  (attack_range): New function.
+	  (attack_range_max): New function.
+	  (could_detonate): New function.
+	  (could_damage_by_0dist_detonation): New function.
+	  (could_damage_by_ranged_detonation): New function.
+	  (could_damage_by_detonation): New function.
+	  (detonate_urange): New function.
+	  (detonate_urange_max): New function.
+	  (detonate_urange_max): New function, second variant.
+	  (could_hit): New function.
+	  (hit_range): New function.
+	  (hit_range_max): New function.
+	  (hit_range_max): New function, second variant.
+	  (direct_capture_range): New function.
+	  (detonate_unit): Do not cache max detonation urange here.
+	* init.c: Use namespace 'Xconq'.
+	* mplayer.c (mplayer_decide_plan): If unit is not active, then 
+	immediately place it in reserve.
+	* plan.c (plan_defense): Only acquire constructor oprole, if 
+	unit is active.
+	* task.c (push_move_dir_task): New function.
+	* tp.c (net_push_move_dir_task): New function.
+
+2005-07-04  00:38  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Simplify and improve capture logic.
+	Further improve hit-unit logic.
+	Allow fire to capture out to ZOC range, plus 1.
+	* task.def (TASK_CAPTURE): Revise parameters.
+	  (TASK_HIT_UNIT): Add max task tries to parameter list.
+	* conq.h (HIT_TRIES_DEFAULT): New data macro.
+	Default number of times ot run 'hit-unit' task.
+	  (CAPTURE_METHOD_NONE): New data macro.
+	Do not capture via any method?
+	  (CAPTURE_METHOD_CAPTURE): New data macro.
+	Capture via direct capture?
+	  (CAPTURE_METHOD_ATTACK): New data macro.
+	Capture via attack?
+	  (CAPTURE_METHOD_FIRE): New data macro.
+	Capture via adjacent fire?
+	  (CAPTURE_METHOD_DETONATE): New data macro.
+	Capture via detonation?
+	  (CAPTURE_METHOD_TRANSPORT): New data macro.
+	Capture via transport?
+	  (CAPTURE_METHOD_OCCUPANT): New data macro.
+	Capture via occupants?
+	  (CAPTURE_METHOD_ANY): New data macro.
+	Capture via any method?
+	  (CAPTURE_TRIES_DFLT): New data macro.
+	Default number of times ot run 'capture' task.
+	* ai.c (check_current_target): Deal with revised args of 
+	'hit-unit' and 'capture' tasks.
+	  (keep_defensive_goal): Likewise.
+	  (ai_go_after_victim): Likewise.
+	  (attack_blockage): Likewise.
+	* aiutil.c (planning_to_capture_type_at): Likewise.
+	* combat.c (do_fire_at_action): Allow fire to capture out to 
+	ZOC range, plus 1.
+	* nlang.c (task_desc): Deal with revised args of 'capture' task.
+	* task.c (do_capture_task): Rewrite.
+	  (do_hit_unit): Deal with revised args.
+	  (create_capture_task): Likewise.
+	  (set_capture_task): Likewise.
+	  (push_capture_task): Likewise.
+	  (create_hit_unit_task): Likewise.
+	  (set_hit_unit_task): Likewise.
+	  (push_hit_unit_task): Likewise.
+	* tp.c (net_set_capture_task): Likewise.
+	  (net_push_hit_unit_task): Likewise.
+	  (net_set_hit_unit_task): Likewise.
+
+2005-07-03  01:52  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Simplify and improve hit-unit logic.
+	* task.def (TASK_HIT_UNIT): Revise parameters.
+	* conq.h (HIT_METHOD_NONE): New data macro.
+	Do not hit via any method?
+	  (HIT_METHOD_ATTACK): New data macro.
+	Hit via attack?
+	  (HIT_METHOD_FIRE): New data macro.
+	Hit via fire?
+	  (HIT_METHOD_DETONATE): New data macro.
+	Hit via detonation?
+	  (HIT_METHOD_TRANSPORT): New data macro.
+	Hit via transport?
+	  (HIT_METHOD_OCCUPANT): New data macro.
+	Hit via occupants?
+	  (HIT_METHOD_ANY): New data macro.
+	Summation of all the hit methods.
+	* ai.c (check_current_target): Deal with revised args of 
+	'hit-unit' task.
+	  (keep_defensive_goal): Likewise.
+	  (victim_id): New global variable.
+	  (ai_go_after_victim): Deal with revised args of 'hit-unit' task.
+	  (attack_blockage): Likewise.
+	* aiutil.c (planning_to_hit_type_at): Likewise.
+	  (planning_to_capture_type_at): Likewise.
+	* nlang.c (task_desc): Revise task description for 'hit-unit'.
+	* plan.c (plan_offense): Disable target reacquisition (for now).
+	  (do_for_occupants): Deal with revised args of 'hit-unit' task.
+	  (ai_find_victim_here): Set 'victim_id' in addition to other 
+	victim data.
+	  (go_after_victim): Delete ifdeffed out version.
+	  (plan_repair): Delete.
+	* task.c (do_hit_unit_task): Rewrite.
+	  (create_hit_unit_task): Rewrite.
+	  (set_hit_unit_task): Rewrite.
+	  (push_hit_unit_task): Rewrite.
+	* tp.c (net_push_hit_unit_task): Deal with revised args of 
+	'hit-unit' task.
+	  (net_set_hit_unit_task): Likewise.
+
+2005-07-02  21:50  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Improve calculation of constructor worths.
+	* ai.c (ai_init_shared): Consider occs-on-completion and their 
+	effects on the type of behavior in question.
+
+	Try to mobile transports more responsive to their occs.
+	* plan.c (plan_passive): Call 'do_for_occupants' on 
+	AI-controlled units.
+
+	Attempt to fix crashing bug in overwatch fire.
+	* side.c (try_overewatch_from): Return immediately if cell is not 
+	inside area.
+
+2005-07-02  20:07  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug in materials requirements checking.
+	(Reported by Elijah.)
+	* actions.c (can_create_common): Perform deep copy from special 
+	materials req array to regular materials req array.
+	  (can_build): Likewise.
+
+	Split out completion and repair evaluation in the AI.
+	* aioprt.cc (choose_unit_to_build_upon): New function.
+	Choose best unit to complete.
+	  (choose_unit_to_repair): New function.
+	Choose best unit to repair.
+	  (choose_unit_construction_or_repair): Remove logic for 
+	choosing best units to complete or repair.
+
+	Attempt to fix crashing bug in overwatch fire.
+	* side.c (all_see_occupy): Only perform overwatch fire against 
+	in-play units.
+
+	Update to Starfleet Battles game. (From Elijah.)
+	* battles.g
+
+2005-07-02  16:17  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Update images. (From Elijah.)
+	* battles1.gif
+
+	Add Doxygen config file for kernel docs.
+	* doc/kernel.dox: New Doxygen config file.
+
+2005-07-02  02:28  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug in occs-on-completion functionality.
+	* conq.h (can_create_common): New parameter, 'could', defaults to 
+	FALSE, so that 'could_create' is checked.
+	  (can_build): New parameter, 'could', defaults to FALSE, so that 
+	'could_build' is checked.
+	* actions.c (can_create_common): New parameter.
+	  (can_build): New parameter.
+	  (grant_occs_on_completion): Call 'can_create_common' with 
+	'could' set to TRUE.
+
+2005-06-27  00:57  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Update Dev-C++ dev pack.
+	* devcpp_w32_SFX.exe
+
+2005-06-26  22:05  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Allow colonizers to merge into units of utypes that they can create.
+	* unit.c (unit_can_build_type_at): Handle special case.
+
+2005-06-26  15:43  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Cleanup and fix various autoconf and make issues.
+	(Thanks to Phil Reid for pointing out a Gentoo ebuild problem.)
+	* configure.in: Do not define 'XCONQDATA'. 
+	  (AC_PREREQ): Check against version 2.57 of Autoconf.
+	* Makefile.in (appdefaultsdir): Delete. No longer used.
+	  (datadir): Set to the value of the 'xconq_data_dir' macro.
+	  (SELFILE): Delete. No longer used.
+	  (SUBDIRS): Get rid of 'tcl', 'tk', and '$(SELFILE)'.
+	  (FLAGS_TO_PASS): Get rid of 'appdefaultsdir'. No longer used.
+	    Add in 'datadir'.
+	* curses/Makefile.in (datadir): Set to the value of the 
+	'xconq_data_dir' macro.
+	* doc/Makefile.in: Likewise.
+	* images/Makefile.in: Likewise.
+	* lib/Makefile.in: Likewise.
+	* sdl/Makefile.in: Likewise.
+	* tcltk/Makefile.in: Likewise.
+	* kernel/Makefile.in: Likewise.
+	  (KDEFS): Define 'XCONQDATA' and 'XCONQSCORES' on the command line 
+	(i.e., the way it used to be done).
+	  (ALL_CFLAGS): Add in 'KDEFS'.
+	* acdefs.h.in: Do not define 'XCONQDATA' and 'XCONQSCORES'.
+	* xconq.spec.in: Make the main changelog get installed in 'changelogs' 
+	directory in the docs hierarchy.
+
+2005-06-25  22:42  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Remove multi-part units functionality.
+	* utype.def (u_parts): Delete.
+	* refman.texi (parts-max): Delete.
+	* unit.h (completed): Check CP against whole completeness rahter 
+	than part completeness.
+	  (fullsized): Delete.
+	  (completenesses): Delete.
+	* actions.c (can_build): Check CP up to whole completeness 
+	rather than part completeness.
+	  (do_build_action_1): Increment CP up to whole completeness 
+	rather than part completeness.
+	  (check_build_action): Call 'completed' instead of 'fullsized'.
+	  (make_unit_complete): Fill out unit CP and HP to whole 
+	completeness levels rather than part completeness levels.
+	* help.c (describe_utype): No longer describe how many parts 
+	an utype has.
+	* init.c (check_game_validity): No longer check sanity of 
+	parts-related things.
+	* mplayer.c (mplayer_review_unit): Call 'completed' instead of 
+	'fullsized'.
+	* run2.c (new_acp_for_turn_if_at): Check against completed 
+	unit CP rather than part CP.
+	  (run_self_builds): Call 'completed' instead of 'fullsized'.
+	* task.c (test_for_buildable): Likewise.
+	  (do_build_task): Likewise.
+	  (find_unit_to_complete): Likewise.
+	* unit.c (completenesses): Delete.
+	  (create_unit): Do not attempt to initialize the completenesses 
+	vector.
+	  (incomplete_build_target): Call 'completed' instead of 'fullsized'.
+	  (unit_can_build_type_at): Likewise.
+	* sdlmap.cc (draw_uview_health_bar): Remove check for whether unit 
+	is multi-part or not.
+	* tkmap.c: Likewise.
+
+2005-06-25  21:44  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug introduced by previous bug fix.
+	* ui.c (xform_unit_view): Calculate offset adjustments using 
+	correct widths, depending on whether unit is of regular size or is 
+	oversized.
+
+2005-06-25  21:10  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug in offsets of oversized unit images on isometric maps.
+	(Reported by Elijah.)
+	* ui.c (can_use_oversized_img): Be more specific about when an 
+	image is oversized.
+	  (xform_unit_view): Properly adjust image offsets in both 
+	overhead and isometric views for both standard and oversized images.
+
+	Archive another game in 'bitrot'.
+	* game.dir: Remove '1805'.
+	* 1805.g: This is a scenario for Napoleon which is already in 
+	the bitrot archive. Move to there.
+	* bitrot/game.dir: Add '1805'.
+
+	Prepare for the removal of multi-part unit functionality.
+	* voyages.g (parts-max): Comment out.
+	* ww2-div-pac.g: Comment out.
+
+2005-06-21  01:17  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix typos in reference manual.
+	* refman.texi
+
+	Remove outdated comment.
+	(Thanks to an anonymous user for bringing this to attention.)
+	* kernel/Makefile.in: Remove comment about what things are passed 
+	in 'CFLAGS'.
+
+	Fix bug in dice scaling.
+	* util.c (multiply_dice2): Scale correct quantity.
+
+	Remove 'transfer-part' action.
+	* action.def (ACTION_TRANSFER_PART): Delete.
+	* cmd.def (ctrl-D): Unbind from 'do_detach' and comment out.
+	* table.def (uu_can_transfer_parts_to): Delete.
+	* utype.def (u_acp_to_transfer_part): Delete.
+	* actions.c (prep_transfer_part_action): Delete.
+	  (do_transfer_part_action): Delete.
+	  (check_transfer_part_action): Delete.
+	  (execute_action): No longer handle 'ACTION_TRANSFER_PART' cases.
+	* cmd.c (do_one_detach): Delete.
+	  (do_detach): Delete.
+	* help.c (describe_utype): Remove description of 'transfer-part'.
+	* tp.c (net_prep_transfer_part_action): Delete.
+	* ui.c (advance_into_cell): No longer handle 'transfer-part' actions.
+	* tkconq.tcl: Remove all instances of 'can_detach' and remove the 
+	"Detach" menu item.
+	* tkinit.c (update_action_controls_info): Remove check for 
+	'transfer-part' action and the setting of the 'can_detach' flag.
+
+2005-06-20  02:02  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix construction-related bugs.
+	* actions.c (can_build): Make sure that the buildee is in 
+	build range of the builder.
+	* aioprt.cc (choose_transport_to_construct_in): Reject mobile 
+	occs as transport to construct in.
+
+2005-06-19  23:33  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix serious bugs in the encoding of negative dice reps.
+	* lisp.c (read_form_aux): Cast dice rep to short before 
+	performing an assignemnt (with widening to int) to 'num'. 
+	Also, ensure that the 14th bit is correct for negative dice reps.
+	* table.def: Make sure that all Type 1 dice tables start at 
+	'TABLO' rather than a greater number.
+
+	Add support of occs-on-completion for initial units placement.
+	* mkunits.c (grant_initial_occs): New function.
+	Add occs-on-completion to just-placed unit.
+	  (place_unit): Call 'grant_initial_occs' to possibly place initial 
+	occs in unit. Also, take new parameters for when being called 
+	by 'grant_initial_occs'.
+
+2005-06-19  20:04  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Refine support of occs-on-completion.
+	Various bits of cleanup.
+	* action.def (ACTION_CREATE_IN): Improve parameter list.
+	  (ACTION_CREATE_AT): Likewise.
+	  (ACTION_BUILD): Likewise.
+	  (ACTION_REPAIR): Likewise.
+	* table.def (uu_alt_complete_occs_on_completion): New Type 1 dice 
+	TableUU, 'alt-complete-occs-on-completion'.
+	  (uu_alt_incomplete_occs_on_completion): New Type 1 dice TableUU, 
+	'alt-incomplete-occs-on-completion'.
+	* refman.texi (alt-complete-occs-on-completion): New entry.
+	  (alt-incomplete-occs-on-completion): New entry.
+	  (complete-occs-on-completion): Modify.
+	  (incomplete-occs-on-completion): Modify.
+	* conq.h (can_meet_materials_requirement): Delete one variation.
+	  (consume_materials): New function decl.
+	Consume materials of a given unit according to given consumption vector.
+	  (can_create_common): Modify parameter list.
+	  (can_build): Modify parameter list.
+	* actions.c: Use namespace 'Xconq'.
+	  (can_meet_materials_requirement): Delete one variation.
+	  (consume_materials): New variation of function.
+	  (consume_materials): Call new variation after constructing 
+	materials vector using getter.
+	  (can_create_common): Add new optional parameters for specifying 
+	ACP and materials costs. Check against those costs, if they are 
+	not their defaults values.
+	  (can_build): Likewise.
+	  (can_change_type_to): Use the preferred variation of 
+	'can_meet_materials_requirement' since the non-preferred variation 
+	is being deleted.
+	  (do_create_action_common_1): Add new optional parameters for 
+	specifying CP to be gained and for ACP and materials costs. Deduct 
+	the costs, and add the specified CP, if they are not their default 
+	values.
+	  (do_build_action_1): New function. Handle optional parameters as 
+	above.
+	  (do_build_action): Call 'do_build_action_1'.
+	  (grant_occs_on_completion): New function. Handle 
+	occs-on-completion functionality. Use enhanced action checking and 
+	and performance functions to simplify code. Also handle new behavior 
+	of the regular occs-on-completion tables, and handle alternative 
+	Type 1 dice occs-on-completion tables.
+	  (make_unit_complete): Move occs-on-completion functionality to 
+	'grant_occs_on_completion', and call that function.
+
+2005-06-19  13:05  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Add some additional info on synthetic dice encoding.
+	* refman.texi (Arithmetic Operations): Give the complete encoding 
+	formula for positive dice, and provide a couple of examples.
+
+2005-06-19  02:44  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Finally write docs on how to synthesize dice encodings in GDL.
+	* refman.texi (Arithmetic Operations): Add new paragraph group 
+	that describes the process. Get rid of "TODO".
+
+2005-06-18  23:07  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Alter the way dice specs work.
+	Honor dice specs for unit explosion damage.
+	* table.def (ut_accident_damage): Change type from 'TABINT' to 
+	'TABDICE1'.
+	  (uu_damage): Change type from 'TABDICE' to 'TABDICE1'.
+	  (uu_detonation_damage_adj): Change type from 'TABINT' to 'TABDICE1'.
+	  (uu_detonation_damage_at): Change type from 'TABINT' to 'TABDICE1'.
+	  (uu_fire_damage): Change type from 'TABINT' to 'TABDICE1'.
+	  (uu_tp_damage): Change type from 'TABDICE' to 'TABDICE1'.
+	* refman.texi (Lexical Elements): Rewrite documentation on dice 
+	specs.
+	  (damage): Rewrite.
+	  (fire-damage): Rewrite.
+	  (tp-damage): Rewrite.
+	  (detonation-damage-at): Rewrite.
+	  (detonation-damage-adj): Rewrite.
+	* conq.h (dice_desc): Delete.
+	* game.h (TABDICE): Delete.
+	  (TABDICE1): New data macro. Type 1 dice table.
+	  (TABDICE2): New data macro. Type 2 dice table.
+	* misc.h (DICE): Delete.
+	  (dice1): New function macro. 
+	Decompose dice representation into Type 1 dice parts.
+	  (dice2): New function macro.
+	Decompose dice representation into Type 2 dice parts.
+	  (roll_dice): Delete.
+	  (multiply_dice): Delete.
+	  (typedef DiceRep): Typedef from 'short'.
+	  (dice1_roll_min): New function decl.
+	Minimum value from Type 1 dice.
+	  (dice2_roll_min): New function decl.
+	Minimum value from Type 2 dice.
+	  (dice1_roll_mean): New function decl.
+	Mean value from Type 1 dice.
+	  (dice2_roll_mean): New function decl.
+	Mean value from Type 2 dice.
+	  (dice1_roll_max): New function decl.
+	Maximum value from Type 1 dice.
+	  (dice2_roll_max): New function decl.
+	Maximum value from Type 2 dice.
+	  (roll_dice1): New function decl. Roll Type 1 dice.
+	  (roll_dice2): New function decl. Roll Type 2 dice.
+	  (multiply_dice1): New function decl.
+	Scale Type 1 dice by a percentage.
+	  (multiply_dice2): New function decl.
+	Scale Type 2 dice by a percentage.
+	* ai.c: Use namespace 'Xconq'.
+	  (average_damage): Call 'dice1_roll_mean' instead of 'dice_roll_mean'.
+	  (offensive_worth): Wrap detonation damage reps with calls to 
+	'dice1_roll_mean'.
+	* aiutil.h (dice_roll_min): Delete.
+	  (dice_roll_mean): Delete.
+	  (dice_roll_max): Delete.
+	* aiutil.c: Use name 'Xconq'.
+	  (dice_roll_min): Delete.
+	  (dice_roll_mean): Delete.
+	  (dice_roll_max): Delete.
+	  (type_attack_damage_max): Call 'dice1_roll_max' instead of 
+	'dice_roll_max'.
+	  (type_attack_damage_min): Call 'dice1_roll_min' instead of 
+	'dice_roll_min'.
+	  (type_fire_damage_max): Call 'dice1_roll_max' instead of 
+	'dice_roll_max'.
+	  (type_fire_damage_min): Call 'dice1_roll_min' instead of 
+	'dice_roll_min'.
+	* combat.c: Use namespace 'Xconq'.
+	  (model_1_attack): Call 'roll_dice1' instead of 'roll_dice', 
+	and make sure the result is at least 0.
+	  (maybe_hit_unit): Call 'roll_dice1' instead of 'roll_dice', 
+	and make sure the result is at least 0.
+	  (detonate_unit): Honor Type 1 dice for detonation damage.
+	* help.c: Use namespace 'Xconq'.
+	  (tb_dice_desc): Call 'dice2_desc' instead of 'dice_desc'. 
+	(TODO: Display both Type 1 and Type 2 dice correctly.)
+	* lisp.h (dice1_desc): New function decl. 
+	Get Type 1 dice spec from internal dice representation.
+	  (dice2_desc): New function decl.
+	Get Type 2 dice spec from internal dice representation.
+	* lisp.c: Use namespace 'Xconq'.
+	  (dice1_desc): New function.
+	  (dice2_desc): New function.
+	  (read_form_aux): Parse the revised dice specs. Be pickier about 
+	what is allowed.
+	  (fprint_num_or_dice): Handle both Type 1 and Type 2 dice, and 
+	use their respective dice description functions, instead of 
+	re-inventing the wheel.
+	* nlang.c (dice_desc): Delete.
+	* run2.c: Use namespace 'Xconq'.
+	  (run_accidents): Call 'roll_dice1' instead of 'roll_dice', and 
+	ensure that value is not less than 0.
+	* util.c: Use namespace 'Xconq'.
+	  (roll_dice): Delete.
+	  (multiply_dice): Delete.
+	  (dice1_roll_min): New function.
+	  (dice2_roll_min): New function.
+	  (dice1_roll_mean): New function.
+	  (dice2_roll_mean): New function.
+	  (dice1_roll_max): New function.
+	  (dice2_roll_max): New function.
+	  (roll_dice1): New function.
+	  (roll_dice2): New function.
+	  (multiply_dice1): New function.
+	  (multiply_dice2): New function.
+	* write.c: Use namespace 'Xconq'.
+	  (add_num_or_dice_to_form): Handle 'TABDICE1' and 'TABDICE2', calling 
+	their dice desc functions as appropriate.
+	* beruit.g (table damage): Remove +1 offsets.
+	* mormon.g: Likewise.
+	* flattop.g (table damage): Subtract 1 from offsets.
+	* ww2-adv.g: Likewise.
+	
+	Move another game to the bitrot archive.
+	* africa.g: Move to 'bitrot'.
+	* africa-1850.g: Likewise.
+	* game.dir: Remove entry for 'africa-1850'.
+	* bitrot/game.dir: Add entry for 'africa-1850'.
+
+2005-06-17  03:07  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix up games library to account for loss of 'indepside-can-build'.
+	* 3rd-age.g (indepside-can-build): Change to 'indepside-has-ai'.
+	* advances.g (indepside-can-build): Change to 'indepside-has-ai'.
+	* anc-near-east.g (indepside-has-ai): Set to 'true'.
+	  (indepside-can-build): Remove.
+	* lord-rings.g (indepside-can-build): Remove.
+
+2005-06-17  02:28  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Implement per-side general action restrictions.
+	Implement per-side construction restrictions.
+	Decommision Iplayer.
+	* gvar.def (g_indepside_can_build): Delete.
+	* keyword.def (K_COULD_ACT): Change to 'K_COULD_ACT_WITH', 
+	'could-act-with'.
+	  (K_COULD_BUILD): Change to 'K_COULD_BUILD', 'could-build'.
+	* refman.texi (Side Action Restrictions): New subsection and 
+	menu entry.
+	  (could-act-with): New entry.
+	  (could-construct): New entry.
+	* kernel/Makefile.in: Remove references to iplayer.
+	* kernel/iplayer.c: Delete.
+	* actions.c (can_act): Check whether the actor's side can with 
+	an unit of the agent's type.
+	  (can_create_common): Likewise.
+	  (can_build): Likewise.
+	* ai.c (register_iplayer): Remove references to this function.
+	* init.c (set_ai_for_player): Ensure that 'indepside-has-ai' is 
+	set, if indepside was assigned an AI. And unset, if no AI.
+	* plan.c (ai_victim_here): Don't check 'indepside-can-build'.
+	* read.c (fill_in_side): Handle 'K_COULD_ACT_WITH' instead of 
+	'K_COULD_ACT', and 'K_COULD_CONSTRUCT' instead of 'K_COULD_BUILD'. 
+	Fix 'K_COULD_RESEARCH' to handle atype-value list instead of 
+	utype-value list.
+	* run.c (init_movement): Only finish indpeside's turn if 
+	it does not have an AI.
+	  (unit_still_acting): Preclude unit action if side is not 
+	permitted to act with unit of its type.
+	  (unit_still_acting_without_plan): Likewise.
+	* side.h (struct a_side): Rename 'could_act' to 'could_act_with'.
+	Rename 'could_build' to 'could_construct'. Fix comment for 
+	'could_research'.
+	* side.c (create_side): Alloc and fill out 'could_act_with', 
+	'could_construct', 'could_develop', and 'could_research' fields.
+	* unit.c (can_build): Get rid of 'indepside_can_build' check.
+	  (type_can_build): Likewise.
+	  (can_build_or_help): Likewise.
+	  (can_build_type): Add check against side's 'could_construct' 
+	vector.
+	* write.c (write_side_properties): Handle 'could_act_with' instead 
+	of 'could_act', and 'could_construct' instead of 'could_build'. 
+	Fix 'could_research' case so that atype-value list is written out.
+	* tkconq.tcl (add_player_dialog_items): Change button name from 
+	"Reveal" to "Activate".
+	  (set_indepside): Ensure that the utypes can act on a side, if the 
+	side is shown, and cannot act if the side is not shown. Change 
+	button name from "Reveal" to "Activate", and "Hide" to "Deactivate".
+	  (popup_indepside_config): Handle "Act with any units" button.
+	  (ok_indepside): Likewise.
+	  (create_map_menus): Remove "Iplayer" as a choice of AI.
+	* tkmain.c (tk_set_indepside_options): Handle "Can act" button 
+	results. Also, only handle those buttons which we have args for.
+	  (tk_start_player_setup_stage): Set the value of Tcl var 
+	'set_indepside_act' based on whether indepside could act with 
+	any unit.
+
+2005-06-15  03:07  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Prepare for some new side-based action-restriction properties.
+	* keyword.def (K_COULD_ACT): New keyword, "could-act".
+	  (K_COULD_BUILD): New keyword, "could-build".
+	  (K_COULD_DEVELOP): New keyword, "could-develop".
+	  (K_COULD_RESEARCH): New keyword, "could-research".
+	* refman.texi: Update some of the documentation on side forms.
+	* side.h (struct a_side): New short int arrays: 'could_act', 
+	'could_build', 'could_develop', and 'could_research'.
+	* read.c (fill_in_side): Handle cases for new keywords by 
+	interpeting utype-value lists.
+	* write.c (write_side_properties): Handle cases for new keywords 
+	by writing out utype-value lists.
+
+	Restrict damaged terrain outcomes based on detonator type.
+	(Feature requested by Elijah.)
+	* table.def (ut_blasts_into_ttype): New TableUU, 'blasts-into-ttype'.
+	* refman.texi (blasts-into-ttype): New entry.
+	* combat.c (damaged_terrain_type): Modify to accept utype argument. 
+	Use utype to look up whether the outcome ttype is valid in the 
+	particular situation.
+	  (damage_terrain): Call 'damaged_terrain_type' with utype argument.
+
+2005-06-12  22:02  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix create check, so that some games will work properly again.
+	* actions.c (could_create): Allow creation with 0 CP to occur.
+
+	Fix bug with oproles not being unassigned when units change side.
+	* unit.c (change_unit_side): Release operational role of unit 
+	from old side.
+
+	Fix bug with construction from Tkconq UI.
+	* tkcmd.c (aux_build2): Help ensure that we are not trying to build 
+	in an invalid or incorrect transport.
+
+	Improve occs-on-completion feature.
+	* actions.c (make_unit_complete): Add incomplete occs with 0 CP 
+	instead of 1 CP.
+	* init.c (check_occs_on_completion): No longer check for cycles 
+	with incomplete units that only need 1 CP to be complete.
+
+	Polish up the Default game some more.
+	* standard.g (variant density2): Rename to 'density1' and turn it 
+	on by default.
+
+2005-06-10  02:05  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Add SF Battles Testbed to 'bitrot' archive.
+	* battles-test.g: Add to archive.
+	* game.dir: Add "battles-test" entry.
+
+2005-06-08  03:01  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Add occs-on-completion feature.
+	(Requested by Elijah and myself.)
+	* table.def (uu_complete_occs_on_completion): New TableUU,
+	'complete-occs-on-completion'.
+	  (uu_incomplete_occs_on_completion): New TableUU, 
+	'incomplete-occs-on-completion'.
+	* refman.texi (complete-occs-on-completion): New entry.
+	  (incomplete-occs-on-completion): New entry.
+	* actions.c (make_unit_complete): Add occs-on-completion 
+	functionality.
+	* init.c (check_occs_on_completion): Look for cycles in 
+	occs-on-completion graphs and produce an init error if any found.
+	  (check_game_validity): Call 'check_occs_on_completion'.
+
+	Bring docs up-to-date.
+	* refman.texi (constructor-absorbed-by): New entry.
+
+	Polish Default game a little bit.
+	* standard.g (variant model1): Rename.
+	  (variant model1doctrine): Rename.
+	  (density1): Remove.
+	* stdunit.g: Remove creation-related tables, since they are no 
+	longer used.
+
+	Remove StarFleet Battles test from games lib.
+	* battle-test.g: Delete.
+
+2005-06-07  02:38  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix colonizer-doesn't-garrision-anymore bug.
+	(I knowingly created this bug with the intent of making a new feature 
+	 to fix it. This patch contains the new feature.)
+	* table.def (uu_constructor_absorbed_by): New TableUU, 
+	'constructor-absorbed-by'.
+	* actions.c (do_create_common_2): Only absorb creator into creation 
+	if 'uu_constructor_absorbed_by' is set.
+	  (do_build_action): Only absorb builder into completed unit 
+	if 'uu_constructor_absorbed_by' is set.
+	* 3rd-age.g (constructor-absorbed-by): New table.
+	* advances.g: Likewise.
+	* bolodd2.g: Likewise.
+	* bolodd3.g: Likewise.
+	* civ2.g: Likewise.
+	* solar.g: Likewise.
+	* time.g: Likewise.
+	
+	Add test for merge "action" to AI.
+	* aiunit.cc (can_create_in): Check whether colonizer can merge 
+	into colonists or not.
+
+2005-06-07  00:17  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix crashing bug in skelconq.
+	(Reported by an anonymous user.)
+	* skelconq.c (main): Only check command-line args for auto-tester 
+	invocation, if there are command-line args. (I could have sworn 
+	that this bug had been reported and fixed before.)
+
+2005-06-06  02:50  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Merge from 'MPT_EMCDONALD_AI_6' to 'MPT_EMCDONALD_AI_7'.
+	Many non-AI-related changes included in this merge.
+	* changelogs/ChangeLog-EMCDONALD_AI: Move from top-level dir. 
+	Branch can continue using this file in top-level, but we wish to 
+	stow it away in 'changelogs' dir in the trunk.
+
+2005-05-01  13:08  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fixes to Opal Heroes.
+	(From Elijah.)
+	* opal-heroes.g
+
+2005-05-01  01:40  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	New make targets.
+	* Makefile.in (bz2dist): New target. Creates a .tar.bz2 dist of 
+	the latest CVS sources.
+	  (lzmadist): New target. Creates a .7z (7-Zip LZMA) dist of the 
+	latest CVS sources.
+
+	Make some Sdlconq-related config changes.
+	* configure.in: Comment out tests for Freetype or ParaGUI. 
+	* configure: Regenerated from 'configure.in'.
+	* sdl/Makefile.in: Use SDL compiler and linker flags directly 
+	from the SDL variables rather than from the ParaGUI variables.
+	* sdlconq.h: Ifdef out ParaGUI includes.
+
+2005-04-30  23:20  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Merge from 'MPT_EMCDONALD_AI_5' to 'MPT_EMCDONALD_AI_6'.
+	Many non-AI-related changes included in this merge.
+	* changelogs/ChangeLog-EMCDONALD_AI: Move from top-level dir. 
+	Branch can continue using this file in top-level, but we wish to 
+	stow it away in 'changelogs' dir in the trunk.
+
+2005-04-19  02:13  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix compilation with optimization flags set.
+	(Bug reported by David Ronis. Thanks David.)
+	* unit.c (could_be_on): Remove 'inline' inidicator.
+
+2005-04-16  02:34  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Updated image from Elijah.
+	* battles1.gif
+
+2005-04-16  01:13  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Merge from 'MPT_EMCDONALD_AI_4' to 'MPT_EMCDONALD_AI_5'.
+	* changelogs/ChangeLog-EMCDONALD_AI: Move from top-level dir. 
+	Branch can continue using this file in top-level, but we wish to 
+	stow it away in 'changelogs' dir in the trunk.
+
+2005-04-09  16:03  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Help the AI consider the new 'detonate-with-attack' uprop.
+	* ai.c (offensive_worth): Consider automatic detonations with 
+	attack in addition to explicit detonation actions.
+
+2005-04-09  05:25  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Vastly improve AI performance.
+	* plan.c (plan_offense): Free up any goals that have been met 
+	or cannot be met. Give 1/5 chance for replan and 4/5 chance for 
+	reserve if nothing was able to be done in the given plan. (This 
+	may be need to be adjusted. Also, mobile units should be given 
+	the opportunity to shift theaters once plan-like logic is on 
+	AI side.)
+	  (plan_offense_support): Likewise.
+	  (plan_defense): Likewise.
+	  (plan_explore): Likewise.
+	  (plan_explorer_support): Likewise.
+	  (plan_colonizer): Likewise.
+	  (plan_colonization_support): Likewise.
+	  (plan_improve): Likewise.
+	  (execute_plan): Reduce cap on per-turn executions of a plan from 
+	1000 to 200.
+	* run.c (move_one_unit_multiple): Restore old logic structure for 
+	dealing with ACP-indep units. This makes sure that ACP-indep units 
+	return 0, whether or not they can build.
+
+2005-04-06  02:16  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	New features: enhance unit combat experience and side treasuries 
+	depending on combat outcomes.
+	(Patch from Elijah Meeks; modified by me.)
+	* table.def (uu_cxp_per_destroy): New table, 'cxp-per-destroy'.
+	  (um_treasury_gain_per_destroy): New table, 
+	'treasury-gain-per-destroy'.
+	  (um_treasury_gain_per_create): New table, 
+	'treasury-gain-per-create'.
+	  (um_treasury_gain_per_capture): New table,
+	'treasury-gain-per-capture'.
+	  (um_treasury_loss_per_destroyed): New table,
+	'treasury-loss-per-destroyed'.
+	  (um_treasury_loss_per_create): New table,
+	'treasury-loss-per-create'.
+	  (um_treasury_loss_per_captured): New table,
+	'treasury-loss-per-captured'.
+	* utype.def (u_detonate_with_attack): New uprop, 
+	'detonate-with-attack'.
+	* refman.texi (treasury-gain-per-create): New entry. Not yet 
+	implemented.
+	  (treasury-loss-per-create): New entry. Not yet implemented.
+	  (cxp-per-destroy): New entry. 
+	  (treasury-gain-per-destroy): New entry. 
+	  (treasury-loss-per-destroyed): New entry.
+	  (treasury-gain-per-capture): New entry.
+	  (treasury-loss-per-captured): New entry.
+	  (detonate-on-attack): New entry.
+	* combat.c (maybe_hit_unit): Add support for detonation upon 
+	melee attack.
+	  (hit_unit): Add support for treasury bonuses and penalties as a 
+	result of unit destruction. Also add support for attacker gaining 
+	combat experience as a result of destroying another unit.
+	  (capture_unit): Add support for treasury bonueses and penalties 
+	as a result of unit capture.
+
+2005-04-05  01:51  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Merge from 'MPT_EMCDONALD_AI_3' to 'MPT_EMCDONALD_AI_4'.
+	* changelogs/ChangeLog-EMCDONALD_AI: Move from top-level dir. 
+	Branch can continue using this file in top-level, but we wish to 
+	stow it away in 'changelogs' dir in the trunk.
+
+2005-04-01  02:17  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Merge from 'MPT_EMCDONALD_AI_2' to 'MPT_EMCDONALD_AI_3'.
+	* changelogs/ChangeLog-EMCDONALD_AI: Move from top-level dir. 
+	Branch can continue using this file in top-level, but we wish to 
+	stow it away in 'changelogs' dir in the trunk.
+
+2005-03-29  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	Fix crashing bug when no isometric image nor tile has been defined
+	for a terrain type.
+	* imf.c (best_image_in_range): As a last resort, try to make a flat
+	colour when there's no tile nor scaling candidate.
+
+2005-03-28  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Add support for developing with Dev-C++ on Windows.
+	* pkg/README_devcpp_w32.rtf: New documentation file.
+	* pkg/devcpp_w32_SFX.exe: New Win32 self-extractor program.
+
+2005-03-28  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Merge from 'MPT_EMCDONALD_AI_1' to 'MPT_EMCDONALD_AI_2'.
+	* changelogs/ChangeLog-EMCDONALD_AI: Move from top-level dir. 
+	Branch can continue using this file in top-level, but we wish to 
+	stow it away in 'changelogs' dir in the trunk.
+
+2005-03-21  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Merge from root of 'BRANCH_EMCDONALD_AI' to 'MPT_EMCDONALD_AI_1'.
+	* changelogs/ChangeLog-EMCDONALD_AI: Move from top-level dir. 
+	Branch can continue using this file in top-level, but we wish to 
+	stow it away in 'changelogs' dir in the trunk.
+
+2005-03-21  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Merge from 'MPT_MSKALA_SUPPLY_2' to 'MPT_MSKALA_SUPPLY_3'.
+	* changelogs/ChangeLog-MSKALA_SUPPLY: Move from top-level dir. 
+	Branch can continue using this file in top-level, but we wish to 
+	stow it away in 'changelogs' dir in the trunk.
+
+2005-03-14  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Merge from 'MPT_MSKALA_SUPPLY_1' to 'MPT_MSKALA_SUPPLY_2'.
+	* changelogs/ChangeLog-MSKALA_SUPPLY: Move from top-level dir. 
+	Branch can continue using this file in top-level, but we wish to 
+	stow it away in 'changelogs' dir in the trunk.
+
+2005-03-12  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix crashing bug with restored games that have only one side.
+	* cmdline.c (set_players_from_options): Do not attempt to access 
+	the 'next' member of a NULL player.
+
+	Partially fix a bug with the scaling of connections.
+	(Bug reported by Matthew.)
+	* imf.c (scale_image): Copy over 'isconnection' and other fields 
+	from original image to scaled image. (Note: The bug is still not 
+	fixed, but at least now the behavior is consistent whether grid 
+	is on or not. Also, the SDL interface now correctly displays the 
+	scaled image (as opposed to drawing nothing as it would have 
+	before this fix), and so it would not appear to be a problem with 
+	the interface-indep code. The remaining problem could be in the 
+	'tkimg' that corresponds to the generic Image.)
+
+	Fix crashing bugs with uviews that have no associated images.
+	* ui.c (can_use_oversized_img): Return FALSE if the uview has 
+	no IMF.
+	* sdlmap.cc (draw_unit_image): Do not attempt to draw image 
+	effects or decorations if the image is NULL.
+	* tkmap.c (draw_unit_image): Likewise.
+
+2005-03-08  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix isometric drawing of connections on Windows.
+	(Bug reported by Elijah.)
+	* tkmap.c (draw_connections_iso): Align "mask" with image so that 
+	connections do not appear to float.
+
+2005-03-06  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Make Windows installer install doc files with '.html' extension 
+	rather '.htm' extension.
+	* xconq.nsi.in: Do not rename files from '.html' to '.htm'.
+
+	Updates from Elijah.
+	* battles1.gif, dg_abyss.gif, awls-rules.g, battles.g, conquest.g, 
+	opal-heroes.g, opal-rules.g, opal.g, u-opal.g, u-val-beach-2.g, 
+	u-val-beach.g, valhalla-beach.g, valhalla.g: Update.
+
+2005-03-05  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Continue building up AI analysis of scorekeepers.
+	* aiscore.h (AI_SKANode_UpropInt): Replace 'uprop_int' member with 
+	'upropname' member.
+	  (AI_SKANode_UpropInt::construct): Add 3 parameters.
+	  (AI_SKANode_UpropInt::merge_or_insert_into_list): New prototype.
+	  (AI_SKAnalysis): Many new members.
+	* aiscore.cc (AI_SKANode_UpropInt::init): Use uprop name instead 
+	of getter function.
+	  (AI_SKANode_UpropInt::construct): Add 3 parameters to constructor 
+	for initializing the side-and-utypes table, and for setting the 
+	uprop name.
+	  (AI_SKANode_UpropInt::copy_to): Use uprop name instead of getter 
+	function.
+	  (AI_SKANode_UpropInt::merge_or_insert_into_list): New static 
+	function. Add a new 'AI_SKANode_UpropInt' if no existing one matches 
+	its upropname or if the list if NULL. Else, merge the side-and-utype 
+	tables between new node and existing node.
+	  (AI_SKAnalysis::init): Properly init all members.
+	  (AI_SKAnalysis::copy_to): Properly deep copy all members.
+	  (AI_SKAnalysis::destroy): Properly dealloc all members.
+	  (analyze_sk_sum_uprop_test): Implement.
+
+2005-03-04  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug in the reporting of the nearest unit under mouse cursor.
+	(This fix is a bit hackish. It will hopefully be improved during 
+	the development of the formal UI API.)
+	* ui.h (find_uview_at_pixel): New prototype.
+	  (find_uview_at_pixel): New prototype.
+	* ui.c (find_uview_at_pixel): New function. Recursively check 
+	occ uviews to see if any are at pixel. If not, then check uview 
+	itself to see if it is at pixel.
+	  (find_uview_at_pixel): New function. Check all members of a uview 
+	stack to if any are at pixel.
+	  (nearest_unit_view): Call 'find_uview_at_pixel' instead of 
+	'find_unit_view_at'.
+	* sdlmap.cc (x_nearest_unit): Call 'nearest_unit_view' and then 
+	return associated unit. Ifdef out code that attempts to do 
+	duplicate 'nearest_unit'.
+	* tkmap.c (x_nearest_unit): Likewise.
+
+2005-03-01  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug in automatic repair materials consumption.
+	(I woke up embarassed by it this morning.)
+	* run2.c (auto_repair_unit): Do not consume any materials until 
+	all materials checks have passed.
+
+2005-03-01  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Make sure that 'consumption-per-repair' is applied during 
+	auto-repair.
+	(Bug reported by Matthew.)
+	* run2.c (auto_repair_unit): Check to see if any material 
+	consumed while repairing is sufficient for the repair to take 
+	place. If yes, then consume the correct amount of that material 
+	if the consumption requirement is > 0. (Note: ACP-indep/automatic 
+	repair should be handled through the regular action code in the 
+	same way that automatic upgrades are handled through the change-
+	type code.)
+
+2005-03-01  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Attempt a fix to a transport entry bug.
+	(Bug reported by Matthew.)
+	* move.c (total_entry_cost): If movement is within same cell, then 
+	do not charge a cell departure cost. However, a cell entry cost 
+	may still be charged; this allows a game designer to simulate 
+	a charge for an unit moving from one transport to another within 
+	the cell. (These changes should not affect existing games.)
+
+2005-02-28  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Do some housecleaning.
+	* score.c (eval_sk_form): Delete old ifdeffed out version.
+	  (sum_property): Likewise.
+	  (eval_sk_test): Likewise.
+
+2005-02-28  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Continue building the AI's scorekeeper analysis.
+	* aiscore.h (struct AI_SKAnalysis): Many new members.
+	  (analyze_sk_arith_gt_test): New prototype.
+	  (analyze_sk_arith_ge_test): Likewise.
+	  (analyze_sk_arith_lt_test): Likewise.
+	  (analyze_sk_arith_le_test): Likewise.
+	  (analyze_sk_arith_ne_test): Likewise.
+	  (analyze_sk_arith_eq_test): Likewise.
+	  (analyze_sk_bool_and_test): Likewise.
+	  (analyze_sk_bool_or_test): Likewise.
+	* aiscore.cc (AI_SKAnalysis::init): Initialize more new fields.
+	  (AI_SKAnalysis:;destroy): Free dynamic arrays.
+	  (AI_SKAnalysis::search_test_ops_for): New member function. 
+	Search the stack/list of test ops.
+	  (analyze_sk_sum_uprop_test): Make parameter list conform to 
+	draft 2 framework. (Still need to implement.)
+	  (analyze_sk_turn_test): Rewrite according to draft 2 framework.
+	  (analyze_sk_score_test): Rewrite according to draft 2 framework.
+	  (analyze_sk_arith_op_test): Implement. Analyze arithmetic 
+	operators forms in scorekeeper.
+	  (analyze_sk_arith_gt_test): New function. Analyze '>' forms in 
+	scorekeeper.
+	  (analyze_sk_artih_ge_test): New function. Analyze '>=' forms in 
+	scorekeeper.
+	  (analyze_sk_arith_lt_test): New function. Analyze '<' forms in 
+	scorekeeper.
+	  (analyze_sk_arith_le_test): New function. Analyze '<=' forms in 
+	scorekeeper.
+	  (analyze_sk_arith_ne_test): New function. Analyze '/=' forms in 
+	scorekeeper.
+	  (analyze_sk_arith_eq_test): New function. Analyze '=' forms in 
+	scorekeeper.
+	  (analyze_sk_arith_comp_test): Finish implementing. Analyze 
+	arithmetic comparison forms in scorekeeper.
+
+2005-02-27  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Provide unimplemented 'free-acp' feature.
+	("Unimplementedness" reported by Matthew.)
+	* actions.c (has_enough_acp): Add 'free-acp' to current ACP when 
+	checking action's ACP debt.
+	* refman.texi (free-acp): Rewrite entry for clarity.
+
+2005-02-26  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug which caused combat experience and morale to be recycled 
+	from a previous dead unit.
+	(Cxp bug reported by Elijah.)
+	* unit.c (create_unit): Zero combat experience and morale.
+
+2005-02-25  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Properly fix Texinfo sources.
+	* refman.texi (backdrop-ignore-doctrine): Use the 'code' keyword 
+	to wrap the name in the definition.
+
+2005-02-25  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug in Texinfo sources so that they compile again.
+	* refman.texi (backdrop-ignore-doctrine): Remove stray "in-length" 
+	in front of definition name.
+
+2005-02-23  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Add 'economy.c' from 'BRANCH_MSKALA_SUPPLY'. I forgot to remove 
+	its sticky tag before committing the merge.
+	* economy.c: New file.
+
+2005-02-23  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Merge from root of 'BRANCH_MSKALA_SUPPLY' to 
+	'MPT_MSKALA_SUPPLY_1'.
+	* changelogs/ChangeLog-MSKALA_SUPPLY: Move from top-level dir. 
+	Branch can continue using this file in top-level, but we wish to 
+	stow it away in 'changelogs' dir in the trunk.
+
+2005-02-23  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix freezing on some versions of multithreaded Tcl.
+	* tkamin.c (ui_mainloop): Block on 'Tcl_DoOneEvent'.
+
+2005-02-22  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Continue building up the AI's scorekeeper analysis.
+	(Second draft. Much cleaner. Getting fairly close to the point 
+	 where things can be hooked in.)
+	* ai.c (create_ai_sk_analysis): Delete. No longer needed.
+	* ai.h (struct a_ai_sk_analysis): Transplant to 'aiscore.h' with 
+	major rewrite.
+	  (AI_SKA_*): Transplant these macros to 'aiscore.h'.
+	  (AI_SKT_*): Likewise.
+	  (AI_SKT_ARITH_COMPARISONS): Transplant to 'aiscore.h'.
+	  (AI_SKT_ARITH_OPERATIONS): Likewise.
+	* mplayer.c (analyze_sk_turn_test): Transplant to 'aiscore.cc'.
+	  (analyze_sk_score_test): Likewise.
+	  (analyze_sk_sum_uprop_test): Likewise.
+	  (analyze_sk_test): Transplant most parts to 'aiscore.cc'. Ifdef 
+	out rest, awaiting transplant.
+	  (analyze_sk_action): Transplant to 'aiscore.cc'.
+	  (analyze_scorekeeper): Transplant to 'aiscore.cc'.
+	* aiscore.h: New header file. Fully "Doxgenated" documentation 
+	included.
+	  (enum AI_SKANKind): Kinds of AI scorekeeper analysis nodes.
+	  (struct AI_SKANode): Abstract base struct for scorekeeper analysis 
+	nodes.
+	  (struct AI_SKANode_UpropInt): Public subclass of 'AI_SKANode'. 
+	Scorekeeper analysis node for integer uprops with side/utype filters.
+	  (struct AI_SKANode_TestOp): Public subclass of 'AI_SKANode'.
+	Scorekeeper analysis node for test operators.
+	  (struct AI_SKAnalysis): Transplant from 'ai.h' with major 
+	rewrite.
+	  (AI_SK_*): Macros related to general properties of a scorekeeper 
+	analysis.
+	  (AI_SKA_*): Transplant from 'ai.h'.
+	  (AI_SKT_*): Likewise.
+	  (analyze_sk_turn_test): Function prototype.
+	  (analyze_sk_score_test): Likewise.
+	  (analyze_sk_sum_uprop_test): Likewise.
+	  (analyze_sk_artih_op_test): Likewise.
+	  (analyze_sk_arith_comp_test): Likewise.
+	  (analyze_sk_bool_comp_test): Likewise.
+	  (analyze_sk_when_test): Likewise.
+	  (analyze_sk_always_true_test): Likewise.
+	  (analyze_sk_test): Likewise.
+	  (analyze_sk_if_action): Likewise.
+	  (analyze_sk_action): Likewise.
+	  (analyze_scorekeeper): Likewise.
+	* aiscore.cc: New implementation file. Fully "Doxygenated" 
+	documenation included.
+	  (AI_SKANode::init): Static function. Initializer.
+	  (AI_SKANode::copy_to): Member function. Deep copier.
+	  (AI_SKANode_UpropInt::init): Static function. Initializer.
+	  (AI_SKANode_UpropInt::construct): Static function. 'xmalloc'-using 
+	"constructor". (Note: We are not yet in a position to intercept 
+	a 'bad_alloc' object should one be thrown. Also, 'xmalloc' tracks 
+	memory allocation stats for us. 'new' does not.)
+	  (AI_SKANode_UpropInt::copy_to): Member function. Deep copier.
+	  (AI_SKANode_UpropInt::clone): Member function. "Copy constructor".
+	  (AI_SKANode_UpropInt::clone_list): Member function. List 
+	"copy constructor".
+	  (AI_SKANode_UpropInt::destroy): Static function. "Destructor".
+	  (AI_SKANode_UpropInt::destroy_list): Static function. List 
+	"destructor".
+	  (AI_SKANode_TestOp::init): Static function. Initializer.
+	  (AI_SKANode_TestOp::construct): Static function. 'xmalloc'-using 
+	"constructor". 
+	  (AI_SKANode_TestOp::copy_to): Member function. Deep copier.
+	  (AI_SKANode_TestOp::clone): Member function. "Copy constructor".
+	  (AI_SKANode_TestOp::clone_list): Member function. List 
+	"copy constructor".
+	  (AI_SKANode_TestOp::destroy): Static function. "Destructor".
+	  (AI_SKANode_TestOp::destroy_list): Static function. List 
+	"destructor".
+	  (AI_SKAnalysis::init): Static function. Initializer.
+	  (AI_SKAnalysis::construct): Static function. "Constructor".
+	  (AI_SKAnalysis::copy_to): Member function. Deep copier.
+	  (AI_SKAnalysis::clone): Member function. "Copy constructor".
+	  (AI_SKAnalysis::destroy): Static function. "Destructor".
+	  (AI_SKAnalysis::push_test_op): Member function. Push an operator 
+	onto the stack of test operators.
+	  (AI_SKAnalysis::pop_test_op): Member function. Pop an operator 
+	from the stack of test operators.
+	  (analyze_sk_turn_test): Transplant from 'mplayer.c'. (Needs to 
+	be rewritten for the new "draft 2" framework.)
+	  (analyze_sk_score_test): Likewise.
+	  (analyze_sk_sum_uprop_test); Likewise.
+	  (analyze_sk_arith_op_test): Analyze arithmetic operator forms. 
+	(Needs to be implemented.)
+	  (analyze_sk_arith_comp_test): Analyze arithmetic comparison forms.
+	(Needs to be implemented.)
+	  (analyze_sk_bool_or_test): Analyze boolean 'or' form.
+	  (analyze_sk_bool_and_test): Analyze boolean 'and' form.
+	  (analyze_sk_bool_comp_test): Analyze boolean comparison forms.
+	  (analyze_sk_when_test): Analyze "when" conditions. (Needs to 
+	be implemented.)
+	  (analyze_sk_always_true_test): Analyze actions/outcomes in light 
+	of a test always yielding true.
+	  (analyze_sk_test): Transplant from 'mplayer.c'. Major rewrite.
+	  (analyze_sk_if_action): Analyze 'if' forms.
+	  (analyze_sk_action): Transplant from 'mplayer.c'. Major rewrite.
+	  (analyze_scorekeeper): Transplant from 'mplayer.c'. Minor rewrite.
+
+2005-02-20  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Continue building up the AI's scorekeeper analysis.
+	(Note that I will likely be moving this mass of new code to a 
+	 separate, new file or two.)
+	(Also note that this is the first draft. We will likely need to 
+	 handle disjoint sets of utypes and whatnot in the future. We will 
+	 also probably want to make things more accurate and less like 
+	 guesswork by passing additonal analysis info up and down the 
+	 parse tree.)
+	* ai.h (AI_SKAnalysis): New fields for tracking more quantities of 
+	interest. (This will probably be reworked soon.)
+	  (AI_SKActionType): Delete. Replace with individual power-of-2 
+	macros.
+	  (AI_SKTestType): Likewise.
+	  (AI_SKT_ARITH_COMPARISONS): Inclusive-or of all arithmetic 
+	comparison flags.
+	  (AI_SKT_ARITH_OPERATIONS): Inclusive-or of all arithmetic 
+	operation flags.
+	* mplayer.c (analyze_sk_turn_test): New analyzer for handling 
+	actions related to a test on the 'turn' keyword.
+	  (analyze_sk_score_test): New analyzer for handling actions 
+	related to a test on the 'score' keyword.
+	  (analyze_sk_sum_uprop_test): New analyzer for handling actions 
+	related to a test on the 'sum-uprop' keyword. (Need to finish 
+	implementing.)
+	  (analyze_sk_test): Fill out. Handle all sorts of things based on 
+	action flags. Plenty of recursive analysis into subforms. 
+	(Need to break this function up. It is a monster.)
+	  (analyze_sk_action): Tweak a few things as far as giving arguments 
+	is concerned.
+	  (analyze_scorekeeper): Tweak the giving of arguments so that the 
+	"master test" object is 't'.
+
+2005-02-19  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Improve documentation wrt construction consuming from treasury.
+	* refman.texi (takes-from-treasury): Mention how this works when 
+	an unit has storage capacity for a material and when it doesn't.
+
+2005-02-19  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Improve wrt the sun position calculation.
+	* refman.texi (axial-tilt): Mention how this affects the sun's 
+	initial position.
+	  (initial-year-part): Likewise.
+	  (initial-day-part): Likewise.
+	* run2.c (compute_sun): Remove some ifdeffed out code. Simplify the 
+	latitudinal correction. Account for 'initial-year-part'.
+
+2005-02-19  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix long-standing issue with not being able to add values lists 
+	as properties to each element of types lists.
+	(Complaint made by Lincoln Peters. This has also bothered me for 
+	ages. Don't know why I didn't address it sooner.)
+	* lisp.h (is_quoted_lisp): New prototype.
+	* lisp.c (is_quoted_lisp): New function. Is the GDL object a 
+	quoted one?
+	* read.c (add_properties): Do not eval quoted GDL objects.
+	  (add_to_utypes): Only process a values list if it is unquoted, 
+	otherwise treat it like an atom after unwrapping it from 'quote'.
+	  (add_to_mtypes): Likewise.
+	  (add_to_ttypes): Likewise.
+	  (add_to_atypes): Likewise.
+
+	Quoting the 'possible-sides' list has not been needed since an earlier 
+	fix to the boolean expression evaluator, IIRC. Now that the new 
+	quoted list property handling is in place, it is important to 
+	demand that the 'possible-sides' list is unquoted. Therefore, fix 
+	games in the library where this is an issue.
+	* cave2.g: Remove quote in front of boolean expression form.
+	* lhsunit.g: Likewise.
+	* logunit.g: Likewise.
+	* postmodern.g: Likewise.
+	* russian-rev.g: Likewise.
+	* stdunit.g: Likewise.
+
+	Add new IMF for a purely blank image.
+	(Thanks to Simon Cox for this contribution.)
+	* imf.dir (blank): Find in 'province.imf'.
+	* province.imf: New file. Defines a purely blank image.
+
+2005-02-19  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug with potential colonizers falling into the passive plan 
+	because they cannot yet create anything that can create them.
+	(Bug reported by Elijah.)
+	* ai.h (assign_to_colonize): Return int instead of nothing.
+	* ai.c (assign_to_colonize): Return int indicating whether 
+	assignment was successful or not. Do not assign passive plan upon 
+	failure.
+	* iplayer.c (iplayer_decide_plan): Only return if a colonization 
+	plan was successfully assigned.
+	* mplayer.c (mplayer_decide_plan): Likewise.
+
+2005-02-15  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug that prevented death-by-detonation from having the 
+	'wrecked-type-if-killed' table apply.
+	(Bug reported by Elijah.)
+	* kernel.h (reckon_damage_around): Take additional parameter.
+	* combat.c (reckon_damage_around): Take additional parameter for 
+	the detonating unit. Set the static variable 'tmp_unit_detonator' 
+	to the detonating unit. (Note: This should be replaced with the 
+	parambox stuff.)
+	  (reckon_damage_here): Use the 'tmp_unit_detonator' variable 
+	when calling 'damage_unit'.
+	  (do_detonate_action): Call 'reckon_damage_around' with the 
+	detonating unit as the new argument.
+	* move.c (detonate_on_approach_around): Likewise.
+	* run2.c (run_detonation_accidents): Likewise.
+
+	Lay foundation for scorekeeper analysis by AI.
+	* ai.h (struct a_strategy): Add 'sk_analyses' slot.
+	  (struct a_ai_sk_analysis): New struct for AI scorekeeper record.
+	Typedef to 'AI_SKAnalysis'.
+	  (enum a_ai_sk_action_type): New enum for AI scorekeeper analysis.
+	Typedef to 'AI_SKActionType'.
+	  (enum a_ai_sk_test_type): New enum for AI scorekeeper analysis.
+	Typedef to 'AI_SKTestType'.
+	  (create_ai_sk_analysis): New prototype.
+	* ai.c (create_ai_sk_analysis): New function. Create and initialize 
+	a new scorekeeper analysis record for an AI.
+	* mplayer.c (analyze_the_game): Make the AI still try even if no 
+	scorekeepers apply to it.
+	  (analyze_sk_test): New function. Analyze a scorekeeper test 
+	on behalf of the AI, and fill out a scorekeeper analysis according 
+	to what is learned from the test and the action flags. 
+	[Still needs to filled out.]
+	  (analyze_sk_action): New function. Analyze a scorekeeper action 
+	on behalf of the AI, and set action flags accordingly.
+	  (analyze_scorekeeper): New function. Analyze a scorekeeper on 
+	behalf of the AI.
+	  (determine_subgoals): A few tweaks which are likely to replaced 
+	once the new scorekeeper analysis functionality is hooked in.
+	* score.h (should_try_to_win): Delete prototype. No longer used.
+	* score.c (should_try_to_win): Delete function. No longer used.
+
+	Fix bug in scorekeeper parsing.
+	* score.c (eval_sk_form): Properly handle else clause of 'if' 
+	keyword.
+
+	Fix bug in documenation of 'change-type' action.
+	(Bug reported by Simon Cox.)
+	* refman.texi (material-to-change-type): Rewrite so that the 
+	correct unit is indicated.
+
+2005-02-14  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix crashing bug in unit view code.
+	(Bug reported by Elijah.)
+	* side.c (see_cell): Make sure that we do not attempt to mistake 
+	an unit view that is not new.
+
+	Fix small calculation error in solar yearlong latitude correction.
+	* run2.c (compute_sun): Latitude cells should be computed out of 
+	1/4 circumference not 1/2.
+
+2005-02-13  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Add documentation for the 'vision-bend' replacement.
+	* refman.texi (Line of Sight): Remove entry for 'vision-bend'. 
+	Replace with 'can-see-behind'.
+
+2005-02-13  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug in ACP-indep construction.
+	(Bug reported by Matthew.)
+	* run.c (run_construction): If an unit is out of some material 
+	and has built on the unit that turn, then report this as a 
+	problem and cease attempting to build. (If the builder later gets 
+	more of the necessary supply, then building can be resumed.) Also, 
+	fix another bug that I found while working on Matthew's bug: 
+	materials are consumed before it is certain that the build action 
+	succeeds. To fix this, we simply move the consumption of any 
+	materials to after the action, and only consume if it was 
+	successful.
+
+	(Note: The ACP-indep construction code in its present form is a 
+	pile of crap. It is in need of a serious rewrite.)
+
+2005-02-13  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix oddity with the 'vision-bend' uprop.
+	(Oddity reported by Matthew Skala.)
+	* utype.def (u_vision_bend): Rename to 'u_can_see_behind', 
+	'can-see-behind'.
+	* help.c (describe_utype): Use 'u_can_see_behind' instead of 
+	'u_vision_bend'.
+	* side.c (init_view): Likewise.
+	  (cover_area_1): Likewise.
+	* battles.g, beirut.g, bolodd2.g, bolodd3.g, cav.g, cave2.g, 
+	colonizer.g, gettysburg.g, metz-1994.g, panzer.g, pgu.g, 
+	solar.g, space.g: Replace 'vision-bend' with 'can-see-behind'.
+
+2005-02-12  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bugs in calculation of sunlit regions.
+	(Bug report from Lincoln Peters.)
+	* run2.c (compute_sun): Make sure that the sun position wraps in 
+	the x direction. There was a problem with the sun going off map in 
+	that direction, which should never happen. Also, ifdef out wacky 
+	sun y position calculation. Make new sun y position calc based on 
+	yearlength rather than daylength; use triangle wave approx to 
+	sine wave.
+
+2005-02-12  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	One last mod to 'transfer-parts'.
+	* table.def (uu_can_transfer_parts): Change default from true to 
+	false, since the default for 'u_acp_to_transfer_parts' was 0 when 
+	0 prevented the action from occuring. This does not appear to 
+	affect existing games, since Napoleon is the only one that 
+	actually uses parts. (Voyages and WWII Pacific - Division Level 
+	declare some units as having parts but apparently do not use the 
+	parts in the parts transfer context.)
+
+2005-02-12  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Modify transfer parts action some more.
+	* table.def (uu_transfer_parts): Rename to 'uu_can_transfer_parts_to', 
+	'can-transfer-parts-to'.
+	* actions.c (check_transfer_part_action): Use 
+	'can-transfer_parts_to' instead of old table name. Remove 
+	restriction that the action must require ACP.
+	* napoleon.g (transfer-parts): Use 'can-transfer-parts-to' instead 
+	of old name.
+
+	Relax the "ACP left" check.
+	* actions.c (has_acp_left): If the action does not require ACP, 
+	then we don't care if the actor has ACP. (Note: This may cause bugs. 
+	I ran a few test games and didn't see any problems, but that 
+	doesn't mean that there aren't any.)
+
+	Update documentation.
+	* refman.texi (Scorekeeper Examples): Polish a few examples.
+	  (Transfer Parts Action): Document 'can-transfer-parts-to', and 
+	update other parts of this documentation.
+
+2005-02-11  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug with the 'transfer-part' action.
+	(Bug report from Lincoln Peters.)
+	* table.def (uu_transfer_parts): New TableUU, 'transfer-parts', 
+	which determines which units can transfer parts to one another. 
+	True by default, for backward compatibility.
+	* actions.c (check_transfer_part_action): If the target unit is 
+	not NULL, then verify that is of type that is compatible with the 
+	donor unit. Also, check if the target unit can even have parts. 
+	If not, then it should not be a recipient? Maybe. For now, this 
+	is true, probably until someone complains that he/she would like to 
+	be able to reinforce a non-partitioned unit from a partitioned one.
+	* napoleon.g (transfer-parts): New table. Restrict part transfers 
+	to units of the same type since the parts take different amounts of 
+	CP to produce and they are militarily dissimilar.
+
+2005-02-10  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug with 'see-always' units not being seen when terrain is 
+	known.
+	(Bug report from ksbrace00 and Elijah Meeks.)
+	* side.c (side_sees_unit): Test to see if the unit is always seen 
+	and if it is on known terrain.
+	  (side_sees_image): Likewise.
+	  (see_cell): Remove some old ifdeffed out code.
+
+2005-02-07  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	Fix bug in adjacent-terrain-border and adjacent-terrain-connection.
+	* mkterr.c (fix_adjacent_terrain): Don't delete borders/connections
+	from layers that don't already exist and so force layer creation.
+
+2005-02-07  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Updates from Elijah's families of games.
+	(Thanks Elijah.)
+	* battles1.gif: Update.
+	* u-val-beach-2.g: New support file for Valhalla Beach.
+	* u-val-beach.g: Update.
+	* awls-rules.g: Update.
+	* valhalla.g: Update.
+	* korea-2006.g: Update.
+	* valhalla-beach.g: Update. Includes a 2-player variant.
+
+	New solar system terrain generator, star namer, and images.
+	(Thanks Matthew.)
+	* solar.g: Solar system generator.
+	* ng-star.g: Name generator for various celestial objects.
+	* solar.gif: New "space" images.
+	* thinline.gif: Solar system orbit connectors.
+
+2005-02-07  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Finish scorekeeper improvements (for now).
+	* refman.texi (Scorekeepers): Clean up various sections. Add more 
+	examples. Document new 'score' keyword.
+	* keyword.def (K_SCORE): New keyword, 'score'.
+	* score.h (sum_property): Delete prototype.
+	  (sum_uprop): New prototype.
+	* score.c (sum_uprop): New function. Sums an uprop over all of 
+	specified utypes.
+	  (eval_sk_test): Hook in support for 'K_SUM_UPROP' and 'K_SCORE'.
+	  (eval_sk_form): Hook in support for 'K_SET_SCORE',
+	'K_ADD_SCORE', 'K_WIN', 'K_LOSE', and 'K_END'.
+	  (sum_property): Ifdef out.
+
+	New util function for flagging an array of utypes based on a GDL 
+	object.
+	* kernel.h (fill_utype_array_from_lisp): New prototype.
+	* unit.c (fill_utype_array_from_lsip): New function.
+
+2005-02-06  Matthew Skala  <mskala@ansuz.sooke.bc.ca>
+
+	Automated generation of connections based on adjacent terrain.
+	* table.def (adjacent-terrain-connection): New table.
+	  (adjacent-terrain-connection-chance): New table.
+	* refman.texi (Terrain Compatibility): Document new tables.
+	* mkterr.c (fix_adjacent_terrain): Implement new feature.
+
+2005-02-06  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	More scorekeeper improvements.
+	* refman.texi (Language Syntax): Add new menu nodes and subsections 
+	for "Arithmetic Comparisons" and "Boolean Comparisons". Change 
+	"Arithmetic Expressions" to "Arithmetic Operations". Document 'not', 
+	'and', 'or', '=', '/=', '<', '<=', '>', and '>=' in the new 
+	subsections.
+	  (Scorekeepers): Various corrections and rearrangements of the 
+	text. New entry for 'keep-score'. Rename 'initial' to 
+	'initial-score'. Rename 'sum' to 'sum-uprop'. Rename 'set' to 
+	'set-score'. Rename 'add' to 'add-score'. Remove boolean and 
+	arithmetic comparison functions from list of scorekeeper functions 
+	since they are now generic. Add new example showing how 
+	arithmetic operation and comparison may be used in a "when 
+	expression".
+	* keyword.def: Sort things pertaining to advanced units into their 
+	proper slots; I shouldn't have had to do this, but apparently the 
+	implementer of that feature was too lazy to do so.
+	  (K_ADD_SCORE): New GDL keyword, 'add-score'.
+	  (K_INITIAL): Change to 'K_INITIAL_SCORE', 'initial-score'.
+	  (K_SET_SCORE): New GDL keyword, 'set-score'.
+	  (K_SUM): Change to 'K_SUM_UPROP', 'sum-uprop'.
+	* score.h (struct a_scorekeeper): Add 'keepscore' field.
+	* mplayer.c (determine_subgoals): Replace 'K_SUM' with 
+	'K_SUM_UPROP'.
+	* nlang.c (side_score_desc): Return an empty buffer when the 
+	scorekeeper is not keeping numeric score.
+	* read.c (interp_scorekeeper): Repalce 'K_INITIAL' with 
+	'K_INITIAL_SCORE'. Handle 'K_KEEP_SCORE' case.
+	* score.c (create_scorekeeper): Change initial score value from 
+	the forbidden '-10001' to '0'. Set the 'keepscore' field to 
+	'TRUE' by default.
+	  (init_scores): Only increment the number of scorekeepers if the 
+	the scorekeeper is flagged as keeping score.
+	* write.c (write_scorekeepers): Handle 'K_KEEP_SCORE' case. Change 
+	default value of 'K_INITIAL_SCORE' from '-10001' to '0'.
+	* tkmain.c (update_side_score_display): Only get a scorekeeper 
+	description and display if a numeric score is being kept.
+
+2005-02-05  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Hoist boolean and arithmetic comparison keywords out of 
+	scorekeeper logic into general GDL evaluator.
+	* lisp.h (eval_boolean_expression): New prototype.
+	  (eval_arithmetic_comparison_expression): New prototype.
+	* lisp.c (eval): Handle cases for 'K_NOT', 'K_AND', 'K_OR', 
+	'K_EQ', 'K_NE', 'K_LT', 'K_LE', 'K_GT', and 'K_GE'. Dispatch 
+	boolean comparisons to 'eval_boolean_expression' function. 
+	Dispatch arithmetic comparisons to 
+	'eval_arithmetic_comparison_expression' function.
+	  (eval_boolean_expression): New function. Evaluates 'not', 'and', 
+	and 'or' keywords.
+	  (eval_arithmetic_comparison_expression): New function. 
+	Evaluates '=', '/=', '<', '<=', '>', and '>=' keywords.
+
+	Ensure that GDL bool constants always match the value of the macros 
+	we use in hacking.
+	* read.c (init_predefined_symbols): Set the value of the 'K_FALSE' 
+	symbol to 'FALSE' rather than 0. Set the value of the 'K_TRUE' 
+	symbol to 'TRUE' rather than 1.
+
+	Rearchitect scorekeeper logic to walk the expression tree and 
+	expand any scorekeeper specific keywords, and then run the general 
+	GDL evaluator on the tree afterwords.
+	* score.h (eval_sk_test): Replace old prototype with one that 
+	returns 'Obj *' instead of 'int'.
+	  (eval_sk_form): Likewise.
+	* score.c (generate_effective_sk_whomask): Check the scorekeeper 
+	test result against 'nil' instead of 'FALSE'.
+	  (eval_sk_test): Rewrite.
+	  (eval_sk_form): Likewise.
+
+2005-01-30  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Restore the 'u_size_min' and 'u_size_max' properties.
+	* run.c (run_population): Put code segments back in proper order.
+	Restore checks against 'u_size_min' and 'u_size_max'.
+	* utype.def (u_size_min): New property (restored, actually), 
+	'size-min'.
+	  (u_size_max): New property (restored), 'size_max'.
+
+2005-01-30  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug in ACP-indep construction.
+	(Reported by Matthew.)
+	* run.c (run_construction): Invalidate the just-executed action 
+	so that it cannot be run again. The bug was that a create action 
+	would be run, and then, in the next loop pass, it would be 
+	determined that there was not enough materials to re-execute the 
+	task, and a goto the end of the function would take place. The 
+	recently executed action (custom execution, instead of through 
+	normal machinery) would still be considered a valid next action. 
+	Next time the function was called, the create action would then 
+	be re-executed. (Note: this _crap_ code must be cleaned up; it is 
+	ridiculous both in its spaghetti layout and in its demented logic; 
+	it should be reconciled with the regular build code as much as 
+	possible. Also, this alternate consumption 
+	('unit-consumption-per-cp') for ACP-indep units is a bad idea; I 
+	see no reason why the regular 'consumption-per-build' cannot be used 
+	for ACP-indep units; that consumption calculation actually is done
+	on a per-CP basis. Having two competing tables is a Bad Idea.)
+
+	Fix obscure bug with AI-controlled sides not finishing their turns.
+	* run.c (move_one_unit_multiple): Ifdef out what appears to be a 
+	premature break if the unit is AI-controlled and might have done 
+	something last past. Under special circumstances, if this code is 
+	left in, it can cause a premature return with the indication that 
+	something was done, when, in fact, nothing was done.
+
+	Add a short circuit to one of the ACP-indep construction util 
+	functions.
+	* unit.c (incomplete_build_target): If the creator/builder has a 
+	valid creation ID, then just use the unit from that ID.
+
+2005-01-24  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Further improvements to scorekeepers.
+	* refman.texi: New section, "Scorekeeper Examples". Updates on 
+	the current status of the various scorekeeper properties and 
+	forms.
+	* keyword.def (K_TURN): New keyword, 'turn'.
+	* score.c (generate_effective_sk_whomask): New function. Generate 
+	an effective whomask based on whether the scorekeeper can run 
+	at the current time for the given side. Handles various 'when' 
+	conditions.
+	  (check_post_turn_scorekeeper): Use the effective whomask to 
+	determine which sides to run the scorekeeper on. (Note that this 
+	has no effect on the 'last-side-wins' and 'last-alliance-wins' 
+	scorekeepers at this time.)
+	  (eval_sk_form): Return current turn number for 'K_TURN'.
+	* side.c (fn_test_side_in_sideclass): Fix bug that caused only 
+	the first element of a side-and-sideclass list to be evaluated.
+
+2005-01-23  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Generate sidemask for 'known-to' property of scorekeepers.
+	* init.c (finalize_scorekeepers): Generate sidemask from 
+	'known-to' in a manner identical to 'applies-to'.
+	* score.c (create_scorekeeper): Initialize 'knowntomask' 
+	field of scorekeeper to 'ALLSIDES'.
+
+	Improve sideclass membership tester to handle side ID numbers and 
+	mixed lists of side ID numbers and sideclasses.
+	* side.c (fn_test_side_in_sideclass)
+
+	Use the new sideclass membership tester to check whether an unit 
+	can belong on a given side. 
+	* unit.c (test_class_membership): Delete function.
+	  (tmpside_classtest): Delete static variable.
+	  (type_allowed_on_side): Evaluate "possible sides" list with 
+	'fn_test_side_in_sideclass' rather than 'test_class_membership'.
+
+2005-01-23  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Unimplement 'last-regular-side-wins' as separate scorekeeper.
+	Instead, just make the 'applies-to' property meaningful.
+	(Sometimes I can be so shortsighted....)
+	* keyword.def (K_LAST_REGULAR_SIDE_WINS): Delete GDL keyword.
+	* help.c (describe_scorekeepers): Remove references to 
+	'K_LAST_REGULAR_SIDE_WINS'.
+	* mplayer.c (determine_subgoals): Likewise.
+	* nlang.c (side_score_desc): Likewise.
+	* score.c (check_post_turn_scores): Likewise.
+	  (eval_sk_form): Likewise.
+	  (eval_sk_last_side_wins): Likewise. Honor scorekeeper's 'applies-to' 
+	mask.
+	  (eval_sk_last_alliance_wins): Honor scorekeeper's 'applies-to' mask.
+	* init.c (finalize_scorekeepers): New function. Finish filling out 
+	any parts of the scorekeepers that need to be filled out.
+	  (calculate_globals): Call 'finalize_scorekeepers'. This seems to be 
+	the best place because it is before the start of the game but after 
+	everything has been read in.
+
+	Another implementation of Lisp boolean evaluator that uses 
+	parameter boxes.
+	* lisp.h (eval_boolean_expression): New prototype.
+	* lisp.c (eval_boolean_expression): New function. Pass a parambox to 
+	predicate function.
+	* side.h (fn_test_side_in_sideclass): New prototype.
+	* side.c (fn_test_side_in_sideclass): New function. Check if a 
+	given side's sideclass matches a given sideclass.
+
+	New parambox for sides.
+	* parambox.h (PBOX_TYPE_SIDE): New enum constant.
+	* side.h (struct ParamBoxSide): New parambox.
+
+2005-01-22  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Implement new scorekeeper, 'last-regular-side-wins'.
+	(NOTE: Still needs to be tested.)
+	* keyword.def (K_LAST_REGULAR_SIDE_WINS): New GDL keyword.
+	* help.c (describe_scorekeepers): Add description of new scorekeeper.
+	* mplayer.c (determine_subgoals): Consider the new scorekeeper.
+	* nlang.c (side_score_desc): Describe new scorekeeper.
+	* read.c (interp_variant_defns): Increase length of default variants 
+	list.
+	* score.c (check_post_turn_scores): Handle new scorekeeper.
+	  (eval_sk_form): Handle new scorekeeper.
+	  (eval_sk_last_side_wins): Handle new scorekeeper.
+
+2005-01-22  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix crashing bug in ACP-indep construction.
+	(Bug report from Matthew Skala.)
+	* run.c (run_construction): If unit has no plan, then do not attempt 
+	to run constuction, and do not attempt to pay for construction. This 
+	can happen if the 'time.g' upgrade mechanism is used.
+
+2005-01-17  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Add Elijah's Valhalla family of games to the games library.
+	* game.dir: Add Valhalla and Valhalla Beach.
+
+2005-01-17  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug in games where all unit see chances were the default (100%).
+	* side.c (compute_see_chances): Calculate 'max_see_chance_range' 
+	independently of whether or not any see chance is not the default.
+	  (see_cell): Always roll the dice whether or not we have a 
+	perfect see chance against something, because other modifiers such 
+	as terrain visibility and night effects must be considered.
+
+2005-01-16  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug in unit view flushing that caused 'see-always' uviews to 
+	be flushed.
+	* side.c (see_cell): Do not remove aged uviews if the 
+	corresponding type is a "see always" unit.
+
+	Fix network sync errors and long timeouts.
+	* tp.c (receive_data): Restore Hans' ack hack for the time being. 
+	Apparently, he was on to something, even though I still wonder if 
+	this truly addresses the underlying problem and if it is the best to 
+	go about it.
+	  (send_packet): Restore the timeout code to only apply to the master, 
+	and not the other peers.
+
+	Fix >2 networked AI's from immediately falling out of sync on 
+	localhost. (Note that they still eventually fall out of sync; I 
+	still wonder if there are not more timing issues lurking in the 
+	noxious Tkconq/networking combination.) (Also note that setting the 
+	AI player after setup will cause desync almost immediately.)
+	* tkmain.c (check_network): Apply the delay hack on localhost for 
+	all setup stages, and not just specific ones.
+
+2005-01-16  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug in setup of some games with more than one remote player.
+	* init.c (make_trial_assignments): Initialize a number of sides 
+	equal to the max of 'numremotes' and 'g_sides_min', and not just 
+	'g_sides_min'. The bug came about because the default 'g_sides_min' 
+	is 2, but if more than 2 peers were participating in a game that 
+	used the default min, then 'numsides' and 'numtotsides' counts 
+	would come up short, which would cause problems later on, such as 
+	when players were being processed, because 'numplayers' would have 
+	the correct count.
+
+2005-01-16  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix bug with unit views in "see all" mode.
+	* ui.c (xform_unit_view): Always start from beginning of uvstack when 
+	counting position. Never start at the position of the uview in 
+	question.
+
+	Fix SDL interface to actually set the main viewport's "show all" 
+	flag so that units can be seen when the "see all" variant is in 
+	effect or when designing.
+	* sdlmain.cc (set_show_all): Fill out empty function. Toggle the 
+	flag on the main viewport of the map of the screen.
+
+	Fix the SDL interface just like the Tcl/Tk interface regarding the 
+	showing of uviews in designer mode.
+	* sdlmap.cc (draw_uviews_in_cell, draw_unit_view_and_occs, 
+	draw_current): Handle master uviews as well as side uviews.
+
+2005-01-15  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	New family of games, Valhalla, from Elijah Meeks.
+	* valhalla.g: New game module file.
+	* valhalla-beach.g: New game module file. Cool scenario for 
+	Valhalla.
+	* t-val-beach.g: Aux module for Valhalla Beach.
+	* u-val-beach.g: Likewise.
+	* korea.gif: Update.
+	* battles1.gif: Update.
+
+	Fix bug with unit views in designer mode.
+	(Bug reported by Elijah.)
+	* side.h (for_all_uvstack): New macro. Iterates through an uvstack, 
+	starting from the given uview. Can handle both master and side 
+	uvstacks.
+	  (query_uvstack_from_unit): New prototype.
+	  (query_uvstack_at): New prototype.
+	* side.c (unit_view_next): Handle a NULL side as an indicator of a 
+	master uview.
+	  (find_unit_view): Likewise.
+	  (query_uvstack_from_unit): New function. Get an uvstack from a 
+	given unit, updating the master views, if necessary.
+	  (query_uvstack_at): New function. Get an uvstack from the first 
+	unit at a given location.
+	  (fill_out_uview): New function. Fill out an uview, whether it is a 
+	master uview or a side uview.
+	  (update_master_uview): New function. Initialize a master uview if 
+	it is uninitialized. Fill out the master uview with most recent 
+	information from the unit. Update the uview's links to other master 
+	uviews, updating those views as well.
+	  (add_unit_view): Call 'fill_out_uview' to fill out the uview.
+	* unit.c (create_unit): Set the 'uview' field of an unit to NULL.
+	* tcltk/tkmap.c (draw_uviews_in_cell): Handle master uviews as well 
+	as side uviews.
+	  (draw_unit_view_and_occs): Handle master uviews as well as side 
+	uviews.
+	  (draw_current): Handle master uview as well as side uview.
+
+	Fix bug with overwatch in designer mode.
+	(Bug reported by Elijah.)
+	* kernel.h, init.c (suppress_reactions): New global variable in 'Xconq' 
+	namespace.
+	* side.c (all_see_occupy): Do not invoke overwatch, if 
+	'suppress_reactions' is set.
+	  (xform_unit_view): Allow NULL sides, but check to make sure that 
+	designer mode is in effect. Handle master uviews as appropriate.
+	* unit.c (designer_create_unit): Set 'suppress_reactions' to TRUE 
+	before doing any shuffling. Reset the flag after the shuffling.
+	  (designer_teleport): Likewise.
+
+	Continue fixing uview lookups to match new uview code.
+	* side.c (find_unit_or_occ_view): Handle master uviews.
+
+2005-01-09  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Make sure DLL's needed for ParaGUI are included by installer.
+	* pkg/xconq.nsi.in: Add 'freetype6.dll' and 'zlib1.dll' to files in 
+	manifest for SDL interface.
+
+2005-01-08  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Improve AI handling of transports.
+	(Patch from Brian Dunn with minor mods by me.)
+	* ai.c (ai_go_after_victim): If victim seeker is a transport, is 
+	empty, and is better defensively than offensively, then don't 
+	bother looking for victims.
+
+	Do not apply hex masks to borders.
+	(Patch from Matthew Skala.)
+	* imf.c (add_scaled_image): Do not consider borders for hex masking.
+	  (make_image_from_file_image): Likewise.
+
+	Networking fixes/improvements.
+	* kpublic.h (broadcast_randstate): New prototype.
+	* tp.c (broadcast_randstate): New function. Broadcast a randstate 
+	value.
+	  (send_packet): For now, create a run error no matter master or 
+	peer gets too tired of waiting for an ack. (This solution is not 
+	ideal, and needs to be revisted.)
+	  (receive_data): Comment out Hans' "fix" for packets that 
+	arrive while we are waiting for an ack. The "fix" is dubious, and 
+	does not improve overall stability/synchronization apparently.
+	* tkmain.c (hndl_network_timer): New 'Tcl_TimerToken' var. Used for 
+	tracking the timer handler so that it can be deleted when no longer 
+	needed (i.e., when 'net_run_game' passes are being scheduled).
+	  (check_network): Check to see the network timer should be reloaded. 
+	If not, then do not set up a new timer.
+	  (sync_randstate): Flush queues, broadcast randstate, and flush 
+	queues again.
+	  (launch_game): Delete any network timer scheduled to fire by using 
+	the most recent 'hndl_network_timer'. We delete the timer when it is 
+	no longer needed to cut down on extraneous event handling, and to 
+	make sure that its queue flushing is not causing any undesired side 
+	effects in the operation of the network code. Also, do not execute 
+	a 'net_run_game' pass at the end of this function; it seems to be 
+	premature and not all state is correctly initialized. It causes the 
+	first few turns to be skipped when they should not, and this 
+	results in immediate sync errors since the peers do not skip those 
+	turns.
+
+	Attempt to make the AI a little bit better at building things with 
+	mobile units.
+	* plan.c (plan_defense): Disable 1 in 5 chance for construction.
+	Always try to constuct when nothing better to do.
+
+	Stabilize unit views so that they are again updated on a per-turn 
+	granularity, except in cases where transport/occupant status or 
+	position has changed. (In the long run, we would like to have 
+	more flexible granularity, ranging from per-seeing to 
+	per-every-view-older-than-n-days.)
+	(Thanks to Robert Goulding for helping confirm the unstable views 
+	issue.)
+	* side.c (see_cell): Do not blast unit views which have not 
+	changed this turn.
+
+	Fix some occupant/transport display glitches, and improve occupant 
+	visibility.
+	* ui.c (max_uviews_in_rect): Do not report 0 uviews if rect is less 
+	than 32 px wide. Let the interface decide how to handle this.
+	* sdlmap.cc, tkmap.c (draw_current): If occ less than 16 px wide, 
+	boost its width to that of the first transport in chain that is >= 
+	16 px wide. If isometric view, boost width to that of top transport 
+	in chain.
+	  (draw_unit_view_and_occs): If transport >= 16 px wide, but < 32 px 
+	wide, then draw grouping box around just the unshrunken transport 
+	image.
+
+2005-01-06  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix compilation errors on some older systems.
+	(Bug reported by Brian Dunn.)
+	* conq.h: Remove the 'iostream' include.
+	* sdl/sdlpreconq.h: New file. Contains includes of anything 
+	that must come before 'config.h' in the SDL interface implementation 
+	files.
+	* sdl/Makefile.in (SDL_H): Add 'sdlpreconq.h' to the list.
+	* sdl/sdlcltbl.cc, sdl/sdlcmd.cc, sdl/sdlimf.cc, sdl/sdlinit.cc, 
+	  sdl/sdlmac.cc, sdl/sdlmain.cc, sdl/sdlmap.cc, sdl/sdlscreen.cc, 
+	  sdl/sdluact.cc, sdl/sdlunix.cc, sdl/sdlwin32.cc: Include 
+	'sdlpreconq.h'.
+
+	Get rid of unused Mac resource file.
+	* sdl/sdlmac.r: Delete file.
+
+2005-01-05  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix unit reach bug. (Reported by Lincoln Peters.)
+	* unit.c (change_unit_type): No longer just consider the case of 
+	a non-advanced type becoming an advanced type. In the case of an 
+	advanced type changing into another advanced type, the unit reach 
+	(and possibly other advanced props) need to considered.
+
+2005-01-04  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Add profiling support to Xconq configurator options.
+	* configure.in (enable-profiling): New command line switch.
+	* misc/runbuild.sh: Take advantage of new switch if desired.
+
+	Fix bug when testing networking on 'localhost' in certain X11 
+	environements.
+	* socket.c (host_is_localhost): New global variable in 'Xconq' 
+	namespace.
+	  (open_remote_connection): Set 'host_is_localhost' to true, if 
+	name of remote host is 'localhost'.
+	* tkmain.c (check_network): Call 'run_ui_idler' before processing 
+	network stuff. Sleep for 1000 ms times RID - 1 of peer, if peer is on 
+	'localhost' along with master.
+
+	More tweaking of Tkconq CPU usage.
+	* tkconq.tcl (run_game_cmd): Schedule the next run of 'run_game_cmd' 
+	to be the interval output from 'run_game'.
+	* tkmain.c (tk_run_game): Set non-idle interval return value to 1.
+	Set idle interval retun value to 50.
+	  (ui_mainloop): Set event wait timeout to 1000 ms.
+
+	Fix crashing bug in Tkconq help window display. (Reported by 
+	Lincoln Peters.)
+	* tkmain.c (tk_help_goto): Get rid of static 'tclbuf'. Replace with 
+	obstack. Grow obstack rather than performing a sprintf into a static 
+	buf. The buf cannot be truncated with 'snprintf' since all parts our 
+	crucial. The crash was coming from an overflow in the static buf; 
+	this was not noticed until now because no game had been large 
+	enough to push the limits.
+
+2005-01-02  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Reactivated feature: unit and uview stack ordering.
+	Bug fix: cycles in uview lists.
+	Also some cleanup from earlier uview/vision hacking.
+	* side.c (is_at_correct_uvstack_position): New function. Compares 
+	an out-of-stack uview to an in-stack one to see if the out-of-stack 
+	one could be spliced in before the in-stack one.
+	  (add_uview_to_uvstack): New function. Splices an uview into a 
+	transport uview's occ stack.
+	  (add_unit_view): Call 'add_uview_to_uvstack' instead of containing 
+	that bulk of code in the function. Fix bug whereby occupant views 
+	were being incorrectly altered after creation.
+	  (add_unit_view_raw): Call 'is_at_correct_uvstack_position' to help 
+	ascertain the correct position of the uview being spliced into the 
+	list for a given cell coord hash.
+	  (test_for_successful_viewer): Delete function. No longer needed or 
+	used.
+	  (test_for_possible_viewer): Likewise.
+	  (tmpunittosee): Delete variable. No longer needed or used.
+	  (tmpseer): Likewise.
+	* unit.c (is_at_correct_ustack_position): New function. Compares 
+	an out-of-stack unit to an in-stack one to see if the out-of-stack 
+	one could be spliced in before the in-stack one.
+	  (add_unit_to_ustack): Renamed from 'add_unit_to_stack'.
+	  (add_unit_to_ustack): New function. Splices an unit into a 
+	transport's occ stack.
+	  (remove_unit_from_ustack): Renamed from 'remove_unit_from_stack'.
+	  (enter_transport): Call 'add_unit_to_ustack' instead of keeping 
+	the equivalent code in the function.
+	* unit.h (a_unit): Add an unit view pointer to struct. This is for 
+	keeping track of a master uview associated with the unit. The master 
+	uview concept is born of the need to represent the unit when an 
+	interface is on 'show_all' mode (such as when deisigning). This 
+	concept will hopefully be implemented soon.
+
+2005-01-01  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	New feature: zone-of-overwatch (ZOO) and overwatch firing.
+	(Almost local midnight... I still have more breathing room than last 
+	year though. That commit made it in with 18 seconds to spare.)
+	* doc/refman.texi (zoo-range): New entry.
+	  (zoo-range-min): New entry.
+	  (acp-for-overwatch): New entry.
+	* side.c (namespace Xconq): New variables: 'any_overwatch_cache', 
+	'any_overwatch_chances', 'overwatch_against_range_max', 
+	'overwatch_against_range_min'.
+	  (compute_overwatch_cache): New function. Sets up a cache of some 
+	useful overwatch-related values the first time it is needed.
+	  (can_overwatch): New function. Checks to see if an unit can 
+	perform overwatch fire against another unit.
+	  (try_overwatch_from): New function. Checks to see if any units 
+	(including occs) in a stack at a given location can perform 
+	overwatch fire against a given unit.
+	  (try_overwatch_against): New function. Checks to see if any 
+	units can perform overwatch fire against a given unit.
+	  (occupy_see_all): If any overwatch is available at all and 
+	available against the current unit type, then attempt to get some 
+	overwatch fire against the unit.
+	* table.def (uu_acp_overwatch): New GDL table. How much extra ACP 
+	does an unit get to perform overwatch fire against another unit?
+	  (uu_zoo_range); New GDL table. Out to how far can an unit 
+	extend a ZOO against another unit?
+	  (uu_zoo_range_min): New GDL table. How close can an unit extend 
+	a ZOO against another unit?
+
+2005-01-01  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Fix date problem with configuration scripts.
+	* configure.in: Change the year format field for the date 
+	command from 'G' to 'Y'. 'G' still thinks it's 2004 in Greenwich.
+	* misc/runconfig.sh: Likewise.
+
+	Fix bug in overrun action. (Thanks to Elijah for reporting this bug.)
+	* combat.c (do_overrun_action): Use 'check_fire_at_action' instead 
+	of the rather lame 'can_fire' function to check if the attacker can 
+	fire upon the defender. Likewise, use 'check_attack_action' instead 
+	of 'can_attack'.
+
+2005-01-01  Eric McDonald  <eric_mcdonald@users.sourceforge.net>
+
+	Happy New Year.
+
+	Rotate 2004 changelog out to the 'changelogs' dir.
+	* ChangeLog-2004: New file.
+	* ChangeLog: Refresh for the new year.
+
+	Make SDL interface compile including ParaGUI headers.
+	* config.h: Include 'iostream' before the C stdio headers.
+	* sdlconq.h: Remove ifdef (0) from around ParaGUI headers.
+
+	Hack around a palette colors bug so that emblems show up correctly 
+	in SDL interface. (Bug reported by Elijah Meeks.)
+	* imf.c (blacken_masked_area): Test to see if UL corner matches 
+	LL and UR corners in terms of color. If not, then replace the LR 
+	corner's palette entry with the mask color.

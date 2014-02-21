@@ -1,0 +1,8 @@
+(imf "opal-swordsman-sho" ((88 88) (file "opal-88x88-1.gif" std 0 0)))
+
+(imf "opal-swordsman-liz" ((88 88) (file "opal-88x88-1.gif" std 1 0)))
+
+(imf "opal-swordsman-ari" ((88 88) (file "opal-88x88-1.gif" std 2 0)))
+
+(imf "opal-swordsman-oni" ((88 88) (file "opal-88x88-1.gif" std 3 0)))
+

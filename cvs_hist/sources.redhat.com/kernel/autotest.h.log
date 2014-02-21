@@ -1,0 +1,30 @@
+
+RCS file: /cvs/xconq/xconq/kernel/autotest.h,v
+Working file: autotest.h
+head: 1.2
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1.2
+date: 2003/01/18 16:41:15;  author: ronne;  state: Exp;  lines: +1 -1
+Update Doxygen comments.
+----------------------------
+revision 1.1
+date: 2002/10/12 22:25:27;  author: kingdon;  state: Exp;
+	* kernel/autotest.c, kernel/autotest.h: Move autotester
+	from skelconq.c to here.
+	* kernel/Makefile.in: Update accordingly.
+	* kernel/move.c (prep_enter_action, do_enter_action,
+	check_enter_action): Rename unit3 to newtransport for clarity.
+	* kernel/unit.c (type_can_occupy): Rename u2 to utransport.
+	* kernel/autotest.c, test/auto.g: Add tests regarding occupancy:
+	headed for reproducing the
+	http://sources.redhat.com/ml/xconq7/2000/msg00365.html bug (in
+	which tcltk "i" skips a bomber in a certain common case) but
+	aren't there yet.
+=============================================================================

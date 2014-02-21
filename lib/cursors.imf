@@ -1,0 +1,7 @@
+(imf "cursor-hand" ((32 32) (file "cursors.gif" std 1 1)))
+(imf "cursor-pointer" ((32 32) (file "cursors.gif" std 0 0)))
+(imf "cursor-scroll-down" ((32 32) (file "cursors.gif" std 3 0)))
+(imf "cursor-scroll-left" ((32 32) (file "cursors.gif" std 4 0)))
+(imf "cursor-scroll-right" ((32 32) (file "cursors.gif" std 2 0)))
+(imf "cursor-scroll-up" ((32 32) (file "cursors.gif" std 1 0)))
+(imf "cursor-sword" ((32 32) (file "cursors.gif" std 0 1)))

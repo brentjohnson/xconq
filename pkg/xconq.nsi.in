@@ -1,0 +1,279 @@
+;;;; Xconq Setup Script for NSIS Windows Installer ;;;;
+;; Script by Eric McDonald <mcdonald at phy dot cmich dot edu>
+;; NSIS is an open source project supported and originated by Nullsoft, Inc.
+
+; NOTE: Run the 'configure' script to automatically generate 'xconq.nsi' from 
+;	'xconq.nsi.in'.
+
+!define VERSION_MAJOR @XCONQ_VERSION_MAJOR@
+!define VERSION_MINOR @XCONQ_VERSION_MINOR@
+!define VERSION_FULL @XCONQ_VERSION_FULL_UNDERSCORED@
+
+;; General Configuration
+
+Name "Xconq Installer"
+OutFile "..\xconq-${VERSION_FULL}-SETUP.exe"
+
+; SetCompressor bzip2
+SetCompressor lzma
+
+InstallDir $PROGRAMFILES\Xconq
+InstallDirRegKey HKLM SOFTWARE\Xconq "Install_Dir"
+
+InstType "For Players"
+InstType "For Game Designers"
+InstType "Everything"
+
+ShowInstDetails show
+ShowUninstDetails show
+SetDateSave on
+
+LicenseText "Xconq is copyright (C) 1987-1989, 1991-2000 Stanley T. Shebs$\r$\nPlease read the following license agreement carefully."
+LicenseData COPYING.txt
+
+ComponentText "Please choose which type of Xconq installation you would like."
+
+DirText "Welcome to Xconq ${VERSION_FULL}.$\r$\nPlease choose the directory where you would like to install."
+
+;; Core Files
+
+Section "Xconq Core (required)" SecCore
+  SectionIn 1 2 3 RO
+; TODO: Add checking to make sure that we are not overwriting an existing installation, 
+;  and if we are, then ask the user what to do about the situation.
+  WriteRegStr HKLM SOFTWARE\Xconq "Install_Dir" "$INSTDIR"
+  SetOutPath $INSTDIR
+  RMDir /r $SMPROGRAMS\Xconq
+  SetOverwrite on
+;  Delete $INSTDIR\xconq.exe
+  File tcltk\xconq.exe
+  File COPYING
+  File README
+  File ChangeLog
+  File tcl84.dll
+  File tk84.dll
+  SetOutPath $INSTDIR\changelogs
+  File changelogs\*.*
+  SetOutPath $INSTDIR\tcltk
+  File tcltk\tkconq.tcl
+  SetOutPath $INSTDIR\tcltk\BWidget
+  File tcltk\BWidget\*.*
+  SetOutPath $INSTDIR\tcltk\BWidget\lang
+  File tcltk\BWidget\lang\*.*
+  SetOutPath $INSTDIR\tcltk\BWidget\images
+  File tcltk\BWidget\images\*.*
+  SetOutPath $INSTDIR\lib
+  File lib\*.*
+  SetOutPath $INSTDIR\images
+  File images\*.*
+  SetOutPath $INSTDIR\bitmaps
+  File bitmaps\*.*
+  SetOutPath $INSTDIR\sounds
+  File sounds\*.*
+  SetOutPath $INSTDIR\doc
+  File doc\TODO
+  File doc\PROJECTS
+  File doc\README.supply
+  File doc\xconq_*.html
+  File doc\README-win.txt
+  File doc\INSTALL
+  File doc\INSTALL-win.txt
+  SetOutPath $INSTDIR\tcltk
+  File /r ..\lib\*.*
+  SetOverwrite off
+SectionEnd
+
+;; plus Imfapp
+
+Section "Imfapp" SecImfapp
+  SectionIn 2 3
+  SetOverwrite on
+  SetOutPath $INSTDIR
+  File tcltk\imfapp.exe
+  SetOutPath $INSTDIR\tcltk
+  File tcltk\imfapp.tcl
+  SetOutPath $INSTDIR\doc
+  File doc\xcdesign_*.html
+  SetOverwrite off
+SectionEnd
+
+;; plus Curses Xconq
+
+Section "Xconq Console" SecCurses
+  SectionIn 2 3
+  SetOverwrite on
+  SetOutPath $INSTDIR
+  File curses\cconq.exe
+  SetOverwrite off
+SectionEnd
+
+;; plus SDL Xconq
+
+Section "Xconq Experimental" SecExperimental
+  SectionIn 3
+  SetOverwrite On
+  SetOutPath $INSTDIR
+  File sdl\sdlconq.exe
+  File SDL.dll
+  File freetype6.dll
+  File zlib1.dll
+  SetOverwrite Off
+SectionEnd
+
+;; plus Source Code
+
+Section "Source Code" SecSources
+  SectionIn 3
+  SetOverwrite on
+  SetOutPath $INSTDIR
+  File configure
+  File configure.in
+  File Makefile.in
+  SetOutPath $INSTDIR\kernel
+  File kernel\Makefile.in
+  File kernel\*.def
+  File kernel\*.h
+  File kernel\*.c
+  SetOutPath $INSTDIR\tcltk
+  File tcltk\Makefile.in
+  File tcltk\*.h
+  File tcltk\*.c
+  File tcltk\Xconq.RC
+  File tcltk\Imfapp.RC
+  File tcltk\Xconq.ico
+  File tcltk\Xcdoc.ico
+  File tcltk\Imfapp.ico
+  SetOutPath $INSTDIR\curses
+  File curses\Makefile.in
+  File curses\*.h
+  File curses\*.c
+  SetOutPath $INSTDIR\sdl
+  File sdl\Makefile.in
+  File sdl\*.h
+  File sdl\*.cc
+  SetOutPath $INSTDIR\doc
+  File doc\*.texi
+  File doc\hacking_*.html
+  File doc\*.tex
+  File doc\texi2html
+  SetOverwrite off
+SectionEnd
+
+;; Register .xcq Extension
+
+Section "Xconq Shell Extensions" SecShex
+  SectionIn 1 2 3
+  ReadRegStr $1 HKCR ".xcq" ""
+  StrCmp $1 "" LLWriteExt1
+    StrCmp $1 "XconqDoc" LLWriteExt1
+    WriteRegStr HKCR ".xcq" "backup_val" $1
+LLWriteExt1:
+  WriteRegStr HKCR ".xcq" "" "XconqDoc"
+  ReadRegStr $0 HKCR "XconqDoc" ""
+  StrCmp $0 "" 0 LLWriteExt2
+    WriteRegStr HKCR "XconqDoc" "" "Xconq Saved Game"
+    WriteRegStr HKCR "XconqDoc\shell" "" "open"
+LLWriteExt2:
+  WriteRegStr HKCR "XconqDoc\DefaultIcon" "" $INSTDIR\xconq.exe,1
+  WriteRegStr HKCR "XconqDoc\shell\open\command" "" '"$INSTDIR\xconq.exe" -f "%1"'
+  ReadRegStr $1 HKCR ".g" ""
+  StrCmp $1 "" LLWriteExt3
+    StrCmp $1 "XconqDocTmpl" LLWriteExt3
+    WriteRegStr HKCR ".g" "backup_val" $1
+LLWriteExt3:
+  WriteRegStr HKCR ".g" "" "XconqDocTmpl"
+  ReadRegStr $0 HKCR "XconqDocTmpl" ""
+  StrCmp $0 "" 0 LLWriteExt4
+    WriteRegStr HKCR "XconqDocTmpl" "" "Xconq Game Module"
+    WriteRegStr HKCR "XconqDocTmpl\shell" "" "open"
+LLWriteExt4:
+  WriteRegStr HKCR "XconqDocTmpl\DefaultIcon" "" $INSTDIR\xconq.exe,1
+  WriteRegStr HKCR "XconqDocTmpl\shell\open\command" "" '"$INSTDIR\xconq.exe" -f "%1"'
+SectionEnd
+
+;; Create Start Menu Shortcuts
+
+!ifndef NO_STARTMENUSHORTCUTS
+Section "Start Menu Shortcuts" SecStartMenu
+  SectionIn 1 2 3
+  SetOutPath $INSTDIR	; Considered to be working dir for invoked executables.
+  CreateDirectory $SMPROGRAMS\Xconq
+  IfFileExists "$INSTDIR\xconq.exe" "" +2
+    CreateShortCut "$SMPROGRAMS\Xconq\Xconq.lnk" "$INSTDIR\xconq.exe" ""
+  IfFileExists "$INSTDIR\imfapp.exe" "" +2
+    CreateShortCut "$SMPROGRAMS\Xconq\Imfapp.lnk" "$INSTDIR\imfapp.exe" ""
+  IfFileExists "$INSTDIR\cconq.exe" "" +2
+    CreateShortCut "$SMPROGRAMS\Xconq\Xconq Console.lnk" "$INSTDIR\cconq.exe" ""
+  IfFileExists "$INSTDIR\sdlconq.exe" "" +2
+    CreateShortCut "$SMPROGRAMS\Xconq\Xconq (Experimental).lnk" "$INSTDIR\sdlconq.exe" ""
+  IfFileExists "$INSTDIR\doc\xconq_toc.html" "" +2
+;    Rename "$INSTDIR\doc\xconq_toc.html" "$INSTDIR\doc\xconq_toc.htm"
+    CreateShortCut "$SMPROGRAMS\Xconq\Player Manual.lnk" \
+      "$INSTDIR\doc\xconq_toc.html" ""
+  IfFileExists "$INSTDIR\doc\xcdesign_toc.html" "" +2
+;    Rename "$INSTDIR\doc\xcdesign_toc.html" "$INSTDIR\doc\xcdesign_toc.htm"
+    CreateShortCut "$SMPROGRAMS\Xconq\Game Design Manual.lnk" \
+      "$INSTDIR\doc\xcdesign_toc.html" ""
+  IfFileExists "$INSTDIR\doc\hacking_toc.html" "" +2
+;    Rename "$INSTDIR\doc\hacking_toc.html" "$INSTDIR\doc\hacking_toc.htm"
+    CreateShortCut "$SMPROGRAMS\Xconq\Hacking Xconq.lnk" \
+      "$INSTDIR\doc\hacking_toc.html" ""
+  IfFileExists "$INSTDIR\INSTALL-win.txt" "" +2
+    CreateShortCut "$SMPROGRAMS\Xconq\Building Xconq.lnk" \
+      "$INSTDIR\INSTALL-win.txt" ""
+SectionEnd
+!endif
+
+;; Create Desktop Shortcut
+
+Section "Desktop Shortcut" SecDesktop
+  SectionIn 1 2 3
+  SetOutPath $INSTDIR	; Considered to be working dir for invoked executables.
+  IfFileExists "$INSTDIR\xconq.exe" "" +2
+  CreateShortCut "$DESKTOP\Xconq.lnk" "$INSTDIR\xconq.exe" ""
+SectionEnd
+
+;; Setup Uninstall
+
+Section -Post
+  SetOutPath $INSTDIR
+  WriteRegStr HKLM SOFTWARE\Xconq "" $INSTDIR
+  WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Xconq" "UninstallString" "$INSTDIR\uninst-xconq.exe"
+  WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Xconq" "InstallLocation" "$INSTDIR"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Xconq" "DisplayName" "Xconq"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Xconq" "DisplayIcon" "$INSTDIR\xconq\xconq.ico,0"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Xconq" "DisplayVersion" "1"
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Xconq" "VersionMajor" "${VERSION_MAJOR}"
+;  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Xconq" "VersionMinor" "${VERSION_MINOR}"
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Xconq" "NoModify" "1"
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Xconq" "NoRepair" "1"
+  Delete $INSTDIR\uninst-xconq.exe
+  WriteUninstaller $INSTDIR\uninst-xconq.exe
+  IfFileExists "$INSTDIR\uninst-xconq.exe" "" +2
+  CreateShortCut "$SMPROGRAMS\Xconq\Uninstall Xconq.lnk" "$INSTDIR\uninst-xconq.exe" ""
+SectionEnd
+
+;; Uninstaller Actions
+
+Section Uninstall
+  IfFileExists $INSTDIR\xconq.exe LLUninstall1
+    MessageBox MB_YESNO "It does not appear that Xconq is installed in the directory '$INSTDIR'.$\r$\nContinue anyway (not recommended)" IDYES LLUninstall1
+    Abort "Uninstall aborted by user."
+LLUninstall1:
+  ReadRegStr $1 HKCR ".xcq" ""
+  StrCmp $1 "XconqDoc" 0 LLUninstall3 ; only do this if we own it
+    ReadRegStr $1 HKCR ".xcq" "backup_val"
+    StrCmp $1 "" 0 LLUninstall2 ; if backup_val == "" then delete the whole key
+      DeleteRegKey HKCR ".xcq"
+    Goto LLUninstall3
+LLUninstall2:
+      WriteRegStr HKCR ".xcq" "" $1
+      DeleteRegValue HKCR ".xcq" "backup_val"
+LLUninstall3:
+  DeleteRegKey HKCR "XconqDoc"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Xconq"
+  DeleteRegKey HKLM SOFTWARE\Xconq
+  RMDir /r $SMPROGRAMS\Xconq
+  Delete "$DESKTOP\Xconq.lnk"
+  RMDir /r $INSTDIR
+SectionEnd

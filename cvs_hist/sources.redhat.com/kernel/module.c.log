@@ -1,0 +1,258 @@
+
+RCS file: /cvs/xconq/xconq/kernel/module.c,v
+Working file: module.c
+head: 1.23
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.13
+	xconq-7_4-branch: 1.13.0.2
+	xconq-7_4-branchpoint: 1.13
+	xtconq-pre-removal: 1.9
+	xconq-7_3_3-release: 1.9
+	xconq-7_3_2-release: 1.9
+	xconq-7_3_1-release: 1.9
+	xconq-7_3-branch: 1.9.0.2
+	xconq-7_3-branchpoint: 1.9
+keyword substitution: kv
+total revisions: 23;	selected revisions: 23
+description:
+----------------------------
+revision 1.23
+date: 2004/07/25 20:08:16;  author: mcdonald;  state: Exp;  lines: +14 -2
+New Xcscribe feature: write out game index.
+Xcscribe improvements.
+Fix bug in module includes processing.
+----------------------------
+revision 1.22
+date: 2004/07/16 00:35:42;  author: ronne;  state: Exp;  lines: +1 -0
+Improve the blurb code.
+----------------------------
+revision 1.21
+date: 2004/05/08 20:57:17;  author: ronne;  state: Exp;  lines: +2 -15
+Various fixes to the tcltk interface.
+----------------------------
+revision 1.20
+date: 2004/03/07 21:56:52;  author: ronne;  state: Exp;  lines: +6 -6
+Fix imfapp path finding under Unix.
+----------------------------
+revision 1.19
+date: 2004/03/07 14:41:53;  author: ronne;  state: Exp;  lines: +29 -7
+Fix so that games can be run from non-standard locations.
+----------------------------
+revision 1.18
+date: 2003/12/15 04:13:46;  author: mcdonald;  state: Exp;  lines: +5 -0
+Enhance the configuration system to support strict ANSI compliance.
+Fix various problems related to non-home working dirs on Windows.
+Gain finer control over the linkage of Tkconq.
+Cosmetic and ANSI compliance fixes.
+Update and enhance Windows installer script.
+----------------------------
+revision 1.17
+date: 2003/12/14 03:37:47;  author: ronne;  state: Exp;  lines: +129 -10
+Add support for network games in file saving code.
+----------------------------
+revision 1.16
+date: 2003/11/15 00:20:43;  author: ronne;  state: Exp;  lines: +9 -9
+Improve module loading and patching code.
+----------------------------
+revision 1.15
+date: 2003/08/18 20:13:41;  author: ronne;  state: Exp;  lines: +10 -6
+Various cleanups and bug fixes.
+----------------------------
+revision 1.14
+date: 2002/05/08 23:51:17;  author: ronne;  state: Exp;  lines: +1 -1
+Make sources C++ compatible.
+----------------------------
+revision 1.13
+date: 2000/11/20 03:36:09;  author: shebs;  state: Exp;  lines: +5 -55
+	* module.c (doublecheck_state, coerce_to_side_id, etc): Remove,
+	no longer useful.
+----------------------------
+revision 1.12
+date: 2000/11/12 00:39:53;  author: ronne;  state: Exp;  lines: +6 -8
+General cleanup of kernel prototypes - part 1.
+----------------------------
+revision 1.11
+date: 2000/10/24 17:01:13;  author: shebs;  state: Exp;  lines: +12 -0
+	* module.c (load_game_description): Skip if module already open,
+	close module, whether or not game-module form was found.
+	(load_game_module): Load default base module if no types
+	defined yet.
+----------------------------
+revision 1.10
+date: 2000/09/10 05:45:40;  author: shebs;  state: Exp;  lines: +58 -50
+	Random rewrites and reorgs resolving remote networking bugs.
+	* ai.c (init_ai): Fill in side->rai for remote AIs.
+	(set_side_ai): Simplify, and add feedback on results.
+	(run_local_ais, run_ai_plan_adjust): Move here from run.c,
+	test taskexecs instead of need_ai_task_reaction.
+	* cmd.c (do_ai_side): Fix player feedback to reflect that
+	network roundup may be necessary before state changes.
+	* cmdline.c (option_width, option_height, option_circumference):
+	New globals.
+	(parse_world_option): Set these instead of pushing a variant.
+	(set_variants_from_options): Call net_set_variant_value instead
+	of pushing variant settings.
+	(find_variant_from_name): New function.
+	* init.c (start_player_pre_setup_stage): Call do_module_variants.
+	(final_init): Report more data structure sizes.
+	* kernel.h (set_variant_value): Declare.
+	* kpublic.h (net_set_variant_value): Declare.
+	* module.h (Variant newvalues): New field, array of new settings
+	for variant.
+	* module.c (create_game_module): Store a copy of the module name.
+	(set_variant_value): Move here from tkmain.c.
+	(do_one_variant): Fill from newvalues fields.
+	* read.c (interp_variant_defns, add_std_var): Fill in newvalues
+	fields.
+	* run.c (latest_action_x, latest_action_y): New globals.
+	(num_local_ais): Move to ai.c.
+	(need_ai_task_reaction): Remove, use taskexecs instead.
+	(save_run_state, clear_task_outcomes): New functions.
+	(run_game): Call them.
+	(move_one_unit_multiple): Replace need_ai_task_reaction test
+	with last_task_outcome and AI usage test.
+	(run_side_research, run_construction): Test local AI instead
+	of AI in general (dubious).
+	* side.h (Side rai): New field.
+	(side_has_ai): Test both local and remote AI.
+	(side_has_local_ai): New macro.
+	* task.c (execute_task): Rework recording of task outcome.
+	* tp.h (RAI): New struct, placeholder "remote AI".
+	* tp.c: Change run warnings into notices.
+	(net_set_variant_value): New function.
+	(receive_variant_settings): Allow at most three values.
+	* write.c (write_side_properties): Only write AI state for
+	local AIs (dubious).
+
+	* tkconq.tcl: Rewrite variant handling to do more work in
+	kernel.
+	(set_variant_value_cmd): New proc, replaces broadcast_variant_value.
+	(set_variants): Do less.
+	(add_world_size_dialog_items): Comment out lat/lon items.
+	(insert_chat_string): Test for existence of window before insert.
+	* tkmain.c: Rewrite for variants also.
+	(send_value_value, implement_variants): Remove tcl commands.
+	(tk_set_variant_value): Rewrite to pass along to kernel.
+	(interpret_variants): Rewrite.
+	(set_variant_world_size, set_variant_real_time): Remove,
+	handled uniformly in kernel.
+	(update_variant_setting): Rewrite.
+----------------------------
+revision 1.9
+date: 2000/06/08 12:19:56;  author: shebs;  state: Exp;  lines: +1 -1
+	* ai.c, goal.def, module.c, tp.c: Fix dates.
+----------------------------
+revision 1.8
+date: 2000/06/04 16:19:03;  author: shebs;  state: Exp;  lines: +0 -32
+	More rewriting of variant handling and player setup.
+	* keyword.def (indepside-has-ai, indepside-can-build,
+	indepside-can-research, indepside-has-treasury): Comment out,
+	will no longer define as variants.
+	* ai.c, ai.h (next_ai_type_name): Rename from next_ai_type.
+	(find_ai_type): New function.
+	* cmdline.c (unixify_variant_name): Remove.
+	(game_usage_info): Use variant ids as argument names.
+	* kernel.h (set_ai_for_player, etc): Move here from conq.h.
+	* init.c (make_up_a_side): Remove set of ingame, redundant.
+	(set_ai_for_player): Warn about invalid AI types.
+	* iplayer.c, mplayer.c: Remove decls now in ai.h.
+	* kpublic.h: Rearrange some decls.
+	* module.c (do_one_variant): Remove indepside variants.
+	* read.c (force_all_variants): New global.
+	(add_std_var): New function.
+	(interp_variant_defns): Rewrite to use it for all variant
+	setup.
+	(add_more_variants): Remove, no longer needed.
+	(interp_game_module): Call interp_variant_defns.
+	* run.c (init_movement): Simplify code.
+	* score.c (eval_sk_last_side_wins, eval_sk_last_alliance_wins):
+	Don't require indepside to lose.
+	(record_into_scorefile): Use a switch statement for variants.
+	(score_variant_desc): Remove indepside variants.
+
+	* macinit.c (interpret_variants, implement_variants): Remove
+	indepside variants.
+	(hit_player_setup_dialog): Use net_exchange_players.
+
+	* tkconq.tcl (add_variants_dialog_items): Wrap help text by
+	words.
+	(add_player_dialog_items): Always create indepside entry but
+	conditionalize packing, add indepside button, improve test of
+	random/sidelib name button enabling.
+	(popup_indepside, ok_indepside): New procs.
+	* tkinit.c (init_display): Seed indepside globals.
+	* tkmain.c (tk_set_indepside_options): New tcl command.
+	(tk_set_ai_for_player): Interpret AI name passed directly.
+	(interpret_variants): Remove indepside variants.
+----------------------------
+revision 1.7
+date: 1999/11/18 03:26:15;  author: shebs;  state: Exp;  lines: +4 -0
+	* module.c (copy_module): Don't overwrite the module name.
+	* tp.c (download_game_module): Clear download module's filename.
+----------------------------
+revision 1.6
+date: 1999/11/10 03:02:08;  author: shebs;  state: Exp;  lines: +49 -6
+	* module.h (Module hook, read_only, fill_type): Remove fields,
+	never used.
+	* module.c (copy_module): New function.
+	(create_game_module): Use it instead of random field inits.
+	(init_module_reshape): Remove unused setting of fill_type.
+	* score.c (get_scores): Display game's title if possible.
+	* tp.c (download_game_module): Simplify by using copy_module.
+	(DOWNLOADPACKETSIZE): Also use 200 if on Windows.
+	* write.c (write_entire_game_state): Simplify module handling.
+----------------------------
+revision 1.5
+date: 1999/10/24 11:20:10;  author: ronne;  state: Exp;  lines: +56 -0
+Add new indepside code, fix various bugs.
+----------------------------
+revision 1.4
+date: 1999/09/16 02:47:45;  author: shebs;  state: Exp;  lines: +40 -72
+	* conq.h, init.c, module.c, tp.c (typesdefined): Remove, never
+ 	actually used.
+
+	* conq.h (enum setup_stage): New enum.
+	(current_stage): New global.
+
+	* imf.c, imf.h (get_img): Remove unused argument.
+	* imf.c, ui.c, xcutil.c, ximf.c, maccolors.c, macimf.c, macinit.c,
+ 	tkimf.c: Fix all callers.
+
+	* init.c, mac.c, mkrivers.c, mkroads.c, module.c. ps.c, score.c,
+ 	task.c: Remove PARAMS usages.
+
+	* mac.c, win32.c (tmprid): Remove decl, never used.
+	* cconq.c (hosting): Remove decl, never used.
+
+	* tp.c (download_game_module): New function, split out from
+	download_to_player.
+	(broadcast_game_module): New function.
+	(broadcast_variants_chosen, broadcast_players_assigned): New
+ 	functions.
+	(receive_packet): Don't do trial assignments here, interpret
+	'a' and 'v' packets.
+
+	* tkconq.tcl (selected_game_title): Init to a default value.
+	* tkmain.c (tk_start_new_game): Broadcast game module to other
+	programs.
+	(tk_launch_game): Broadcast that variants have been chosen.
+	(tk_launch_game_2): Broadcast that players have been assigned.
+	(last_stage): New global.
+	(check_network): Call tcl commands to move dialogs through
+	stages of game setup.
+----------------------------
+revision 1.3
+date: 1999/07/17 14:35:21;  author: ronne;  state: Exp;  lines: +1 -1
+Change fopen to open_file.
+----------------------------
+revision 1.2
+date: 1999/06/26 14:53:43;  author: ronne;  state: Exp;  lines: +3 -1
+load_side_config: Call open_module instead of fopen.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:28;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

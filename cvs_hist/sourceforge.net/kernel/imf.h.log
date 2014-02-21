@@ -1,0 +1,98 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/imf.h,v
+Working file: imf.h
+head: 1.4
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.4
+	BPT_EMCDONALD_AI_15: 1.4
+	SS_7_5_0_0pre_0_20050612: 1.4
+	BPT_MSKALA_IMF_3: 1.4
+	BPT_MSKALA_SUPPLY_12: 1.4
+	BPT_EMCDONALD_AI_14: 1.4
+	MPT_EMCDONALD_AI_7: 1.4
+	BPT_EMCDONALD_AI_13: 1.4
+	SS_7_5_0_0pre_0_20050501: 1.4
+	BPT_EMCDONALD_AI_12: 1.4
+	MPT_EMCDONALD_AI_6: 1.4
+	BPT_EMCDONALD_AI_11: 1.4
+	SS_7_5_0_0pre_0_20050416: 1.4
+	BPT_EMCDONALD_AI_10: 1.4
+	MPT_EMCDONALD_AI_5: 1.4
+	BPT_EMCDONALD_AI_9: 1.4
+	BPT_EMCDONALD_AI_8: 1.4
+	MPT_EMCDONALD_AI_4: 1.4
+	BPT_EMCDONALD_AI_7: 1.4
+	MPT_EMCDONALD_AI_3: 1.4
+	BPT_EMCDONALD_AI_6: 1.4
+	BPT_MSKALA_SUPPLY_11: 1.4
+	BPT_EMCDONALD_AI_5: 1.4
+	MPT_EMCDONALD_AI_2: 1.4
+	SS_7_5_0_0pre_0_20050322: 1.4
+	BPT_MSKALA_SUPPLY_10: 1.4
+	BPT_EMCDONALD_AI_4: 1.4
+	MPT_EMCDONALD_AI_1: 1.4
+	BPT_EMCDONALD_AI_3: 1.4
+	BPT_MSKALA_SUPPLY_9: 1.4
+	MPT_MSKALA_SUPPLY_3: 1.4
+	BPT_EMCDONALD_AI_2: 1.4
+	BPT_MSKALA_SUPPLY_8: 1.4
+	MPT_MSKALA_SUPPLY_2: 1.4
+	BPT_MSKALA_SUPPLY_7: 1.4
+	BRANCH_EMCDONALD_AI: 1.4.0.4
+	BPT_EMCDONALD_AI_1: 1.4
+	BPT_MSKALA_SUPPLY_6: 1.4
+	SS_7_5_0_0pre_0_20050225: 1.4
+	BPT_MSKALA_SUPPLY_5: 1.4
+	MPT_MSKALA_SUPPLY_1: 1.4
+	BPT_MSKALA_SUPPLY_4: 1.4
+	BPT_MSKALA_SUPPLY_3: 1.4
+	BPT_MSKALA_SUPPLY_2: 1.4
+	SS_7_5_0_0pre_0_20050208: 1.4
+	BPT_MSKALA_IMF_2: 1.4
+	BRANCH_MSKALA_SUPPLY: 1.4.0.2
+	BPT_MSKALA_SUPPLY_1: 1.4
+	SS_7_5_0_0pre_0_20050117: 1.4
+	SS_7_5_0_0pre_0_20050108: 1.4
+	SS_7_5_0_0pre_0_20041228: 1.4
+	BRANCH_MSKALA_IMF: 1.2.0.2
+	BPT_MSKALA_IMF_1: 1.2
+	SS_7_5_0_0pre_0_20041211: 1.2
+	SS_7_5_0_0pre_0_20041126: 1.1.1.1
+	GENESIS: 1.1.1.1
+	PRIVATE_TREE_1: 1.1.1
+keyword substitution: kv
+total revisions: 6;	selected revisions: 6
+description:
+----------------------------
+revision 1.4
+date: 2004/12/25 19:25:19;  author: eric_mcdonald;  state: Exp;  lines: +1 -1
+Major changes to the UI API.
+Major cleanup and refactoring of the Tkconq unit display code.
+Improvements to my little local-build script.
+----------------------------
+revision 1.3
+date: 2004/12/13 01:49:39;  author: eric_mcdonald;  state: Exp;  lines: +3 -1
+Start to fix problems with unit image scaling.
+----------------------------
+revision 1.2
+date: 2004/12/04 18:50:47;  author: eric_mcdonald;  state: Exp;  lines: +2 -0
+branches:  1.2.2;
+Improve image scaling, especially of terrain.
+Lay groundwork for "hexgrid" inline map images.
+----------------------------
+revision 1.1
+date: 2004/11/21 03:01:08;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.1;
+Initial revision
+----------------------------
+revision 1.1.1.1
+date: 2004/11/21 03:01:08;  author: eric_mcdonald;  state: Exp;  lines: +0 -0
+Initial import from private repo into SF repo.
+----------------------------
+revision 1.2.2.1
+date: 2005/01/28 03:35:59;  author: eric_mcdonald;  state: Exp;  lines: +4 -2
+Merge in trunk changes between BPT_MSKALA_IMF_1 and BPT_MSKALA_IMF_2.
+=============================================================================

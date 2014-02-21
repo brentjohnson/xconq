@@ -1,0 +1,74 @@
+
+		README for AD2C - convert resource files to C decls
+
+		 George Ferguson, ferguson@cs.rochester.edu
+
+			     12 Nov 1990
+			Updated 19 Apr 1993
+
+DESCRIPTION:
+
+     Ad2c is a program which converts X resource files into C
+     declarations appropriate for inclusion as fallback resources.
+     The program is a sed script which is effectively a finite state
+     machine, escaping quotes and backslashes (and newlines where
+     necessary), and adding quotes and commas as needed for array
+     initialization.
+
+DISCLAIMER:
+
+     This software is provided as is with no warranty expressed or implied.
+     I hope you find it useful, but I won't be held responsable for
+     any damage that may occur from reading, compiling, installing or
+     using it.
+
+     You are free to use any part of this code for other purposes. It
+     would be nice if you could keep my name on some part of whatever the
+     final product is.
+
+INSTALLATION:
+
+     1. Edit the Imakefile to change the installation directories if
+	desired.
+
+     2. Execute "xmkmf" to make the Makefile.
+
+     3. Execute "make install" to install ad2c, and/or "make install.man"
+	to install the man page. Making ad2c itself is unnecessary.
+
+HISTORY:
+
+     12 Nov 1990
+	- Written and released to alt.sources.
+
+     19 Mar 1991
+	From: ferguson@cs.rochester.edu
+		- Made it "self-contained" (ie. eliminated ad2c.sed)
+		- Added Imakefile
+	From: jerbil@ultra.com (Joseph Beckenbach)
+		- Wrote man page.
+
+     22 Jul 1991
+	From: ferguson@cs.rochester.edu
+		- Added USAGE section to man page and converted it to
+		  use italic rather than bold font.
+
+     Version 1.4: 6 Jan 1992
+	From: tim@cs.wisc.edu (Tim Theisen)
+		- Fixed example in man page.
+	From: mycroft@gnu.ai.mit.edu (Charles Hannum)
+		- Changes to work with Gnu and IBM sed, instead of relying
+		  or quirky SunOS "-n" behaviour.
+
+     Version 1.5: 7 Jan 1992
+	From: matthew@sunpix.East.Sun.COM (Matthew Stier)
+		- Escape quotes after escaping backslashes.
+
+     Version 1.6: 8 Jul 1992
+	From: davidw@vista.atmos.uiuc.edu (David Wojtowicz)
+		- Semicolon after close-paren in example in manpage.
+
+     Version 1.7: 19 Apr 1993
+	From: ferguson@cs.rochester.edu
+		- Remove comments inside sed command, and just put
+		  them in the text.

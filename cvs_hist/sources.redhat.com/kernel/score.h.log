@@ -1,0 +1,38 @@
+
+RCS file: /cvs/xconq/xconq/kernel/score.h,v
+Working file: score.h
+head: 1.4
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.2
+	xconq-7_4-branch: 1.2.0.4
+	xconq-7_4-branchpoint: 1.2
+	xtconq-pre-removal: 1.2
+	xconq-7_3_3-release: 1.2
+	xconq-7_3_2-release: 1.2
+	xconq-7_3_1-release: 1.2
+	xconq-7_3-branch: 1.2.0.2
+	xconq-7_3-branchpoint: 1.2
+keyword substitution: kv
+total revisions: 4;	selected revisions: 4
+description:
+----------------------------
+revision 1.4
+date: 2003/08/23 23:17:09;  author: ronne;  state: Exp;  lines: +2 -0
+Improve scorekeeper output.
+----------------------------
+revision 1.3
+date: 2002/07/31 20:40:08;  author: ronne;  state: Exp;  lines: +29 -16
+Add Doxygen comments to kernel includes.
+----------------------------
+revision 1.2
+date: 1999/09/04 13:40:55;  author: shebs;  state: Exp;  lines: +21 -21
+        * history.h, kpublic.h, module.h, player.h, print.h, score.h,
+        side.h, tp.h, ui.h, world.h: Remove PARAMS usages.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:31;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

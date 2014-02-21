@@ -1,0 +1,229 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/utype.def,v
+Working file: utype.def
+head: 1.13
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.13
+	BPT_EMCDONALD_AI_15: 1.13
+	SS_7_5_0_0pre_0_20050612: 1.11
+	BPT_MSKALA_IMF_3: 1.11
+	BPT_MSKALA_SUPPLY_12: 1.11
+	BPT_EMCDONALD_AI_14: 1.11
+	MPT_EMCDONALD_AI_7: 1.4.2.10
+	BPT_EMCDONALD_AI_13: 1.10
+	SS_7_5_0_0pre_0_20050501: 1.10
+	BPT_EMCDONALD_AI_12: 1.10
+	MPT_EMCDONALD_AI_6: 1.4.2.8
+	BPT_EMCDONALD_AI_11: 1.10
+	SS_7_5_0_0pre_0_20050416: 1.10
+	BPT_EMCDONALD_AI_10: 1.10
+	MPT_EMCDONALD_AI_5: 1.4.2.8
+	BPT_EMCDONALD_AI_9: 1.9
+	BPT_EMCDONALD_AI_8: 1.8
+	MPT_EMCDONALD_AI_4: 1.4.2.6
+	BPT_EMCDONALD_AI_7: 1.7
+	MPT_EMCDONALD_AI_3: 1.4.2.5
+	BPT_EMCDONALD_AI_6: 1.6
+	BPT_MSKALA_SUPPLY_11: 1.6
+	BPT_EMCDONALD_AI_5: 1.6
+	MPT_EMCDONALD_AI_2: 1.4.2.4
+	SS_7_5_0_0pre_0_20050322: 1.5
+	BPT_MSKALA_SUPPLY_10: 1.5
+	BPT_EMCDONALD_AI_4: 1.5
+	MPT_EMCDONALD_AI_1: 1.4.2.1
+	BPT_EMCDONALD_AI_3: 1.4
+	BPT_MSKALA_SUPPLY_9: 1.4
+	MPT_MSKALA_SUPPLY_3: 1.2.2.2
+	BPT_EMCDONALD_AI_2: 1.4
+	BPT_MSKALA_SUPPLY_8: 1.4
+	MPT_MSKALA_SUPPLY_2: 1.2.2.2
+	BPT_MSKALA_SUPPLY_7: 1.4
+	BRANCH_EMCDONALD_AI: 1.4.0.2
+	BPT_EMCDONALD_AI_1: 1.4
+	BPT_MSKALA_SUPPLY_6: 1.4
+	SS_7_5_0_0pre_0_20050225: 1.4
+	BPT_MSKALA_SUPPLY_5: 1.4
+	MPT_MSKALA_SUPPLY_1: 1.2.2.2
+	BPT_MSKALA_SUPPLY_4: 1.4
+	BPT_MSKALA_SUPPLY_3: 1.4
+	BPT_MSKALA_SUPPLY_2: 1.3
+	SS_7_5_0_0pre_0_20050208: 1.3
+	BPT_MSKALA_IMF_2: 1.2
+	BRANCH_MSKALA_SUPPLY: 1.2.0.2
+	BPT_MSKALA_SUPPLY_1: 1.2
+	SS_7_5_0_0pre_0_20050117: 1.2
+	SS_7_5_0_0pre_0_20050108: 1.2
+	SS_7_5_0_0pre_0_20041228: 1.2
+	BRANCH_MSKALA_IMF: 1.1.1.1.0.2
+	BPT_MSKALA_IMF_1: 1.1.1.1
+	SS_7_5_0_0pre_0_20041211: 1.1.1.1
+	SS_7_5_0_0pre_0_20041126: 1.1.1.1
+	GENESIS: 1.1.1.1
+	PRIVATE_TREE_1: 1.1.1
+keyword substitution: kv
+total revisions: 32;	selected revisions: 32
+description:
+----------------------------
+revision 1.13
+date: 2005/06/25 22:57:48;  author: eric_mcdonald;  state: Exp;  lines: +0 -4
+Remove multi-part units functionality.
+----------------------------
+revision 1.12
+date: 2005/06/21 01:30:41;  author: eric_mcdonald;  state: Exp;  lines: +0 -4
+Fix typos in reference manual.
+Remove outdated comment.
+Fix bug in dice scaling.
+Remove 'transfer-part' action.
+----------------------------
+revision 1.11
+date: 2005/06/06 03:03:47;  author: eric_mcdonald;  state: Exp;  lines: +8 -4
+Merge from 'MPT_EMCDONALD_AI_6' to 'MPT_EMCDONALD_AI_7'.
+----------------------------
+revision 1.10
+date: 2005/04/16 01:17:12;  author: eric_mcdonald;  state: Exp;  lines: +5 -1
+Merge from 'MPT_EMCDONALD_AI_4' to 'MPT_EMCDONALD_AI_5'.
+----------------------------
+revision 1.9
+date: 2005/04/06 02:29:50;  author: eric_mcdonald;  state: Exp;  lines: +4 -0
+New features to enhance unit cxp and side treasuries as a result of combat.
+New testbed game: awls-testbed.g.
+----------------------------
+revision 1.8
+date: 2005/04/05 01:53:38;  author: eric_mcdonald;  state: Exp;  lines: +8 -0
+Merge from 'MPT_EMCDONALD_AI_3' to 'MPT_EMCDONALD_AI_4'.
+----------------------------
+revision 1.7
+date: 2005/04/01 02:20:46;  author: eric_mcdonald;  state: Exp;  lines: +4 -0
+Merge from 'MPT_EMCDONALD_AI_2' to 'MPT_EMCDONALD_AI_3'.
+----------------------------
+revision 1.6
+date: 2005/03/28 03:56:51;  author: eric_mcdonald;  state: Exp;  lines: +20 -4
+Merge from 'MPT_EMCDONALD_AI_1' to 'MPT_EMCDONALD_AI_2'.
+----------------------------
+revision 1.5
+date: 2005/03/21 03:42:08;  author: eric_mcdonald;  state: Exp;  lines: +16 -0
+Merge from root of 'BRANCH_EMCDONALD_AI' to 'MPT_EMCDONALD_AI_1'.
+----------------------------
+revision 1.4
+date: 2005/02/13 03:13:32;  author: eric_mcdonald;  state: Exp;  lines: +4 -4
+branches:  1.4.2;
+Fix oddity with the 'vision-bend' uprop.
+----------------------------
+revision 1.3
+date: 2005/01/30 09:10:57;  author: eric_mcdonald;  state: Exp;  lines: +8 -0
+Restore the 'u_size_min' and 'u_size_max' properties.
+----------------------------
+revision 1.2
+date: 2004/12/27 05:23:46;  author: eric_mcdonald;  state: Exp;  lines: +13 -4
+branches:  1.2.2;
+Add customizable colors to Tkconq grouping box.
+New Sdlconq feature: unit construction boxes with customizable colors.
+----------------------------
+revision 1.1
+date: 2004/11/21 03:01:27;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.1;
+Initial revision
+----------------------------
+revision 1.1.1.1
+date: 2004/11/21 03:01:27;  author: eric_mcdonald;  state: Exp;  lines: +0 -0
+branches:  1.1.1.1.2;
+Initial import from private repo into SF repo.
+----------------------------
+revision 1.1.1.1.2.2
+date: 2005/06/06 03:39:36;  author: eric_mcdonald;  state: Exp;  lines: +76 -12
+Merged in all trunk changes between BPT_MSKALA_IMF_2 and BPT_MSKALA_IMF_3.
+----------------------------
+revision 1.1.1.1.2.1
+date: 2005/01/28 03:36:15;  author: eric_mcdonald;  state: Exp;  lines: +13 -4
+Merge in trunk changes between BPT_MSKALA_IMF_1 and BPT_MSKALA_IMF_2.
+----------------------------
+revision 1.2.2.5
+date: 2005/06/06 03:18:21;  author: eric_mcdonald;  state: Exp;  lines: +29 -5
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_11' and 'BPT_MSKALA_SUPPLY_12'.
+----------------------------
+revision 1.2.2.4
+date: 2005/03/28 04:17:56;  author: eric_mcdonald;  state: Exp;  lines: +20 -4
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_10' and 'BPT_MSKALA_SUPPLY_11'.
+----------------------------
+revision 1.2.2.3
+date: 2005/03/21 03:58:09;  author: eric_mcdonald;  state: Exp;  lines: +16 -0
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_9' and 'BPT_MSKALA_SUPPLY_10'.
+----------------------------
+revision 1.2.2.2
+date: 2005/02/18 04:43:24;  author: matthewskala;  state: Exp;  lines: +4 -4
+Merge changes from mainline, fix doctrine check bug.
+----------------------------
+revision 1.2.2.1
+date: 2005/02/09 18:11:31;  author: matthewskala;  state: Exp;  lines: +8 -0
+Merge in changes from trunk, fix bug by allowing unit material stores to go negative during economy phase.
+----------------------------
+revision 1.4.2.11
+date: 2005/07/10 15:43:07;  author: eric_mcdonald;  state: Exp;  lines: +0 -8
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_14' and 'BPT_EMCDONALD_AI_15'.
+----------------------------
+revision 1.4.2.10
+date: 2005/06/05 20:53:01;  author: eric_mcdonald;  state: Exp;  lines: +4 -4
+Ensure that Tkconq and the generic UI code rebuild when AI files are changed.
+Add support for autoconf assignment of "sizeof" macros.
+Start to add support for making primitve integer types of known size.
+Remove or disable more code associated with the colonization plan.
+Improve colonization support in constructor oprole.
+Prepare support for action masks.
+Remove now-unused 'buildingdone' flag.
+Delete remnants of special ACP-indep construction code.
+----------------------------
+revision 1.4.2.9
+date: 2005/06/05 03:03:01;  author: eric_mcdonald;  state: Exp;  lines: +4 -0
+Fix bugs in building and self-improvement.
+Fix bug with Tkconq action-enablement in UI.
+Make ACP-indep construction work correctly again.
+Fix some (but not all) end-of-turn pauses.
+----------------------------
+revision 1.4.2.8
+date: 2005/04/13 01:55:22;  author: eric_mcdonald;  state: Exp;  lines: +5 -1
+More treasury-checking functions.
+Many AI tweaks, plus foundation for further enhancements.
+Fix bug in my earlier bugfix in the economy code.
+----------------------------
+revision 1.4.2.7
+date: 2005/04/09 16:45:36;  author: eric_mcdonald;  state: Exp;  lines: +4 -0
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_8' and 'BPT_EMCDONALD_AI_9'.
+----------------------------
+revision 1.4.2.6
+date: 2005/04/04 02:45:14;  author: eric_mcdonald;  state: Exp;  lines: +8 -0
+Fix crashing bug in unit creation code.
+Various and sundry AI improvements.
+----------------------------
+revision 1.4.2.5
+date: 2005/03/31 02:55:43;  author: eric_mcdonald;  state: Exp;  lines: +4 -0
+New functions for handling materials checking and consumption for any actions.
+Add support for tech restriction associated with change-type action.
+Add support for materials consumption restriction for change-type action.
+----------------------------
+revision 1.4.2.4
+date: 2005/03/27 03:51:26;  author: eric_mcdonald;  state: Exp;  lines: +9 -1
+Various and sundry improvements to the AI.
+Fix bug in backdrop model 0 scarce materials distribution.
+----------------------------
+revision 1.4.2.3
+date: 2005/03/26 20:26:30;  author: eric_mcdonald;  state: Exp;  lines: +8 -4
+Various and sundry improvements to the AI.
+----------------------------
+revision 1.4.2.2
+date: 2005/03/25 17:37:43;  author: eric_mcdonald;  state: Exp;  lines: +4 -0
+Move some useful functions to a more common location.
+Start laying groundwork for new set of designer-specifiable AI worth functions.
+Fix warning in Default and related games.
+----------------------------
+revision 1.4.2.1
+date: 2005/03/21 03:19:40;  author: eric_mcdonald;  state: Exp;  lines: +16 -0
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_1' and 'BPT_EMCDONALD_AI_3'.
+Add new unit analysis capabilities to AI.
+Implement a plan-decision lottery. (Still needs work.)
+Break out common, useful parts of kernel action-checking code.
+Provide a normalization macro.
+Fix bug with quoted encounter lists.
+=============================================================================

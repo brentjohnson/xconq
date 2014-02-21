@@ -1,0 +1,11 @@
+A World Lost Slowly Changelog:
+
+8-3-2004
+*opal.g: (variant) Added random setup and changed calls to reflect that t-opal.g and u-opal.g are now part of the 'classic' variant.
+*s-opal.g: this file is no longer used.
+*opal-rules.g: archmage is now treated as a normal unit
+(acp-to-defend) (acp-to-attack) (define) ranged-types and mage-types are now listed in the weak/strong/powerful/incredible lists, allowing for smoother melee combat.  Their acp-to-attack and -defend have been set to 0 to prevent melee combat
+(wrecked-type) legend no longer wreck-types to riplegend, because riplegend is treated as a self-unit
+(capture-chance) only certain undead units can capture deadcity units, so that non-undead players can't start producing a zombie horde, at least not easily.
+(point-value) assigned values to most units and the working spells.  It seemed to lessen the number of engineers the AI builds, but only a bit.
+

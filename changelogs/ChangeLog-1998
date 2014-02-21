@@ -1,0 +1,2551 @@
+Wed Dec 30 18:19:36 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* imf.c (clone_imf): Clear numsizes.
+	(get_img): Sort by style also.
+	(best_image): Succeed in best-besting if size matches request.
+	(write_imf): Write style.
+	* move.c (check_move_action): Fail if speed is 0.
+	* ui.c (hcs): Adjust spacing at 64x64 mag.
+	
+	* skelconq.c (unit_advance_dialog, global_advance_dialog):
+	New functions, defaults for linking.
+
+	* tkconq.h: Merge enum tooltypes into enum mapmode.
+	(Map terrain_style, unit_style, inpunit): New slots.
+	* tkcmd.c: Pass NULL instead of unit to grok_position usually.
+	(do_map): Add options to set terrain display styles.
+	(do_survey): Use new mode organization.
+	* tkinit.c: Include new border and "marching ants" bitmaps.
+	(bordpics, antpic): New globals.
+	(init_bitmaps): Set them.
+	(init_cursors): Regularize.
+	* tkmain.c (tk_mouse_over_cmd): Record last mouse position.
+	(tk_world_mouse_down_cmd, tk_world_mouse_up_cmd): New functions.
+	(set_current_unit): Eliminate side arg, update map even if no
+	unit selected.
+	(play_movies): Share more code among cases.
+	(tk_set_design_tool): Reflect merge of tools and modes.
+	* tkcmd.c, tkmain.c: Change all callers.
+	* tkmap.c (zoom_in_out): Update mouseover and menus.
+	(MapW main_font): New slot.
+	(mapw_display): Set it and free it.
+	(draw_map_widget): Move draw_current to unit draws.
+	(draw_contours, etc): Eliminate side and drawable args,
+	get from dside and mapw->d.
+	(draw_feature_name): Use mapw->main_font for font.
+	(cell_drawing_info): Use pictures at powers 4,5,6.
+	(set_terrain_gc_for_image): Draw solid color if terrain style
+ 	calls for it.
+	(draw_terrain_row): Make picture-drawing case work.
+	(draw_current): Animate selection box, fix coloring.
+	(draw_blast): Use update_at_unit to update, add a delay.
+	(draw_border_line_mult): Calculate and draw pieces of a
+	generic border bitmap.
+	(handle_mouse_down, set_tool_cursor): Update to reflect mode/tool
+	merge.
+	(handle_world_mouse_down, handle_world_mouse_up): New functions.
+	* tkconq.tcl (designer): New global.
+	(create_map_menus): Use it, add separate move mode and survey
+	mode entries to side menu, add terrain and unit style submenus
+	to view menu.
+	(make_normal_bindings): Make clicking on world map do something.
+	(update_zoom): New proc, adjust menus according to mag power.
+	(popup_design_palette): Disable some menu entries.
+	(do_initial_setup): Increase animation speed.
+	
+	* neurope.g (independent-density): Define only in variants.
+	
+Thu Dec 24 13:35:02 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* imftk.tcl: Fix tipo.
+
+	* tkmap.c (MapW rsx, rsy, rsw, rsh): New slots.
+	(mapw_cmd): Init them.
+	(mapw_configure): Always allocate GC.
+	(mapw_display): Update only a subrect if specified via rsx etc.
+	(update_at_cell, update_at_unit): New functions.
+	* tkmain.c (update_cell_display): Use them.
+
+	* tkconq.h (for_all_maps): No longer pass side arg.
+	* tkmain.c, tkmap.c: Change all callers.
+
+	* tkinit.c (init_display, set_optional_colors, etc): Use dside
+ 	instead of side argument.
+	* tkmap.c (create_map, redraw_map, etc): Similarly.
+	* tkcmd.c, tkmain.c: Change all callers.
+	
+	* tkcmd.c (really_do_design): Make extern, set map->see_all.
+
+Tue Dec 22 18:50:07 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* Makefile.in (all-imftk): New action.
+	* read.c (interp_table): Don't load default game.
+	
+	* table.def (drawable-terrain): New table.
+	* africa.g, gettysburg.g, panzer.g: Use it. 
+
+	* tcltk/Makefile.in: Build libtkimf.a.
+	* tkconq.h (enum tooltypes): Add controlpainttool.
+	(Map colorize_units): New slot.
+	* tkcmd.c (aux_build): Call cancel_unit_type when cancelling.
+	(do_map): Add more options.
+	(do_message): Simplify cases.
+	* tkconq.tcl (dblbuffer): New global, controls double-buffering.
+	(create_map_window): Do unit list with multiple columns.
+	(create_map_menus): Use checkboxes for view options.
+	(update_unitlist): Replace with update_unitlist_count,
+	update_unitlist_count, update_unitlist_incomplete.
+	(enable_unitlist): Only draw border if enabled.
+	(ask_side_mode, etc): New procs.
+	(create_agreements_window): New proc.
+	(create_help_window, update_help): Put title in text widget.
+	(controlonly): New global.
+	(select_design_tool): Use it.
+	(popup_design_palette): Use it, also fix popup menu setup.
+	(new_feature, rename_feature): New procs.
+	* tkimf.c (tk_interp_image): Clean up solid color handling.
+	(tk_make_color_pixmap): Fix bug with certain images.
+	* tkinit.c (set_colors, etc): Remove side argument and use global
+	dside instead.
+	(request_color): Try to get a color from the imf library.
+	* tkisamp.c (imfsample_display): Fix name drawing, row/column
+	layout, background color option.
+	(draw_one_image): Make more like tkmap.c drawing.
+	* tkmain.c (tk_create_new_feature): New function.
+	(tk_t_image_name, tk_u_image_name): Return type name if necessary.
+	(update_unit_type_list): Use multiple procs.
+	(tk_help_goto): Add other node classes.
+	(tk_interp_key): Handle prefix arg.
+	* tkmap.c
+	(cancel_unit_type): New function.
+	(grok_side): Make work.
+	(MapW d): New slot.
+	(draw_area_background, etc): Remove side and drawable args,
+	use dside and mapw->d instead.
+	(draw_people, draw_country_border_line): Rewrite to handle all
+	people and control choices.
+	(draw_text): New function.
+
+	* x11/Makefile.in (tkconq, imftk): Link in libtkimf.a.
+	* imftk.c: Use tkisamp.c.
+	
+	* gettysburg.g: Make ravines more difficult to cross, tweak
+	side colors, add more comments.
+
+	* PROJECTS: Add some random ideas.
+
+Mon Dec 21 18:28:04 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* INSTALL: Fix mistaken reference to /usr/games, add a note
+	about XPM files.
+
+Mon Dec  7 19:17:42 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* world.c (init_world, set_world_circumference): Remove new
+	restriction on circumference, fails for outer space games.
+	(latlong_to_xy): Return if circumference is zero.
+	(divide_into_regions): Fix bug in cylinder handling.
+	(random_edge_point): Cache adjusted width.
+
+	* tkconq.tcl (popup_splash_screen, add_splash_screen_dialog_items,
+	remove_splash_screen_dialog_items, etc): New procs, complete
+	set of dialogs for game setup.
+	(create_map_window): Set imfsamples to inherit background color
+	of underlying widgets.
+	* tkisamp.c: Add remove command to widget.
+	(imfsample_replace_imf): Add the image if none currently displayed.
+	* tkmain.c (tk_version_string, tk_short_side_title, etc): New
+	functions, used in game setup dialogs.
+	(popup_game_dialog): Invoke popup_splash_screen.
+
+	* xtconq.c: New file, modified copy of xconq.c for Xt-based code.
+	* x11/Makefile.in: Use it.
+	(TCLTK_LIB): Fix pathnames.
+	* xconq.c (main): Bring up game setup dialog if no arguments on
+	command line, always go into ui_mainloop after setup dialog.
+	
+	* macgworld, macmouse.c, macrow.c: Clean up commented-out code.
+
+	* PROJECTS: Add some new interface ideas, idea for new Godzilla
+	game.
+
+Thu Dec  3 19:51:52 1998  Hans Ronne  <ronne@bmc.uu.se>
+
+	* ui.c (xform_cell): Permit mac interface to go outside area 
+	for backcolor support.
+
+	* world.c (init_world): Set default world.circumference to 360.
+	(set_world_circumference): Don't allow zero or negative values!
+	(compute_feature_centroid): Comment out buggy centroid code.
+	
+	* maccmd.c (do_recenter): Call set_map-focus instead of set_focus.
+	(set_focus): Remove.
+	(do_set_view_angle): Call set_map_angle.
+	* maccolors.c (mac_create_cicn): Declare extern for use in
+ 	set_side_colors.
+	(mac_init_cicn): Declare extern for use in set_side_colors.
+	(build_colors_popup_menu): Prototype new function.	
+	(append_color_callback): Prototype new function.
+	(fill_in_empty_name): Remove obsolete prototype.
+	(set_default_colors): Add support for window background color.	
+	(init_side_colors): Set grid_matches_unseen correctly.	
+	(set_side_colors): Remove check for Images file.
+	(set_side_colors): Call build_colors_popup_menu.
+	(set_side_colors): Fix icon display bug by calling mac_create_cicn.
+	(set_feature_color): Remove check for Images file.
+	(set_feature_color): Call build_colors_popup_menu.
+	(set_feature_color): Set grid_matches_unseen correctly.	
+	(set_terrain_color): Remove check for Images file.
+	(set_terrain_color): Call build_colors_popup_menu.
+	(build_colors_menu): Add support for backcolor.	
+	(build_sides_menu): Fix 2 menu item bugs.	
+	(build_features_menu): Add support for backcolor.	
+	(build_colors_popup_menu): New function for handling imf input.	
+	(append_color_callback): New function for handling imf input.	
+	* macconq.c (draw_meridians_setport): Remove prototype.
+	(update_action_display): Restore old code (skip
+	draw_meridian_setport call).
+	(play_movies): Call update_cell instead of clear_unit_blast.
+	(force_overall_update): Call force_map_update instead of
+	force_update(map).
+	* macconq.h: Clean out all the obsolete stuff that has
+	accumulated here.
+	(struct a_map): Add map->xwrap and map->leaky_grid.
+	(BACKTTYPE): Define = -1.
+	(backcolor): Define = featColor[0].
+	(**current_colorscheme): Declare here instead of in maccolors.c.
+	(update_cell): New function declared. Several old ones removed.
+	(set_map_focus): New function declared. set_focus removed.
+	(set_map_angle): New function declared.
+	(set_meridians): New function declared.
+	* macdefs.h (miViewMeridians): Define.
+	(miDrawLatLong): Remove. Renumber remaining items.
+	(dMeridians): Add new dialog with items.
+	* macdraw.c (draw_cell_block): Add support for BACKTTYPE.
+	(draw_cell_block): Add support for customized unseencolor.
+	(draw_hex_region): Add support for BACKTTYPE.
+	(draw_hex_region): Add support for customized unseencolor.
+	(draw_legend_text): Tweak name erasing fix from 4 to 3 pixels.
+	(draw_legend_text): Add case 256 for feature names at max magnifiction.
+	* macgworld.c (rotate_angle_up): Prototype new function.
+	(rotate_angle_down): Prototype new function.
+	(scroll_map_window): Fix big offset bug.
+	(scroll_map_window): Support map->xwrap.	
+	(copy_from_gworld):	Rewrite and simplify. Support map->xwrap.
+	(copy_clipped_to_map): Add clipping for gworld edge.
+	(update_resized_map): Support backcolor.
+	(update_gworld): Support map->xwrap.
+	(cell_is_in_gworld): Support map->xwrap.
+	(handle_numeric_keypad): Support cmd-jump for normal arrow keys.
+	(handle_numeric_keypad): Call rotate_angle_up and rotate_angle_down.
+	(rotate_angle_up): New function for setting view angle.
+	(rotate_angle_down): New function for setting view angle.
+	(set_meridians): New Dialog for map-specific meridian settings.
+	* macmap.c (draw_feature_names): Declare static.
+	(update_grid_leakage): Declare static.
+	(create_map): Initialize map->xwrap.
+	(create_map): Call update_grid_leakage.
+	(create_map): Add smart meridian interval code.
+	(set_map_focus): New function. Replaces set_focus in maccmc.d.
+	(set_map_angle): New function. Partially replaces do_set_view_angle.
+	(force_map_update): Call update_grid_leakage.
+	(update_grid_leakage): New function. Updates map->leaky_grid.
+	(draw_window_background): Add support for backcolor.
+	(draw_window_background): Fix grid_matches_unseen bug.
+	(draw_map_content): Call draw_feature_names.	
+	(draw_feature_names): New function. Draws feature names globally.
+	(draw_meridians_setport): Not used any more. Remove.
+	(draw_meridians): Rewrite for use with update_cell.
+	(draw_meridians old code): Remove iffed out kernel callback code.
+	(draw_area_background): Fix 2 grid_matches_unseen bugs.
+	(draw_unit_blast): Call cell_is_in_gworld.
+	(clear_unit_blast): Not used any more. Remove. 
+	(draw_selections): Call cell_is_in_gworld.
+	(draw_selections_at): Call cell_is_in_gworld.
+	(draw_selected_unit_setport): Not used any more. Remove. 	
+	(erase_selection): Not used any more. Remove.
+	(erase_selections): Not used any more. Remove.
+	(draw_unselected_unit): Not used any more. Remove.
+	(update_cell_display): Rewrite. Let update_cell do all work.
+	(update_cell): New function. Replaces all the above.
+	(draw_unit_names_only): Remove redundant city code at low
+	magnification.
+	* macmenus.c (do_menu_command): Add Background to Colors menu.
+	(do_menu_command): Call new set_meridians Dialog in mViewMap.
+	(do_menu_command): Fix other-map bug in mViewAngles by calling
+	set_map_angle.
+	(do_menu_command): Remove miDrawLatLong (replaced by new Dialog).
+	(moveonclick_mi): Fix toggle bug by calling draw_control_panel.
+	(adjust_menus): Remove miDrawLatLong.
+	(adjust_menus): Fix crashes when quitting without front window.
+	*macmouse.c (toggle_map_plans): Always call force_map_update.
+ 	(do_mouse_down_map_content): Call update_cell instead of
+	erase_selection.
+	(do_mouse_down_map_content): Call set_map_focus instead of
+	set_focus.
+	(unselect_all): Rewrite. Call update_cell instead of
+	erase_selections.	
+	(select_all_units_in_rect): Call draw_selections instead of
+	draw_selected_unit_setport.
+	* macprefs.c (default_draw_latlong): Change to TRUE.
+	(default_latlong_interval): Change to 300.
+	(interp_mac_ui_data): Add support for backcolor.
+	(ui_update_state): Add support for backcolor.
+	(set_preferences): Fix set_default_side_colors bug.
+	* macrow.c (cell_terrain): Add BACKTTYPE support.
+	(cell_style): Add support for redrawing window background.
+	(draw_row): (both versions) Remove call to draw_feature_name,
+ 	add support for map->leaky_grid.
+	(draw_terrain_row): Rewrite and simplify. Support redrawing
+	of window background.
+	(cell_update): Remove function and prototype.
+	(draw_feature_name): Remove function and prototype.
+	(draw_units): Remove redundant city code at low magnification.
+	* macwins.c (current_colorscheme): Move declaration to macconq.h.
+	* XconqProj.rsrc (DLOG 806 "Set Meridians"): New dialog.	
+	(DITL 806 "Set Meridians"): New dialog item list.
+	(MENU 136 "Map View"): Add "Meridians" item.
+	(MENU 216 "Grids & Boxes Popup"): Remove "Lat & Long grid" item.
+	(MENU 707 "Side Pref Popup"): Add "Pick Side" item.
+	(MENU 708 "Features Pref Popup"): Add "Pick Feature" item.
+	* Xconq.r: Update from XconqProj.rsrc to reflect the above changes.
+
+Tue Dec  1 19:13:16 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* tkisamp.c: New file, "image sample" widget.
+	* tcltk/Makefile.in (OBJS): Add tkisamp.o.
+	* tkconq.h (enum tooltypes): Add materialpainttool etc.
+	(UI curpeoplenumber, curcontrolnumber, etc): New slots.
+	(Map anim_state): New slot.
+	* tkmain.c (initial_ui_init): Search for tcl file near library.
+	(tk_u_image_name, etc): New C procs for tcl code to use.
+	(tk_help_goto): Return node class also.
+	(tk_set_design_data): Add more painting types.
+	(hack_find_imf): New function.
+	* tkmap.c (MapW bg_border): Rename from bgBorder.
+	(set_tool_cursor): Handle missing cursor case.
+	(handle_designer_mouse_down): Add more painting types.
+	* tkconq.tcl (add_new_game_dialog_items): New proc.
+	(popup_game_dialog): Use it.
+	(new_game, popup_variants_dialog, etc): New procs.
+	(animate_selection_cmd): New proc.
+	(do_initial_setup): Call it periodically.
+	(create_map_window): Use imfsample widget for emblems and units.
+	(update_mouseover, map_xscroll_set, map_yscroll_set): New procs
+	to call from C code.
+	(create_help_window): Make topic selection work.
+	(add_help_topic_key, update_help): New procs.
+	(popup_design_palette): Set up imfsamples, add more controls.
+	(dbg_set_design_data, cycle_design_data): Similarly.
+
+	* wconq.c, xconq.c (main): Call initial_ui_init after parsing
+ 	args.
+
+	* intro.g: Base it on the standard game rather than using a
+	unique set of rules.
+
+Tue Nov 24 17:30:36 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* tkconq.h (enum tooltypes, enum movie_type, struct a_movie): New.
+	(UI cursors): New slot.
+	* tkcmd.c (do_dir, do_dir_multiple, do_fire, do_fire_into,
+ 	do_recenter, do_wake, do_wake_all, do_design): Implement.
+	* tkinit.c (init_cursors): New.
+	(init_bitmaps): Add combat splats.
+	* tkmain.c (ui_init): Set dside correctly.
+	(tk_game_info): Return more game info.
+	* tkconq.tcl (popup_game_dialog): Improve generally.
+	(create_map_window): Parametrize more, adjust positionings.
+
+	* win/Makefile.in, win/configure.in: Clean out X11 junk.
+	* wconq.c: Similarly.
+
+Mon Nov 16 17:18:36 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* tkconq.tcl: Hide the main window.
+	(create_map_window): Popup the map window.
+	(make_normal_bindings): Bind only the map window.
+	(set_map_cursor): Remove, no longer used.
+	(popup_design_palette, make_design_tool, etc): New procs.
+	* tkmain.c (tk_ttype_name, tk_set_design_tool, etc): New functions.
+	(tk_mouse_over_cmd): Add designer painting ability.
+	(update_side_display): Handle NULL side.
+	(schedule_movie, play_movies): Make work.
+	* tkmap.c (MapW blastsx, etc): New slots, add code to draw/erase
+	hit "blast" images.
+	(handle_designer_mouse_down, paint_on_drag): New functions.
+	
+Mon Nov 16 17:13:31 1998  Hans Ronne  <ronne@bmc.uu.se>
+
+	* macconq.c (draw_meridians_setport): Declare extern.
+	(extern int numwindows): Move declaration to macconq.h.
+	(extern WindowPtr *winmenuwins): Move declaration to macconq.h.
+	(handle_event): Move FrontWindows != NULL check after menu commands.
+	(adjust_cursor): Fix failure to update mouseover when scrolling or
+ 	zooming.
+	(stagger_window): Don't stagger new window if previous postion now
+ 	is empty.
+	(update_action_display): Call draw_meridians_setport for each map.
+	* macconq.h (typedef a_list): Add short list->id.
+	(worldmapwin, worldmap, frontmap, numwindows, mapnum): Declare.
+ 	(create_map): Add int id to prototype.
+	* macdefs.h (miFileConnect): Change to item 3. 
+	(miFileClose): New Item 5.
+	* macgworld.c (scroll_list_using_key): Declare extern.
+	(handle_numeric_keypad): Support scrolling in list window.
+	(handle_numeric_keypad): Support use of normal arrow keys for
+	scrolling.	
+	(auto_scroll_left_arrow): New static function.
+	(auto_scroll_right_arrow): New static function.
+	(auto_scroll_up_arrow): New static function.
+	(auto_scroll_down_arrow): New static function.
+	* macinit.c (init_display): Use int mapnum++ in create_map call.
+	* maclist.c (draw_list): Fix clipping bug.
+	(draw_list_headings): Draw dividing line.
+	(draw_unit_list_entry): Draw dividing line.
+	(list_vscroll_fn): Eliminate headings flicker.
+	(list_hscroll_fn): Fix scrolling bug.
+	(scroll_list_using_key): New function.
+	(create_list): Support list->id for list number cleanup.
+	(destroy_list): Clean up list numbers.
+	* macmap.c (worldmap): Move declaration to macconq.h.
+	(frontmap): Move declaration to macconq.h. Initialize instead.
+	(mapnum): Move declaration to macconq.h. Initialize instead.
+	(draw_meridians_setport): New function. Declare extern for use
+	in macconq.c.
+	(create_map): Add new World Map code.
+	(create_map): Turn on name erasing if named mobile unit exists.
+	(draw_top_line): Fix flickering of bottom line.
+	(destroy_map): Move call to draw_related_maps before cleanup
+	of map list.
+	(destroy_map): Add new World Map code.
+	* macmenus.c (numwindows): Move declaration to macconq.h.
+	Initialize instead.
+	(add_window_menu_item): Add new World Map code.
+	(do_menu_command): Add Close Window option.
+	(do_menu_command): Add new World Map code.
+	(adjust_menus): Add Close Window option.
+	(adjust_menus): Add new World Map code.
+	(adjust_menus): Fix miWindowsFirst bug.
+	* macmouse.c: Remove obsolete declarations of mapnum and nummaps.
+	* macwins.c (create_notice_window): Remove call to
+	add_window_menu_item.	
+	* XconqProj.rsrc (MENU 129 "File"): Move "Connect" to position 3.
+	(MENU 129 "File"): Add new item 5 "Close" with cmd-W key.
+	(MENU 132 "Play"): Change item 2 "City Dialog" key from cmd-D
+	to cmd-C.
+	(MENU 134 "Side"): Remove cmd-M key from item 4 "Move on Click".
+	(MENU 135 "Windows"): Add cmd-M key to item 9 "New Map".
+	(MENU 135 "Windows"): Add cmd-L key to item 10 "New List".
+	(MENU 135 "Windows"): Change item 12 "World Map" key from
+	cmd-W to cmd-D.
+	(MENU 215 "TextPopup"): Change title of item 1 to
+	"Draw Unit Names".
+	(MENU 215 "TextPopup"): Change title of item 2 to
+	"Draw Feature Names".
+	(MENU 215 "TextPopup"): Change title of item 3 to
+	"Use Optimized Font Sizes".
+	(MENU 215 "TextPopup"): Change title of item 4 to
+	"Erase Moving Names (slow)".
+	(ALRT 1005 "Out of Memory Alert"): Autoposition to Alert.
+	(ALRT 4000 "Two Button Alert"): Autoposition to Alert.
+	(ALRT 4001 "One Button Alert"): Autoposition to Alert.
+	(DLOG 137 "Reduce Screen depth"): Autoposition to Alert.
+	(DLOG 160 "Mplayer", etc): Autoposition to Center.
+	* Xconq.r: Update from XconqProj.rsrc to reflect the above changes.
+
+Sun Nov  8 14:02:10 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* supply.c: Re-enable Dprintf until an actual bug occurs.
+
+	* tkconq.h (Map): Add slots for input position.
+	* tkcmd.c: Remove hint string from calls to ask_position.
+	(cmd_error): Re-enable beepcount.
+	* tkmain.c (tk_handle_modal_cmd): Remove.
+	(tk_interp_key): New function, merges normal and modal keystroke
+	handling.  Record mouse position at time of keystroke.
+	(ask_unit_type, etc): Use braces to protect when passing to tcl.
+	* tkconq.tcl (create_map_window): Use place instead of pack
+	for leftside/rightside panes, add unitlist scrollbar.
+	(create_map_menus): New proc.
+	(update_game_side_info, update_game_side_score, update_unitlist):
+ 	New.
+	(ask_bool_mode, ask_bool_done, etc): Simplify, don't use modal
+	bindings.
+	
+Thu Nov  5 18:17:28 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* configure.in (host_tools): Add tcl and tk.
+	* Makefile.in (all-tkconq): Add all-tcl and all-tk.
+	(all-tcl, all-tk): New actions.
+
+	* nlang.c (task_desc): Handle null task.
+	* ui.c (unit_actually_visible): Move to here from tkmap.c.
+	* unit.c (longest_shortest): New global.
+	(shortest_unique_name): Compute it.
+
+	* tcltk/Makefile.in (ALL_CFLAGS): Add includes to tcl/tk dirs.
+	* tkconq.h (UI grid_color, etc): Rename slots to use underscores.
+	* tkcmd.c (do_map): Add display commands.
+	* tkimf.h (TkImage cmap): New slot.
+	* tkimf.c (tk_make_color_pixmap): Make it work.
+	* tkinit.c (init_bitmaps): Get some of the bitmaps.
+	* tkmain.c (tkwin): Remove global.
+	(update_mouseover): New function, split out from tk command.
+	* tkmap.c: Add more map display options and decor.
+	(MapW): Remove unused slots, add width and height.
+	(config_specs): Add -cursor, -height, -width, -world.
+	(mapw_cmd): Update slot inits.
+	(mapw_widget_cmd): Make scrolling work.
+	(mapw_configure): Fix sizing.
+	(draw_feature_name): Make it work.
+	* tkconq.tcl (create_map_window): Make window 4/5 of screen,
+	tweak packing and sizing, pass sizes to map widgets.
+	(update_unit_info): New proc.
+
+	* x11/Makefile.in (TCLTK_LIB): Point at locally-build libraries.
+	* xdraw.c (unit_actually_visible): Remove.
+
+Sat Oct 24 16:08:41 1998  Hans Ronne  <ronne@bmc.uu.se>
+
+	* gvar.def (g_grid_color): Set default to dark-gray.
+	* plan.c (plan_random): Fix panic crashes by adding case
+ 	TASK_COLLECT.
+	* run.c (run_research): Fix science dialog crashes.
+	* supply.c (heap_insert): Fix compile error.
+	* ui.c (get_generic_images): Declare extern for use in maccolors.c.
+	(nearest_cell): Fix meridian drawing for non-cylindrical worlds.
+	* unit.c (has_advance_to_build): Skip line that prevents giving
+ 	units to indep side.
+	(int nextid): Initialize to 0 instead of 1 to prevent 0-unit
+ 	crashes in side_number.
+	
+	* actions.c, combat.c, move.c, mtype.def, run2.c, unit.c, unit.h,
+ 	utype.def, world.c, world.h, maccolors.c, macconq.c, machelp.c,
+ 	macimf.c, macinit.c, maclist.c, macmap.c, macmenus.c,
+ 	macmouse.c. macrow.c, macwins.c: Remove all the old double-slashed
+ 	change markers.
+
+	* maccolors.c: Remove prototypes for create_ppat_color &
+ 	fill_in_empty_name.
+	(init_side_colors): Skip check for empty_string(g_unseen_color)
+ 	that kills the quick grid.
+	(get_generic_images): Declare extern for use in get_color.
+	(get_color): Rewrite to handle imf colors correctly. Add 3d
+ 	parameter in get_img call.
+	(set_feature_color): Skip check for empty_string(g_unseen_color)
+ 	that kills the quick grid.
+	(create_ppat_color): No longer used. Remove.
+	* macdefs.h: Redefine miMoreGiveUnit from 6 to 17.
+	* macinit.c (init_display): Remove remains of old iffed out ICN#
+ 	plotting code.
+	(init_terrain_images): Rewrite to handle imf colors correctly.
+	* macmap.c (draw_meridians): Rewrite to speed up and fix error in
+ 	locating map origin.
+	* macmenus.c (do_menu_command): Fix yet another world map bug.
+	* macmouse.c (do_mouse_down_map_content): Prevent ctrl-click peeks
+ 	at enemy units unless debugging. Fix crashes when ctrl-clicking
+ 	without playable units.
+	* macprefs.c (interp_mac_ui_data): Add meridiancolor &
+ 	contourcolor.  Fix incorrect order of textcolor, gridcolor &
+ 	unseencolor.
+	(ui_update_state): Add meridiancolor & contourcolor.  Fix
+ 	incorrect order of textcolor, gridcolor & unseencolor.
+	* macrow.c (draw_region): Fix compile error.
+	* XconqProj.rsrc (MENU 133 "More"): Move "Give Unit" submenu from
+ 	item 6 to 17.
+	* Xconq.r: Update from XconqProj.rsrc using DeRez and modern R
+ 	includes with system 7 positioning data enabled in WINDs, ALRTs &
+ 	DLOGs. Now also contains "scientist" PICTs.
+	* XconqMWC.r: New file, needed to compile CodeWarrior projects
+ 	using Xconq.r.
+
+Sat Oct 24 15:51:18 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* tkconq.tcl: Rename from conqtk.tcl, for consistency, plus
+	make various fixes.
+	(popup_game_dialog, set_map_cursor): New procs.
+	* tkconq.h (UI mapdown): Remove, never used.
+	(Map autoselect, move_on-click, worldw): New slots.
+	(Map pxw, pxh, curx, cury): Remove no longer used.
+	* tkcmd.c: Re-enable use of map->prefixarg.
+	(tk_execute_command): Set map slots correctly.
+	(do_map): Add !<cmd> as option to send arbitrary tcl commands.
+	(do_survey): Set the correct flags.
+	* tkinit.c (set_optional_colors): Set colors only if request
+	succeeds.
+	* tkmain.c (dside): New global, pointer to side with display.
+	(tk_numgames, tk_game_info): New tcl commands.
+	(tk_mouse_over_cmd): Clear display if mouse not in map.
+	(draw_unit_info): Display unit's tasks.
+	(init_redraws): Make sure more of map window up-to-date.
+	(eval_tcl_cmd): New function.
+	* tkmap.c (create_map): Fill in more slots.
+	(enable_in_unit_type_list): New function.
+	(save_cur, restore_cur): Remove, no longer needed.
+	(mapw_widget_cmd): Add xview and yview commands.
+	(x_nearest_cell, x_nearest_boundary): Remove, call generic
+	functions directly.
+
+	* xconq.c (main): Call ui_mainloop after popping up new game
+	dialog.
+
+Sun Oct 11 16:31:55 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* init.c: Remove redundant decl of curdatestr.
+	* ui.h (VP draw_features_names): New slot.
+
+	* conqtk.tcl (do_initial_setup): Remove call to create_map_window,
+	now done from C code.
+	(create_map_window): Add more menu items, add mouseover pane,
+	progress items, world map pane.
+	(update_side_progress): New proc.
+	* tkconq.h (Map vp): Remove slot, no longer used.
+	* tkcmd.c (do_map): Add more subcommands.
+	(do_refresh): Implement.
+	* tkinit.c (open_display): Don't add bitmaps to unit list here.
+	* tkmain.c (tk_mouse_over_cmd): New function.
+	(ui_init): Don't update unit lists yet.
+	(update_side_display): Add score and progress display.
+	(update_message_display): Implement.
+	(place_legends): New function.
+	* tkmap.c: Merge in contents of tkdraw.c, make it possible to
+	draw two map widgets in a map.
+	(widget_vp): New function, access to map's main viewport.
+	* tkdraw.c: Remove.
+	* tcltk/Makefile.in (OBJS): Remove tkdraw.o.
+
+	* x11/Makefile.in (tkconq): Remove XOBJS from dependencies.
+	* xtconq.h (Map drawfeatureboundaries, drawfeaturenames):
+	Remove, using vp versions instead.
+	* xdraw.c (draw_terrain_row): Use vp->draw_feature_names and
+	vp->draw_feature_boundaries.
+	* xmap.c (create_map, set_from_controls, update_controls): Similarly.
+	
+Wed Sep 30 21:07:43 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* conqtk.tcl: Add more menu entries, more modal interaction
+	procs.
+	* tkcmd.c (do_quit): Simplify.
+	* tkdraw.c: Set properties of newly-gotten GCs explicitly.
+	* tkinit.c (init_display): Set up unit type list bitmaps.
+	(close_display): Remove, never used.
+	* tkmain.c, tkmap.c: Various cleanups.
+
+	Supply line support from Sami Perttu  <perttu@cc.helsinki.fi>:
+	* kernel/supply.c: New file.
+	* kernel/Makefile.in, kernel/Imakefile: Compile it.
+	* table.def (supply-out-threshold, supply-out-max, etc): New
+	tables.
+	* unit.h (Unit s_flow, s_conn): New slots.
+	(supply_inflow, supply_connectedness): New macros.
+	* run2.c (run_turn_start): Call run_supply.
+	* xdraw.c (draw_map_info): Report on supply line.
+	* test/supply.g: Test game for supply.
+
+Thu Sep 24 19:47:56 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* conqtk.tcl: Put main window creation into a proc, add scrollbars
+	to map, add callback handlers for modes, add help dialog.
+	* tkconq.h: Add interaction slots to Map.
+	* tkcmd.c: Fill in the commands that require interaction to
+	get additional data.
+	* tkmain.c: Add help and modal interaction commands.
+	* tkmap.c: Add ask_* and grok_* functions similar to X11
+ 	interface.
+
+Sat Sep 12 14:07:52 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* ui.c (parse_long_name_command): Handle newlines in command.
+
+	* tcltk/Makefile.in: Add more dependencies.
+	* conqtk.tcl: Default window to most of screen, improve packing,
+	set up unit type list, etc.
+	* tkconq.h: Use XColor * for colors, add more properties to maps.
+	* tkcmd.c: Use per-map curunit.
+	* tkdraw.c: Enable/modify more of the inherited X11 code, use
+	Tk_GetGC to get GCs everywhere.
+	* tkimf.c: Make solid color handling work.
+	* tkinit.c: Use XColor * for colors everywhere.
+	* tkmain.c: Add some more commands.
+	(update_unit_type_list): New function.
+	* tkmap.c: Add mouse input handling.
+	
+Fri Sep  4 17:13:41 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* tcltk/Makefile.in: Add .h dependencies.
+	* conqtk.tcl: Add View Closer and Farther menu items.
+	* tkcmd.c: Impl do_zoom_in, do_zoom_out.
+	* tkconq.h, tkdraw.c, tkmap.c, tkmain.c
+	* tkimf.c. tkimf.h: New files, Tk-specific image handling.
+	* tkinit.c: New file, Tk interface initialization.
+
+	* x11/Makefile.in (tkconq): Don't link in XOBJS.
+
+Mon Aug 31 19:53:11 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	First version of a tcl/tk-based interface to Xconq.
+	* tcltk: New directory.
+	* tcltk/Makefile.in, tcltk/configure.in, conqtk.tcl, tkcmd.c,
+	tkconq.h, tkdraw.c, tkmain.c, tkmap.c: New files.
+	* configure.in (host_tools): Add tcltk.
+	* Makefile.in (all-tkconq, all-tcltk): New actions.
+
+	* x11/Makefile.in (TCLTK_LIB, TKUI_LIB): New variables.
+	(XTOBJS): Rename from XOBJS, remove xconq.o, add xtmain.o.
+	(xconq): Link xconq.o explicitly.
+	(tkconq): New target.
+	* xtconq.h: New file, Xt-specific parts of xconq.h.
+	* xcloseup.c, etc: Include it instead of xconq.h.
+	* xconq.c: Move Xt-specific code to xtmain.c, call new
+	generic UI functions (initial_ui_init, ui_mainloop, etc).
+	(init_all_displays): Move to here from xinit.c.
+	* xtmain.c: New file.
+	
+Mon Aug 31 19:39:06 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* cmd.def (Wlog): New command.
+	* cmd.c (do_warning_log): New function.
+	* read.c (read_warning): Add ability to log warnings.
+	* util.c (warnings_logged, ewfp): New globals.
+	(log_warning): New functions, writes warnings to file.
+	(init_error, etc): Call it.
+	
+	* mkterr.c (name_geographical_features): Allow a class name that
+	is different from a specific name of a feature type, pass to
+	specific generators.
+	(name_highest_peaks, name_islands, name_lakes, name_bays): Add and
+ 	use name argument.
+	(name_islands): Use regions to identify.
+	(water_point): Remove, no longer needed.
+
+	* run.c (end_the_game): Allow all sides to see everything.
+	* run2.c (run_spies): Simplify code.
+	(run_accidents): Interp accident damage table as a dice spec.
+
+	* ancient.g: Add help info, commented-out advance tables.
+	* flattop.g: Make atoll a liquid type.
+	* standard.g: Update feature-types.
+
+	* refman.texi: Describe feature-types variable more accurately,
+	update info about accident-damage.
+	
+	* PROJECTS: Add various ideas, reflect above changes.
+
+Mon Aug 17 18:22:43 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* unit.c (type_can_sit_on_conn): New function.
+	* actions.c (check_create_at_action): Use it.
+
+	* mkterr.c (name_geographical_features): Use more temp vars,
+	add cases for islands and bays.
+	(name_highest_peaks): Interpret a density parameter.
+	(name_islands, name_bays): New functions.
+	(name_lakes): Use regions to find lakes.
+	* world.h (TRegion, TRegionLink): New types.
+	(Area regions): New slot.
+	* world.c (region_list, numregions): New globals.
+	(region_value, divide_into_regions, add_neighbor): New functions,
+	machinery to divide area into regions of uniform type.
+	* macrow.c (draw_region): New function, debug display for terrain
+	region computation.
+
+	* gettysburg.g: Default day/night variant to true.
+	* standard.g: Identify and name islands and bays.
+	* stdterr.g (alt-smoothing): Reduce from 4 to 3.
+
+	* PROJECTS: Remove item about stdplay.c, will always want to
+	tune generic AI to play standard game well, also reflect
+	above changes.
+
+Mon Aug 10 19:19:41 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* ui.c (nearest_cell): Don't dereference null fraction pointers in
+ 	debug print (thanks to Michael Firnau<mfi@techfak.uni-kiel.de>).
+	
+	* combat.c (attempt_to_capture_unit): Account for stack
+	protection.
+	* nlang.c: Use strcat and strcpy instead of sprintf where possible.
+	(others_here_desc): Fix reporting of incomplete units.
+
+	* macdraw.c (draw_cell_block, draw_hex_region,
+ 	draw_border_line_multiple, draw_connection_line_multiple): Fix
+ 	logic of drawing solid colors vs images.
+	* macwins.c (draw_side_status): Erase progress bar if designing.
+
+	* gettysburg.g (stack-protection): Let infantry and cavalry
+	prevent artillery capture.
+	* ww2-bn.g: Allow Allies to capture coastal artillery, let
+	artillery only attack/defend via firing.
+
+Thu Jul  9 18:59:23 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* kernel.h (execute_task_aux): Remove decl.
+	* task.c (execute_task_aux): Get function to call from table.
+
+	* ancient.g: New game, simulation of ancient civilizations.
+	* fantasy.g (accident-damage): Define.
+	* postmodern.g (accident-vanish-chance): Define.
+	(event-notices): Define.
+
+	* PROJECTS: Add misc ideas, remove color/silhouette merge item.
+
+Tue Jul  7 19:13:14 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	Action and task to collect materials and deliver to another unit.
+	* action.def (extract): New action type.
+	* table.def (acp-to-extract, material-to-extract): New tables.
+	* task.def (collect): New task type.
+	* cmd.def (collect): New command.
+	* actions.c (prep_extract_action, etc): New functions.
+	* task.c: Alphabetize task manipulation functions.
+	(do_collect_task, collect_test, etc): New functions.
+	(execute_task_aux): Add collect case.
+	
+	* task.def: Include names of all task manipulation functions
+	for each task type.
+	* kernel.h, kpublic.h, unit.h: Include task.def to declare
+	functions.
+	* task.c (create_build_task): Add unit argument.
+	(set_move_to_task): Add distance argument.
+	* tp.c (net_push_move_near_task, etc): Change to
+	net_push_move_to_task.
+	(net_push_hit_task, net_push_specific_hit_task, etc): Change to
+ 	net_push_hit_unit_task.
+	* mplayer.c, plan.c, task.c, tp.c, ui.c, xcmd.c, xmap.c, ccmd.c:
+ 	Change all callers.
+
+	* gvar.def (grid-color, meridian-color, unseen-color): Set to
+	black.
+	* combat.c (do_overrun_action): Handle withdraw and surrender
+	chances.
+	* read.c (CHECK_INDEX_1, etc): Improve text of warning.
+	* ui.c (give_supplies): Add ability to give to adjacent units.
+	* unit.c (change_unit_type): Call init_supply.
+	* world.c (change_terrain_type): Reset material in cell.
+
+	* maccmd.c (do_keyboard_command, etc): Use dside->prefixarg.
+	(describe_keyboard, describe_text_commands): Remove.
+	(do_collect): New function.
+	* macdraw.c (draw_hex_region): Fix tests for unseen color case.
+	* machelp.c (create_help_window): Use generic command help
+	functions.
+	* macmenus.c (apply_to_all_selected): If no map or list in
+	front, find and use a random map.
+
+	* xcmd.c (do_collect): New function.
+	* ccmd.c (do_collect): Ditto.
+
+Thu Jun 25 18:33:16 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* run.c (has_advance_to_research): Simplify.
+	* unit.c (has_advance_to_build): Simplify, also return false for
+	indep side.
+
+	* xconq.c (unit_advance_dialog, global_advance_dialog): Add
+	default (auto-pick) implementations.
+
+Wed Jun 24 18:16:01 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* cmd.c (CmdTab): Comment out unused argtypes field.
+	* generic.c (init_types): Don't clear utypes etc twice.
+	* nlang.c (shortest_side_title): Add pluralnoun case.
+	* read2.c: New file, overflow from read.c.
+	* read.c (interp_utype_value_list, etc): Move to read2.c.
+	* types.c: Add a comment.
+	* ui.c (set_contour_interval): Declare.
+	* Makefile.in, Imakefile (OBJS): Add read2.o.
+
+	* macciv.c: Rename "science" to "advance" everywhere.
+	* maccolors.c (set_default_colors): Fill from GDL variables.
+	(build_colors_menu, build_side_menu): Use shortest_side_title.
+	(fill_in_empty_name): Remove, no longer needed.
+	* machelp.c, macwins.c: Clean up change comments.
+	* macimf.c: Update calls to get_img.
+	* macinit.c (init_unit_images): Update call to get_unit_type_images.
+	* macrow.c (draw_contours): Use vp->contour_interval.
+
+	From Hans Ronne	<ronne@bmc.uu.se>:
+	* run.c (global_advance_dialog): Declare extern.
+	(run_research): Set all involved cities to "Idle" when advance has
+ 	been completed, call global_advance_dialog instead of
+ 	unit_science_dialog.
+
+	* macdefs.h (miSideGlobalAdvance): New menu item.
+	(dGlobalAdvance): New dialog with items.
+	(MAXPROJMENUS): Define.
+	* macciv.c (global_advance_dialog): New function.
+	* macmenus.cc(do_menu_command): Call global_advance_dialog.
+	(adjust_menus): Enable miSideGlobalAdvance if advanced units exist.
+	* macmouse.c (do_mouse_down_map_content): Enable ctrl-clicking
+	on non-advanced units, call global_advance_dialog instead of
+	unit_advance_dialog.
+
+	* XconqProj.rsrc (CNTL 712 "Science Popup no Title"): New control.
+	(DITL 805 "Global Science"): New dialog item list.
+	(DLOG 805 "Global Science"): New dialog.
+	(MENU 130 "Edit"): Remove command key Z for unused Undo command. 
+	(MENU 132 "Play"): Add dots after "City Dialog".
+	(MENU 134 "Side"): New item "Science Dialog". Set command key to Z.
+
+Mon Jun 22 19:25:37 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	Rename "science" to "advance" everywhere.
+	* atype.def: New file, was stype.def.
+	* config.h, conq.h, game.h, generic.c, help.c, help.h, init.c,
+	keyword.def, lisp.c, lisp.h, mknames.c, module.c, plan.c, read.c,
+	run.c, side.c, side.h, table.def, tables.c, types.c, unit.c,
+	unit.h, write.c: Rename "stype" to "atype", and so forth.
+
+	* gvar.def (contour-color): Default to saddle-brown.
+	(country-border-color): Default to pink.
+	(meridian-color): Make default empty.
+	* history.c (record_event): Reorganize notification.
+	(notify_event): Add standard notifications.
+	* ui.c, ui.h (imf_describe_hook): New global.
+	(describe_imf): Move to here from xinit.c, make generic.
+
+	* xconq.h (UI contour_color): Rename from contourcolor.
+	(UI country_border_color, feature_color, etc): New slots.
+	* xconq.c (update_event_display): Remove notification code,
+	now in history.c.
+	* xdraw.c (draw_meridians): Use side->ui->meridian_color.
+	(draw_feature_name): Use feature_color.
+	(draw_country_border_line): Use country_border_color.
+	(draw_map_info): Reorganize initial tests.
+	* xinit.c (init_display): Set imf_describe_hook.
+	(set_colors): Init new color slots to defaults.
+	(set_optional_colors): Init new color slots to global var values.
+	(init_emblem): Remove call to get_default_emblem.
+	(get_default_emblem): Remove, no longer needed.
+	(x11_describe_image): New function.
+
+	* cdraw.c (show_side_list): Use short_side_title.
+
+	* PROJECTS: Remove redundant item about patrolling.
+
+Sun Jun 14 13:56:18 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* xconq.c, cconq.c (unit_science_dialog): Define placeholders.
+
+Sun Jun 14 13:45:48 1998  Hans Ronne	<ronne@bmc.uu.se>
+
+	* maccolors.c, macconq.c, macconq.h, macdraw.c, macgworld.c
+ 	macimf.c, macinit.c, macmap.c, macmenus.c, macprefs.c, macwins.c:
+ 	Clean up and remove all double-slashed change markers.
+
+	* keyword.def (science): Define keyword.
+	(science-type): Define keyword.
+	(s*): Define keyword.
+	* mtype.def (m_resource_icon): Define.
+	* utype.def (advanced): Define.
+	* stype.def: New file, stype property definitions.	
+	* table.def (ss_needed_to_research): Define.
+	(us_needed_to_build): Define.
+	(sm_consumption_per_rp): Define.
+	(um_consumption_per_cp): Define.
+	(um_consumption_per_size): Define.
+	(um_consumption_to_grow): Define.
+	
+	* config.h (MAXSTYPES, INITMAXSTYPES): Define.
+	* conq.h (set_s_type_name, etc): Prototype.
+	* game.h (NONSTYPE): Define.
+	(typedef enum Typetype): Add STYP = 3.
+	(extern short numstypes): Declare.
+	(typedef struct stype): Declare.
+	Declare all functions accessing and setting stype properties.
+	Include "stype.def" (new file).
+	Declare table accessor functions and globals for stype support.
+	(extern Stype *stypes): Declare.
+	(extern PropertyDefn stypedefns[]): Declare.
+	(for_all_science_types): Define macro.	
+	(for_all_possible_science_types): Define macro.
+	(checks): Define macro.
+	(is_science_type): Define macro.	
+	(extern short canaddstype): Declare.	
+	(extern short tmpstype): Declare.
+	(extern void stype_error): Prototype.	
+	(extern void default_science_type): Prototype.
+	(extern Obj *get_s_extension): Prototype.
+	* actions.c (make_unit_complete): Kick out enemy users from cell.
+	(can_have_enough_acp): Always return TRUE for advanced unit.	
+	* civ.c: New file, advanced unit and science code.
+	* combat.c (capture_unit): Kick out enemy users from cell.
+	* generic.c (short numstypes): Declare.
+	(short canaddstype): Initialize.
+	(stype_error): New function.
+	(Stype *stypes): Declare.
+	(int curmaxstypes): Initialize.
+	(init_types): Add stype support throughout function.
+	(default_science_type): New function.
+	(index_type_name): Add stype support.
+	(allocate_table): Add stype support.
+	(numtypes_from_index_type): Add stype support.
+	* help.c (static void describe_stype): Prototype.
+	(create_game_help_nodes, describe_game_design, describe_utype):
+ 	Add stype support.
+	(describe_stype): New function.
+	* help.h (enum nodeclass): Add stypenode.
+	* init.c (short tmpstype): Declare.
+	(check_game_validity): Add stype support.
+	* lisp.c (new_stype): New function.
+	(c_number): Add stype support.
+	(stypep): New function.
+	(numberishp): Add stype support.
+	(equal): Add stype support.
+	(fprintlisp): Add stype support.
+	(sprintlisp): Add stype support.
+	* lisp.h (enum lisptype): Add STYPE.
+	(extern Obj *new_stype): Prototype.
+	(extern int stypep): Prototype.
+	* mknames.c (gen_from_rule): Add stype support.
+	* module.c (load_game_module): Add stype support.
+	(add_to_stypesset_s_type_name): Prototype.
+	(lazy_bind): Add stype support.
+	* move.c (move_unit): Kick out enemy users from cell.
+	* plan.c (make_plausible_random_args): Add stype support.
+	* read.c (init_predefined_symbols): Add stype support.
+	(mtype_from_name, stype_from_name, ttype_from_name): New functions.
+	(interp_form): Add stype support.
+	(interp_stype, fill_in_stype): New functions.
+	(INDEXP): Add stype support to macro definition.
+	(add_properties): Add stype support.
+	(add_to_stypes, interp_stype_value_list): New functions.
+	* run2.c (run_advanced_units): Declare extern.
+	(compute_advanced_acp): Declare extern.
+	(run_turn_start): Call run_advanced_units.
+	(compute_moves): Call compute_advanced_acp.
+	* side.c (create_side): Add stype support.
+	* side.h (typedef struct a_side): Add stype support.
+	* tables.c (TableDefn tabledefns[]): Add stype support.
+	Define many new accessor functions for stype support.
+	* types.c (PropertyDefn stypedefns[]): New function.
+	Define all functions for scientific advance properties.
+	Include "stype.def". 
+	* unit.c: Initialize defaults for advanced city support.
+	(has_science_to_build): Declare extern.
+	(free_used_cells): Declare extern.
+	(create_unit): Modify for advanced city support.
+	(type_allowed_on_side): Call has_science_to_build.
+	(enter_cell): Kick out enemy users from cell.
+	(kill_unit_aux): Call free_usedcells.
+	* unit.h: Declare defaults for advanced city support.
+	(typedef struct a_unit): Modify for advance city support.
+	* world.c (allocate_area_terrain): Allocate user layer.
+	* world.h (typedef struct a_area): Add user layer.
+	(user_defined, user_at, set_user_at): New macros.
+	(cell_is_within_n_steps, cell_is_within_reach,
+ 	for_all_cells_within_n_steps, for_all_cells_within_reach): New
+ 	macros.
+	* write.c (write_stype_value_list):  New function.
+	(write_types, star_from_type, name_from_typ): Add stype support. 
+	 
+	* macconq.h (typedef struct a_map): Add map->drawsizes.
+	(typedef struct a_list): Add list->drawsizes.
+	(extern int default_drawsizes): Declare.
+	(extern void draw_unit_size): Prototype.
+	* macdefs.h (OkButton): Define.
+	(CancelButton): Define.
+	(mBuildPopup): New menu.
+	(mSciencePopup): New menu.
+	(dCity): New dialog with items.
+	(dScience): New dialog with items.
+	(miPlayCityDialog): New menu item.
+	* macciv.c: New file, advanced unit and science interface for mac.
+	* machelp.c (insert_newlines): Change \n to \r also #ifdef __MWERKS__
+	(set_help_content): Change \n to \r also #ifdef __MWERKS__
+	* maclist.c (create_list): Initialize list->drawsizes.
+	(draw_unit_list_entry): Optionally call draw_unit_size.
+	* macmap.c (create_map): Initialize map->draw_sizes.
+	(draw_selected_unit): Optionally call draw_unit_size.
+	* macmenus.c (city_dialog): Declare extern.
+	(do_city_dialog_mi): Prototype.
+	(do_menu_command): Call do_city_dialog_mi.
+	(do_city_dialog_mi): New function.
+	(adjust_menus): Disable miPlayCityDialog.
+	(enable_commands_for_unit): Enable miPlayCityDialog.
+	* macrow.c (draw_units): Optionally call draw_unit_size.
+	(draw_unit_and_occs): Optionally call draw_unit_size.
+	* macmouse.c (city_dialog): Declare extern.
+	(unit_science_dialog): Declare extern.
+	(do_mouse_down_map_content): Ctrl-click opens city & science dialogs.
+	* macwins.c (draw_unit_closeup): Optionally call draw_unit_size.
+	(append_notice): Change \n to \r also #ifdef __MWERKS__
+	(append_scores): Change \n to \r also #ifdef __MWERKS__
+	
+	* XconqProj.rsrc (cicn 2010-2146): Many new cicns. 
+	(CNTL 710 "Build Popup"): New control.
+	(CNTL 711 "Science Popup"): New control.
+	(dctb 803 "City"): New dialog color table.
+	(DITL 803 "City"): New dialog item list.
+	(DITL 804 "Science"): New dialog item list.
+	(DLOG 803 "City"): New dialog.
+	(DLOG 804 "Science"): New dialog.
+	(MENU 132 "Play"): New item "City Dialog".
+	(MENU 710 "Build Popup"): New menu.
+	(MENU 711 "Science Popup"): New menu.
+	(PICT 4001 "Mad Scientist"): New picture. 
+	(PICT 4002 "Busy Scientist"): New picture.
+	(PICT 4003 "Idle Scientist"): New picture.	 
+
+Sun Jun 14 13:10:32 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* ui.c (plot_meridians): Draw meridian labels midway between
+	intersections.
+
+	* xdraw.c (meridian_text_callback): Make it actually draw text.
+
+Thu Jun 11 19:35:19 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* keyword.def (silhouette): New keyword.
+	* imf.h (Image): Change most int slots to short.
+	(Image style): New slot.
+	(ImageFamily preferred_style): New slot.
+	* imf.c (get_img): Add style arg, change all callers.
+	(interp_image): Interpret silhouette keyword.
+	(best_image): Search for matching style as well as size.
+	* ui.h (VP num_contours, contour_interval, linebuf): New slots.
+	* ui.c (new_vp): Init contour line parameters.
+	(set_contour_interval): New function.
+	(init_contour_lines): Remove.
+	(contour_lines_at): Use viewport slots instead of globals.
+	(get_unit_type_images): Remove style arg and related code.
+	* ps.c: Use for_all_images.
+
+	* xcmd.c (do_map): Add options to control color vs silhouette
+	images, contour interval.
+	* xdraw.c (draw_contours): Update for ui.c changes.
+	* ximf.c, xutil.c: Update get_img calls.
+	* xinit.c: Update get_unit_type_images call.
+	(describe_imf): Mention tileness and style.
+	* xmap.c (create_map): Prefer silhouettes for unit type buttons.
+
+	* std-c.imf: Remove, merge contents into standard.imf.
+	* imf.dir: Update.
+
+	* PROJECTS: Reflect above changes.
+
+	* kernel/Imakefile (OBJS): Add cmd.o.
+
+Tue Jun  9 20:05:15 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* imfapp.c (make_imf_resources): Don't make resources out of
+	synthesized images.
+	* maccmd.c (do_distrust, do_doctrine, do_down,
+ 	do_force_global_replan, do_release, do_run, do_set_rate,
+ 	do_submit, do_trust, do_gdl, do_debug, do_debugg, do_debugm):
+ 	Remove, now generic.
+	* maccolors.c: Use g_unseen_color everywhere.
+
+Mon Jun  8 19:23:23 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* side.h (Side ai_may_resign, prefixarg): New slots.
+	* ai.c (try_to_draw, give_up): Actually do if allowed to.
+
+	* cmd.c (autofinish_start, autofinish_count): Move here from
+ 	cconq.c.
+	(do_ai_side): Add +, - args to set AI permissions.
+	(do_distrust, do_doctrine, do_down, do_force_global_replan,
+ 	do_release, do_run, do_set_rate, do_submit, do_trust, do_gdl,
+	do_debug, do_debugg, do_debugm): New functions, generic versions.
+	* ui.c (force_global_replan, generic_do_doctrine): Remove, now
+	merged into generic commands.
+	* util.c: Fix indentation.
+
+	* x11/Makefile.in: Build imftk.
+	* imftk.c, imftk.tcl: New files, new version of imf tool.
+	* xcmd.c: Remove designer commands, and commands that are now
+ 	generic.
+	* xconq.c (update_everything): Do XSynchronize if debugging
+	graphics.
+	* xmap.c (interp_key_command): Set prefixarg and beepcount.
+	
+	* ccmd.c: Remove designer commands, and commands that are now
+	generic.
+	(cmd_error): Beep only, if format string empty.
+	* cconq.c (interpret_input): Set dside->prefixarg.
+
+	* PROJECTS: Reflect above projects.
+
+	From Hans Ronne <ronne@bmc.uu.se>:
+	* maccolors.c (default_max_bufx): Increase to 600.
+	(init_side_colors): Init grid color here.
+	* macimf.c (mac_add_cicn): Fix to avoid heap fragmentation.
+	* macinit.c (launch_game): Similarly.
+	(init_terrain_images): Remove grid color init.
+	(reinit_all_emblem_images, init_unit_cicns, init_emblem_cicns,
+	dispose_emblem_cicns): Fix to avoid heap fragmentation.
+	* macprefs.c: Ditto.
+	* macmap.c (destroy_map): Fix world map disposal crash.
+	(clear_unit_blast, draw_unselected_unit, update_cell_display): Fix
+ 	shoreline and grid drawing.
+	* macrow.c (draw_row): Draw one more cell for grid/shoreline.
+	(draw_gridlines, draw_shorelines): Optimize toolbox calls.
+	
+Fri Jun  5 17:08:47 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* gvar.def (contour-color, country-border-color, feature-colors,
+	frontline-color, meridian-color, shoreline-color, side-colors,
+	unit-name-color): New globals.
+	(unseen-image-name): Remove.
+	* mtype.def (color): Remove, never used.
+	
+	* cmd.c: Update decls.
+	(key_commands_help_node, long_commands_help_node): New globals.
+	(execute_long_command): Rename from execute_named_command,
+	fix a bug.
+	(describe_commands, describe_command_table): Remove.
+	(describe_key_commands): New function.
+	* help.c (describe_utype, describe_mtype): Don't describe color.
+	* ui.c (get_unseen_images): Use g_unseen_color.
+	* ui.h: Declare command handling functions and globals.
+
+	* xconq.h (UI contourcolor): New slot.
+	(UI neutcolor): Remove.
+	* xcmd.c: Use only generic bits from cmd.c and ui.h.
+	(do_help): Use new command help nodes.
+	(do_map): Add contour-color control.
+	* xdraw.c (draw_contours): Use side->ui->contourcolor.
+	(draw_feature_boundary): Use graycolor instead of neutcolor.
+	* xinit.c (set_colors, set_optional_colors): Set up contour
+	color.
+
+	* ccmd.c (cmd_error): Add side argument.
+	* cconq.c (commands_help_node): Remove.
+	(init_interaction): Update to new help nodes.
+	* cconq.h (execute_command, etc): Remove decls.
+	* cdraw.c (linear_char): Change to backslash.
+	(draw_type_list_entry): Tweak the format.
+
+	* PROJECTS: Reflect above changes.
+
+Wed Jun  3 19:17:53 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* cmdline.c: Add options -V0 and -Vfalse.
+
+	* greek.g: Rename |siege engine| to siege-engine, make money
+	more important to construction plans, make more types of units
+	dependent on money, tweak some combat probs, allow supply
+	redistribution, add action-notices.
+	* pelops.g: Add more hoplites and triremes to initial setup.
+
+	* xconq.texi: Put curses info last.
+	* commands.texi: Document run command.
+	* curses-sect.texi: Reorganize, remove curses-only commands.
+	* x11-sect.texi: Reorganize, remove X11-only commands, add
+	description of intro game play, fix details of options.
+
+	* cmd-diff.sh: Update to reflect command reorg.
+	
+	* PROJECTS: Add some random ideas.
+
+	From Hans Ronne <ronne@bmc.uu.se>:
+
+	* maccolors.c (set_default_color,
+ 	set_default_side_colors,init_side_colors): Fix for m68k Macs.
+	* macrow.c (draw_row): #ifdef out the single-loop version,
+	slightly slower.
+	* macwins.c (side_rename_dialog): Update call to
+ 	dissect_colorscheme.
+	
+Mon Jun  1 18:12:24 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* conq.h (cxp_desc): Declare.
+	* nlang.c (cxp_desc): New function.
+	* combat.c (elevation_blocks, found_blocking_elevation): Fix
+	to work if terrain has thickness, but no elevations.
+	* move.c (border_slide_possible): Declare.
+
+	* cave.g: Add beholder, coins, improve names of types, experience
+	gain for adventurer, reduced incidence of treasures.
+	* fantasy.g: Major cleanup, fix names, construction, occupancy,
+	spell effects, vision, and so on.
+	* standard.g: Remove "test" variant.
+	* terrain.imf: Change white in sea and shallows to light blue,
+ 	less garish.
+
+	* test/Makefile.in (game-diff, game.uses): New actions.
+	* game-diff.sh: New script.
+	* game-uses.sh: Make work.
+	* imf-diff.sh, imf-uses.sh: Small improvements.
+
+	* xcmd.c (do_fire): Report failure of action usefully.
+	* xdraw.c (draw_unit_info): Show cxp and morale if defined.
+	
+	Merge all keyboard commands into a single all-platform list.
+	* kernel/cmd.c: New file, generic command handling and command
+	functions.
+	* cmd.def (flash, map, new-map, orders, run, side, unit,
+ 	world-map): New commands, collected from ccmd.def and xcmd.def.
+	* ui.h: Declare all command functions.
+	* kernel/Makefile.in (OBJS): Add cmd.o.
+
+	* xcmd.def: Remove, no longer used.
+	* x11/Makefile.in: Remove xcmd.def dependencies.
+	* xconq.h: Don't declare command functions here.
+	(UI curmap): New slot.
+	* xcloseup.c, xconq.c, xmap.c: Update direct calls to command
+	functions.
+	* xcmd.c (execute_command, do_add_player, etc): Remove, now in
+	generic code, remove map args from all functions, and use
+	side->ui->curmap instead.
+	(do_flash, etc): Renamed from X-specific versions.
+	(do_map): New functions, includes all X-specific display controls.
+	(cmd_error): Make globally visible.
+	* xmap.c (interp_key_command): Fix args to execute_command.
+
+	* ccmd.def: Remove, no longer used.
+	* ccmd.c (execute_command, do_add_player, etc): Remove, now in
+	generic code, add side args to all command functions.
+	(do_map, etc): Renamed from do_c_show.
+	* cconq.c (interpret_input): Pass side and char args to
+ 	execute_command.
+
+	* macconq.h: Remove decls of command functions.
+	* maccmd.c (execute_command, do_add_player, etc): Remove, now in
+ 	generic code, add side args to all command functions.
+	* macgworld.c, macmenus.c, macmouse.c: Update direct calls to
+ 	command functions.
+
+	* PROJECTS: Reflect above changes.
+
+Thu May 28 20:05:49 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* cmd.def: Add commands from Mac-specific file.
+
+	* maccmd.def: Delete, no longer needed.
+	* maccmd.c (mac_commands): Delete.
+	(execute_named_command, etc): Remove search for Mac-specific cmds.
+	(do_escape, etc): Rename from do_mac_escape.
+	(do_set_view_angle): Rename from do_mac_set_map_angle.
+
+	* help.h (HelpNode textsize): Remove, never used.
+	* help.c (get_help_text): Remove ref.
+	* run.c (run_local_ai): Return a value.
+	* world.c (compute_feature_centroid): Tweak test.
+
+	* xinit.c (init_terrain_images): Find solid color correctly.
+
+Thu May 28 20:00:29 1998  Hans Ronne <ronne@bmc.uu.se>
+
+	* applestuff.h: No longer needed, remove from project. 
+	* macconq.c (init_toolbox): Pump up 68K stack size to 64K.
+	* macconq.h : Change dissect_colorscheme prototype.
+	Remove prototypes of functions used only in macrow.c.
+	* maccolors.c: Remove char **colorscheme.
+	(set_default_colors): Remove allocation of colorsheme array.
+	Remove allocation of side->colorscheme. Zero all colorschemes.
+	Change default shoreline color to blue.
+	(set_default_side_colors): Fix 68K colorscheme bug.
+	(init_side_colors): Fix 68K colorscheme bug.
+	(dissect_colorscheme): Remove unused arg & fix 68K colorscheme bug.
+	* macdraw.c (make_cell_clip): Moved here from macmap.c.
+	(draw_border_line_multiple): Draw only W, NW & NE border for each
+ 	cell.
+	* macgworld.c: Add control strip routine descriptors from applestuff.h.
+	* macmap.c: Now contains all map-related code not in macrow.c or
+ 	macmouse.c.
+	(WRAP_SX): Rename to UNWRAP_SX everywhere.
+	(WRAP_RECT): Rename to UNWRAP_RECT everywhere.
+	(WRAP_POLY): Rename to UNWRAP_POLY everywhere.
+	(SHIFT_ORIGIN): Remove. Now included in draw_selection_animation.
+	(RESET_ORIGIN): Remove. Now included in draw_selection_animation.
+	(draw_meridians): Enable new Mac-specific function, disable
+ 	generic code.
+	(draw_other_map): Add UNWRAP comment.
+	(clear_unit_blast): Modify for new draw_gridlines and
+ 	draw_shorelines.
+	(draw_selection_animation): Include SHIFT_ORIGIN and RESET_ORIGIN
+ 	macros.
+	(draw_unselected_unit): Modify for new draw_gridlines and
+ 	draw_shorelines.
+	(update_cell_display): Modify for new draw_gridlines and
+ 	draw_shorelines.
+	* macmouse.c: Renamed from macmap2.c, now contains mouse-related
+ 	code only.
+	(WRAP_SX, WRAP_RECT, WRAP_POLY, SHIFT_ORIGIN, RESET_ORIGIN):
+ 	Remove macros. No longer needed in this file.
+	(select_all_dragged_over): Remove all WRAP_RECT macro calls.
+	(select_area_and_zoom): Remove all WRAP_RECT macro calls.
+	* macrow.c: New file with draw_row and all the functions it calls.
+	(WRAP_SX): Rename to UNWRAP_SX everywhere.
+	(WRAP_RECT): Rename to UNWRAP_RECT everywhere.
+	(WRAP_POLY): Rename to UNWRAP_POLY everywhere.
+	(draw_row): Rewrite function. Use one single loop only.
+	(draw_terrain_row): Change y0 to y.  Put data types in arg list.
+	(cell_update): Put data types in argument list.
+	(draw_cliffs): Fix multiple kernel macro wrapping bugs.
+	(draw_contours): UNWRAP line drawing at date line.
+	(draw_gridlines): Change from run-length to single cell drawing.
+  	Change x0 to x, x to xw.  Rewrite for cliff support.  UNWRAP line
+ 	drawing at date line.  Fix multiple kernel macro wrapping bugs.
+	(draw_shorelines): Change from run-length to single cell drawing.
+  	Change x0 to x, x to xw.  Rewrite for cliff support.  UNWRAP line
+ 	drawing at date line.
+	(draw_borders): Put data types in argument list.
+	(draw_connections): Put data types in argument list.
+	(draw_feature_boundary_simple): draw_simple_feature_borders
+ 	renamed.  Change from run-length to single cell drawing.  Change
+ 	x0 to x, x to xw.  Fix multiple kernel macro wrapping bugs.
+  	UNWRAP line drawing at date line.
+	(draw_feature_boundary): Put data types in argument list.
+	Fix kernel macro wrapping bug.		
+	(draw_feature_name): draw_legend renamed.  Put data types in
+ 	argument list.  Fix multiple kernel macro wrapping bugs.
+	(draw_people_row): Put data types in argument list.  Change from
+ 	run-length to single cell drawing.  Change x0 to x, x to xw.  Fix
+ 	multiple kernel macro wrapping bugs.
+	(draw_materials): Put data types in argument list.  Fix kernel
+ 	macro wrapping bug.
+	(draw_units): Put data types in argument list.
+	(draw_unit_and_occs): Put data types in argument list.
+	(draw_ai_region): Put data types in argument list.
+	Fix kernel macro wrapping bug.
+	* macwins.c (side_rename_dialog): Change dissect_colorscheme call.
+
+Thu May 28 19:20:42 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* table.def (mp-to-traverse): Allow -1 as value, make default.
+	* move.c (border_slide_possible): New function.
+	(do_move_action, check_move_action): Use it.
+	(total_move_cost, total_entry_cost): Fix traversal cost
+ 	calculation.
+	* task.c (do_move_to_task): Check for border slide possibility.
+	(plausible_move_dir): Fix traversal cost calculation.
+
+	* test/Makefile.in (all): Add desc of imf diff test.
+	* imf-diff.sh: Make smarter.
+
+	* aircraft.imf: Enhance some images.
+	* ancient.imf (archer, hoplite, peltast): Add larger images.
+	* dwellings.imf (village-maker): Remove.
+	* fantasy.imf (bugbear, treasure-chest): New.
+	(carpet, holy-man): Remove.
+	* insects.imf (web-maker, worker-ant, web-2): Remove.
+	(web): Use web-2 data.
+	* misc.imf (breath, diplomat): Remove.
+	* people.imf (adventurer): Improve appearance.
+	(elite): Add larger image.
+	(trooper, worker): Add masks.
+	* places.imf (nuclear-plant, oil-platform): New.
+	* sf.imf (space-station, spaceyard): New.
+	* terrain.imf (hills): Add color.
+	(question): Remove.
+	* imf.dir: Update.
+
+	* empire.g (mech-infantry): Use halftrack instead of halftrack-2.
+	(recon-plane): Use sr71 image.
+	(fortress): Use fort image.
+	* fantasy.g, galaxy2.g, greek.g, mars.g, panzer.g, postmodern.g,
+ 	quest.g, time.g, ww2-bn.g, ww2-div-eur.g: Put image names on first
+ 	line of unit type forms.
+	* insects.g (web): Use image "web".
+	* quest.g: Scatter objects around.
+	* space.g: Add more help info.
+	* standard.g: Cosmetic changes.
+	* stdunit.g (mp-to-traverse): Allow ships to traverse rivers.
+	
+	* xcdesign.texi, design.texi: Remove platform conditionals,
+ 	include *-dsect.texi directly, add info about feature naming and
+ 	people in countries.
+	* doc/Imakefile, doc/Makefile.in: Update dependencies.
+	* curses.texi, mac.texi, x11.texi: Remove, no longer used.
+	* refman.texi: Fixed description of feature-types.
+
+	* PROJECTS: Add more more ideas.
+
+Tue May 26 20:05:52 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* Version 7.2.1 released.
+
+	* ui.c (add_default_unit_image, etc): Return image family
+	resulting from running interp_hook.
+	(get_unit_type_images, etc): Replace imf with generated default.
+
+	* xshowimf.c (show_image_families): Run interp_hook on all
+	images.
+	(magnify_bitmap): Reverse endianness before creating bitmap.
+	(update_or_export_image): Run interp_hook on image.
+
+	* game.dir: Remove u-midearth.
+
+Thu May 21 18:14:22 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* NEWS, README, xconq.spec, version.h: Bump to 7.2.1.
+	* INSTALL: Add cygwin32 build instructions.
+
+	* imf.c (best_image): Don't magnify if largest image larger
+	than 1/2 the desired size.
+
+	* ximf.c (x11_load_imf): Return imf if one passed in.
+
+	* macimf.c (mac_add_cicn): Don't unlock if cicn was already
+	plotted once, never lock the resource handle.
+	(mac_create_cicn): Flag a replacement cicn as not initialized.
+
+Tue May 19 18:55:04 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* imf.h (ImageFamily ersatz, numsizes): Make short.
+	* imf.c, imf.h (imf_load_hook, imf_interp_hook): Declare to
+	return image family.
+	* ui.c (get_generic_images): Never clone imf, expect hook
+	functions to do it if necessary.
+
+	* ximf.c, ximf.h (x11_load_imf, x11_interp_imf): Clone family
+	if on new display, return image family.
+
+	* macimf.c, macimf.h (mac_load_imf, mac_interp_imf): Return
+	image family.
+
+Mon May 18 18:20:31 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* gvar.def (side-library): Remove default init.
+	* imf.c (write_synthetic_also): New global.
+	(write_imf): Use it.
+	(get_imf, get_image_file, interp_imf): Clarify warnings.
+	(compute_image_bbox): Fix edge case.
+	(image_pixel_at, set_image_pixel_at): Speed up slightly.
+	(add_shrunken_image, add_magnified_image): Compute bbox,
+	speed up.
+	* mknames.c (set_g_side_lib_default): Remove, no longer needed.
+	(make_up_side_name): If no side library, name sides A, B, etc
+	strictly sequentially.
+	* ui.c (plot_meridians): Fix roundoff error in lat/long report.
+	(get_generic_images): Remove unused settings of `cloned'.
+	(add_default_unit_image): New function.
+	(get_unit_type_images): Call it, remove default_hook arg.
+	(add_default_terrain_image): Call image interp_hook, Rename from
+	generic_get_default_terrain_image.
+	(get_unseen_images): Remove default_hook arg.
+	(add_default_emblem_image): New function.
+	(get_emblem_images): Call it, remove default_hook arg.
+
+	* imfapp.c (miView4x4): Remove, no longer useful.
+	(main): Set imf_load_hook and imf_interp_hook.
+	(imf_callback): Fix args to mac_interp_imf.
+	(draw_one_image): Position bbox using draw_as_unit_image return.
+	(draw_as_unit_image): Don't scale image.
+	* macconq.c (main): Set imf_load_hook and imf_interp_hook.
+	* macdraw.c (draw_unit_image): Don't scale image, share fallback
+	drawing code.
+	(draw_side_emblem): Similarly.
+	* macimf.h (MacImage cicn_inited): New slot.
+	* macimf.c (Image minw, etc): Remove uses.
+	(mac_interp_image): New function, was body of mac_interp_imf.
+	(mac_interp_imf): New arguments, call mac_interp_image, convert
+	Lisp to raw data, convert raw data to Mac objects.
+	(mac_create_cicn): Ditto.
+	(mac_create_ppat): New function, was part of mac_interp_imf.
+	(mac_copy_bytes): New function, like memcpy but can pad to
+	Mac object requirements.
+	(mac_init_cicn): New function to do dummy PlotCIcon, was part
+	of init_unit_cicns.
+	* macinit.c (add_default_unit_image, add_default_terrain_image,
+ 	add_default_emblem_image ): Remove, no longer needed.
+	(init_unit_cicns, etc): Move here from maccolors.c.
+
+	* panzer.g: Give towns many more hp.
+	* magnusvew.g: Start Russian and some German non-vehicular units
+ 	in vehicles.
+	* rom-civ-war.g: Fix a couple color names.
+
+	* PROJECTS: Reflect above changes, add items about civ emulation
+	and some random ideas.
+
+	From Hans Ronne <ronne@bmc.uu.se>:
+	* applestuff.h (_ControlStripDispatch): Comment out.
+	* maccolors.c [NEW_HEADERS]: Include ColorPicker.h instead of Picker.h.
+	* macconq.h, macimf.c [NEW_HEADERS]: Include MacTypes.h instead of
+ 	Types.h, MacMemory.h instead of Memory.h, Gestalt.h instead of
+ 	GestaltEqu.h, omit Desk.h.
+	* macgworld.c (scroll_map_window): Fix case of "tall" areas.
+	(auto_scroll_left, etc): Fix cast in GetKeys call.
+	* macmap.c (draw_meridians): Mac-specific function, workaround
+	for bugs in generic version.
+	* macmap2.c (toggle_map_topline): Add another case for update
+	without scroll.
+
+	From Raj Menon <rxmtemp@mcdata.com>:
+	* SelFile/Dir.c: Add ifdef __CYGWIN32__.
+	* unix.c: Don't include netinet/tcp.h if __CYGWIN32__.
+
+Thu May 14 18:23:00 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	Add interface-independent image scaling.
+	* kernel/Makefile.in: Add dependencies on imf.h.
+	* imf.h (Image minw, etc): Remove, no longer needed.
+	(Image synthetic): New flag.
+	(ImageFamily hook): New slot.
+	(for_all_images): New macro.
+	* imf.c (add_shrunken_image, add_magnified_image,
+	image_pixel_at, set_image_pixel_at): New functions.
+	(imf_load_hook, imf_interp_hook): New globals.
+	(clone_imf): Clear image family hook.
+	(best_image): Handle tiles and regular images separately,
+	create and return shrunken or magnified images if necessary.
+	(largest_image): New function.
+	* ui.c (get_generic_images, get_unit_type_images, etc): Remove
+ 	interp and load hook args, use globals instead, change all
+ 	callers.
+
+	* ximf.h (X11ImageFamily): New structure
+	(X11Image monodata, etc): Remove, slots never used.
+	* ximf.c (tmp_valid, tmp_display, tmp_root_window): Move here
+	from xinit.c.
+	(init_x11_image): Init color image.
+	(x11_load_imf, x11_interp_imf): Remove dpy and rootwin args, use
+ 	info stored in hook if possible.
+	(x11_interp_image): New function, does bulk of work that was in
+	x11_interp_imf.
+	* xinit.c (tmp_display, tmp_root_windo): Declare instead of
+	defining.
+	(init_display): Set imf_load_hook and imf_interp_hook.
+	(x11_interp_fn, x11_load_fn): Remove, no longer needed.
+	* xshowimf.c (main): Set imf_load_hook and imf_interp_hook.
+	(show_image_families, update_or_export_image): Call
+ 	imf_interp_hook if defined.
+	(find_image): Remove, use find_img instead.
+	* xutil.c (write_x11_bitmaps): Reverse bits before writing.
+
+	* xdraw.c (unit_actually_visible): Succeed if side->see_all.
+	(draw_unit_image): Allow scaled 8x8 drawing.
+	(draw_side_emblem): Draw offset shadow if style 1.
+	(draw_side_info): Give side emblem more area.
+
+	* insects.imf (web-2): Rename from web2.
+	* insects.g: Tweak to match.
+
+	* PROJECTS: Reflect above changes, add Mac project to elim
+	need for toolbox to scale anything.
+
+Thu May  7 19:09:18 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* tp.c: Add some prototypes.
+
+Wed May  6 19:24:59 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* init.c (check_game_validity): Tighten up synthesis methods
+	check.
+	* ui.c (generic_get_default_terrain_image): New function,
+	generic version of default terrain image generation.
+	(get_terrain_type_images): Call it.
+
+	* xconq.h (UI pref_color_unit_images_: New slot.
+	(UI unitw, unith): Remove, never used.
+	* xinit.c (init_display): Remove setting of unitw and unith.
+	(init_unit_images): Prefer color images.
+	(get_default_terrain_image): Remove, now generic.
+	(init_terrain_images): Remove call of get_default_terrain_image.
+
+	* refman.texi, hacking.texi: Remove references to external
+	synthesis programs.
+
+	* PROJECTS: Genericize some Mac project ideas.
+
+	From Massimo Campostrini:
+	* xconq.spec: Fix pathnames.
+	* xcloseup.c (get_unit_picture): Eliminate unneeded foreground
+	set, fix arguments to draw_unit_image.
+	* xutil.c (write_xpm_file): Fix call to palette parsing.
+
+Tue May  5 18:02:29 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* conq.h (past_name_or_number): Remove decl.
+	* mkunits.c (add_preexisting_units): Report possunits correctly.
+	* nlang.c (side_and_type_name, past_unit_handle): Use
+ 	side_adjective.
+	(unit_handle): Report side vs origside in a consistent way.
+	(short_unit_handle): Report self-units correctly.
+	(past_name_or_number): Remove, never used.
+	(constructible_desc): Say "Tech" instead of just "T".
+	* plan.c (force_replan): Check on existence of plan.
+	* run2.c (run_unit_fates): Check both general and unit-type-specific
+	lost-surrender flags.
+	* score.c (side_loses): Fix check of people vs control sides.
+	(score_variant_desc): Don't try to scan variants if none present.
+	* tp.c (sendnow, outgoing, etc): New globals.
+	(crossbuf): Remove.
+	(struct q_entry): New structure, packet queue entry.
+	(save_outgoing_packet, flush_outgoing_queue, etc): New functions.
+	(send_packet): Save outgoing packet until ready to send.
+	(receive_data): Save incoming packets if current packet unfinished.
+	(net_set_unit_main_goal): Don't deref null goal.
+	(receive_unit_prop): Create null goal if packet so indicates.
+	* write.c (write_globals): Always write Lisp-valued globals.
+
+	* xcmd.c (do_copying, do_warranty): Ensure node visibility.
+	(aux_resign): Improve wording of query.
+	(aux_resign_2): Loop until valid side received.
+	* xconq.c (main): Tweak sendnow.
+	(run_game_proc): Flush outgoing queue when possible.
+	* xinit.c (init_terrain_images): Test for existence of image
+	before testing for solid color.
+	* xmap.c (ask_side, grok_side): Make them really work.
+	
+	* mars.g (water-ice): Fix image name.
+	* ww2-eur-42.g: Give Jerusalem and Haifa to British.
+	
+	* PROJECTS: Whack some vague ideas, add some more definite ones.
+
+Wed Apr 22 17:07:21 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* xconq.h (UI eimages_loaded): New slot.
+	* xinit.c (init_emblem_images): Allocate it, also allocate
+	emblem image space for the maximum possible number of sides.
+	(init_emblem): Make globally visible, set eimages_loaded.
+	* xconq.c (update_side_display): Init a side's emblem if it
+	wasn't already done (such as when the side is newly created).
+
+Mon Apr 20 19:36:10 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* mh-solaris (NET_EXTRA_LIBS): Define.
+	* x11/Makefile.in, curses/Makefile.in: Use NET_EXTRA_LIBS when linking.
+
+	* nlang.c (notify_doctrine): Handle emptiness better.
+	* ui.c (generic_do_doctrine): New function.
+	* ccmd.c, xcmd.c (do_doctrine): Call it.
+
+	From Massimo Campostrini:
+	* rom-civ-war.g: Put ships in ports.
+
+Thu Apr  9 20:43:46 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* Version 7.2 released.
+
+	* README: Bump to 7.2.
+	* Xconq.r, IMFApp.r: Updated from current resource files.
+
+Wed Apr  8 19:29:20 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* version.h: Bump to version 7.2.
+
+	* xconq.texi, xcdesign.texi, playref.texi, gdlref.texi: Bump to 7.2.
+
+	* run2.c (unit_revolt): Add argument to bypass prob testing.
+	(lost_unit_surrender, maybe_surrender_lost_to): New functions.
+	(run_unit_fates): Call them, reorganize to actually work.
+
+	* xcmd.c (do_release, do_repair): Implement.
+	* xcmd.c, ccmd.c (do_take_unit): Remove, no longer used.
+
+	* stdunit.g (lost-vanish-chance, lost-surrender-chance,
+	lost-revolt-chance): Set up so that most cities of a losing
+	side stay around, so other players can grab.
+
+	* refman.texi: Document various new forms.
+	* x11-dsect.texi: Remove inaccurate bit about resources.
+
+	* Local.config (SCORESDIR): Set.
+	* lib/Imakefile (install): Set up SCORESDIR.
+
+Mon Apr  6 19:38:14 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* score.c (interp_score_record): Add new records to front of list.
+	(last_record): Remove, no longer needed.
+	(get_scores): Indicate world circumference with lower-case 'w'.
+
+	* cave.g: New types next, orc-hole, and pentagram to generate
+ 	monsters, plus associated build tables.
+	* classic.g: Clarify the module's blurb.
+	* crater-lake.g: Turn off see-all by default.
+	* postmodern.g: Don't allow land units on water, limit stacking
+	of cities, don't start with any villages, use more variables,
+	
+	* refman.texi: Mention default for zoc-range.
+
+Sun Apr  5 23:12:40 1998  Hans Ronne  <ronne@bmc.uu.se>
+
+	* macconq.h (for_all_windows): New macro.
+	* maccmd.c (message_dialog): Call update_all_map_windows when done.
+	* maccolors.c (set_side_colors, set_feature_colors,
+ 	set_terrain_colors): Call update_all_map_windows when done.
+	* macconq.c (handle_event): Call update_window for new front
+ 	window.
+	(close_window, connection_method_dialog, serial_port_dialog,
+ 	won_game_dialog, lost_game_dialog, game_over_dialog): Call
+ 	update_all_map_windows when done.
+	(force_update): Remove BeginUpdate before call to update_gworld.
+	* macdesign.c (feature_rename_dialog, designer_save_dialog,
+ 	designer_reshape_dialog): Call update_all_map_windows when done.
+	* macgworld.c (copy_clipped_to_map, update_all_windows,
+ 	update_all_map_windows, update_all_visible_windows,
+ 	update_all_visible_map_windows): New functions.
+	(scroll_map_window): Modified for better function.
+	(copy_from_gworld): Rewritten for better function.
+	(update_resized_map): Modified for better function.
+	(update_gworld): Modified for better function.
+	(set_offscreen_buffers): Call update_all_map_windows when done.
+	* macmap.c (grow_map, zoom_maps): Update maps in background
+ 	immediately.
+	* macmenus.c (do_menu_command): Call update_window for selected
+ 	windows.
+	(do_about_box, find_location_dialog, find_unit_dialog): Call
+ 	update_all_map_windows when done.
+	* macprefs.c (set_preferences): Call update_all_map_windows when
+ 	done.
+	* macwins.c (do_mouse_down_construction): Call update_window for
+ 	selected windows.
+	(unit_rename_dialog, message_dialog): Call update_all_map_windows
+ 	when done.
+
+Wed Apr  1 19:39:30 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* macprefs.c (ui_save_state): Remove, never used.
+
+Tue Mar 31 20:59:45 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* side.c (see_cell): Check for existence of people sides.
+	* task.c (compare_directions): Ditto.
+
+	* empire.g: Fix images for engineers & wasteland.
+	* midway.g: Add a unit-defaults to get units back on the map.
+
+	From Massimo Campostrini:
+	* Imakefile (SUBDIRS): Add lib.
+	* Local.config: Add definitions needed for installation to work.
+	* curses/Imakefile, doc/Imakefile, x11/Imakefile (install): Add.
+	* doc/Imakefile: Update to reflect player/design manual split.
+	* xconq.spec: New file, basic RPM spec.
+
+	* galaxy2.g: Removed oxygen material, added notices, adjusted
+	various tables, added speed variation due to damage.
+
+Sun Mar 29 19:12:40 1998  Hans Ronne  <ronne@bmc.uu.se>
+
+        * macconq.h (FEATURES): Increase to 10.
+        (contourcolor, meridiancolor): Define.
+        * macconq.c (adjust_cursor): Fix frozen selection bug.
+        (update_window): Fix map update bug.
+	* maccolors.c (set_default_colors): Add support for contourcolor &
+ 	meridiancolor.
+ 	(set_side_colors): Handle non-white Dialog bkColor correctly.
+        * macmap.c (draw_meridians): Use meridiancolor.
+        (draw_contours): Use contourcolor.
+        (draw_row): Put draw_contours before draw_gridlines, make sure
+ 	draw_gridlines is called if contours are drawn.
+        (draw_control_panel): Set the port. 
+	* macmenus.c (adjust_menus): Fix PPC crash on launch bug in 4 new
+ 	submenus.
+
+Sat Mar 28 11:25:28 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* stdunit.g: Fix a closing quote.
+
+	* conq.h, skelconq.c, xconq.c cconq.c (ui_save_state): Remove,
+ 	instead expect that UI maintains state in a ready-to-write form.
+	* write.c (write_side_properties): No longer call ui_save_state.
+	* xinit.c (init_display): Ditto.
+
+	* tp.c (must_ack): Remove, no longer used.
+	(receive_game_checksum): Don't send mismatches to master,
+	exacerbates the situation.
+
+	* imf.c (write_imf): Handle another case of a symbol color name.
+
+Thu Mar 26 19:47:07 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* stdunit.g (out-length): Increase for bases and cities.
+	* ww2-div-pac (action-notices, action-narratives): Define.
+
+	* macmap.c (draw_control_panel): Set the grafport always.
+
+	From Hans Ronne:
+	* macconq.c (adjust_cursor): Handle a special case of autoselect
+ 	with no selected units.
+
+	From Massimo Campostrini:
+	* SelFile.c (errno etc): Don't define if __GLIIBC__.
+
+Thu Mar 19 18:56:41 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* maccmd.c, macconq.c, macconq.h, macdefs.h, macdesign.c,
+	macdraw.c, macimf.h, macinit.c, maclist.c, macmap.c, macmap2.c,
+	macmenus.c, macprefs.c, macwins.c: Remove marker comments.
+	
+	* cmdline.c: Remove unused -mail option.
+
+	* cconq.6in, xconq6in
+	* cmdline.6in, x11-sect.texi: Updated doc of command-line options.
+
+	* INSTALL: Mention differences in procedures between using
+	imake and configure.
+	* NEWS: Updated.
+
+	* PROJECTS: Added a few new ideas.
+
+	More improvements from Hans Ronne:
+	* ui.h (VP wide_viewport): New slot.
+	* ui.c (xform_cell, calc_view_misc): Use it.
+	(contour_lines_at): Make endpoints join up exactly.
+	* macgworld.c: Fix to handle correctly for cylindrical worlds.
+	* macmap.c (WRAP_SX, WRAP_RECT, WRAP_POLY): New macros for
+	handling wrapped worlds, use everywhere, also use wrapped x
+	values in more places.
+	(create_map): Set vp->wide_viewport.
+	(draw_other_map): Draw extra frame if wrapping.
+	(draw_meridians): Make the viewport temporarily, so as to
+	draw more meridians.
+	* macmap2.c: Similarly.
+
+Thu Mar 12 19:06:34 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* Local.config (DATADIR, XC_X11LIBDIR): Define.
+	(GLIBDIR, IMFLIBDIR): Remove.
+	* curses/Imakefile, kernel/Imakefile, x11/Imakefile, (DEFINES):
+ 	Use DATADIR.
+	* x11/Imakefile: App defaults Xshowimf -> XShowimf.
+	(EXTRA_DEFINES): Remove no-longer-used definitions.
+	* doc/Makefile.in: Fix path to syms.texi.
+
+Tue Mar 10 20:07:46 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* kernel.h, plan.c (wake_unit): Remove unused arguments.
+	* kpublic.h, tp.c (net_wake_unit): Ditto.
+	* mplayer.c, plan.c, side.c, task.c, xcmd.c: Fix callers.
+	* tp.c (receive_command): Interpret new form of wake_unit.
+	* plan.c (init_unit_plan): Initialize to PLAN_PASSIVE instead
+	of PLAN_NONE.
+	(set_unit_plan_type): If setting to PLAN_NONE, set to
+	PLAN_PASSIVE instead and force a complete replan.
+	(execute_plan): Do nothing if PLAN_NONE.
+	(plan_passive): Do intro game's auto-build here.
+	(decide_plan): Remove, no longer used.
+	* tp.c (net_run_game): Return amount done.
+
+	* xconq.c (run_game_proc): Use net_run_game result.
+	* xdraw.c (draw_units, draw_unit_and_occs): Fix visibility tests.
+	(draw_side_emblem): Skip more code if no image.
+	(draw_map_info): Put up more info if actual unit being viewed.
+	* xinit.c (go_dialog, init_assignw_player): Handle null-player
+ 	case.
+	
+	* insects.g: Change "worker" to "ant", "field" to "grass",
+	remove 1-letter type names, fix speed of immobile types.
+	* rising-sun.g: Fix locations of towns and bases.
+	* stdterr.g: Add a blurb.
+	* u-e1-1938.g: Tweak some more locations, change Chinese
+	names to transliterations used in the 1930s.
+	* u-e1-1998.g: Fix "bare" variant, Adis Abeba name, Fuzhou
+	location.
+	* u-e50-1998.g: Fix Adis Abeba name, Ouagadougou location.
+	* ww2-38.g, ww2-42.g, ww2s-42.g, ww2s-pac-41.g: Fix list of
+ 	Japanese occupations, misc locations of combat units.
+	
+	* test-save.sh: Filter out saved game bits that will always
+	mismatch.
+
+Thu Mar  5 19:43:05 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* cmdline.c (parse_command_line): Rename options to -sim and -seq
+	from -sm and -sq, fix call to parse_realtime_option.
+	(game_usage_info): Update to reflect, show default real-time
+	values.
+	(parse_realtime_option): Remove unused -timeout option.
+	(set_variants_from_options): Add real-time variant settings.
+	* nlang.c (report_combat_special, etc): New functions.
+	(report_combat): Call it.
+
+	* classic.g, fantasy.g, flattop.g, galaxy.g, galaxy2.g,
+	insects.g, monster.g, old-empire.g, postmodern.g, stdunit.g,
+	time.g, wizard.g (action-notices): Add destroy messages.
+	* stdunit.g: Improve some unit notes.
+
+	* doc/Makefile.in: Add $(srcdir)/ to file names.
+	* commands.texi (idle, repair): Document commands.
+	* glossary.texi: More terms, random clarifications.
+	* play.texi: Update library file descriptions.
+	* refman.texi (acp-morale-effect, mp-to-enter-own, etc): Describe.
+	* xcdesign.texi: Move glossary and license after permuted index.
+	* xconq.texi: Fix node links.
+	* mac-sect.texi, x11-sect.texi: Ditto.
+	* x11-sect.texi: Fix descriptions of command options.
+	* hacking.texi, refman.texi, x11-sect.texi: Fill some ragged
+ 	paragraphs.
+
+Mon Mar  2 18:53:28 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* syms.texi: Remove, always recalculate.
+
+	* conq.h (daynight): Declare.
+	* imf.c (interp_imf_contents, interp_image): Use for_all_list.
+	* mkunits.c (add_preexisting_units, place_unit, expand_countries):
+	New functions.
+	(make_countries): Call them.
+	* nlang.c: Use %d instead of %ld for ints.
+	* plan.c (move_into_formation): Improve leader validity test.
+	* side.c (compute_see_chances): Fix calculation of
+	any_people_see_chances.
+	(see_cell): Fix usage of see chances.
+	* tp.c (net_designer_change_side, etc): Ensure result defined.
+	* ui.c (xform_occupant): Fix nmy set.
+	* actions.c, run2.c, side.c: Remove redundant decls.
+	* move.c, nlang.c, plan.c, ui.c, unit.c, write.c, ccmd.c: Reindent
+ 	various functions.
+	
+	* x11/Makefile.in (X_H): Add all files included by xconq.h.
+	* xdraw.c (tmpmap): Move to here from xcmd.c.
+	(draw_meridians): Use plot_meridians.
+	(meridian_line_callback, meridian_text_callback): New functions.
+	(cellbuf): Remove, never used.
+	(draw_terrain_row, draw_hex_polygon): Simplify shading tests.
+	(draw_units, draw_map_info): Avoid drawing invisible units.
+	(unit_actually_visible): New function.
+	
+	* u-e1-1938.g: Ownership tweaks, downrate minor places to bases.
+	* u-e50-1998.g: Add towns for sides that don't have any.
+
+	* PROJECTS: Add various ideas, remove Mac name display item,
+	now done correctly.
+
+Fri Feb 27 18:07:09 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* conq.h, nlang.c (latlong_desc): Add argument to display only
+	one of latitude or longitude.
+	* ui.c (oneliner): Tweak caller.
+	(nearest_cell): Adjust fractional position.
+	(plot_meridians): New function, generic code to space and plot
+	meridians in a viewport.
+	* world.c (xy_to_latlong, latlong_to_xy): Use floats for
+	intermediate calculations.
+	* mkunits.c (make_countries): Tweak test of possible_units to
+	work in empty list case.
+
+	* macmap.c (draw_meridians): Use plot_meridians.
+	(meridian_line_callback, meridian_text_callback): New functions.
+	
+	* earth-1deg.g, earth-50km.g, t-e1-river.g, t-e50-river.g,
+	u-e1-1998.g, u-e50-1998: Various additions and cleanups.
+	* ww2-eur-42.g, ww2s-eur-42.g: Jerevan is Soviet.
+	* nat-names.g: Comment out Swazis (too rural), add some preferred
+	unit names for sides.
+
+Tue Feb 24 19:49:28 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* relief.g: Define and use a smoother gradation of colors.
+
+Mon Feb 23 19:06:14 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* Makefile.in (MAKEDIRS): Add subdirectories of installed lib dir.
+	(install-dirs): Set ownership of scores directory.
+	* lib/Makefile.in (GAMEUID, GAMEGRP, DIRPERM, FILEPERM): Set to
+	standard values.
+
+	* imf.c (smallest_image): Move here from ximf.c, change to use
+	only one argument.
+	* ui.c (xform_cell_fractional): Fix direction of y calculation.
+	* world.c (xy_to_latlong, latlong_to_xy): Simplify and fix.
+	* history.c, imf.c, side.c, ui.c: Cosmetic improvements.
+
+	* xcmd.def (meridians): New command.
+	* xcmd.c (do_x_meridians): New function.
+	* xconq.h (usefontchars): Remove, no longer used.
+	(SHOW_LATLONG): Define.
+	(UI default_latlong_interval): New slot.
+	(Map drawcellpats): Remove, never used.
+	* xdraw.c (xform_fractional, draw_meridians): New functions.
+	(draw_map_view): Use.
+	(draw_terrain_row): Remove disabled cellpat and fontchars code.
+	(draw_unit_image): Use emblem_position.
+	(draw_side_emblem): For style 1, draw gray box sized to emblem.
+	(draw_side_info): Clear scores before updating in place.
+	* ximf.c (x11_load_imf): Simplify.
+	(x11_interp_imf, x11_make_color_pixmap): Fix calls to
+ 	parse_lisp_palette_entry.
+	* xinit.c (init_unit_images): Update use of smallest_image.
+	* xmap.c (create_ctrlpanel, etc): Use SHOW_LATLONG.
+	* macmap.c (draw_meridians): Remove bounds arguments, determine
+	internally.
+	(draw_gridlines): Fix direction.
+
+	* intro.g: Add a fixed map and unit setup.
+
+	* PROJECTS: Remove a X11 resource usage not worth bothering
+	with, clarify savefile restart idea.
+
+Fri Feb 20 17:50:04 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* init.c (make_trial_assignments): Don't assign any players
+	to sides not in game.
+	(assign_players_to_sides): Skip over sides with no players.
+
+	* xconq.c (update_turn_display): Update all sides if end of game.
+	* xdraw.c (draw_terrain_row): Set foreground color correctly.
+	(draw_contours): Fix loop bounds.
+	(draw_side_info): Cache window, don't draw scores of sides that
+	were never in the game.
+	(draw_side_progress): Blank out progress for sides not in game.
+	* xinit.c (init_bitmaps): Don't set up 8x8 hex bitmaps.
+	* bitmaps/hex8.b, bitmaps/hex8b.b: Remove, never used.
+	* xmap.c (draw_game_state): Use curdatestr.
+
+Wed Feb 18 19:08:01 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* u-e1-1998.g, u-e50-1998.g: Rename from 1996 versions.
+	* mod-usa.g: Update.
+
+	* SelFile/Makefile.in (clean): Remove library.
+	* curses/Makefile.in, x11/Makefile.in (clean): Remove constructed
+ 	man page.
+	* doc/Makefile.in (clean): Remove more files.
+	* test/Makefile.in (clean): Ditto.
+	
+	* imf.c (write_imf): Use write_color more.
+	(color_matches_mono): Fix to work with 1-color palette.
+	(write_palette_contents): Write palette name if possible.
+	(write_color): Generalize to be more widely useful.
+	(parse_lisp_palette_entry): Use first arg, instead of its car.
+	* imf.h (parse_lisp_palette_entry): Tweak decl.
+	* ui.c: Add some comments.
+	(xform_cell): Eliminate unused code.
+	* mkterr.c (name_highest_peaks): Handle small areas correctly.
+	* world.c (xy_to_latlong, latlong_to_xy): Various fixes.
+
+	* xconq.h (enum controltypeenum): New value SHOW_COVER.
+	(Map drawterrain, etc): Delete, use VP slots instead.
+	* xconq.c (update_cell_display): Only update for certain layers
+	if right flag set.
+	* xdraw.c (cell_overlay): New macro.
+	(draw_terrain_row): Use it, shade cells with overlay.
+	(draw_hex_polygon): Ditto.
+	* xmap.c (create_map, etc): Use VP slots.
+	(create_ctrlpanel): Add coverage display button.
+	(set_from_controls, update_controls): Use button.
+
+	* macmap.c (draw_top_line, draw_unit_info): Rearrange drawing
+ 	order so as to flicker less.
+	* macmenus.c (find_something): Add ability to find other
+	sides' units if allowed.
+
+	* earth-1deg.g: Add Siberian swamps, other small changes.
+	* nat-names.g: Add misc nationalities, Bosnia, Eritrea,
+	Swaziland, etc, and add preferred units to many sides.
+	* t-e1-river.g: Various adjustments.
+	* u-e1-1938.g: Synchronize with u-e1-1998.g, shrink some
+	minor cities into towns, towns into bases.
+	* u-e1-1996.g: Make at least one town for each side in
+	nat-names.g, fix some locations and sizes.
+	* u-e50-1996.g: Ditto.
+	
+	* flags.imf: Add flags for the new nationalities.
+
+Tue Feb 17 18:23:29 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* u-e1-1987.g: Remove, good for nostalgia but not much else.
+
+Fri Feb 13 17:31:47 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* world.c (any_thickness): New global.
+	(count_terrain_subtypes): Compute it.
+
+	* macmap.c (cell_terrain): Remove useless argument.
+	(draw_cliffs): Fix to work if thicknesses but no elevations.
+	* imfapp.c (miViewSolidColor): New menu item.
+	(show_solid_color): New global.
+	(draw_as_terrain_image): Use it.
+	
+	* terrain.imf (swamp): Make more green than blue.
+
+Thu Feb 12 19:21:00 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* mkterr.c (make_maze_terrain, dig_maze_path): Rewrite to generate
+ 	guaranteed continuous maze.
+	(dig_maze_path_between, etc): New functions.
+	* world.c: Add some comments.
+
+	* macdefs.h (diMessageTo): Fix value.
+	(dMessageReceive): Remover, never used.
+
+	* cave.g (maze-passage-density ): Set.
+	* gazala.g (unit-storage-x, out-length, in-length): Fix contents.
+
+	* lib-uses.h: Include subdirectory with module name.
+
+	From Massimo Campostrini <campo@ipifidpt.difi.unipi.it>:
+	* galaxy.g: Add hp recovery and repair, nebula effect on vision,
+	adjust hp for moons and planets.
+
+Tue Feb 10 19:11:22 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* run2.c (unit_revolt): Use oldside, add notices to sides.
+
+	* greek.g: Use money, tweak variant name, add some text.
+	* greek.g, napoleon.g: Fix default world size.
+	* pelops.g: Add correct calendar, origsides for units that
+	won't revolt, and some hoplites.
+	* u-greek.g: Remove Thoricus.
+
+Tue Feb 10 18:32:29 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* conq.h (curdatestr, sunx, suny): Declare.
+	* history.h (enum damage_reasons): Add attrition_dmg.
+	* ui.h (VP drawterrain, etc): New slots.
+	* combat.c (damage_unit): Add argument, record attrition death.
+	(rescue_occupants): Rewrite to not use retreat_unit.
+	* lisp.c (escaped_symbol): Handle numeral case separately.
+	* nlang.c (latlong_desc): Rename from latlon_desc, add
+	arguments for cell fractions.
+	(generic_oneliner): Remove.
+	* read.c (interp_variant_defns): Improve variable names,
+	handle missing id differently.
+	* run.c (run_game): Improve real-time game test.
+	* run2.c (run_turn_start): Remove season name formatting,
+	add player warning if last turn in game.
+	(run_restored_turn_start): Call compute_season.
+	(run_turn_end): Add a progress note, test for end of game here
+	instead of at turn start.
+	(compute_season): Format contents of curdatestr here.
+	* scores.c (record_into_scorefile): Use a more compact format.
+	(interp_score_record): Adjust to match new format.
+	(score_variant_desc): New function, was part of get_scores.
+	* side.c (send_message): Add more feedback.
+	* ui.c (xform_cell_fractional): New function.
+	(nearest_cell): Rewrite to return cell fractions.
+	(oneliner): Generic version from Mac interface.
+	* world.c (compute_all_feature_centroids): Rewrite.
+	(xy_to_latlon, latlon_to_xy): Rewrite to use cell fractions.
+
+	* macconq.h (Map drawterrain, etc): Remove, now in ui.h.
+	* macdefs.h (miFileColors): New item, was top-level Colors menu.
+	* maccmd.c (message_dialog): Build side mask correctly.
+	* maccolors.c (set_default_colors): Tweak grid and shoreline
+ 	colors.
+	* macmap.c: Use map->vp-> instead of map-> for drawing options.
+	(GO_OFFSCREEN, RETURN_ONSCREEN): Fix var ref.
+	(xform_fractional): New function.
+	(draw_meridians): New function.
+	(draw_map): Call it.
+	* macmap2.c (oneliner): Remove.
+	* macmenus.c (init_menus): Set up colors menu as submenu.
+	* macprefs.c (interp_mac_ui_data, etc): Use
+ 	default-latlong-interval instead of default-latlong-incr.
+	* macwins.c (create_scores_window): Capitalize window name.
+
+	* africa.g, beirut.g, classic.g, empire.g, fantasy.g, flattop.g,
+ 	fred.g, future.g, gazala.g, greek.g, insects.g, intro.g,
+ 	monster.g, mormon.g, old-empire.g, postmodern.g, sc4.g, wizard.g,
+ 	ww2-bn.g, ww2-div-eur.g, ww2-div-pac.g: Define liquid terrain
+ 	types.
+	* fred.g, 1756.g, 1757.g: Adjust calendar data.
+	* feb-1917.g, gettysburg.g napoleon.g, red-october.g, ww2-adv.g,
+ 	ww2-div-eur.g, ww2-div-pac.g (calendar): Define in standard way.
+	* panzer.g: Add defaults to real-time variant.
+	* u-e1-1996.g: Adjust Hiroshima location.
+	
+	* PROJECTS: Add assorted new ideas, remove some obscure X11 ideas.
+
+Wed Feb  4 19:53:06 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* combat.c (reckon_damage): Add argument, suppress "miss"
+	messages if damage due to attacker firing.
+	* init.c (init_data_structures): Allocate curdatestr.
+	* kernel.h, kpublic.h: Remove some unused decls.
+	* run2.c (curdatestr): Move here from Mac code.
+	(run_turn_start): Compute it.
+	* world.c (find_feature): Handle 0 fid.
+	(feature_at): Simplify.
+	(paint_feature): Paint even if fid is 0 (removes feature).
+
+	* maccmd.c (get_a_visible_unit): New function.
+	(do_attack, do_fire): Use it.
+	* macconq.c (small_font_name,etc): Remove, never used.
+	(movies): Allocate dynamically.
+	(curdatestr): Remove, now in generic code.
+	(update_turn_display): Don't compute curdatestr.
+	* macinit.c (init_ui): Don't allocate curdatestr.
+	* macmap.c (draw_top_line): Clean up use of curdatestr.
+	* macwins.c (draw_game_date): Ditto.
+
+	* 1756.g, 1757.g: Set initial-year-part.
+
+	* mac-dsect.texi: Clarify description of some of the tools.
+	* mac-sect.texi: Remove Unix-oriented doc viewing info,
+	describe firing better.
+	* x11-sect.texi: Add doc viewing and printing info.
+	* xconq.texi: Misc small changes.
+
+	From Antoine Makhlouf <mahloaa@musc.edu>:
+	* combat.c (one_attack): Don't allow automatic counterattack if
+ 	acp-to-defend is insufficient.
+
+Mon Feb  2 18:42:50 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* ui.c (vp_latlon_to_xy): New function.
+
+	* maccmd.c (do_take): Beep if no materials in game.
+	* macprefs.c: New file, preferences code that was in macconq.c.
+	* macdraw.c: Use blackcolor instead of setting up a black color.
+	(draw_cell_block, draw_hex_region, draw_border_line_multiple,
+ 	draw_connection_line_multiple, draw_unit_name, draw_legend_text):
+ 	Add arguments instead of looking up map.
+	(draw_terrain_sample): Decide solid/pattern locally.
+	* macimf.c: Do ANSI-style function definitions.
+	* macinit.c (hit_player_setup_dialog): Reinit emblem images when
+	side is added or renamed.
+	(reinit_all_emblem_images): New function.
+	* macmap.c (WATER): Eliminate, use only t_liquid test.
+	* macmap2.c (toggle_survey): Redraw selections when going to
+ 	survey mode.
+	
+	* xconq.h (enum grayshade): Add black as a shade.
+	(UI boxcurs, boxmask): Delete.
+	(Map anim_state): New slot.
+	* xconq.c (animate_current_proc): New function.
+	(main): Set up to call it periodically.
+	* xcmd.c (do_submit): Implement.
+	(do_take): Use common code in ui.c.
+	* xdraw.c (draw_cursor_icon): Merge into draw_current.
+	(draw_current): Reflect acp a la Mac interface, use anim_state
+	for blinking, remove boxcurs/boxmask use.
+	* xinit.c (init_bitmaps): Remove boxcurs/boxmask setup.
+	* bitmaps/boxcurs.b, bitmaps/boxmask.b: Remove.
+
+	* earth-50km.g, t-e50-river.g, u-e50-1996.g: Various adjustments,
+	add preferred sides for some places.
+
+	* PROJECTS: Reflect above changes, remove some uninteresting
+	X11 and curses projects.
+
+Mon Jan 26 19:14:20 1998  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* utype.def (acp-morale-effect, morale-recovery): New properties.
+	* history.def (H_UNIT_TYPE_CHANGED, H_UNIT_NAME_CHANGED): Add
+	second parameter.
+	* combat.c (maybe_hit_unit): Make morale affect retreat chance.
+	(capture_unit_2): Adjust morale.
+	* nlang.c (historical_event_desc): Add case for when name change
+	event seems bogus.
+	* run2.c: Add debug prints, temp vars for various functions.
+	(run_morale_recovery): New function.
+	(run_turn_start): Call it.
+	(compute_acp): Adjust acp according to morale effect.
+	(damage_unit_with_temperature): Allow occupants to try to escape
+	freezing.
+	(run_unit_fates): Simplify.
+	(maybe_detonate_accidently): Merge into run_detonation_accidents.
+	* unit.c (change_morale): Move here from combat.c.
+
+	* maccmd.c, macconq.h, macdefs.h, macdesign.c, macdraw.c,
+ 	machelp.c, macinit.c, maclist.c, macmap.c, macmap2.c, macmenus.c:
+ 	Remove change markers.
+	* maccolors.c, macconq.c, macdraw.c, macgworld.c, macmap.c,
+ 	macmap2.c: Reformat new code to match rest of Xconq Mac code.
+	* maccolors.c (featColor, sideColor, etc): Change from arrays to
+	pointers.
+	(set_default_colors): Allocate them dynamically, fill in by
+	assignment.
+	(set_default_side_colors): Ditto.
+	(get_color): Cast img->hook correctly.
+	* macconq.c (get_preferences): Lock down prefs resource when
+	reading from it.
+	* macdraw.c (draw_unit_image): Use get_sideColor macro.
+	* maclist.c (toggle_list_sidecolors): Move here from maccolors.c.
+	* macmap2.c (toggle_map_sidecolors, etc): Move here from maccolors.c.
+
+	* earth-50km.g, t-e50-river.g: Various adjustments.
+
+	* PROJECTS: Reflect above changes, whack some decided-useless
+	items, add items for morale effect on retreat chance and
+	command list merging.
+
+Mon Jan 19 19:12:40 1998  Hans Ronne  <ronne@bmc.uu.se>
+
+	* applestuff.h: New header file with Apple control strip routine
+	descriptors. Needed in macgworld.c.
+	* maccmd.c (do_recenter): Return if not in front window.
+	(set_focus): Call scroll_map_window to do offscreen scroll.
+	(do_mac_set_angle): Rewrite for offscreen graphics.
+	* maccolors.c: New file, side color code.
+	* macconq.c (PREFSIZE): New macro constant.
+	(default_draw_names): Change to TRUE.
+	(main): Call set_default_colors & check_screen_depth.
+	small_font_id: Change to geneva.	
+	large_font_id: Change to geneva.	
+	images_refnum: Initialize new extern short.
+	(get_files): Save images_refnum.
+	(get_preferences): Call read_xcol.
+	(save_preferences): Call write_xcol.
+	(save_preferences): Change BUFSIZE to PREFSIZE.
+	(interp_mac_ui): Add many new preferences.
+	(ui_update_state): Add many new preferences.
+	(draw_font_sample): Save and restore current font.
+	(set_preferences): Add 3 new dialogs & many new preferences.
+	(set_preferences): Fix bug in Files dialog.
+	(set_preferences): Fix crashing bug in Fonts dialog.
+	(set_preferences): Dispose of old cicns and init new ones if the unit
+	image set was changed.
+	(set_preferences): Update all maps if unified_cicns was changed.
+	(add_preferences_topic_items): Add 3 new dialogs & many new 
+	preferences.
+	(event_loop): Fix crash when starting w/o instructions window.
+	(handle_event): Fix crash when typing w/o open window.
+	(handle_event): Call handle_numeric_keypad.
+	(update_window): Call copy_from_gworld.
+	(action_point): Call scroll_map_window to do offscreen scroll.
+	(get_string_from_item): Change BUFSIZE to PREFSIZE.
+	(force_update): Only redraw content region in map windows.
+	* macconq.h: Include QDOffscreen.h.
+	(a_map): Add support for offscreen graphics.
+	(a_map): Add many new map parameters.
+	(a_list): Add list->sidecolors.
+	draw_unit_image: Add emblem parameter to prototype.
+	Declare defaults for the new map parameters.
+	Add prototypes for functions in maccolors.c.
+	Add prototypes for functions in macgworld.c.
+	Define macro constants for feature color names.
+	Declare sideColors and all associated variables.
+	do_recenter: Declare extern.
+	do_mac_zoom_in: Declare extern.
+	do_mac_zoom_out: Declare extern.
+	do_mac_set_map_angle: Declare extern.
+	sanitize_for_menu: Declare extern.
+	images_refnum: Declare extern.
+	prefs_refnum: Declare extern.
+	* macdefs.h: mColors: New menu.
+	mViewText: New submenu with items.
+	mViewGrids: New submenu with items.
+	mViewColors: New submenu with items.
+	mViewBorders: New submenu with items.
+	mSideColorPopup: New popup menu with items.
+	mSideColorUse: New popup menu with items.
+	mViewMap: Items reorganized & renumbered.
+	mViewList: Add one item.
+	dPreferences: Add 3 new subdialogs.
+	dsPreferencesFiles: Many new items.
+	dsPreferencesMap: Many new items.
+	dsPreferencesFonts: Many new items.
+	dsPreferencesOffscreen: New subdialog with items.
+	dsPreferencesImageSets: New subdialog with items.
+	dsPreferencesColorSchemes: New subdialog with items.
+	dOffscreen: New dialog with items.
+	dSideColor: New dialog with items.
+	dFeatureColor: New dialog with items.
+	dScreenDepth: New dialog with items.
+	aNoMem: New alert with items.
+	aOneButtonAlert: New alert with items.
+	aTwoButtonAlert: New alert with items.
+	* macdesign.c (draw_design_window_tool): Add emblem in call 
+	to draw_unit_image.
+	* macdraw.c: best_terrain_images: Declare extern.
+	(draw_unit_image): Rewrite for side colors & offscreen graphics.
+	(draw_side_emblem): Rewrite for offscreen graphics.
+	(draw_cell_block): Support map->solid_color_terrain.
+	(draw_hex_region): Support map->solid_color_terrain.
+	(draw_border_line_multiple): Support map->solid_color_terrain.
+	(draw_border_line_multiple): Modify for offscreen graphics.
+	(draw_connection_line_multiple): Support map->solid_color_terrain.
+	(draw_connection_line_multiple): Modify for offscreen graphics.
+	(draw_feature_borders): Support featureColor.
+	(draw_elevation, draw_temperature, draw_coverage,
+	draw_unit_name): Support textColor.
+	(draw_unit_name): Dont draw names at low magnification.
+	(draw_legend_text): Rewrite for textmasks and optimized fonts.
+	(draw_legend_text): Change scaling formula for scaled fonts.
+	(draw_blast_image): Modify for offscreen graphics.
+	(plot_sicn): Modify for offscreen graphics.	
+	* macgworld.c: New source file with all the new offscreen code.
+	* macimf.h: mac_load_image_color: Remove this unused 
+	prototype which causes a link error.	
+	* machelp.c (draw_help): Add emblem in call to draw_unit_image.	
+	* macinit.c: Remove declaration of gridcolor and unseencolor.
+	(launch_game): Call init_side_colors.
+	(launch_game): Call init_unit_cicns.
+	(launch_game): Call init_emblem_cicns.
+	(launch_game_2): Call build_colors_menu.
+	(init_display): Remove locked ICN handles that mess up the heap.
+	(init_display): Check default_power and show_instructions.
+	(init_terrain_images): Modify check for gridcolor = unseencolor.
+	* maclist.c (create_list): Support list->sidecolors.
+	(draw_unit_list_entry): Add emblem in call to draw_unit_image.	
+	* macmap.c: WATER: New macro used in draw_shorelines.
+	GO_OFFSCREEN: New macro for offscreen graphics.
+	RETURN_ONSCREEN: New macro for offscreen graphics.
+	(update_cell_display): Rewrite for offscreen graphics.
+	(update_cell_display): Support for map-> erase_names.
+	(create_map): Rewrite for offscreen graphics & new parameters.
+	(set_content_rect): Do not offset contentrect.
+	(set_map_scrollbars): Fix 32K limit bug by scaling the shorts.
+	(grow_map, zoom_map, draw_map): Rewrite for offscreen graphics.
+	(draw_window_background): Change contentrect to portRect, use
+	gridcolor if everything is visible.
+	(draw_map_content): Modify for offscreen graphics.
+	(draw_map_content): Delete all area-minimizing code.
+	(draw_map_content): Support map->draw_latlong.
+	(draw_area_background): Use gridcolor if everything is visible.
+	(draw_control_panel): Add 2 new toggle boxes.
+	(draw_top_line): Support small_font_id.
+	(draw_info_text): Support small_font_id.
+	(draw_related_maps): Clip drawing to map content.
+	(draw_related_maps): Draw both offscreen and onscreen.
+	(draw_other_map): Handle scrolling across dateline.
+	(draw_row): Support map->simple_borders, grid_matches_unseen,
+	map->shorelines, map->featurenames.
+	(draw_row): Change cutoff magnification for featurenames to hh > 3.
+	(draw_terrain_row): Support grid_matches_unseen.
+	(draw_unit): Fix leakage of dotdotdots into grid.
+	(draw_unit): Support map->boxmasks and icon_mask_color[s].
+	(draw_unit): Draw city names at uniform size & position.
+	(draw_unit_and_occs): Fix leakage of grouping boxes into grid.
+	(draw_unit_and_occs): Support map->boxmasks and icon_mask_color[s].
+	(draw_unit_and_occs): Draw city names at uniform size & position.
+	(draw_unit_and_occs): Use emblem in draw_unit_image call.
+	(draw_people_row): Fix wrapping bug.
+	(draw_people_row): Support frontlineColor.
+	(draw_people_row): Support map->simple_borders.
+	(draw_legend): Draw featurenames offset in featureColor and double size.
+	(draw_unit_blast): Rewrite for offscreen graphics.
+	(clear_unit_blast): Rewrite for offscreen graphics.
+	(invert_map): Rewrite for offscreen graphics.
+	(draw_selections): Rewrite for offscreen graphics.
+	(draw_selections_at): Rewrite for offscreen graphics.
+	(draw_selected_unit_setport): Rewrite for offscreen graphics.
+	(draw_selected_unit): Handle transport + occ & 3d unit correctly.
+	(draw_selected_unit): Remove mag lines which leaked into the grid.
+	(draw_selection_animation): Handle transport + occ & 3d unit correctly.
+	(draw_selection_animation): Handle new definition of contentrect.
+	(draw_selection_animation): Also draw the black selection box.
+	(erase_selection): Rewrite for offscreen graphics.		
+	(erase_selections): Rewrite for offscreen graphics.		
+	(draw_unselected_unit): Redraw names & shorelines correctly.
+	(destroy_map): Clean up map ids and window numbers, trash the gworld,
+	always dispose of the window, erase other-map boxes, zero map->id to
+	show that it no longer exists.
+	(oneliner): Support map->draw_latlong.
+	(draw_simple_feature_borders, draw_shorelines, draw_gridlines,
+	draw_unit_names_only): New functions.	
+	* macmap2.c (map_scroll_fn): Rewrite for offscreen graphics.
+	(do_mouse_down_map): Rewrite for offscreen graphics.
+	(do_mouse_down_control_panel): Add two new buttons.
+	(set_map_mag): Call draw_related_maps.
+	(toggle_map_topline): Modify for offscreen graphics.	
+	(toggle_map_topline): Support map->draw_topline.	
+	(toggle_map_topline): Call draw_related_maps.	
+	(toggle_map_topunit): Modify for offscreen graphics.	
+	(toggle_map_topunit): Support map->draw_topline.	
+	(toggle_map_topunit): Call draw_related_maps.	
+	(do_mouse_down_map_content): Support control-clicking on map.
+	(scroll_best_map_to_unit): Modify for offscreen graphics.
+	(scroll_to_unit): Rewrite for offscreen graphics.	
+	* macwins.c (side_rename_dialog): Handle color schemes.
+	(draw_unit_closeup): Add emblem in call to draw_unit_image.	
+	* macmenus.c: sanitize_for_menus now declared in macconq.h.
+	colorsmenu: Declare new MenuHandle.
+	(init_menus): Add Colors menu and 4 new View Map submenus.
+	(do_menu_command): Add Colors menu & 4 View Map submenus.
+	(do_menu_command): Use default_power in call to create_map.
+	(do_menu_command): Fix worldmap-related crashes.
+	(do_menu_command): Compute size of worldmap correctly.
+	(do_menu_command): Modify for offscreen graphics.
+	(do_menu_command): Support list->sidecolors.
+	(do_find_location_mi): Use offscreen scrolling if possible.
+	(adjust_menus): Add Colors menu & 4 View Map submenus.
+	(adjust_menus): Support list->sidecolors.	
+	* XconqProj.rsrc: New resources for preferences, side colors.
+	DITL 701 "Preferences File Items" modified.
+ 	DITL 702 "Preferences Map Items" modified.
+	DITL 703 "Preferences Font Items" modified.
+	DLOG 700 "Preferences" modified.
+	MENU 136 "Map View" modified.
+	MENU 208 "List View" modified.
+	MENU 701 "Small Font Popup" modified.
+	MENU 703 "Large Font Popup" modified.
+	PICT 130 "Map Controls TL" modified.

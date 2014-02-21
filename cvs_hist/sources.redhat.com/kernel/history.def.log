@@ -1,0 +1,123 @@
+
+RCS file: /cvs/xconq/xconq/kernel/history.def,v
+Working file: history.def
+head: 1.10
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.5
+	xconq-7_4-branch: 1.5.0.2
+	xconq-7_4-branchpoint: 1.5
+	xtconq-pre-removal: 1.3
+	xconq-7_3_3-release: 1.3
+	xconq-7_3_2-release: 1.3
+	xconq-7_3_1-release: 1.3
+	xconq-7_3-branch: 1.3.0.2
+	xconq-7_3-branchpoint: 1.3
+keyword substitution: kv
+total revisions: 10;	selected revisions: 10
+description:
+----------------------------
+revision 1.10
+date: 2004/08/20 23:26:11;  author: ronne;  state: Exp;  lines: +2 -0
+Improved combat code part 1: TASK_ATTACK, TASK_FIRE, unit view clearance.
+----------------------------
+revision 1.9
+date: 2004/06/06 05:55:51;  author: mcdonald;  state: Exp;  lines: +4 -0
+Add new possibilities for unit wrecking behavior.
+Apply unit starvation patch from Matthew Skala. (Thanks Matthew.)
+Define and handle new event types related to unit destruction.
+Fix serious bug with model 0 attack/fire hit damage computation.
+Improve efficiency of attrition applicator that runs at turn start.
+Address nasty parsing order issue.
+Add simple, new game that showcases the new wrecking functionality.
+----------------------------
+revision 1.8
+date: 2004/01/05 23:36:37;  author: ronne;  state: Exp;  lines: +2 -0
+Add pre-flight checks of move commands to the ui code.
+----------------------------
+revision 1.7
+date: 2004/01/03 15:56:08;  author: ronne;  state: Exp;  lines: +1 -1
+Enable change-type on all platforms.
+----------------------------
+revision 1.6
+date: 2000/12/28 15:10:46;  author: shebs;  state: Exp;  lines: +10 -0
+	Add more feedback for action failures.
+	* history.def (occ-cannot-do, attack-cannot-hit, overrun-cannot-hit,
+	fire-cannot-hit, extract-no-source): New event types.
+	* actions.c (check_extract_action): Use one.
+	* combat.c (check_attack_action, check_overrun_action,
+	check_fire_at_action, check_fire_into_action,
+	check_capture_action): Ditto.
+	* nlang.c (action_result_desc): Describe new event types.
+
+	* actions.c (check_add_terrain_action,
+	check_remove_terrain_action): Return A_ANY_TOO_FAR instead of
+	A_ANY_ERROR if too far.
+	* combat.c (check_capture_action, check_detonate_action): Ditto.
+
+	* game.h (could_develop): New macro.
+	* actions.c (check_develop_action): Use it.
+	(check_create_common): Use could_create.
+	(any_construction_possible): Ditto.
+	* ai.c (build_depot_for_self, needs_develop): Use could_create.
+	* init.c (cache_possible_types): Ditto.
+----------------------------
+revision 1.5
+date: 2000/12/08 17:10:10;  author: shebs;  state: Exp;  lines: +4 -0
+	Add player feedback for out-of-ammo and other action failures.
+	(Still missing Mac interface version, more complicated because
+	of multi-unit selections.)
+	* history.def (zz-undefined): New hevt type, flag value.
+	(insufficient-ammo): New hevt type, distinguishes missing
+	ammo from other types of missing material.
+	* combat.c (check_attack_action, check_overrun_action,
+	check_fire_at_action, check_fire_into_action): Return
+	A_ANY_NO_AMMO instead of A_ANY_NO_MATERIAL
+	* nlang.c (action_result_desc): Add case for A_ANY_NO_AMMO,
+	improve the default case.
+	(advance_failure_desc): New function, describes reason for
+	failure to advance into a cell.
+	* conq.h (advance_failure_desc): Declare.
+	* ui.c (advance_into_cell): Add failure code argument, rewrite
+	cases to use it.
+	* ui.h (advance_into_cell): Update decl.
+
+	* maccmd.c (do_one_dir_move): Add argument to advance_into_cell.
+	* macmouse.c (move_the_selected_unit): Ditto.
+	* tkcmd.c (aux_move_dir): Ditto, plus notify of failure reason.
+	* tkmap.c (move_the_selected_unit): Ditto.
+	* cconq.c (do_dir_2): Ditto.
+----------------------------
+revision 1.4
+date: 2000/12/07 17:34:23;  author: shebs;  state: Exp;  lines: +2 -0
+	Report LOS blockage understandably.
+	* history.def (fire-blocked): New hevt type.
+	* nlang.c (action_result_desc): Describe it.
+	(report_combat_special): Make static.
+	* combat.c (check_fire_at_action, check_fire_into_action): Report
+	it.
+	(check_attack_action): Report A_ANY_NO_MATERIAL if no ammo.
+	(report_damage): Don't report actions by dead units.
+----------------------------
+revision 1.3
+date: 2000/04/02 23:10:24;  author: shebs;  state: Exp;  lines: +3 -1
+	* gvar.def (unit-name-color): Change default to white.
+	* history.def (blocking-zoc): New action failure type.
+	* keyword.def (transition): New keyword.
+
+	* imf.c (interp_image, write_image): Use transition keyword.
+	* move.c (check_move_action): Return distinct failure code
+	if blocked by ZOC.
+	(in_blocking_zoc): Fix typos, add traverse-blocking case.
+	(unit_traverse_blockable_by, any_friendly_at): New functions.
+----------------------------
+revision 1.2
+date: 1999/09/09 22:26:57;  author: ronne;  state: Exp;  lines: +2 -0
+Move new ai code to action_reaction hook, fix some bugs.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:25;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

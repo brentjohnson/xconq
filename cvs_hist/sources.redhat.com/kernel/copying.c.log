@@ -1,0 +1,35 @@
+
+RCS file: /cvs/xconq/xconq/kernel/copying.c,v
+Working file: copying.c
+head: 1.3
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.2
+	xconq-7_4-branch: 1.2.0.2
+	xconq-7_4-branchpoint: 1.2
+	xtconq-pre-removal: 1.1
+	xconq-7_3_3-release: 1.1
+	xconq-7_3_2-release: 1.1
+	xconq-7_3_1-release: 1.1
+	xconq-7_3-branch: 1.1.0.2
+	xconq-7_3-branchpoint: 1.1
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1.3
+date: 2004/07/11 19:00:42;  author: mcdonald;  state: Exp;  lines: +279 -279
+More output functionality for help system.
+Make help system safer.
+----------------------------
+revision 1.2
+date: 2000/11/20 03:32:43;  author: shebs;  state: Exp;  lines: +2 -8
+	* copying.awk: Generate modern syntax for functions.
+	* copying.c: Regenerate.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:24;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

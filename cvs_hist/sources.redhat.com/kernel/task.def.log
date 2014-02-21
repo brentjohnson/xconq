@@ -1,0 +1,80 @@
+
+RCS file: /cvs/xconq/xconq/kernel/task.def,v
+Working file: task.def
+head: 1.9
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.8
+	xconq-7_4-branch: 1.8.0.2
+	xconq-7_4-branchpoint: 1.8
+	xtconq-pre-removal: 1.2
+	xconq-7_3_3-release: 1.2
+	xconq-7_3_2-release: 1.2
+	xconq-7_3_1-release: 1.2
+	xconq-7_3-branch: 1.2.0.2
+	xconq-7_3-branchpoint: 1.2
+keyword substitution: kv
+total revisions: 9;	selected revisions: 9
+description:
+----------------------------
+revision 1.9
+date: 2004/08/20 23:26:12;  author: ronne;  state: Exp;  lines: +12 -0
+Improved combat code part 1: TASK_ATTACK, TASK_FIRE, unit view clearance.
+----------------------------
+revision 1.8
+date: 2000/12/10 01:52:54;  author: shebs;  state: Exp;  lines: +1 -1
+	Improve the textual description of tasks.
+	* task.def (hit-unit): Shorten display name to just "Hit".
+	* nlang.c (task_desc): Use the task type's display name
+	consistently, fix generation of unit type and side substrings.
+----------------------------
+revision 1.7
+date: 2000/12/04 17:50:21;  author: shebs;  state: Exp;  lines: +19 -16
+	* task.def: Revert the mistaken task argtypes changes, add some
+	comments.
+	* unit.h: Add some comments.
+	* task.c: Add a couple comments.
+----------------------------
+revision 1.6
+date: 2000/12/03 23:36:20;  author: ronne;  state: Exp;  lines: +15 -15
+Fix some problems with capture code.
+----------------------------
+revision 1.5
+date: 2000/11/05 20:26:03;  author: shebs;  state: Exp;  lines: +1 -1
+	Improve the success rate of transports picking up occupants.
+	* task.def (pickup): Add a direction choice argument.
+	* task.c (do_pickup_task): Add an approach subtask.
+----------------------------
+revision 1.4
+date: 2000/10/30 16:28:29;  author: shebs;  state: Exp;  lines: +16 -16
+	* goal.def (DEF_GOAL): Add a separate display name for each goal.
+	* unit.h (GoalDefn): New field display_name.
+	* unit.h, ai.c: Update uses of DEF_GOAL.
+	* task.def (DEF_TASK): Add a separate display name for each task.
+	* unit.h (TaskDefn): New field display_name.
+	* kernel.h, kpublic.h, unit.h, task.c: Update uses of DEF_TASK.
+	* nlang.c (task_desc): Use display name instead of internal name.
+	(goal_desc): Likewise.
+	* side.c (standing_order_desc): Likewise.
+----------------------------
+revision 1.3
+date: 2000/10/29 21:10:37;  author: ronne;  state: Exp;  lines: +16 -16
+Improve ai planning. More support for combat model 1.
+----------------------------
+revision 1.2
+date: 2000/03/05 15:32:48;  author: shebs;  state: Exp;  lines: +7 -12
+	* task.def (TASK_BUILD): Add args for location at which to build.
+	* task.c (do_build_task): Pass location to create-at action.
+	* iplayer.c, mplayer.c, kpublic.h, plan.c, task.c, tp.c,
+	ccmd.c, macunit.c, macwins.c, tkcmd.c, xcmd.c: Update all calls.
+
+	* task.def (TASK_DO_ACTION): Remove, never used.
+	* task.c (do_action_task): Remove.
+	* xcloseup.c: Remove ref.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:34;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

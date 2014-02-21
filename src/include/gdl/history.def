@@ -1,0 +1,135 @@
+/* Definitions of all the historical event types in Xconq.
+   Copyright (C) 1993-1995, 1997-2000 Stanley T. Shebs.
+
+Xconq is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.  See the file COPYING.  */
+
+DEF_HEVT("zz-undefined", H_UNDEFINED, "")
+
+DEF_HEVT("zz-log-head", H_LOG_HEAD, "")
+
+DEF_HEVT("log-started", H_LOG_STARTED, "")
+
+DEF_HEVT("log-ended", H_LOG_ENDED, "")
+
+DEF_HEVT("game-started", H_GAME_STARTED, "")
+
+DEF_HEVT("game-saved", H_GAME_SAVED, "")
+
+DEF_HEVT("game-restarted", H_GAME_RESTARTED, "")
+
+DEF_HEVT("game-ended", H_GAME_ENDED, "")
+
+DEF_HEVT("side-joined", H_SIDE_JOINED, "S")
+
+DEF_HEVT("side-lost", H_SIDE_LOST, "Ss")
+
+DEF_HEVT("side-withdrew", H_SIDE_WITHDREW, "S")
+
+DEF_HEVT("side-won", H_SIDE_WON, "Ss")
+
+DEF_HEVT("unit-created", H_UNIT_CREATED, "SU")
+
+DEF_HEVT("unit-completed", H_UNIT_COMPLETED, "SU")
+
+DEF_HEVT("unit-moved", H_UNIT_MOVED, "Uxy")
+
+DEF_HEVT("unit-assaulted", H_UNIT_ASSAULTED, "UUxy")
+
+DEF_HEVT("unit-damaged", H_UNIT_DAMAGED, "Unn")
+
+DEF_HEVT("unit-captured", H_UNIT_CAPTURED, "UUS")
+
+DEF_HEVT("unit-acquired", H_UNIT_ACQUIRED, "US")
+
+DEF_HEVT("unit-revolted", H_UNIT_REVOLTED, "US")
+
+DEF_HEVT("unit-surrendered", H_UNIT_SURRENDERED, "UUS")
+
+DEF_HEVT("unit-killed", H_UNIT_KILLED, "Uu")
+
+DEF_HEVT("unit-wrecked", H_UNIT_WRECKED, "Uu")
+
+DEF_HEVT("unit-died-in-accident", H_UNIT_DIED_IN_ACCIDENT, "U")
+
+DEF_HEVT("unit-wrecked-in-accident", H_UNIT_WRECKED_IN_ACCIDENT, "U")
+
+DEF_HEVT("unit-vanished", H_UNIT_VANISHED, "U")
+
+DEF_HEVT("unit-garrisoned", H_UNIT_GARRISONED, "UU")
+
+DEF_HEVT("unit-disbanded", H_UNIT_DISBANDED, "U")
+
+DEF_HEVT("unit-starved", H_UNIT_STARVED, "Um")
+
+DEF_HEVT("unit-died-from-temperature", H_UNIT_DIED_FROM_TEMPERATURE, "U")
+
+DEF_HEVT("unit-died-from-attrition", H_UNIT_DIED_FROM_ATTRITION, "U")
+
+DEF_HEVT("unit-wrecked-from-attrition", H_UNIT_WRECKED_FROM_ATTRITION, "U")
+
+DEF_HEVT("unit-merged", H_UNIT_MERGED, "U")
+
+DEF_HEVT("unit-left-world", H_UNIT_LEFT_WORLD, "U")
+
+DEF_HEVT("unit-type-changed", H_UNIT_TYPE_CHANGED, "UUu")
+
+DEF_HEVT("unit-name-changed", H_UNIT_NAME_CHANGED, "UU")
+
+DEF_HEVT("action-ok", A_ANY_OK, "")
+
+DEF_HEVT("action-error", A_ANY_ERROR, "")
+
+DEF_HEVT("cannot-do", A_ANY_CANNOT_DO, "")
+
+DEF_HEVT("occ-cannot-do", A_ANY_OCC_CANNOT_DO, "")
+
+DEF_HEVT("insufficient-acp", A_ANY_NO_ACP, "")
+
+DEF_HEVT("insufficient-material", A_ANY_NO_MATERIAL, "")
+
+DEF_HEVT("insufficient-ammo", A_ANY_NO_AMMO, "")
+
+DEF_HEVT("too-far", A_ANY_TOO_FAR, "")
+
+DEF_HEVT("too-near", A_ANY_TOO_NEAR, "")
+
+DEF_HEVT("action-done", A_ANY_DONE, "")
+
+DEF_HEVT("insufficient-mp", A_MOVE_NO_MP, "")
+
+DEF_HEVT("blocking-zoc", A_MOVE_BLOCKING_ZOC, "")
+
+DEF_HEVT("cannot-leave-world", A_MOVE_CANNOT_LEAVE_WORLD, "")
+
+DEF_HEVT("destination-full", A_MOVE_DEST_FULL, "")
+
+DEF_HEVT("unit-gone", A_MOVE_UNIT_GONE, "")
+
+DEF_HEVT("no-path", A_MOVE_NO_PATH, "")
+
+DEF_HEVT("insufficient-tooling", A_CONSTRUCT_NO_TOOLING, "")
+
+DEF_HEVT("attack-cannot-hit", A_ATTACK_CANNOT_HIT, "")
+
+DEF_HEVT("overrun-cannot-hit", A_OVERRUN_CANNOT_HIT, "")
+
+DEF_HEVT("overrun-failed", A_OVERRUN_FAILED, "")
+
+DEF_HEVT("overrun-succeeded", A_OVERRUN_SUCCEEDED, "")
+
+DEF_HEVT("fire-blocked", A_FIRE_BLOCKED, "")
+
+DEF_HEVT("fire-cannot-hit", A_FIRE_CANNOT_HIT, "")
+
+DEF_HEVT("fire-into-outside-world", A_FIRE_INTO_OUTSIDE_WORLD, "")
+
+DEF_HEVT("capture-failed", A_CAPTURE_FAILED, "")
+
+DEF_HEVT("capture-succeeded", A_CAPTURE_SUCCEEDED, "")
+
+DEF_HEVT("build-completed", A_BUILD_COMPLETED, "")
+
+DEF_HEVT("extract-no-source", A_EXTRACT_NO_SOURCE, "")

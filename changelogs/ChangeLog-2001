@@ -1,0 +1,1119 @@
+2001-09-19  mniw@sol.dti.ne.jp
+
+	* lib/logunit.g: Fix typo in game-module notes.
+
+2001-09-15  Jim Kingdon  <kingdon@panix.com>
+
+	* kernel/help.c (describe_utype): attrition is a probfraction, not
+	a percentage.
+	* lib/russian-rev.g: acp-damage-effect values are hit points, not
+	percentages.  Set version.
+
+2001-09-14  mniw@sol.dti.ne.jp
+
+	* lib/russian-rev.g: Fix typo in notes which caused "modules" in
+	the help to give an error.
+
+2001-09-09  Jim Kingdon  <kingdon@panix.com>
+
+	* kernel/oplayer.c (oplayer_create_strategy): Allocate
+	strategy->strengths and similar fields (got lost in the copy from
+	mplayer to oplayer?).
+	(create_theater): Likewise for theater->numassigned and friends.
+
+2001-09-02  Jim Kingdon  <kingdon@panix.com>
+
+	* kernel/help.c (describe_utype): For auto-repair, try to be clear
+	about who is repairing whom.  Print as probfraction.  Say
+	"explicit repair" when that is what we mean.
+	(tb_probfraction_desc): New function.
+
+2001-08-27  Jim Kingdon  <kingdon@panix.com>
+
+	* lib/stdunit.g: Up resupply-percent to 60 - the AI's bombers and
+	fighters, especially, were crashing.  50% leaves no margin for
+	error (hit submarine, enemy units in the way, trying to resupply
+	from a carrier which moved, &c).
+
+	* kernel/side.c (see_cell): When we first get the terrain view, if
+	there is a see-always unit there, add to coverage.
+	* kernel/combat.c (capture_unit_2): When we get information on a
+	u_see_always unit, add to coverage.  Also, when we get information
+	on terrain, see see_always units.
+
+	* x11/.cvsignore: Add sdlconq.
+	* sdl/.cvsignore: Added.
+	* sdl/Makefile.in (ALL_CFLAGS): Use sdl-config instead of
+	hardcoding -I.
+
+2001-08-18  Jim Kingdon  <kingdon@panix.com> and Hans Ronne
+
+	Get the AI to repair its units better:
+	* lib/stdunit.g: Up repair-percent to 75 - much too easy to kill
+	off bombers (and others) at the default 35.
+	* kernel/ai.c (ai_decide_plan): Call ai_react_to_action rather
+	than duplicating the code which calls defensive_reaction &c.  This
+	is so that we check for whether we are looking for repair.
+	* kernel/task.c (do_repair_task): Only look for repair from a
+	transport which can provide it.
+	* kernel/task.c (do_repair_task): Unless we are above
+	repair_percent, we haven't repaired enough.  Also round up on the
+	80% check - otherwise 1/2 is considered to be >= 80% for example.
+
+2001-08-16  Jim Kingdon  <kingdon@panix.com>
+
+	Make it so that there is still reason to explore after the early
+	part of the game:
+	* lib/standard.g: Don't set see-terrain-if-captured.
+	Reduce see-others-if-captured for "town (town city)" from 100%
+	to 30%.
+	* lib/lhs.g, lib/log.g: Likewise.
+
+2001-07-13    Hans Ronne <hronne@2.sbbs.se>
+
+	Update mac code for changes in Universal Interfaces 3.4.
+	* (Floating.c, Floating.h, maccmd.c, macconq.c, macdesign.c,
+	machelp.c, macinit.c, macwins.c): Rename ActivateWindow to
+	ActivateTheWindow everywhere to avoid name conflict.
+
+2001-07-08    Hans Ronne <hronne@2.sbbs.se>
+
+	* macinit.c (joinhost): Change it to "127.0.0.1"	
+	* sdlmain.c (fullscreen): Change it to FALSE for Mac.
+
+2001-07-12  Jim Kingdon  <kingdon@panix.com>
+
+	* lib/standard.g: For ice age, use swamp for edge, and increase
+	the number of independent cities (so it is similar to non-ice age
+	variant).
+
+2001-05-12  Jim Kingdon  <kingdon@panix.com>
+
+	* lib/3rd-age.g: Use anchor image for harbor.
+
+	* lib/beirut.g: Make leader 40% (not 20%) likely to get a building
+	to surrender.  Make leader harder to kill (except by death squad).
+	Add comment about scorekeeper.  Make game end after 100 turns.
+
+	* kernel/help.c (describe_utype): Don't double % to tbcat.
+
+2001-04-16    Hans Ronne <hronne@2.sbbs.se>
+
+	Fix SDL code so that it compiles again on the Mac.
+	* sdlconq.h (screen_oneliner, draw_button): Prototype.
+	(Button): Change to SDLButton everywhere.
+	* sdlmain.c (Button): Ditto.
+	* sdlscreen.c (Button): Ditto.
+		
+	Update for changes in SDL 1.2.
+	* sdlmain.c (handle_event): Remove comment about window
+	resize bug which has now been fixed.
+
+2001-04-12  Jim Kingdon  <kingdon@panix.com>
+
+	* tcltk/tkcmd.c (do_build): Let a unit finish building its
+	transport even if numtypes > 1.
+
+2001-04-12  Jim Kingdon  <kingdon@panix.com>
+
+	* lib/{feb-1917.g, galaxy2.g, ng-chinese.g, ng-italian.g,
+	ng-japanese.g, red-october.g, roman.g, rom-civ-war.g,
+	russian-rev.g, time.g, t-roman.g): Update email address of Massimo
+	Campostrini (and/or remove it; it doesn't need to be in every
+	file).  Add his note about maintainership of his games.
+
+2001-04-09  Jim Kingdon  <kingdon@panix.com>
+
+	* lib/roman.g: Set acp-per-turn for camp to 0.  Set hp-recovery
+	for tribe and camp (just like the rest of the units).  Add
+	docstring describing the barbarian/civilized/roman thing.  When a
+	side loses, have its cities/tribes revolt rather than vanishing.
+
+2001-03-26  Stan Shebs  <shebs@shebs.cnchost.com>
+
+	Add buttons to SDL interface, use for construction.  Also
+	allow panels to be transparent, add mouseover help.
+	* sdlconq.h (Panel overlay, label, buttons, numbuttons): New
+	fields.
+	(Button): New structure.
+	* sdlmain.c (handle_mouse_down_in_panel): New function.
+	(handle_mouse_down): Use it.
+	* sdlscreen.c (create_panel): Add screen argument.
+	(open_screen): Move panel_specific code to create_panel,
+	add panel labels.
+	(create_panel): Add a group of buttons.
+	(set_panel_sizes): Account for transparent panels.
+	(draw_panel): Only draw background if not transparent, tweak
+	position of expand/contract button, draw buttons.
+	(struct protobutton): New structure, info about possible
+	buttons.
+	(protobuttons, num_protobuttons, button_offset): New globals.
+	(prev_button_fn, next_button_fn, build_button_fn): New functions.
+	(update_unit_info): Fill in the bottom panel button with
+	construction actions.
+	(create_button, draw_button): New functions.
+	(draw_world_map): Change calc to area to clear.
+	* sdlcmd.c (impl_build): Make extern.
+	
+	* sdlmain.c (screen_oneliner): New function.
+	(update_mouseover): Use it.
+	* sdlscreen.c (draw_mouseover_panel): Ditto.
+	
+2001-03-15  Stan Shebs  <shebs@shebs.cnchost.com>
+
+	Add display of world map as minimap in bottom panel.
+	* sdlconq.h (Screen minimap): New field.
+	(Screen number, terrain_patterns): Remove, never used.
+	(Map sx, sy, is_world): New fields.
+	* sdlmain.c (default_draw_terrain_patterns): Remove, never used.
+	(point_in_map): New function.
+	(autoscroll): Add explicit map and minimap handling, remove
+	"vp" and "which" args.
+	(ui_mainloop, update_mouseover_x): Update autoscroll call.
+	(set_current_unit): Call update_unit_info instead of draw_unit_info.
+	(update_mouseover_x): Use point_in_map.
+	(s_nearest_cell): Adjust for map position.
+	(update_unit_display): Call draw_unit_info instead of
+	update_unit_info.
+	* sdlscreen.c (open_screen): Call create_map to create maps,
+	add creation of minimap.
+	(set_panel_position): New function.
+	(set_panel_sizes): Call it, adjust panels according to type.
+	(add_update): Do clipping into args.
+	(draw_unit_info): Make this do the drawing of unit info
+	strings only, improve string position calcs.
+	(update_unit_info): New function.
+	(draw_world_map): Fill it in.
+	(draw_line): New function, only does horizontal and vertical
+	right now.
+	* sdlmap.c (create_map): New function.
+	(draw_map_outline): New function.
+	(draw_map): Call it.
+	(xform): Adjust for map position.
+
+	* sdlmain.c (set_tool_cursor): Remove "which" arg, simplify.
+	* sdlmain.c (autoscroll, handle_event): Update call.
+	* sdlcmd.c (do_survey, do_design): Ditto.
+	* sdlconq.h: Update decl.
+
+2001-03-13  Hans Ronne <hronne@2.sbbs.se>
+
+	Don't resize the map if the resize event occurred in the
+	SIOUX console. Add comment about some X11 window resize
+	events not being detected by SDL.
+	* sdlmain.c (handle_event): Break case SDL_VIDEORESIZE if
+	the Mac SIOUX console is in front.
+
+	Fix panel width resizing bug.
+	* sdlscreen.c (set_panel_sizes): Set panel->w correctly.
+
+	Fix X11 crashes when exiting from the fbcon driver.
+	* sdlmain.c (exit_xconq): Call SDL_Quit before exit.
+
+	Force fullscreen mode when using the fbcon driver.
+	* sdlmain.c (initial_ui_init): Set fullscreen for fbcon.
+
+2001-03-04  Jim Kingdon  <kingdon@panix.com>
+
+	* lib/advances.g: Set cp of most units to 50; 100/300 for facilities;
+	more for the fancier combat units.
+	(unit-consumption-per-size): Add comment about increasing this.
+	(unit-consumption-to-grow): Increase from 10 to 60; city growth
+	had been artificially fast for debugging.
+
+2001-03-03  Hans Ronne <hronne@2.sbbs.se>
+
+	Finally fix bug in update clipping code and reenable the use of
+	SDL_UpdateRects on unix in order to speed up the graphics.
+	* sdlscreen.c (add_update): Return if outside the main screen.
+	(update_screen): Reenable use of SDL_UpdateRects on unix.
+
+	Fix visible system cursor problem in mac fullscreen mode.
+	* sdlmain.c (initial_ui_init): Don't call SDL_ShowCursor(0) on
+	the mac.
+
+2001-03-01  Stan Shebs  <shebs@shebs.cnchost.com>
+
+	Reorganize SDL interface.  Screens now consists of maps plus
+	variable numbers of panels.  Change most map references to
+	screen references, including struct fields, function names,
+	and local variables.
+	* sdlconq.h (Screen): New type, move most Map fields to it.
+	(Panel): New type.	
+	(enum paneltype): New enum.
+	* sdlscreen.c: New file, includes general screen-handling
+	code from sdlmap.c and sdlmain.c, plus new panel code.
+	* sdl/Makefile.in: Add it.
+	* sdlconq.h, sdlcmd.c, sdlmain.c: Change most existing references
+	from "Map" to "Screen".
+	* sdlmain.c (mscreen): Rename from screen.
+	(sscreen): New global, was smap.
+	(initial_ui_init): Check for NULL from getenv of SDL_VIDEODRIVER
+	before using strcmp.
+	* sdlmap.c: Comment out unused local vars.
+	(xform): Make extern.
+	(draw_map_overhead): Use draw_grid from viewport.
+	(draw_borders, etc): Don't use map->draw_lines.
+
+	* macsdl.c (start_game): Call redraw_screen instead of redraw_map.
+
+	* ui.c (oneliner): Handle the outside-the-viewport case.
+
+2001-02-25  Hans Ronne <hronne@2.sbbs.se>
+
+	Fix new UpdateRects crashes in Linux (a temporary hack).
+	* sdlmap.c (update_map): Don't call UpdateRects ifdef UNIX.
+
+	Fix some remaining problems with the hardware acceleration.
+	* sdlmain.c (initial_ui_init): Force fullscreen mode for the mac 
+	DrawSprocket driver.
+	(initial_ui_init): Don't call SDL_ListModes on the mac. 
+	(initial_ui_init): Update comments about hardware acceleration. 
+	(initial_ui_init): Set pixel depth to 32 instead of passing 0 to get 
+	the current depth in the SDL_SetVideoMode call.
+	(handle_event): Pass 32 as pixel depth in both SDL_SetVideoMode
+	and SDL_AllocSurface calls. Call SDL_FreeSurface for the screen.
+	Always assume we are in non-fullscreen mode when resizing.
+	(handle_event): Call SDL_ShowCursor if SDL_APPMOUSEFOCUS
+	was lost in case SDL_ACTIVEEVENT.
+	* sdlmap.c (open_sdl_window): Set pixel depth explicitly to 32
+	and pass SDL_HWSURFACE to get a hardware surface if possible.
+	(update_map): Only use SDL_Flip if SDL_DOUBLEBUF is set.
+
+	Add back support for the Mac SIOUX console if compiled in.
+	* macsdl.c (start_game): Hide the console and redraw the map.
+	* sdlmain.c (handle_macos_cursor): Rewrite and simplify.
+	(initial_ui_init): Also call SDL_ShowCursor(0) on the mac.
+	(interp_sym): Add case SDLK_ESCAPE for toggling between
+	the main window and the SIOUX console using the escape key.
+	(handle_mouse_down): Add back the mac focus switching code.
+	
+2001-02-22  Jim Kingdon  <kingdon@panix.com>
+
+	* lib/advances.g: Fix typo in last checkin.
+
+2001-02-20  Jim Kingdon  <kingdon@panix.com>
+
+	* lib/advances.g: Comment the cash material, and the forum and
+	marketplace units - they don't do anything.
+	Add comment about advances which don't do anything.
+	Make advances cost more at higher generations (otherwise the game
+	degenerates into massive numbers of legions on each side around
+	turn 25 or 30).
+	Also require the navigation advance for the trireme so you don't
+	the situation where you can build a trireme without canvas &c.
+	* kernel/run.c (run_population): Comment out code which hardcodes
+	the unit name "Granary" (the hardcoding is just too gross to live,
+	but the whole concept seems odd, see comment for discussion).
+
+2001-02-18  Jim Kingdon  <kingdon@panix.com>
+
+	* lib/advances.g: Fix spelling ("litterature" -> "literature").
+	Provide help for The Bit (so it doesn't sound like it means
+	invention of computers - yeah, I know I'm a nerd but that was
+	my first reaction).
+	* tcltk/tkconq.tcl (popup_research_dialog): Provide scrollbars.
+
+2001-02-11  Hans Ronne <hronne@2.sbbs.se>
+
+	Accomodate latest SDL/CVS fixes in mac event handling code.
+	* sdlmain.c (SDL_APPMOUSEFOCUS): Now undefine and define 
+	as SDL_APPINPUTFOCUS instead.
+
+2001-02-09  Hans Ronne <hronne@2.sbbs.se>
+
+	Add support for SDL window resizing in non-fullscreen mode.
+	* sdlmain.c (initial_ui_init): Set the SDL_RESIZABLE flag.
+	(handle_event): Add case SDL_VIDEORESIZE.
+
+2001-02-05  Jim Kingdon  <kingdon@panix.com>
+
+	* lib/modern.g: Add comment about making shipyards work.
+
+2001-02-08  Hans Ronne <hronne@2.sbbs.se>
+
+	Add support for the SDL command line dialog on the mac. This 
+	dialog is brought up if the cmd key is held down during launch 
+	and makes it possible to use xconq command line arguments and 
+	pick the video driver. The arguments and settings are saved in a 
+	System:Preferences file which is used also when the command 
+	line dialog is not invoked. 
+	* macsdl.c (main): Add argc and argv arguments.
+	(main): Call parse_command_line four times.
+
+2001-02-07  Hans Ronne <hronne@2.sbbs.se>
+
+	Handle application foreground switches correctly on the mac.
+	* sdlmain.c (SDL_APPMOUSEFOCUS): Undefine and redefine as 
+	SDL_APPACTIVE on the Mac.
+	
+	Fix cursor update bugs when switching the application focus.
+	* sdlmain.c (handle_event): Rewrite case SDL_ACTIVEEVENT.
+
+	Accomodate recent support for cooperative multitasking in SDL.
+	*sdlmain.c (initial_ui_init): Don't toggle cursor here on the mac.
+	(handle_mouse_down): Remove special mac focus switching code.
+	(handle_macos_cursor): Rewrite and simplify. Add comments.
+
+2001-02-04  Jim Kingdon  <kingdon@panix.com>
+
+	* lib/modern.g (extraction-types): Add coal-mine; otherwise there
+	is no way to make coal.
+	(acp-to-disband): Allow disbanding units.
+	(productivity): Make coal-mine and iron-mine much more effective
+	in mountains than anywhere else.  This is more of an aesthetic
+	choice than anything else.
+	(default-doctrine, side-defaults): Set run to 1.
+	(unit-storage-x, acp-to-produce, material-per-production,
+	material-to-produce, acp-per-turn): Use explicit production in
+	addition to base-consumption (instead of base-production) to model
+	refineries turning oil to petro and steel-mills turning coal and
+	iron-ore to steel.
+	(vanishes-on): Engineers can't swim.
+	(top of file): add comments about what is missing.
+	(material-type food): Change docstring; this material doesn't
+	relate to either the "people" material, or xconq's "people"
+	concept.
+	(out-length): Iron-mine can send iron-ore.
+	(in-length): Steel-mill can get iron-ore.
+	(hp-per-starve): Exclude (farm food) and (refinery petrol).
+	* kernel/actions.c (distribute_material): Distribute material to
+	occupants too.
+	* kernel/run2.c (maybe_starve): Add comment about notifying user.
+
+2001-02-06  Hans Ronne <hronne@2.sbbs.se>
+
+	Fix problem with cursor updates after changing the mode.
+	* scdlcmd.c (do_survey): Call update_cursor.
+	* sdlconq.h (update_cursor): New prototype.
+	* sdlmain.c (update_cursor): New function.
+	(handle_macos_cursor): Call update_cursor.
+
+	Add support for Apple Events drag and drop to the Mac SDL game.
+	* macsdl.c (p2c, XconqSignature): Define macros.
+	(main): Rewrite and reorganize to handle Apple Events. Move 2nd 
+	half into the new function start_game.
+	(start_game): New function called by Apple Event handlers.
+	(init_ae): New function with minimalistic Apple Event handling.
+	(do_ae_open_document, open_game): New functions.
+	(mac_exit). Remove unused int.
+	
+	Fix prototype and SDL_main macro problems with macsdl.
+	* macsdl.c (kpublic.h, cmdline.h, SegLoad.h): Include them.
+	(interpret_variants, launch_game): Declare extern functions.
+	(main): Undo undef (and add SDLmain.o and StdCLib to project).
+	
+	Fix problem with lost system key repeat after running sdlconq.
+	* sdlmain.c (initial_ui_init): Call SDL_EnableKeyRepeat with
+	default values to ensure the key repeat stays on.
+
+	Undo mac-specific cursor hack. 
+	* sdlmain.c (initial_ui_init): Call SDL_ShowCursor also on
+	the mac (now works after the startup code was reorganized).
+
+	* ng-european.g: Add Erik Sigra's list of Finnish place names.
+	
+2001-02-02  Hans Ronne <hronne@2.sbbs.se>
+
+	Fix crashes in X due to bad values in SDL_UpdateRects calls.
+	* sdlmap.c (redraw_map): Fix argument bug in add_update call.
+	(add_update): Clip update rects to the screen size (bypasses a
+	known bug in SDL).
+	
+	Fix cursor loss in MacOS and X11 after quitting fullscreen mode. 
+	* sdlmain.c (exit_xconq): Call SDL_ShowCursor(1) before exit.
+	
+	Fix menu bar loss in MacOS after quitting fullscreen mode.
+	* macsdl.c (main): Call HideMenuBar in fullscreen mode.
+	(mac_exit): Call ShowMenuBar in fullscreen mode.
+	
+	Fix argument bug in random_color call.
+	* sdlmap.c (update_map): Change surf to map->surf.
+
+	Add keypad commands for zooming, tilting and recentering the map.
+	* sdlmain.c (interp_sym): Call do_recenter for case SDLK_KP5.
+	(interp_sym): Call do_set_view_angle for case SDLK_KP_MULTIPLY.
+	(interp_sym): Call do_zoom_out for case SDLK_KP_MINUS.
+	(interp_sym): Call do_zoom_in for case SDLK_KP_PLUS.
+
+	Fix extremely slow screen updates on non-accelerated hardware.
+	* sdlmap.c (update_map): Only call SDL_Flip if acceleration is 
+	available. Else call UpdateRects.
+
+	Turn on any hardware acceleration that is available when launching 
+	the game. Use globals to set fullscreen mode and default screen size.
+	* sdlconq.h (fullscreen, mainw, mainh): New globals.
+	* sdlmain.c (fullscreen): Initialize to TRUE for Mac, FALSE for Unix.
+	(mainw, mainh): Initialize to 800 and 600.
+	(initial_ui_init): Set fullscreen mode if asked to. 
+	(initial_ui_init): Check if we are using the XFree86 dga driver. 
+	(initial_ui_init): Call SDL_ListModes to get fullscreen size. 
+	(initial_ui_init): Enable hardware acceleration if available. 
+	(initial_ui_init): Add comments about SDL video mode flags.
+	
+	Fix various cursor and update problems when switching between the 
+	non-fullscreen map and the console on the mac.
+	* sdlconq.h (handle_macos_cursor): New mac-specific prototype.
+ 	(sdl_window, sdl_console): Mac-specific window pointers.
+	* sdlmain.c (autoscroll): Return w/o scrolling if use_cursors is off.
+ 	(initial_ui_init): Don't call SDL_ShowCursor on the mac.
+	(handle_macos_cursor): New mac-specific function.
+	(handle_event): Call handle_macos_cursor when moving the mouse.
+	(handle_mouse_down): Redraw smap when bringing sdl_window to 
+	the front on the mac.
+	* sdlmap.c (update_map): Only draw cursor if use_cursors is on.
+	* macsdl.c (sdlconq.h): Include it to get smap and fullscreen.
+	(sdl_console, sdl_window): Initialize to NULL.
+	(main): Undo macro definition of main acquired from SDL_main.h.
+	(main): Hide the SIOUX console behind the map and redraw it. 
+	(main): Set global pointers sdl_console and sdl_window.
+
+	Add profiling support for CodeWarrior on the mac.
+	* sdlconq.h (mac_exit): New extern prototype.
+	(exit): Define as mac_exit instead of ExitToShell.
+	* macsdl.c (Profiler.h): Include it if profiling.
+	(main): Call ProfilerInit and ProfilerSetStatus if profiling.
+	(mac_exit): New exit function with profiler support.
+
+2001-01-31  Jim Kingdon  <kingdon@panix.com>
+
+	* kernel/run2.c (run_economy): Add comment about how sharing
+	supplies only checks inlength, not outlength.
+
+	* tcltk/tkcmd.c (do_build, aux_build): When prompting for
+	location, say what unit type we are building.
+
+	* lib/stdunit.g: Have comment refer to log.g, not empire.g, for a
+	logistics game.  The former already works ;-).
+	* lib/logunit.g (unit-size-as-occupant): Don't let factories
+	have ships or aircraft as occupants.
+	(independent-density): No advantage to having a town in plains in
+	this game.
+
+2001-01-23  Hans Ronne <hronne@2.sbbs.se>
+
+	Fix some compile errors.
+	* sdlmap.c (hexagon_w1, hexagon_w2): Declare extern.
+	* ui.c (could_attack): return TRUE for case 1 and default.
+
+2001-01-23  Jim Kingdon  <kingdon@panix.com>
+
+	* lib/standard.g: Add "Ice Age" variant.  Credit to Jakob Ilves
+	<illvilja@yahoo.com> for the initial implementation, to Stan for
+	some ideas, and to me for various tweaks.
+
+2001-01-23  Stan Shebs  <shebs@shebs.cnchost.com>
+
+	Eliminate a few minor warnings, minor tweaks.
+	* plan.c (plan_offense_support, plan_explorer_support): Remove
+	unused locals.
+	* read.c (interp_unit_defaults): Remove unused local m.
+	* tkcmd.c (do_fire): Removed unused local rslt.
+	* tkconq.h, tkmain.c (init_all_display): Make static.
+	* tkinit.c (toplevel_display_used): Remove unused global.
+	(report_missing_images): Report correct side for emblems.
+	(init_other_images): Fix debug reports.
+	* tkmain.c (update_mouseover): Use unit_could_attack, remove
+	copy of could_attack.
+
+	* configure.in: Remove -DSDL from HFLAGS when SDL enabled.
+	* configure: Regenerate.
+
+	Clean up SDL declarations, add display of country borders
+	and hex grid.
+	* ui.c, ui.h (unit_could_attack): Move to here from sdlmain.c,
+	was called could_attack.
+
+	* sdlconq.h: Add many decls.
+	(struct a_real_ui): New fields grids, no_grid_available,
+	country_boundaries, no_country_boundary_available.
+	(Map draw_grid): New field.
+	* sdlcmd.c (do_fire): Remove unused arg, uncomment code.
+	(do_refresh): Comment out call to update_contour_intervals.
+	* sdlimf.c: Declare random_color.
+	(sdl_interp_image): Eliminate special cases of subimage
+	iteration.
+	(sdl_copy_color_image): Move mask blackening in here, reorg,
+	add some comments.
+	* sdlinit.c (hexagon_w1, hexagon_w2): New globals.
+	(init_other_images): Collect image families for them.
+	* sdlmain.c: Make many functions static, add decls for them.
+	(set_current_unit): Call update_map.
+	(handle_mouse_down): Add button argument.
+	(interp_key): Enable code to set mouse position when key pressed.
+	(ui_update_state): Comment out.
+	(interp_unix_ui_data): Comment in, remove leftover tcl calls.
+	(set_show_all): Add arguments.
+	(exit_xconq): Remove unused argument.
+	* sdlcmd.c (do_quit, aux_quit_exit, etc): Change callers.
+	* sdlmap.c: Fix up decls.
+	(draw_terrain_grid, get_grid_surface, draw_country_boundary_line,
+	get_country_boundary_surface, hex_face_rect): New functions.
+	(open_sdl_window): Use full area for map, set smap->draw_grid.
+	(draw_map_overhead): Enable grid-drawing code.
+	(draw_terrain_row): Remove unused dogrid local.
+	(draw_people): Enable boundary-drawing code.
+	(update_at_cell, update_at_unit): Call update_map.
+
+	* images/misc44x48.gif: New file, misc shapes.
+	* terrain.imf, imf.dir (hexagon-w1, hexagon-w2): New images,
+	borders of hexagons.
+	
+2001-01-23  Hans Ronne <hronne@2.sbbs.se>
+
+	Add support for numeric keypad scrolling of the SDL map window.
+	* sdlmain.c (interp_sym): New function and prototype.
+	(auto_scroll_map): New function and prototype.
+	(handle_event): Call interp_sym before interp_key.
+
+	Fix cursor-dependent SDL autoscrolling problem on the mac.
+	* sdlmain.c (handle_event): Add comment about smap->active.
+	* sdlmap.c (open_sdl_window): Initialize smap->active to TRUE.
+
+2001-01-21  Hans Ronne <hronne@2.sbbs.se>
+
+	Make it possible to compile and run the SDL interface on the mac. 		
+	* mac/macsdl.c: New file, skeleton version of macconq.c for use 
+	with the SDL interface.
+
+	Make it possible to quit the SDL game on the mac.
+	* sdlconq.h: Define exit as ExitToShell if MAC is defined. 
+	* sdlcmd.c (aux_quit_resign): Call exit_xconq when done.
+	(aux_quit_resign_to): Call exit_xconq when done.
+
+	Fix Cursor name conflict with QuickDraw.
+	* sdlconq.h (a_cursor): Change type name to SDLCursor.
+	(a_real_ui): Change Cursor to SDLCursor.
+	(a_map): Change Cursor to SDLCursor.
+	(generic_cursor): Change Cursor to SDLCursor.
+	(get_cursor): Change return type to SDLCursor.
+	* sdlinit.c (init_display): Change newgeneric to SDLCursor.
+	(get_cursor): Change return type to SDLCursor.
+	(get_cursor): Declare rslt as SDLCursor.
+	* sdlmain.c (generic_cursor): Change type to SDLCursor.
+	(set_tool_cursor): Declare cursor as SDLCursor.	
+
+	Fix some compile errors in the SDL code.
+	* sdlmain.c (interp_key): Remove side argument in fn.
+	(could_attack): Return TRUE for cases 1 and default.
+	(handle_mouse_down): Remove side argument in fn.   
+	
+2001-01-21  Hans Ronne <hronne@2.sbbs.se>
+
+	Prepare for cross-platform sound playback by making the mac use 
+	sound files instead of snd resources.
+
+	* macconq.c (play_sound): Rewrite to handle AIFF files instead of snd
+	resources.
+
+	* sounds: New directory.
+	* boom.aif, explosion-long.aif, explosion-distant.aif,
+	crunch.aif, pop-2.aif, laser.aif, chirr.aif, typewriter-key.aif,
+	bonk-metallic.aif, plasma-laser.aif, plasma-explosion.aif,
+	pop.aif, blowup.aif, thunder.aif, smack.aif: New files in /sounds
+	directory with converted snd resources from lib-mac:Sounds.
+
+	* lhs.g (unit-moved sound): Change from "pop 2" to "pop-2".
+	* log.g (unit-moved sound): Change from "pop 2" to "pop-2".
+	* standard.g (unit-moved sound): Change from "pop 2" to "pop-2".
+
+	Fix crashing bug in the mac interface player setup dialog.
+	* macinit.c (hit_player_setup_dialog): Call close_window instead of
+	DisposeDialog when done.
+
+	Cosmetic fix to mac preferences dialog.
+	* macprefs.c (set_preferences): Call draw_default_button.
+
+	Further cleanup of the mac interface code. Remove 256 colors alert
+	and control strip gymnastics code. Remove reading and writing of
+	XCol resources in the prefs file. Remove unified_cicns and its
+	setting in the prefs. Always turn on name erasing when unit names
+	are drawn. Fix the version number in XconqProj.rsrc. Move all
+	picts in lib-mac:Resources to XconqProj.rsrc.
+
+	* macgworld.c (Palettes.h): Don't include it.
+	(MixedMode.h)Don't include it.
+	(OSUtils.h): Don't include it.
+	(SBIsControlStripVisible): Remove function and prototype.
+	(SBShowHideControlStrip): Remove function and prototype.
+	(ControlStrip.h): Don't include it.
+	(check_screen_depths): Remove function.
+	(reduce_screen_depths): Remove function and prototype.
+	
+	* macconq.h (a_map): Remove map->erase_names.
+	(use_colornames): Remove global.
+	(use_RGB_values): Remove global.
+	(unified_cicns): Remove global.
+	(alert_256_colors): Remove global.
+	(default_erase_names): Remove global.
+	(check_screen_depths): Remove prototype.
+	(read_xcol): Remove prototype.
+	(write_xcol): Remove prototype.
+	
+	* macconq.c (main): Don't call check_screen_depth.
+	
+	* maccolors.c (use_colornames): Don't initialize.
+	(use_RGB_values): Don't initialize.
+	(unified_cicns): Don't initialize.
+	(alert_256_colors): Don't initialize.
+	(default_erase_names): Don't initialize.
+	(init_side_colors): Don't test for use_RGB_values.
+	(read_xcol): Remove function.
+	(write_xcol): Remove function.
+	
+	* macdefs.h (diPrefs256colors): Remove item.
+	(diPrefsColXCpf): Remove and renumber items.
+	(diPrefsColXCol): Remove and renumber items.
+	(diPrefsColText): Remove and renumber items.
+	(diPrefsEraseNames): Remove and renumber items.
+	(diPrefsUnifiedCicns): Remove and renumber items.
+	(diPrefsUnifiedText): Remove and renumber items.
+	(diPrefsColText): Remove and renumber items.
+	(miTextEraseNames): Remove and renumber items.
+	(dScreenDepth): Remove unused dialog and items.
+
+	* macdraw.c (draw_unit_image): Remove unified_cicns code.
+	
+	* macmap.c (create_map): Don't set map->erase_names.
+	(update_grid_leakage): Test for map->vp->draw_names instead.
+	(update_cell): Don't test for map->erase_names.
+	
+	* macmenus.c (adjust_menus): Don't set miTextEraseNames.
+	(do_menu_command): Don't call toggle_erase_names.
+	(toggle_erase_names): Remove function and prototype.
+	
+	* macprefs.c (get_preferences): Don't call read_xcol.
+	(save_preferences): Don't call write_xcol.
+	(interp_mac_ui_data): Don't interp alert_256_colors.
+	(interp_mac_ui_data): Don't interp default_erase_names.
+	(interp_mac_ui_data): Don't interp use_colornames.
+	(interp_mac_ui_data): Don't interp use_RGB_values.
+	(interp_mac_ui_data): Don't interp unified_cicns.
+	(interp_mac_ui_data): Alway read colors by name.
+	(ui_update_state): Don't update alert_256_colors.
+	(ui_update_state): Don't update default_erase_names.
+	(ui_update_state): Don't update use_colornames.
+	(ui_update_state): Don't update use_RGB_values.
+	(ui_update_state): Don't update unified_cicns.
+	(ui_update_state): Always update colorschemes.
+	(set_preferences): Don't set alert_256_colors.
+	(set_preferences): Don't set default_erase_names.
+	(set_preferences): Don't set use_colornames.
+	(set_preferences): Don't set use_RGB_values.
+	(set_preferences): Don't set unified_cicns.
+	(set_preferences): Remove old_unified_cicns code.
+	(add_preferences_topic_items): Don't set alert_256_colors.
+	(add_preferences_topic_items): Don't set default_erase_names.
+	(add_preferences_topic_items): Don't set use_colornames.
+	(add_preferences_topic_items): Don't set use_RGB_values.
+	(add_preferences_topic_items): Don't set unified_cicns.
+
+	* XconqProj.rsrc (CNTL 300): Remove unused control.
+	(DITL 128 "Splash Items"): Move buttons below strings.
+	(DITL 137 "Reduce Screen Depth"): Remove unused dialog items.
+	(DITL 605 "Help Items"): Remove unused dialog items.
+	(DITL 701 "Preferences File Items") Remove items 6-8.
+	(DITL 702 "Preferences Map Items") Remove item 18.
+	(DITL 704 "Preferences Offscreen Items") Remove items 7 and 9.
+	(DITL 705 "Preferences Image Sets Items") Remove items 4 and 5.
+	(DLOG 128 "Splash"): Reduce size.
+	(DLOG 137 "Reduce Screen Depth"): Remove unused dialog.
+	(DLOG 605 "Help Items"): Remove unused dialog.
+	(DLOG 700 "Preferences"): Reduce size.
+	(MENU 215 "Text Popup") Remove item 4.
+	(PICT 135 "panzer"): Move here from lib-mac:Resources.
+	(PICT 136 "galaxy"): Move here from lib-mac:Resources.
+	(PICT 137 "1756"): Move here from lib-mac:Resources.
+	(PICT 138 "voyages"): Move here from lib-mac:Resources.
+	(PICT 139 "magellan"): Move here from lib-mac:Resources.
+	(PICT 1000 "standard"): Move here from lib-mac:Resources.
+	(PICT 1002 "intro"): Move here from lib-mac:Resources.
+	(PICT 1010 "classic"): Move here from lib-mac:Resources.
+	(PICT 1011 "ww2"): Move here from lib-mac:Resources.
+	(PICT 1020 "crater-lake"): Move here from lib-mac:Resources.
+	(PICT 1021 "normandy"): Move here from lib-mac:Resources.
+	(PICT 1040 "gettysburg"): Move here from lib-mac:Resources.
+	(PICT 1042 "ww2-eur-42"): Move here from lib-mac:Resources.
+	(PICT 1043 "pelops"): Move here from lib-mac:Resources.
+	(vers 1): Change 7.2.2 to 7.5pre.
+	(vers 2): Change 7.2.2 to 7.5pre.
+
+	* Xconq.r: Update from XconqProj.rsrc.
+
+2001-01-20  Hans Ronne <hronne@2.sbbs.se>
+
+	Clean out obsolete black and white monitor support on the mac. Also
+	remove some other unused stuff.
+	
+	* imfapp.c (hasColorQD): Remove.
+	(useColorQD): Remove.
+	(main): Don't set hasColorQD and useColorQD. 
+	(main): Call init_error if no ColorQD. Remove non-ColorQD code.
+	(do_menu_command): Remove case miViewCQD.
+	(adjust_menus): Remove non-ColorQD code.
+	(adjust_menus): Remove miViewCQD.
+	(make_imf_resources): Remove hasColorQD check.
+	(draw_as_terrain_image): Remove check for useColorQD.
+	(draw_as_unit_image): Remove check for useColorQD.
+	(draw_as_emblem_image): Remove check for useColorQD.
+	
+	* maccmd (create_command_window): Remove non-ColorQD code.
+	
+	* maccolors.c (set_side_colors): Remove hasColorQD check.
+	(set_feature_color): Remove hasColorQD check.
+	(set_terrain_color): Remove hasColorQD check.
+	
+	* macconq.c (hasColorQD): Don't intialize.
+	(init_toolbox): Don't set hasColorQD.
+	(init_toolbox): Call init_error if no ColorQD.
+	(recalc_depths): Remove non-ColorQD code.
+	(get_files): Remove non-ColorQD code. 
+	(get_files): Use sImagesFilenames instead of imagesfilenameres.
+	(position_on_screen): Remove non-ColorQD code.
+	(set_standard_state): Remove non-ColorQD code.
+	(get_main_screen_size): Remove non-ColorQD code.
+	
+	* macconq.h (grays): Remove enumeration.
+	(hasColorQD): Remove global.
+	(gridgray, unseengray, bggray): Remove.
+	
+	* macdefs.h (dCommand): Remove unused dialog and items.
+	(pSplashBW, pSplashColor, pNewGameDecor): Remove.
+	(sImagesBWFilenames, sImagesColorFilenames): Remove.
+	(sImagesFilenames): Define as 129.
+	
+	* macdesign.c (create_design_window): Remove non-ColorQD code.
+
+	* macdraw.c (draw_side_emblem): Remove non-ColorQD code.
+	(draw_cell_block): Remove non-ColorQD code.
+	(draw_hex_region): Remove non-ColorQD code.
+	(draw_border_line_multiple): Remove non-ColorQD code.
+	(draw_connection_line_multiple): Remove non-ColorQD code.
+	(draw_feature_borders): Remove non-ColorQD code.
+	(draw_blast_image): Remove non-ColorQD code.
+
+	* macgworld.c (check_screen_depths): Remove hasColorQD check.
+	(update_resized_map): Remove hasColorQD check and BackPat code.
+
+	* machelp.c (create_instructions_window): Remove non-ColorQD code.
+	(create_instructions_window): Remove non-ColorQD code.
+	(zoom_help): Remove non-ColorQD code.
+
+	* macimf.c (hasColorQD): Remove.
+	(mac_load_imf): Remove non-ColorQD code.
+	(mac_interp_image_1): Remove hasColorQD checks.
+	(make_generic_image_data): Remove hasColorQD checks.
+
+	* macinit.c (gridgray, unseengray, bggray): Don't initialize.
+	(draw_splash_dialog): Don't substitute picture.
+	(init_terrain_images): Remove hasColorQD check.
+
+	* maclist.c (create_list): Remove non-ColorQD code.
+
+	* macmap.c (create_map): Remove non-ColorQD code.
+	(draw_window_background): Remove non-ColorQD code.
+	(draw_area_background): Remove non-ColorQD code.
+	(draw_area_background): Remove shaded border code.
+
+	* macmenus.c (do_about_box): Don't substitute picture.
+
+	* macwins.c (create_game_window): Remove non-ColorQD code.
+	(create_construction_window): Remove non-ColorQD code.
+	(zoom_construction): Remove non-ColorQD code.
+	(create_history_window): Remove non-ColorQD code.
+	(zoom_history): Remove non-ColorQD code.
+	(create_notice_window): Remove non-ColorQD code.
+	(zoom_notice): Remove non-ColorQD code.
+	(create_scores_window): Remove non-ColorQD code.
+	(zoom_scores): Remove non-ColorQD code.
+
+	* IMFApp.r (MENU 131 "View"): Remove case Use QD.
+
+	* XconqProj.rsrc (DLOG 204 "Command"): Remove unused dialog.
+	(DITL 204 "Command Items") Remove unused dialog item list.
+	(PICT 2000 "Splash B/W"): Remove unused picture.
+	(PICT 2001 "splash.gif"): Rename to "Splash" and change to 2000.
+	(STR# 129 "Images BW"): Remove unused string.
+	(STR# 130 "Images Color"): Rename to "Images" and change to 129.
+
+	* Xconq.r: Update from XconqProj.rsrc.
+
+2001-01-19  Jim Kingdon  <kingdon@panix.com>
+
+	* lib/logunit.g: Tweak storage of cities, towns, and armor.
+
+2001-01-19  Stan Shebs  <shebs@shebs.cnchost.com>
+
+	Add support for multiple cursors specified by GDL, also some
+	general simplification and cleanup for commands.  (Much of the
+	code is adapted from the tcltk interface.)
+
+	* gvar.def (attack-cursor, generic-cursor, survey-cursor): New
+	globals.
+
+	* sdlconq.h (enum mapmode): Add no_mode value.
+	(Cursor): New structure.
+	(UI cursors): New field.
+	(Map cursor): New field.
+	(Map modalhandler): Remove useless side argument.
+	(curs): Remove, no longer used.
+	* sdlinit.c (init_display): Add cursor setup, report of
+	missing images.
+	(get_cursor): New function, creates a cursor from image name.
+	(init_other_images): Improve image desc for blasts and transitions.
+	(sdl_describe_image): Implement.
+	(report_missing_images): New function.
+	* sdlmain.c (default_cursor_name, generic_cursor, use_cursors):
+	New globals.
+	(initial_ui_init): Use get_cursor to set up generic cursor,
+	set up imf_interp_hook earlier.
+	(handle_event): Use add_update and update_mouseover_x.
+	(interp_key): Add modal handler and prefix code from tcltk version.
+	(update_mouseover_x): New function, handle cursor change.
+	(could_attack): New function.
+	(update_mouseover): New function.
+	(ask_unit_type, grok_unit_type, help_unit_type, etc): Make all
+	these work by printing the prompts to stdout for now, remove
+	useless side argument.
+	(set_tool_cursor): Implement.
+	* sdlmap.c (open_sdl_window): Set initial values for map mode,
+	etc.
+	(redraw_map): Use add_update.
+	(update_map): Use map->cursor instead of global, account for
+	cursor hotspot position.
+	(draw_random_color_rect): Remove, change callers to use
+	draw_rect with random_color.
+	(add_update): Detect overflow of update buffer and redraw.
+	* sdlcmd.c: Remove useless side argument from all modal
+	handlers, use dside where necessary instead, also change
+	calls to ask_ and grok_ functions.
+	* sdlimf.c (sdl_load_imf): Remove, not needed.
+	(sdl_interp_image_1): Remove unused local namebuf.
+	(sdl_copy_color_image): Declare static void, remove unused local.
+
+	* lib/cursors.imf: New file, cursor image families.
+	* images/cursors.gif: New file, cursor images.
+	* images/cursor.bmp: Remove, no longer needed.
+	* imf.dir: Record them.
+
+2001-01-17  Hans Ronne <hronne@2.sbbs.se>
+
+	Clean out old serial and appletalk network code on the mac and 
+	remove some other unused stuff.
+
+	* cconq.c (serial_port_dialog): Remove dummy function.
+
+	* mac.c (numremotes): Don't declare here.
+	(my_rid): Don't declare here.
+	(master_rid): Don't declare here.
+	(serial.h): Don't include it.
+	(appletalk.h): Don't include it.
+	(signal.h): Don't include it.
+	(init_file_port): Remove extern prototype.
+	(close_file_port): Remove extern prototype.
+	(low_file_send): Remove extern prototype.
+	(low_file_receive): Remove extern prototype.
+	(mac_abort): Remove unused function and prototype.
+	(open_remote_connection): Replace serial version by dummy.
+	(ser_input_refnum): Remove static short. 
+	(ser_output_refnum): Remove static short. 
+	(low_send): Replace serial version by dummy.
+	(low_receive): Replace serial version by dummy.
+	(close_remote_connection): Replace serial version by dummy.
+	(init_serial_port): Remove unused function and prototype.
+	(low_serial_send): Remove unused function and prototype.
+	(low_serial_readchars): Remove unused function and prototype.
+	(close_serial_port): Remove unused function and prototype.
+	(names_table_entry): Remove NamesTableEntry.
+	(nbp_registered): Remove int.
+	(atp_socket_number): Remove char.
+	(remote_addr): Remove AddrBlock.
+	(open_appletalk): Remove unused function and prototype.
+	(low_appletalk_receive): Remove unused function and prototype.
+	(low_appletalk_send): Remove unused function and prototype.
+	(close_appletalk): Remove unused function and prototype.
+	
+	* macconq.h (launch_game): Prototype extern here.
+	(launch_game_2): Prototype extern here.
+	(connect_game_dialog): Remove prototype.
+	(draw_elevation_here): Remove unused prototype.
+	(draw_elevation): Remove unused prototype.
+	(clear_blast_image): Remove unused prototype.
+	(add_remote_player): Remove unused prototype.
+	
+	* macconq.c (launch_game): Don't prototype here.
+	(launch_game_2): Don't prototype here.
+	(connection_method_name): Remove char.
+	(event_loop): Remove non-GUSI network code.
+	(do_ae_join_game): Remove function and prototype.
+	(do_ae_join_game_proc): Remove AEEventHandlerUPP.
+	(init_ae): Don't init do_ae_join_game_proc.
+	(connect_game_dialog): Remove function.
+	(connection_method_dialog): Remove function and prototype.
+	(serial_port_dialog): Remove function.
+	
+	* macdefs.h (dConnectionMethod): Remove dialog and items.
+	(dSerialMethod): Remove dialog and items.
+
+	* macdraw.c (draw_elevation): Remove unused function.
+ 	(draw_elevation_here): Remove unused function.
+	(clear_blast_image): Remove unused function.
+
+	* macinit.c (launch_game): Don't prototype here.
+	(launch_game_2): Don't prototype here.
+	(hit_splash_dialog): Don't call connect_game_dialog.
+	(add_remote_player): Remove function.
+
+	* macmenus.c (do_menu_command): Don't call connect_game_dialog.
+
+	* skelconq.c (serial_port_dialog): Remove dummy function.
+
+	* system.h (serial_port_dialog): Remove prototype.
+	
+	* XconqProj.rsrc (DLOG 170 "Connection Method"): Remove.
+	(DLOG 171 "Serial Method"): Remove.
+	(DITL 170 "Connection Method Items"): Remove.
+	(DITL 171 "Serial Method Items"): Remove.
+	(PICT 2010 "New"): Remove.
+	(PICT 2011 "Open"): Remove.
+	(PICT 2012 "Connect"): Remove.
+
+	* Xconq.r: Update from XconqProj.rsrc.
+
+2001-01-16  Jim Kingdon  <kingdon@panix.com>
+
+	* lib/logunit.g, lib/log.g: New game.
+
+2001-01-15  Jim Kingdon  <kingdon@panix.com>
+
+	* tcltk/tkconq.tcl: Add comment about fonts and window sizes.
+
+2001-01-13  Stan Shebs  <shebs@shebs.cnchost.com>
+
+	Add standard terrain images for mag power 3 (12x13).
+	* images/stdt12x13.gif, images/stdt13x9i.gif: New files.
+	* terrain.imf: Add image forms for new file images, use
+	"std" position syntax for existing file image refs.
+
+	Various additions to the SDL interface - mouseover text pane,
+	unit&feature names on map, isometric display, misc layers.
+	* sdlconq.h (ui curfid): New field.
+	(Map active): New field.
+	(small_font): New global.
+	* sdlmain.c (small_font): Define.
+	(initial_ui_init): Fill in from font.bmp, enable unicode
+	translation of keyboard events.
+	(autoscroll): Update focus.
+	(ui_mainloop): Only autoscroll when map is active window.
+	(handle_event): Get unicode from key event, filter out zeros,
+	grok activation	events.
+	(ask_position): Put out the prompt.
+	(place_legends): Implement.
+	* sdlcmd.c (do_refresh): Tweak place_legends call.
+	(do_set_view_angle): Implement.
+	* sdlmap.c (open_sdl_window): Get map viewport from surface size,
+	set an initial focus.
+	(update_map): Add isometric case, add more debugging draws,
+	add mouseover pane.
+	(random_color): New function.
+	(draw_map_isometric, draw_terrain_iso, draw_clouds_row,
+	draw_temperature_row, draw_winds_row, draw_feature_boundary,
+	draw_feature_name, draw_people, draw_string): New functions.
+	(draw_unit_name, draw_unit_size): Make work.
+
+	* tkconq.h, tkcmd.c, tkmain.c (place_legends): Don't pass
+	a side argument.
+
+	* images/font.bmp: Basic text font, borrowed from Randi
+	Relander's Regimental Command project.
+
+	* ui.c: Add a comment about 12x13 hex size.
+	* imf.c, imf.h (copy_from_file_image): Add actual-size arguments.
+	* imf.c (make_raw_palette): Add a little slop, for now at least.
+	(make_image_from_file_image): Add slop to subimage palette
+	allocation, use copy_from_file_image actual-size arguments.
+
+	* dir.h (dir_subtract): Move to here from tkmap.c.
+	* cmd.c (execute_command): Filter out zero chars.
+
+2001-01-10  Jim Kingdon  <kingdon@localhost.localdomain>
+
+	* doc/refman.texi: Add missing @end example.  Also put "," outside
+	of @var to squelch warnings.
+
+2001-01-08  Stan Shebs  <shebs@shebs.cnchost.com>
+
+	Add an SDL-based user interface.
+	* sdl/: New directory.
+	* sdl/Makefile.in, sdl/sdlconq.h, sdl/sdlcmd.c, sdl/sdlimf.c,
+	sdl/sdlinit.c, sdl/sdlmain.c, sdl/sdlmap.c: New files.
+	* images/cursor.bmp: New file, color cursor.
+	* Makefile.in (SUBDIRS): Add sdl.
+	(all-sdlconq): New target.
+	* configure.in: Add option --enable-sdl.
+	* configure: Regenerate.
+	* x11/Makefile.in (sdlconq): New target.
+
+	* system.h, mac.c, unix.c, win32.c (default_images_pathname): Add
+	argument, use instead of compiled-in pathname.
+	* init.c (init_library_path): Change caller.
+
+	* imf.h (Image r, g, b): Solid color for an image.
+	* imf.c (blacken_masked_area, blacken_mono_masked_area) Move to
+	here from tkimf.c, add rgb args.
+	(make_raw_palette): Move to here from tkimf.c.
+
+	* ui.c. ui.h (dside): Define here instead of in each interface.
+	(generic_transition): Similarly.
+	(compute_x1_len): Move to here from tkmap.c.
+	* macconq.c, macconq.h (dside): Remove.
+	* macinit.c (generic_transition): Remove.
+	* tkmain.c, tkconq.h (dside): Remove.
+	* tkinit.c, tkmap.c (generic_transition): Remove.
+	* cconq.c, cconq.h (dside): Remove.
+	
+	* tkcmd.c (require_unit): Test for NULL map.
+	(get_selected_units): Similarly.
+	(do_follow_action, do_message, do_quit, do_set_view_angle,
+	do_survey, do_design): Similarly.
+	* tkimg.c (tk_interp_image_1): Fill in generic image rgb,
+	* tkmap.c (draw_current): Fix test for health bar color change.
+	(draw_side_emblem): Draw black border around solid-color emblem.
+
+	* ui.c (favored_type): Use unit_can_build_type.
+
+	* read.c (interp_unit_defaults): Fix setup of default tooling.
+
+2001-01-06  Hans Ronne <hronne@2.sbbs.se>
+
+	Finally fix problem with mac hosts getting stuck for a very
+	long time while accepting a new connection.
+	* socket.c (accept_remote_connection): Don't call gethostbyaddr
+	on the mac. Initialize hostent to NULL.
+
+2001-01-04  Hans Ronne <hronne@2.sbbs.se>
+
+	Fix sporadic module confusion in mixed platform games.
+	* macinit.c (selected_game): Delete static module and replace
+	it by mainmodule throughout the file.
+	
+	Close the splash window when opening network game from file.
+	* macconq.c (check_network): Also close splashwin if still open
+	when reaching variant_setup_stage.
+
+	Disable new game selection from list for mac network clients.
+	* macinit.c (do_key_down_newgame): Kick out network clients.
+	(create_newgame_dialog): Don't select first item for network clients.
+	(hit_newgame_dialog): Restrict network clients to the scrollbar.
+	
+	Fix build code so that the curses game compiles again.
+	* ccmd.c (do_build): Use curunit instead of unit in call to
+	unit_can_build_type.
+
+	Fix so that network games do not hang when we try to host 
+	a game while being offline.
+	* tp.c (host_the_game): Reset hosting to FALSE if we fail.
+	* socket.c (open_remote_connection): Return 0 if we fail.
+	Remove unix linefeed in "unknown host" warning.
+
+	* macinit.c (hit_chat_dialog): Improve status field handling.

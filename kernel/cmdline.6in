@@ -1,0 +1,141 @@
+.LP
+Each argument will be taken to be a specification of a player
+who will participate in the game.  The format of a player spec is
+.IP
+.B [name[,\fIai\fP][/\fIconfig\fP]@]host[+\fIadvantage\fP]
+.LP
+where \fIhost\fP is the name of a host.
+\fIadvantage\fP is a multiplier specifying how much more a player
+gets to start with, so a player at +3 in the standard game gets
+3 cities and 15 towns instead of the usual 1 and 5.
+.TP 5
+.B \-e[,\fIai\fP][+\fIadv\fP] \fInumber\fP
+sets the number of machine players (AIs) not attached to displays.
+If \fIai\fP and/or \fIadv\fP are supplied, each of the machine
+players will get that AI type and advantage.
+.TP 5
+.B -h \fInumber\fP
+creates \fInumber\fP players that may have displays and waits
+for them to join the game (via \fB-join\fP, see below).
+.LP
+General options:
+.TP 5
+.B \-c \fInumber\fP
+sets checkpointing to occur every \fInumber\fP turns.
+.TP 5
+.B \-f \fIname\fP
+reads the file named \fIname\fP, interpreting as a game.
+.TP 5
+.B \-g \fIname\fP
+reads the game named \fIname\fP.
+.TP 5
+.B \-help, \--help
+displays help information and exits.
+.TP 5
+.B \-host \fIgame\fP
+sets up a network game named \fIgame\fP.
+.TP 5
+.B \-join \fIgame\fP
+connects to a network game named \fIgame\fP.
+.TP 5
+.B \-L \fIpathname\fP
+sets the location to search for game files to \fIpathname\fP.
+.TP 5
+.B \-noai
+suppresses all AI creation when setting up the game.
+.TP 5
+.B \-r
+suppresses the creation of the default player.
+.TP 5
+.B \--version
+displays version information and exits.
+.TP 5
+.B \-w
+suppresses warnings.
+.LP
+Variant options:
+.TP 5
+.B \-M \fIwidth\fP[x\fIheight\fP]
+generates a random map of the given size.  The size must be at least 5x5,
+although some periods will impose additional constraints on the lower bound.
+In theory, there is no upper bound (but 200x200 would be huge).
+.TP 5
+.B \-seq
+makes all the players move one at a time.
+.TP 5
+.B \-sim
+allows all the players to move simultaneously.
+.TP 5
+.B \-tgame \fInumber\fP
+limits the total length of the game to \fInumber\fP minutes.
+.TP 5
+.B \-tside \fInumber\fP
+limits the total time of play for each side to \fInumber\fP minutes.
+Time is only counted while actually waiting for input.
+.TP 5
+.B \-tturn \fInumber\fP
+limits the time of play for each side to \fInumber\fP minutes per side
+per turn.
+Time is only counted while actually waiting for input.
+.TP 5
+.B \-v
+makes the entire world seen by all players at the outset.
+This is useful if exploration is deemed to be time-consuming, or if
+the world is already known to everybody.  Some games have this enabled
+by default.
+.TP 5
+.B \-V
+makes everything seen all the time.
+Some games have this enabled by default.
+.TP 5
+.B \-v\fIvariant-name[=variant-value]\fP
+sets variants that are defined by the chosen game.
+The options "-g game -vhelp" will list the available variants.
+.LP
+Designing and debugging options:
+.TP 5
+.B \-design
+enables designer mode, if available.
+.TP 5
+.B \-D[-GM]
+enables debugging output, if available.
+.TP 5
+.B \-R \fInumber\fP
+sets the random seed to \fInumber\fP, if available.
+.SH ENVIRONMENT VARIABLES
+.TP
+.SM XCONQLIB
+If this is set to a directory pathname, Xconq will look here for
+library games.
+.TP
+.SM XCONQ_SCORES
+If this is set to a directory, Xconq will use it to store scorefiles
+instead of the compiled-in default.
+.TP
+.SM XCONQHOME
+This is the pathname to where Xconq will store saved games and
+preferences for a user.  If this is not set, Xconq will use $HOME/.xconq
+to store per-user files.
+.SH EXAMPLES
+.TP 8
+.B
+xconq -g standard
+Standard game, one human on local display, one AI, 60x30 random world
+.TP 8
+.B
+xconq -g crater-lake
+One human vs one machine, playing the "crater lake" game
+.TP 8
+.B
+xconq -e 2 -M 40x20
+One human, two mplayers, 40x20 random world
+.TP 8
+.B
+xconq -e 6 -g u-e1-1998 -V
+Seven players (6 mplayer, 1 human), all playing
+on a 360x140 map of the earth with present-day cities,
+with everything always visible.  Major!
+.TP 8
+.B
+xconq ,ai+4
+Standard game, one human and one mplayer, mplayer has advantage of 4.

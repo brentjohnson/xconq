@@ -1,0 +1,163 @@
+
+RCS file: /cvs/xconq/xconq/kernel/module.h,v
+Working file: module.h
+head: 1.13
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.7
+	xconq-7_4-branch: 1.7.0.2
+	xconq-7_4-branchpoint: 1.7
+	xtconq-pre-removal: 1.4
+	xconq-7_3_3-release: 1.4
+	xconq-7_3_2-release: 1.4
+	xconq-7_3_1-release: 1.4
+	xconq-7_3-branch: 1.4.0.2
+	xconq-7_3-branchpoint: 1.4
+keyword substitution: kv
+total revisions: 13;	selected revisions: 13
+description:
+----------------------------
+revision 1.13
+date: 2004/07/16 00:35:42;  author: ronne;  state: Exp;  lines: +1 -1
+Improve the blurb code.
+----------------------------
+revision 1.12
+date: 2003/12/14 03:37:47;  author: ronne;  state: Exp;  lines: +5 -1
+Add support for network games in file saving code.
+----------------------------
+revision 1.11
+date: 2003/02/25 23:25:14;  author: ronne;  state: Exp;  lines: +2 -0
+Comment out agreement code. Fix some bugs.
+----------------------------
+revision 1.10
+date: 2003/01/18 16:41:15;  author: ronne;  state: Exp;  lines: +1 -1
+Update Doxygen comments.
+----------------------------
+revision 1.9
+date: 2002/09/08 17:18:01;  author: ronne;  state: Exp;  lines: +24 -25
+Fix wrong occ in saved games bug.
+----------------------------
+revision 1.8
+date: 2002/07/31 20:40:08;  author: ronne;  state: Exp;  lines: +101 -87
+Add Doxygen comments to kernel includes.
+----------------------------
+revision 1.7
+date: 2000/11/12 00:39:53;  author: ronne;  state: Exp;  lines: +2 -0
+General cleanup of kernel prototypes - part 1.
+----------------------------
+revision 1.6
+date: 2000/10/25 13:46:46;  author: shebs;  state: Exp;  lines: +0 -1
+	Remove useless program-version property of modules.
+	* keyword.def (program-version): Remove.
+	* module.h (Module programversion): Remove.
+	* read.c (interp_game_module): Remove handling.
+	* write.c (write_game_module): Remove save.
+	* all.g, warn.g: Remove references.
+	* refman.texi: Remove description, also improve info about
+	default-base-module and area restrictions.
+----------------------------
+revision 1.5
+date: 2000/09/10 05:45:40;  author: shebs;  state: Exp;  lines: +1 -0
+	Random rewrites and reorgs resolving remote networking bugs.
+	* ai.c (init_ai): Fill in side->rai for remote AIs.
+	(set_side_ai): Simplify, and add feedback on results.
+	(run_local_ais, run_ai_plan_adjust): Move here from run.c,
+	test taskexecs instead of need_ai_task_reaction.
+	* cmd.c (do_ai_side): Fix player feedback to reflect that
+	network roundup may be necessary before state changes.
+	* cmdline.c (option_width, option_height, option_circumference):
+	New globals.
+	(parse_world_option): Set these instead of pushing a variant.
+	(set_variants_from_options): Call net_set_variant_value instead
+	of pushing variant settings.
+	(find_variant_from_name): New function.
+	* init.c (start_player_pre_setup_stage): Call do_module_variants.
+	(final_init): Report more data structure sizes.
+	* kernel.h (set_variant_value): Declare.
+	* kpublic.h (net_set_variant_value): Declare.
+	* module.h (Variant newvalues): New field, array of new settings
+	for variant.
+	* module.c (create_game_module): Store a copy of the module name.
+	(set_variant_value): Move here from tkmain.c.
+	(do_one_variant): Fill from newvalues fields.
+	* read.c (interp_variant_defns, add_std_var): Fill in newvalues
+	fields.
+	* run.c (latest_action_x, latest_action_y): New globals.
+	(num_local_ais): Move to ai.c.
+	(need_ai_task_reaction): Remove, use taskexecs instead.
+	(save_run_state, clear_task_outcomes): New functions.
+	(run_game): Call them.
+	(move_one_unit_multiple): Replace need_ai_task_reaction test
+	with last_task_outcome and AI usage test.
+	(run_side_research, run_construction): Test local AI instead
+	of AI in general (dubious).
+	* side.h (Side rai): New field.
+	(side_has_ai): Test both local and remote AI.
+	(side_has_local_ai): New macro.
+	* task.c (execute_task): Rework recording of task outcome.
+	* tp.h (RAI): New struct, placeholder "remote AI".
+	* tp.c: Change run warnings into notices.
+	(net_set_variant_value): New function.
+	(receive_variant_settings): Allow at most three values.
+	* write.c (write_side_properties): Only write AI state for
+	local AIs (dubious).
+
+	* tkconq.tcl: Rewrite variant handling to do more work in
+	kernel.
+	(set_variant_value_cmd): New proc, replaces broadcast_variant_value.
+	(set_variants): Do less.
+	(add_world_size_dialog_items): Comment out lat/lon items.
+	(insert_chat_string): Test for existence of window before insert.
+	* tkmain.c: Rewrite for variants also.
+	(send_value_value, implement_variants): Remove tcl commands.
+	(tk_set_variant_value): Rewrite to pass along to kernel.
+	(interpret_variants): Rewrite.
+	(set_variant_world_size, set_variant_real_time): Remove,
+	handled uniformly in kernel.
+	(update_variant_setting): Rewrite.
+----------------------------
+revision 1.4
+date: 2000/05/30 15:44:37;  author: shebs;  state: Exp;  lines: +2 -1
+	Add help strings for variants.
+	* module.h (Variant help): New field.
+	* read.c (interp_variant_defns): Fill it in, supply default
+	help strings for standard variants.
+	(add_more_variants): Comment out people and supply system
+	variants, they don't work.
+	* cmdline.c (game_usage_info): Use help strings.
+
+	* tkconq.tcl: Say "config" instead of "configure" consistently.
+	(show_variant_help): Use varianthelp global.
+	* tkmain.c (interpret_variants, interpret_checkbox): Set up
+	tcl global varianthelp.
+
+	* magellan.g, panzer.g, standard.g, ww2-eur-42.g: Add help
+	strings to variants.
+
+	* refman.texi: Update reference manual.
+
+	* tkmain.c (play_movies): Slow down nuke movie.
+----------------------------
+revision 1.3
+date: 1999/11/10 03:02:08;  author: shebs;  state: Exp;  lines: +5 -6
+	* module.h (Module hook, read_only, fill_type): Remove fields,
+	never used.
+	* module.c (copy_module): New function.
+	(create_game_module): Use it instead of random field inits.
+	(init_module_reshape): Remove unused setting of fill_type.
+	* score.c (get_scores): Display game's title if possible.
+	* tp.c (download_game_module): Simplify by using copy_module.
+	(DOWNLOADPACKETSIZE): Also use 200 if on Windows.
+	* write.c (write_entire_game_state): Simplify module handling.
+----------------------------
+revision 1.2
+date: 1999/09/04 13:40:55;  author: shebs;  state: Exp;  lines: +17 -17
+        * history.h, kpublic.h, module.h, player.h, print.h, score.h,
+        side.h, tp.h, ui.h, world.h: Remove PARAMS usages.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:28;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

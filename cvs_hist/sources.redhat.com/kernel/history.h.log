@@ -1,0 +1,73 @@
+
+RCS file: /cvs/xconq/xconq/kernel/history.h,v
+Working file: history.h
+head: 1.8
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.5
+	xconq-7_4-branch: 1.5.0.2
+	xconq-7_4-branchpoint: 1.5
+	xtconq-pre-removal: 1.3
+	xconq-7_3_3-release: 1.2
+	xconq-7_3_2-release: 1.2
+	xconq-7_3_1-release: 1.2
+	xconq-7_3-branch: 1.2.0.2
+	xconq-7_3-branchpoint: 1.2
+keyword substitution: kv
+total revisions: 8;	selected revisions: 8
+description:
+----------------------------
+revision 1.8
+date: 2004/06/06 05:55:51;  author: mcdonald;  state: Exp;  lines: +6 -4
+Add new possibilities for unit wrecking behavior.
+Apply unit starvation patch from Matthew Skala. (Thanks Matthew.)
+Define and handle new event types related to unit destruction.
+Fix serious bug with model 0 attack/fire hit damage computation.
+Improve efficiency of attrition applicator that runs at turn start.
+Address nasty parsing order issue.
+Add simple, new game that showcases the new wrecking functionality.
+----------------------------
+revision 1.7
+date: 2003/01/18 16:41:15;  author: ronne;  state: Exp;  lines: +1 -1
+Update Doxygen comments.
+----------------------------
+revision 1.6
+date: 2002/07/31 20:40:08;  author: ronne;  state: Exp;  lines: +60 -36
+Add Doxygen comments to kernel includes.
+----------------------------
+revision 1.5
+date: 2000/11/24 06:12:12;  author: kingdon;  state: Exp;  lines: +1 -1
+	* tp.h, conq.h, history.h, lisp.h, plan.c, unit.h, utype.def: Add
+	newline to end of file (shuts up GCC warnings on unix).
+----------------------------
+revision 1.4
+date: 2000/11/12 00:39:53;  author: ronne;  state: Exp;  lines: +4 -0
+General cleanup of kernel prototypes - part 1.
+----------------------------
+revision 1.3
+date: 2000/07/23 13:55:03;  author: shebs;  state: Exp;  lines: +3 -3
+	Increase unit ids to 32 bits in size.
+	* unit.h (Unit id): Declare as int instead of short.
+	(UnitView id): Ditto.
+	(Action actee, args): Ditto.
+	(Task args): Ditto.
+	* history.h (HistEvent data): Ditto.
+	(PastUnit id): Ditto.
+	* world.h (Area user): Ditto.
+	* tkconq.h (Map curunit_id, argunitid): Ditto.
+	* xtconq.h (Map argunitid): Ditto.
+	* plan.c (make_plausible_random_args): Declare args arg as int.
+	* task.c (do_approach_subtask): Declare statep arg as int.
+	* unit.c (create_unit): Add note about id overflow.
+----------------------------
+revision 1.2
+date: 1999/09/04 13:40:55;  author: shebs;  state: Exp;  lines: +18 -17
+        * history.h, kpublic.h, module.h, player.h, print.h, score.h,
+        side.h, tp.h, ui.h, world.h: Remove PARAMS usages.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:25;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

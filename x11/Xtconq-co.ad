@@ -1,0 +1,188 @@
+#include "Xtconq"
+
+Xtconq*Scrollbar.background:			lightgray
+Xtconq*Scrollbar.foreground:			dimgray
+
+! Map window color resources.
+
+Xtconq*map.background:				gray
+
+Xtconq*map*leftPane*background:			lightgray
+
+Xtconq*map*leftPane*infoForm.prompt.background:		white
+Xtconq*map*leftPane*infoForm.history.*.background:	lightgray
+Xtconq*map*leftPane*infoForm.history.textSink.background: white
+Xtconq*map*leftPane*infoForm.history.background:	white
+
+Xtconq*map*leftPane*leftForm.background:			gray
+
+Xtconq*map*leftPane*leftForm*controlForm*background:	gray
+Xtconq*map*leftPane*leftForm*controlForm.background:	tan
+
+Xtconq*map*leftPane*leftForm*mapForm.background:		gray
+Xtconq*map*leftPane*leftForm*mapForm.borderColor:	gray
+Xtconq*map*leftPane*leftForm*mapForm*info.background:	white
+Xtconq*map*leftPane*leftForm*mapForm*View.background:	black
+
+Xtconq*map*rightPane.background:			gray
+
+Xtconq*map*rightPane*sides.background:		gray
+Xtconq*map*rightPane*listView.background:	gray
+
+Xtconq*map*rightPane*listView.listForm*background:	white
+Xtconq*map*rightPane*listView.listForm.background:	tan
+
+Xtconq*map*Panner.background:			dimgray
+Xtconq*map*Panner.shadowColor: 			dark slate gray
+
+! Help window color resources.
+
+Xtconq.helpShell*background:			lightgray
+Xtconq.helpShell.form.background:		gray
+Xtconq.helpShell*title.background:		gray
+Xtconq.helpShell*Command.background:		white
+Xtconq.helpShell*topicList.background:		moccasin
+
+! Print dialog color resources.
+
+Xtconq*PrintSetup.form.background:		gray
+Xtconq*PrintSetup.form.Command.background:	blue
+Xtconq*PrintSetup.form.Command.foreground:	white
+Xtconq*PrintSetup.form.quit.background:		red
+Xtconq*PrintSetup.form.names.background:		moccasin
+Xtconq*PrintSetup.form.names.foreground:		black
+Xtconq*PrintSetup*Dialog.background:		moccasin
+Xtconq*PrintSetup*Dialog.Label.background:	moccasin
+Xtconq*PrintSetup*Dialog.Text.background:	white
+Xtconq*PrintSetupHelp*background:		gray
+Xtconq*PrintSetupHelp*foreground:		black
+Xtconq*PrintSetupHelp*Command.background:	blue
+Xtconq*PrintSetupHelp*Command.foreground:	white
+Xtconq*PrintSetupHelp*Label.background:		LightGray
+
+Xtconq.map.leftPane.leftForm.helpPop.background:	blue
+Xtconq*map*helpPop.foreground:			yellow
+Xtconq.map.leftPane.leftForm.ctrlpanelPop.background:	blue
+Xtconq*map*ctrlpanelPop.foreground:		yellow
+
+! More... dialog 
+
+Xtconq.controlPanel.form.background:		tan
+Xtconq.controlPanel.form.Label.background:	tan
+Xtconq.controlPanel.form.Toggle.background: 	gray
+Xtconq.controlPanel.form.Command.background:	gray
+Xtconq.controlPanel.form.Cancel.background:	red
+
+! design dialog
+
+Xtconq.Design.Design.Box.background:		tan
+Xtconq.Design.Design.Box.Label.background: 	tan
+Xtconq.Design.Design.Box.Toggle.background:	gray
+Xtconq.Design.Design.Box.Command.background:	gray
+
+! Game dialog color resources.
+
+Xtconq.gameDialog*inForm.background:		tan
+Xtconq.gameDialog*outForm.background:		gray
+Xtconq.gameDialog*inForm.Form.background:	tan
+Xtconq.gameDialog*name.background:		cyan
+Xtconq.gameDialog*intro.name.background:		green
+Xtconq.gameDialog*standard.name.background:	green
+Xtconq.gameDialog*label.background: 		moccasin
+Xtconq.gameDialog*quit.background:		orange red
+
+Xtconq*gameForm.background:			gray
+Xtconq*gameForm.pane.background:			gray
+Xtconq*gameForm.pane.form.background:		gray
+Xtconq*gameForm*name.background:			cyan
+Xtconq*gameForm.Dialog.value*background:		yellow
+Xtconq*gameForm.cancel.background:		orange red
+Xtconq*gameForm.ok.background:			green
+Xtconq*gameForm.add.background:			yellow
+Xtconq*gameForm.verify.background:		yellow
+Xtconq*gameForm.go.background:			green
+Xtconq*gameForm*quit.background:			orange red
+Xtconq*gameForm*variant.background:		cyan
+Xtconq*gameForm*assign.background:		cyan
+Xtconq*gameForm*instructions_label.background:	cyan
+Xtconq*gameForm*notes_label.background:		cyan
+Xtconq*gameForm.varMessage.background:		coral
+Xtconq*gameForm.nameMessage.background:		coral
+Xtconq*gameForm.idMessage.background:		coral
+
+Xtconq.unitCloseup.form.background:		tan
+Xtconq.unitCloseup*Command.background:		gray
+Xtconq.unitCloseup*icon.background:		gray
+Xtconq.unitCloseup*flag.background:		gray
+
+Xtconq.sideCloseup.form.background:		tan
+Xtconq.sideCloseup*Command.background:		gray
+Xtconq.sideCloseup*flag.background:		gray
+Xtconq.sideCloseup*filter.background:		gray
+Xtconq.sideCloseup*filter.Label.background:	yellow
+
+Xtconq.unitList.form.background:			tan
+Xtconq.unitList*flag.background:			gray
+Xtconq.unitList*list.background:			gray
+Xtconq.unitList*Command.background:		gray
+Xtconq.unitList*failed.background:		yellow
+
+Xtconq.closeupList*list.background:		gray
+Xtconq.closeupList.form.background:		tan
+
+Xtconq.unitCloseup.form.background:		tan
+Xtconq.unitCloseup*Command.background:		gray
+Xtconq.unitCloseup*icon.background:		gray
+Xtconq.unitCloseup*flag.background:		gray
+
+Xtconq.sideCloseup.form.background:		tan
+Xtconq.sideCloseup*Command.background:		gray
+Xtconq.sideCloseup*flag.background:		gray
+Xtconq.sideCloseup*filter.background:		gray
+Xtconq.sideCloseup*filter.Label.background:	yellow
+
+Xtconq.unitList.form.background:			tan
+Xtconq.unitList*flag.background:			gray
+Xtconq.unitList*list.background:			gray
+Xtconq.unitList*Command.background:		gray
+Xtconq.unitList*failed.background:		yellow
+
+Xtconq.closeupList*list.background:		gray
+Xtconq.closeupList.form.background:		tan
+
+! orders interface
+
+Xtconq.orders.form.background:			tan
+Xtconq*orders.form.Command.background:		blue
+Xtconq*orders.form.Command.foreground:		white
+Xtconq*orders.form.quit.background:		red
+! Xtconq*orders.form.label.background: 		moccasin
+Xtconq*orders*orders.background:			dimgray
+Xtconq*orders*orders.Form.background:		gray
+Xtconq*orders*orders.Form.foreground:		red
+Xtconq*orders*orders*toggle.foreground:		#6495ed
+! cornflowerblue
+
+Xtconq.utypeSelect.box.background:		gray
+Xtconq.utypeSelect.box.cancel.background:	red
+Xtconq.utypeSelect.box.cancel.foreground:	white
+
+Xtconq.dirSelect.box.background:			gray
+
+Xtconq.stringSelect.dialog.background:		gray
+Xtconq.stringSelect.dialog.label.background:	gray
+
+Xtconq.condSelect.box.background:		gray
+Xtconq.condSelect.box.cancel.background:		red
+Xtconq.condSelect.box.cancel.foreground:		white
+
+Xtconq.taskSelect.box.background:		gray
+Xtconq.taskSelect.box.cancel.background:		red
+Xtconq.taskSelect.box.cancel.foreground:		white
+
+Xtconq*ordersHelp*background:			gray
+Xtconq*ordersHelp*foreground:			black
+Xtconq*ordersHelp*Command.background:		blue
+Xtconq*ordersHelp*Command.foreground:		white
+Xtconq*ordersHelp*Label.background:		lightgray
+

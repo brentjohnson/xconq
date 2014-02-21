@@ -1,0 +1,105 @@
+
+RCS file: /cvsroot/xconq/xconq/kernel/mkunits.c,v
+Working file: mkunits.c
+head: 1.3
+branch:
+locks: strict
+access list:
+symbolic names:
+	BPT_EMCDONALD_AI_16: 1.3
+	BPT_EMCDONALD_AI_15: 1.3
+	SS_7_5_0_0pre_0_20050612: 1.2
+	BPT_MSKALA_IMF_3: 1.2
+	BPT_MSKALA_SUPPLY_12: 1.2
+	BPT_EMCDONALD_AI_14: 1.2
+	MPT_EMCDONALD_AI_7: 1.1.1.1.6.1
+	BPT_EMCDONALD_AI_13: 1.2
+	SS_7_5_0_0pre_0_20050501: 1.2
+	BPT_EMCDONALD_AI_12: 1.2
+	MPT_EMCDONALD_AI_6: 1.1.1.1.6.1
+	BPT_EMCDONALD_AI_11: 1.1.1.1
+	SS_7_5_0_0pre_0_20050416: 1.1.1.1
+	BPT_EMCDONALD_AI_10: 1.1.1.1
+	MPT_EMCDONALD_AI_5: 1.1.1.1
+	BPT_EMCDONALD_AI_9: 1.1.1.1
+	BPT_EMCDONALD_AI_8: 1.1.1.1
+	MPT_EMCDONALD_AI_4: 1.1.1.1
+	BPT_EMCDONALD_AI_7: 1.1.1.1
+	MPT_EMCDONALD_AI_3: 1.1.1.1
+	BPT_EMCDONALD_AI_6: 1.1.1.1
+	BPT_MSKALA_SUPPLY_11: 1.1.1.1
+	BPT_EMCDONALD_AI_5: 1.1.1.1
+	MPT_EMCDONALD_AI_2: 1.1.1.1
+	SS_7_5_0_0pre_0_20050322: 1.1.1.1
+	BPT_MSKALA_SUPPLY_10: 1.1.1.1
+	BPT_EMCDONALD_AI_4: 1.1.1.1
+	MPT_EMCDONALD_AI_1: 1.1.1.1
+	BPT_EMCDONALD_AI_3: 1.1.1.1
+	BPT_MSKALA_SUPPLY_9: 1.1.1.1
+	MPT_MSKALA_SUPPLY_3: 1.1.1.1
+	BPT_EMCDONALD_AI_2: 1.1.1.1
+	BPT_MSKALA_SUPPLY_8: 1.1.1.1
+	MPT_MSKALA_SUPPLY_2: 1.1.1.1
+	BPT_MSKALA_SUPPLY_7: 1.1.1.1
+	BRANCH_EMCDONALD_AI: 1.1.1.1.0.6
+	BPT_EMCDONALD_AI_1: 1.1.1.1
+	BPT_MSKALA_SUPPLY_6: 1.1.1.1
+	SS_7_5_0_0pre_0_20050225: 1.1.1.1
+	BPT_MSKALA_SUPPLY_5: 1.1.1.1
+	MPT_MSKALA_SUPPLY_1: 1.1.1.1
+	BPT_MSKALA_SUPPLY_4: 1.1.1.1
+	BPT_MSKALA_SUPPLY_3: 1.1.1.1
+	BPT_MSKALA_SUPPLY_2: 1.1.1.1
+	SS_7_5_0_0pre_0_20050208: 1.1.1.1
+	BPT_MSKALA_IMF_2: 1.1.1.1
+	BRANCH_MSKALA_SUPPLY: 1.1.1.1.0.4
+	BPT_MSKALA_SUPPLY_1: 1.1.1.1
+	SS_7_5_0_0pre_0_20050117: 1.1.1.1
+	SS_7_5_0_0pre_0_20050108: 1.1.1.1
+	SS_7_5_0_0pre_0_20041228: 1.1.1.1
+	BRANCH_MSKALA_IMF: 1.1.1.1.0.2
+	BPT_MSKALA_IMF_1: 1.1.1.1
+	SS_7_5_0_0pre_0_20041211: 1.1.1.1
+	SS_7_5_0_0pre_0_20041126: 1.1.1.1
+	GENESIS: 1.1.1.1
+	PRIVATE_TREE_1: 1.1.1
+keyword substitution: kv
+total revisions: 8;	selected revisions: 8
+description:
+----------------------------
+revision 1.3
+date: 2005/06/19 23:39:37;  author: eric_mcdonald;  state: Exp;  lines: +69 -5
+Fix serious bugs in the encoding of negative dice reps.
+Add support of occs-on-completion for initial units placement.
+----------------------------
+revision 1.2
+date: 2005/04/30 23:35:09;  author: eric_mcdonald;  state: Exp;  lines: +3 -2
+Merge from 'MPT_EMCDONALD_AI_5' to 'MPT_EMCDONALD_AI_6'.
+Many non-AI-related changes included in this merge.
+----------------------------
+revision 1.1
+date: 2004/11/21 03:01:11;  author: eric_mcdonald;  state: Exp;
+branches:  1.1.1;
+Initial revision
+----------------------------
+revision 1.1.1.1
+date: 2004/11/21 03:01:11;  author: eric_mcdonald;  state: Exp;  lines: +0 -0
+branches:  1.1.1.1.2;  1.1.1.1.4;  1.1.1.1.6;
+Initial import from private repo into SF repo.
+----------------------------
+revision 1.1.1.1.6.2
+date: 2005/07/10 15:42:52;  author: eric_mcdonald;  state: Exp;  lines: +69 -5
+Merge in CVS trunk between 'BPT_EMCDONALD_AI_14' and 'BPT_EMCDONALD_AI_15'.
+----------------------------
+revision 1.1.1.1.6.1
+date: 2005/04/28 02:26:40;  author: eric_mcdonald;  state: Exp;  lines: +3 -2
+Fix buffer overflow in side country grower code.
+----------------------------
+revision 1.1.1.1.4.1
+date: 2005/06/06 03:18:20;  author: eric_mcdonald;  state: Exp;  lines: +3 -2
+Merge in CVS trunk between 'BPT_MSKALA_SUPPLY_11' and 'BPT_MSKALA_SUPPLY_12'.
+----------------------------
+revision 1.1.1.1.2.1
+date: 2005/06/06 03:39:36;  author: eric_mcdonald;  state: Exp;  lines: +3 -2
+Merged in all trunk changes between BPT_MSKALA_IMF_2 and BPT_MSKALA_IMF_3.
+=============================================================================

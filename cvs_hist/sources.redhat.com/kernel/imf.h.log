@@ -1,0 +1,323 @@
+
+RCS file: /cvs/xconq/xconq/kernel/imf.h,v
+Working file: imf.h
+head: 1.20
+branch:
+locks: strict
+access list:
+symbolic names:
+	xconq-7_4_1-release: 1.12
+	xconq-7_4-branch: 1.12.0.2
+	xconq-7_4-branchpoint: 1.12
+	xtconq-pre-removal: 1.10
+	xconq-7_3_3-release: 1.10
+	xconq-7_3_2-release: 1.10
+	xconq-7_3_1-release: 1.10
+	xconq-7_3-branch: 1.10.0.2
+	xconq-7_3-branchpoint: 1.10
+keyword substitution: kv
+total revisions: 20;	selected revisions: 20
+description:
+----------------------------
+revision 1.20
+date: 2004/07/18 18:49:48;  author: ronne;  state: Exp;  lines: +8 -7
+Add support for multiple and unique unit images.
+----------------------------
+revision 1.19
+date: 2004/07/06 02:43:59;  author: mcdonald;  state: Exp;  lines: +1 -1
+Disable another compiler warning.
+Clean up a horde of warnings.
+----------------------------
+revision 1.18
+date: 2004/06/20 22:14:50;  author: ronne;  state: Exp;  lines: +1 -1
+Fix image loading problems.
+----------------------------
+revision 1.17
+date: 2003/10/01 22:16:03;  author: ronne;  state: Exp;  lines: +4 -0
+Fix GDI memory problems on Windows ME and below.
+----------------------------
+revision 1.16
+date: 2003/05/25 09:28:30;  author: ronne;  state: Exp;  lines: +5 -1
+Further fixes to imfapp.
+----------------------------
+revision 1.15
+date: 2003/01/18 16:41:15;  author: ronne;  state: Exp;  lines: +52 -38
+Update Doxygen comments.
+----------------------------
+revision 1.14
+date: 2001/01/13 18:27:06;  author: shebs;  state: Exp;  lines: +2 -1
+	Various additions to the SDL interface - mouseover text pane,
+	unit&feature names on map, isometric display, misc layers.
+	* sdlconq.h (ui curfid): New field.
+	(Map active): New field.
+	(small_font): New global.
+	* sdlmain.c (small_font): Define.
+	(initial_ui_init): Fill in from font.bmp, enable unicode
+	translation of keyboard events.
+	(autoscroll): Update focus.
+	(ui_mainloop): Only autoscroll when map is active window.
+	(handle_event): Get unicode from key event, filter out zeros,
+	grok activation	events.
+	(ask_position): Put out the prompt.
+	(place_legends): Implement.
+	* sdlcmd.c (do_refresh): Tweak place_legends call.
+	(do_set_view_angle): Implement.
+	* sdlmap.c (open_sdl_window): Get map viewport from surface size,
+	set an initial focus.
+	(update_map): Add isometric case, add more debugging draws,
+	add mouseover pane.
+	(random_color): New function.
+	(draw_map_isometric, draw_terrain_iso, draw_clouds_row,
+	draw_temperature_row, draw_winds_row, draw_feature_boundary,
+	draw_feature_name, draw_people, draw_string): New functions.
+	(draw_unit_name, draw_unit_size): Make work.
+
+	* tkconq.h, tkcmd.c, tkmain.c (place_legends): Don't pass
+	a side argument.
+
+	* images/font.bmp: Basic text font, borrowed from Randi
+	Relander's Regimental Command project.
+
+	* ui.c: Add a comment about 12x13 hex size.
+	* imf.c, imf.h (copy_from_file_image): Add actual-size arguments.
+	* imf.c (make_raw_palette): Add a little slop, for now at least.
+	(make_image_from_file_image): Add slop to subimage palette
+	allocation, use copy_from_file_image actual-size arguments.
+
+	* dir.h (dir_subtract): Move to here from tkmap.c.
+	* cmd.c (execute_command): Filter out zero chars.
+----------------------------
+revision 1.13
+date: 2001/01/08 16:24:40;  author: shebs;  state: Exp;  lines: +8 -3
+	Add an SDL-based user interface.
+	* sdl/: New directory.
+	* sdl/Makefile.in, sdl/sdlconq.h, sdl/sdlcmd.c, sdl/sdlimf.c,
+	sdl/sdlinit.c, sdl/sdlmain.c, sdl/sdlmap.c: New files.
+	* images/cursor.bmp: New file, color cursor.
+	* Makefile.in (SUBDIRS): Add sdl.
+	(all-sdlconq): New target.
+	* configure.in: Add option --enable-sdl.
+	* configure: Regenerate.
+	* x11/Makefile.in (sdlconq): New target.
+
+	* system.h, mac.c, unix.c, win32.c (default_images_pathname): Add
+	argument, use instead of compiled-in pathname.
+	* init.c (init_library_path): Change caller.
+
+	* imf.h (Image r, g, b): Solid color for an image.
+	* imf.c (blacken_masked_area, blacken_mono_masked_area) Move to
+	here from tkimf.c, add rgb args.
+	(make_raw_palette): Move to here from tkimf.c.
+
+	* ui.c. ui.h (dside): Define here instead of in each interface.
+	(generic_transition): Similarly.
+	(compute_x1_len): Move to here from tkmap.c.
+	* macconq.c, macconq.h (dside): Remove.
+	* macinit.c (generic_transition): Remove.
+	* tkmain.c, tkconq.h (dside): Remove.
+	* tkinit.c, tkmap.c (generic_transition): Remove.
+	* cconq.c, cconq.h (dside): Remove.
+
+	* tkcmd.c (require_unit): Test for NULL map.
+	(get_selected_units): Similarly.
+	(do_follow_action, do_message, do_quit, do_set_view_angle,
+	do_survey, do_design): Similarly.
+	* tkimg.c (tk_interp_image_1): Fill in generic image rgb,
+	* tkmap.c (draw_current): Fix test for health bar color change.
+	(draw_side_emblem): Draw black border around solid-color emblem.
+
+	* ui.c (favored_type): Use unit_can_build_type.
+
+	* read.c (interp_unit_defaults): Fix setup of default tooling.
+----------------------------
+revision 1.12
+date: 2000/10/04 16:10:10;  author: shebs;  state: Exp;  lines: +12 -17
+	Move use_clip_mask to generic code, use to control creation
+	of transparent black in images.
+	* imf.c, imf.h (use_clip_mask): Move to here from tkimf.c.
+	* gif.c (get_gif_from_file): Test it.
+	* wconq.c, wimfapp.c, xconq.c (use_clip_mask): Remove decl.
+
+	* imf.c, imf.h (MAXIMAGEPALETTES, palettes, numpalettes,
+	sort_all_palettes): Remove, no longer used.
+	* imf.h (ImagePalette): Ditto.
+----------------------------
+revision 1.11
+date: 2000/09/10 13:59:59;  author: shebs;  state: Exp;  lines: +1 -8
+	Remove named palettes, unused and un-useful.
+	* imf.c, imf.h (interp_palette, new_image_palette,
+	canonical_palette_name, get_imp, find_imp, write_imp): Remove.
+	(write_palette_contents): Remove named palette case.
+	(interp_imf_form): Remove call to interp_palette.
+	* read.c (interp_form): Ditto.
+
+	* refman.texi: Remove references to named palettes.
+----------------------------
+revision 1.10
+date: 1999/11/23 03:27:32;  author: shebs;  state: Exp;  lines: +1 -0
+	* imf.h (Image orig_pixelsize): New field.
+	* imf.c (write_pixmap): Add orig_pixelsize argument, write
+	original pixel size if recorded.
+	(write_imf): Update call.
+	* tkimf.c (blacken_masked_area): Sharpen test of need to deepen
+	image, record original pixel size if deepened.
+----------------------------
+revision 1.9
+date: 1999/09/16 02:47:45;  author: shebs;  state: Exp;  lines: +1 -1
+	* conq.h, init.c, module.c, tp.c (typesdefined): Remove, never
+ 	actually used.
+
+	* conq.h (enum setup_stage): New enum.
+	(current_stage): New global.
+
+	* imf.c, imf.h (get_img): Remove unused argument.
+	* imf.c, ui.c, xcutil.c, ximf.c, maccolors.c, macimf.c, macinit.c,
+ 	tkimf.c: Fix all callers.
+
+	* init.c, mac.c, mkrivers.c, mkroads.c, module.c. ps.c, score.c,
+ 	task.c: Remove PARAMS usages.
+
+	* mac.c, win32.c (tmprid): Remove decl, never used.
+	* cconq.c (hosting): Remove decl, never used.
+
+	* tp.c (download_game_module): New function, split out from
+	download_to_player.
+	(broadcast_game_module): New function.
+	(broadcast_variants_chosen, broadcast_players_assigned): New
+ 	functions.
+	(receive_packet): Don't do trial assignments here, interpret
+	'a' and 'v' packets.
+
+	* tkconq.tcl (selected_game_title): Init to a default value.
+	* tkmain.c (tk_start_new_game): Broadcast game module to other
+	programs.
+	(tk_launch_game): Broadcast that variants have been chosen.
+	(tk_launch_game_2): Broadcast that players have been assigned.
+	(last_stage): New global.
+	(check_network): Call tcl commands to move dialogs through
+	stages of game setup.
+----------------------------
+revision 1.8
+date: 1999/08/28 23:22:44;  author: shebs;  state: Exp;  lines: +59 -62
+        * configure.in: Add --enable-build-warnings to control extra
+        warnings, choose which subdirs to configure based on Unix vs
+        Windows.
+        * configure: Regenerate.
+        * Makefile.in: Eliminate refs to lib-x11.
+        * x11/Makefile.in: Ditto.
+        * curses/Makefile.in, kernel/Makefile.in, tcltk/Makefile.in,
+        x11/Makefile.in: Change UNIX_CFLAGS to autoconf-using HFLAGS,
+        remove WARNING_CFLAGS.
+        * actions.c, ai.c, ai.h, cmdline.c, cmdline.h, conq.h, generic.c,
+        help.h, imf.c, imf.h, imf2imf.c, lisp.c, lisp.h, misc.h, system.h,
+        imf2x.c, xcutil.h: Remove PARAMS usages.
+        * gif.c, help.c, imf.c, imf2imf.c, lisp.c, unix.c, tkmain.c,
+        wimfapp.c, imf2x.c, x2imf.c, xconq.c, xcutil.c: Remove unused
+        variables, add prototypes, etc.
+        * run2.c, side.c, macconq.c: Remove decl of update_area_display.
+        * skelconq.c: Declare _dialog functions.
+        * tkcmd.c: Remove exit_xconq decl.
+        * wconq.c (check_player_displays): Remove uses.
+        * xconq.c: Include tkconq.h.
+
+        * tkconq.h (IMFLIB): Remove.
+        (exit_xconq): Declare.
+        * tkimf.c, tkinit.c: Remove imflib uses.
+        * xconq.h, xcutil.c: Ditto.
+        * ximf.c, xinit.c: Ditto.
+        * PROJECTS: Remove lib-x11 item.
+----------------------------
+revision 1.7
+date: 1999/08/03 02:57:41;  author: shebs;  state: Exp;  lines: +1 -0
+	* imf.c (get_generic_images): Move to here from ui.c, remove
+	unused side argument.
+	* imf.h (get_generic_images): Declare.
+	* ui.c, maccolors.c, tkinit.c: Change all callers.
+----------------------------
+revision 1.6
+date: 1999/07/25 14:27:42;  author: ronne;  state: Exp;  lines: +12 -0
+Fix prototype and type cast problems.
+----------------------------
+revision 1.5
+date: 1999/06/25 18:25:54;  author: shebs;  state: Exp;  lines: +2 -0
+	Add support for terrain images.
+	* imf.h (Image numsubimages, subx, suby): New slots.
+	* imf.c (interp_image): Fill in from "x" property.
+	(make_image_from_file_image): Get offsets from filedata, add
+	ability to collect multiple images for a normal image, use
+	copy_from_file_image for build all types of subimages.
+	(copy_from_file_image): New function, extract image/subimage
+	data from a file image (tileset).
+	* tkimf.c (tk_interp_image): Call for generic subimages.
+	* tkmap.c (draw_terrain_row): Draw terrain images.
+	* terrain.imf: Add offsets, references to stdt44x48.gif.
+	* images/stdt44x48.gif: New file, GIF of standard terrain types.
+	* images/sea.gif: New file, GIF with sea pattern.
+	* tkmap.c (draw_map_outline): Fix typo.
+----------------------------
+revision 1.4
+date: 1999/06/17 19:22:27;  author: shebs;  state: Exp;  lines: +1 -0
+	* imf.h (Image istransition): New slot.
+	* imf.c (interp_image): Recognize "transition" keyword.
+	(make_image_from_file_image): Handle transition images.
+	* tkimf.c (tk_interp_image): Handle transitions.
+	* tkinit.c (generic_transition): New global.
+	(init_other_images): Set it up.
+	* tkmap.c (draw_terrain_transitions): Rewrite to use image family
+ 	with subimages.
+	* terrain.imf (transition): New image family.
+	* images/tran24x26.gif, tran44x48.gif, tran88x96.gif: New images,
+	generic transition terrain masks.
+----------------------------
+revision 1.3
+date: 1999/06/14 18:51:29;  author: shebs;  state: Exp;  lines: +20 -0
+	Add support for reading images from GIFs directly, plus ability
+	to collect multiple images from a single "file image".
+	* kernel/gif.c: New file, GIF reader lifted from NetPBM.
+	* kernel/Makefile.in: Compile it.
+	* keyword.def (file): New keyword.
+	* imf.h (Image filedata, file_image, subimages): New slots.
+	(FileImage): New structure.
+	* imf.c (K_FILE_): New enum.
+	(file_images): New global.
+	(get_img): Replace dummy style arg with subimage arg.
+	(get_subimg): New function.
+	(interp_image): Recognize connection and border images, and
+	images whose data is in a file.
+	(make_image_from_file_image): New function.
+	(add_shrunken_image, add_magnified_image): Call it.
+	(best_image): Rewrite to handle images that are mixes of
+	regular images and tiles.
+	(get_file_image, load_file_image): New functions.
+	* ui.c (halfsides): New global array.
+	* tkimf.c (tk_interp_image): Add subimg arg, change callers,
+	call make_image_from_file_image and self recursively.
+	* tkinit.c (bordpics, connpics, rrpics): Remove, no longer needed.
+	* tkmap.c (set_terrain_gc_for_image): Only do for tiles.
+	(draw_unseen_fuzz): Use halfsides array.
+	(draw_borders, draw_connections): Rewrite to use subimages.
+----------------------------
+revision 1.2
+date: 1999/05/04 05:08:51;  author: shebs;  state: Exp;  lines: +2 -4
+        * atype.def, mtype.def, ttype.def (available): Remove.
+        * utype.def (available): Allow negative values, as doc'ed.
+        * keyword.def (battle, silhouette): Remove.
+        * actions.c (distribute_material): Check for unit trust.
+        * imf.h (Image style): Remove.
+        (ImageFamily preferred_style): Remove.
+        * imf.c: Remove style references everywhere.
+        (interp_image): No longer recognize silhouette keyword.
+        * ui.c: Ditto.
+        * init.c (check_game_validity): Remove availability checks,
+        add test of u_wrecked_type value.
+        * nlang.c (task_desc): Describe pickup task.
+        * read.c: Remove recognition of K_BATTLE.
+        * run2.c (run_economy): Rewrite to scan needy units in second
+        pass.
+        (need_left, try_sharing_need): New functions.
+        * world.c (search_and_apply): Terminate early if pred fails.
+----------------------------
+revision 1.1
+date: 1999/04/28 19:36:26;  author: shebs;  state: Exp;
+Initial checkin.
+=============================================================================

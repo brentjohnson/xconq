@@ -1,0 +1,88 @@
+.TH ad2c 1 "19 Apr 1993"
+.SH NAME
+ad2c \- convert resource files to C declarations
+.SH SYNOPSIS
+.I ad2c
+[ files ]
+.SH DESCRIPTION
+.LP
+.I Ad2c
+converts X resource files into C declarations, appropriate for
+inclusion as fallback resources.  The program is a
+.IR sed (1)
+script which is effectively a finite state machine, escaping quotes
+and backslashes (and newlines where necessary), and adding quotes and
+commas as needed for array initialization.
+.LP
+It reads from the given files (or stdin if none are given) and writes
+the C declarations to stdout.
+.SH USAGE
+The following example shows a typical use of
+.I ad2c
+to ensure that an application always has the latest version of its
+resources compiled into the executable.  Suppose the application
+defaults file is named "Foobar.ad", for application
+.IR foobar .
+Then the following lines in a Makefile or Imakefile will indicate
+how and when to run
+.IR ad2c :
+
+.nf
+.na
+    Foobar.ad.h: Foobar.ad
+            ad2c Foobar.ad >Foobar.ad.h
+.ad
+.fi
+
+The resulting C strings should be included (say in "foobar.c"):
+
+.nf
+.na
+    static char fallback_resources[] = {
+        #include "Foobar.ad.h"
+        NULL
+    };
+.ad
+.fi
+
+This array of strings can then be given as a parameter to
+.IR XtAppInitialize (3X)
+or otherwise used to initialize the application's resources.  Running
+.I makedepend
+or adding the line
+
+.nf
+.na
+    foobar.c: Foobar.ad.h
+.ad
+.fi
+
+to the Makefile or Imakefile will ensure that "foobar.c" is
+recompiled when necessary (ie., whenever "Foobar.ad" changes).
+.SH "RETURN VALUE"
+.LP
+.I Ad2c
+returns as for
+.IR sed .
+.SH "SEE ALSO"
+sed(1)
+.SH DISCLAIMER
+.LP
+This software is provided as is with no warranty expressed or implied.
+I hope you find it useful, but I won't be held responsable for
+any damage that may occur from reading, compiling, installing or
+using it.
+.LP
+You are free to use any part of this code for other purposes. It
+would be nice if you could keep my name on some part of whatever the
+final product is.
+.SH AUTHOR
+.LP
+George Ferguson, ferguson@cs.rochester.edu.
+.LP
+Man page by Joseph Beckenbach, jerbil@ultra.com. Usage section added
+by George Ferguson. Example corrected by Tim Theisen, tim@cs.wisc.edu.
+Example further corrected by David Wojtowicz, davidw@vista.atmos.uiuc.edu.
+.LP
+Modified to work with Gnu and IBM sed by Charles Hannum,
+mycroft@gnu.ai.mit.edu.

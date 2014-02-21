@@ -1,0 +1,121 @@
+Welcome to Xconq version 7.5 Prerelease!
+
+Xconq is a general strategy game system.  It is a complete system that
+includes all the components: a portable engine, graphical interfaces
+for Unix/Linux/X11, Macintosh, and Windows, multiple AIs, networking
+for multi-player games, and an extensive games library.
+
+In addition to Xconq's "default" game, which is similar to the
+classic Empire/Empire Deluxe games of years ago, the games library
+includes games for ancient civilizations, the Peloponnesian War, the
+Roman Civil War, Frederician strategy, Napoleonic strategy, Gettysburg
+at a brigade scale, the Russian revolution, the Normandy invasion,
+WWII at scales from tactical to grand strategic, Beirut street
+fighting, voyages of discovery, African exploration, and many others,
+including space and fantasy games.
+
+As befits its emphasis on strategy, Xconq's forte is turn-based play
+using overhead views of a tiled world.  The world is basically
+two-dimensional, although varying elevations are available for games
+that need elevation effects or line-of-sight.  Xconq is especially
+interesting for games about unusual or lesser-known strategic
+situations; it is unique in providing a single system for modelling
+the conflicts and strategies of any period in history.
+
+Xconq games may include hundreds of types of units, hundreds of
+materials (ammo, fuel, etc), hundreds of types of terrain, and
+hundreds of types of technological advances.  Worlds may be up to
+32,767 x 32,767 in size, over a billion cells (hexagons)!  The largest
+map currently in the library is a monster 800x320 map of the Earth.
+Xconq can also synthesize new worlds for its games.
+
+Up to 31 sides may participate in a game, with any mix of human and AI
+players.  Xconq networking is peer-to-peer, so no separate server is
+required.
+
+To set up new types of games, Xconq includes an interpreter for a game
+design language (GDL).  While the syntax resembles Lisp, GDL is a
+declarative language, where you create a game just by defining the
+properties of types and objects, and then filling in tables describing
+their interactions.  There are literally hundreds of properties
+available, and hundreds of tables relating units, materials, terrain,
+and advances.  Xconq is capable of emulating many other strategy
+games, and Xconq's generic AI includes the ability to analyze a set of
+rules and to figure out (usually!) how to play it.
+
+In addition, the game designer gets a collection of nearly a thousand
+graphic images available for use in games, including unit icons,
+terrain tiles, and national emblems.  It's also easy to import
+additional graphics content of your choice.
+
+To help keep the both new and experienced designers from being lost in
+the complexity, Xconq includes a game designer's manual that describes
+all of this machinery in detail.
+
+If you are compiling your own of Xconq from sources, you may wish to 
+look at the INSTALL files in the doc directory.  Xconq has been tested 
+in a wide variety of systems and environments, including most versions of 
+Unix, Linux, Macintosh (PowerPC only), and Windows.
+
+Once Xconq is installed, depending on your system you should be able
+to either type "xconq" at a shell or click on the program's icon.  The
+program will guide you the rest of the way.  If this is your first
+time playing Xconq, choose the "Introductory" game; this is a simple
+preset scenario that uses the standard rules.
+
+There are also alternative user interfaces for Xconq.  The Curses interface 
+can be used in terminals and text consoles; it is generally invoked as 
+"cconq".  The SDL interface is being developed as a sleeker, faster, easier-
+to-use replacement to the Tcl/Tk interface; it can be invoked as "sdlconq", 
+or, on Windows, by locating it in "Start Menu | Programs" as 
+"Xconq (Experimental)".
+
+Xconq calls several different sites home.  For a number of years now, Xconq 
+has been found at
+
+	http://sources.redhat.com/xconq
+
+But, this is not its only home, and most development is now taking place at
+
+	http://sourceforge.net/projects/xconq
+
+and discussion and news can be found at
+
+	http://www.xconq.org
+
+These pages include information about new versions of Xconq, screenshots,
+online versions of the manuals, and so forth.
+
+A number of mailing lists are available.  Information on these lists can 
+be found at
+
+	http://sourceforge.net/mail/?group_id=124062
+
+and at
+
+	http://sources.redhat.com/xconq/lists.html
+
+Xconq is free software, and is licensed under the Gnu Public License,
+version 2; see the file COPYING for more details.
+
+Since Xconq is free, you can copy it, hack on it, and redistribute the
+hacked version as you like; but PLEASE identify clearly any changes
+you make to an "official" release - this will be of immeasurable help
+to me, other Xconq hackers, and users.  I always enjoy hearing about
+and seeing any improvements, fixes, or suggestions, and will try to
+incorporate the best ones into future versions of Xconq.
+
+
+						Stan Shebs
+						shebs@shebs.cnchost.com
+
+						(with updates by)
+						Eric McDonald
+						mcdonald@phy.cmich.edu
+
+
+Thanks to the many Xconq players and hackers around the net who have
+contributed literally hundreds of suggestions, fixes, and improvements
+since Xconq's first release to comp.sources.games in 1987.  The manual
+includes more detailed acknowledgments.
+

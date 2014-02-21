@@ -1,0 +1,278 @@
+# Makefile for X11 interface to Xconq.
+# Copyright (C) 1991-1995, 1997, 1999, 2000 Stanley T. Shebs.
+
+# Xconq is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+prefix = @prefix@
+
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+datadir = $(prefix)/share/xconq 
+mandir = @mandir@
+man6dir = $(mandir)/man6
+infodir = @infodir@
+docdir = $(datadir)/doc
+
+appdefaultsdir = @x11_app_defaults_dir@
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+krnsrcdir = $(srcdir)/../kernel
+
+GAMEUID = @gameuser@
+GAMEGRP = @gamegrp@
+
+GAMEPERM = 04755
+IAPPPERM = 0755
+DIRPERM  = 0755
+FILEPERM = 0644
+
+SHELL = /bin/sh
+
+INSTALL = install -c
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL)
+
+CC = @CC@
+
+CFLAGS = @CFLAGS@
+
+LDFLAGS =
+
+XTCONQ_EXEC_NAME = @XTCONQ_EXEC_NAME@
+
+X11_LIB = -lXext -lXmu -lX11
+
+XAW_LIB = -lXaw -lXt $(X11_LIB) -lXext -lm
+
+X11_CFLAGS = 
+X11_LDFLAGS =
+X11_LIBS =
+
+GUI_CFLAGS_X = @GUI_CFLAGS_X@
+
+X11_LIB_FLAGS = @XLIBS@
+
+# Override this to disable SelFile calls.
+
+SELFILE_CFLAGS = -DHAVE_SELFILE
+
+# Override this to point at or disable SelFile library.
+
+SELFILE_LIB = -L../SelFile -lXgnu
+
+# Override this in order to point at the Xpm include files.
+
+XPM_INCLUDE_FLAGS =
+
+# Override this in order to point at the Xpm library.
+
+XPM_LIB = -lXpm
+
+WITH_LIBS = 
+
+KERNEL_LIB = ../kernel/libconq.a
+LOW_LIB = ../kernel/libconqlow.a
+
+# Host and target-dependent makefile fragments come in here.
+####
+# End of host and target-dependent makefile fragments.
+
+LOW_H =	$(krnsrcdir)/config.h \
+	$(krnsrcdir)/misc.h \
+	$(krnsrcdir)/lisp.h
+
+GAME_H = $(krnsrcdir)/game.h \
+	 $(krnsrcdir)/gvar.def \
+	 $(krnsrcdir)/utype.def \
+	 $(krnsrcdir)/mtype.def \
+	 $(krnsrcdir)/ttype.def \
+	 $(krnsrcdir)/table.def
+
+UNIT_H = $(krnsrcdir)/unit.h \
+	 $(krnsrcdir)/action.def \
+	 $(krnsrcdir)/plan.def \
+	 $(krnsrcdir)/task.def
+
+ALL_H = $(krnsrcdir)/conq.h \
+	$(LOW_H) \
+	$(krnsrcdir)/dir.h \
+	$(krnsrcdir)/module.h \
+	$(GAME_H) \
+	$(krnsrcdir)/player.h \
+	$(krnsrcdir)/side.h \
+	$(UNIT_H) \
+	$(krnsrcdir)/goal.def \
+	$(krnsrcdir)/world.h \
+	$(krnsrcdir)/score.h \
+	$(krnsrcdir)/history.h \
+	$(krnsrcdir)/ai.h
+
+X_H =	$(srcdir)/xtconq.h \
+	$(srcdir)/ximf.h \
+	$(krnsrcdir)/cmd.def \
+	$(krnsrcdir)/imf.h \
+	$(krnsrcdir)/ui.h \
+	$(krnsrcdir)/print.h
+
+# Interface-specific object files.
+
+XTOBJS = xtmain.o \
+	xinit.o \
+	xmap.o \
+	xdraw.o \
+	xcloseup.o \
+	xcmd.o \
+	xprint.o \
+	xdesign.o \
+	xhelp.o \
+
+XOBJS = ximf.o
+
+XUTOBJS = ximf.o \
+	 xcutil.o
+
+HFLAGS = @HFLAGS@ @WIN32_GUI_SUBSYS_FLAG@
+
+X11_INCLUDE_FLAGS = @XINCLUDES@
+
+ALL_CFLAGS = $(CFLAGS) $(HFLAGS) $(SELFILE_CFLAGS) $(XPM_CFLAGS) $(REQD_CFLAGS) -I$(srcdir) -I$(srcdir)/.. -I$(krnsrcdir) $(X11_INCLUDE_FLAGS) $(XPM_INCLUDE_FLAGS)
+
+.c.o:
+	$(CC) -c $(ALL_CFLAGS) $<
+
+# Do it all.
+
+all:	all-xtconq
+
+all-xtconq:	$(XTCONQ_EXEC_NAME) Xtconq Xtconq-color x2imf imf2x xshowimf XShowimf XShowimf-color xtconq.6
+
+# The game itself.
+
+kernel-lib:
+	(cd ../kernel && $(MAKE) $(FLAGS_TO_PASS) libconq.a)
+
+low-lib:
+	(cd ../kernel && $(MAKE) $(FLAGS_TO_PASS) libconqlow.a)
+
+$(XTCONQ_EXEC_NAME): xtconq.o $(XTOBJS) $(XOBJS) kernel-lib low-lib
+	rm -f xconq xtconq
+	$(CC) -o $(XTCONQ_EXEC_NAME) $(ALL_CFLAGS) $(LDFLAGS) xtconq.o $(XTOBJS) $(XOBJS) $(KERNEL_LIB) $(LOW_LIB) $(X11_LIB_FLAGS) $(WITH_LIBS) $(XAW_LIB) $(NET_EXTRA_LIBS)
+
+xtconqad.h:	Xtconq.ad
+	$(srcdir)/../Ad2c/ad2c.script Xtconq.ad >xtconqad.h-new
+	$(srcdir)/../move-if-change xtconqad.h-new xtconqad.h
+
+# X-related utilities.
+
+x2imf:	x2imf.o $(XUTOBJS) low-lib
+	$(CC) -o x2imf $(ALL_CFLAGS) $(LDFLAGS) x2imf.o $(XUTOBJS) $(LOW_LIB) $(X11_LIB_FLAGS) $(WITH_LIBS) $(XAW_LIB) $(NET_EXTRA_LIBS)
+
+imf2x:	imf2x.o $(XUTOBJS) low-lib
+	$(CC) -o imf2x $(ALL_CFLAGS) $(LDFLAGS) imf2x.o $(XUTOBJS) $(LOW_LIB) $(X11_LIB_FLAGS) $(WITH_LIBS) $(XAW_LIB) $(NET_EXTRA_LIBS)
+
+xshowimf:	xshowimf.o $(XUTOBJS) low-lib
+	$(CC) -o xshowimf $(ALL_CFLAGS) $(LDFLAGS) xshowimf.o $(XUTOBJS) $(LOW_LIB) $(X11_LIB_FLAGS) $(WITH_LIBS) $(SELFILE_LIB) $(XAW_LIB) $(NET_EXTRA_LIBS)
+
+# Resources.
+
+Xtconq:	$(srcdir)/Xtconq.ad
+	cp $(srcdir)/Xtconq.ad Xtconq
+
+Xtconq-color:	Xtconq-co.ad
+	cp $(srcdir)/Xtconq-co.ad Xtconq-color
+
+XShowimf:	XShowimf.ad
+	cp $(srcdir)/XShowimf.ad XShowimf
+
+XShowimf-color:	XShowimf-co.ad
+	cp $(srcdir)/XShowimf-co.ad XShowimf-color
+
+# Man pages.
+
+xconq.6:	xconq.6in ../kernel/cmdline.6in
+	sed -e '/.so ...kernel.cmdline.6in/r $(srcdir)/../kernel/cmdline.6in' -e '/.so ...kernel.cmdline.6in/d' $(srcdir)/xconq.6in >xconq.6.new
+	$(srcdir)/../move-if-change xconq.6.new xconq.6
+
+xtconq.6:	xtconq.6in ../kernel/cmdline.6in
+	sed -e '/.so ...kernel.cmdline.6in/r $(srcdir)/../kernel/cmdline.6in' -e '/.so ...kernel.cmdline.6in/d' $(srcdir)/xtconq.6in >xtconq.6.new
+	$(srcdir)/../move-if-change xtconq.6.new xtconq.6
+
+# Installation.
+
+install: all install-only
+
+install-only: install-xtconq
+
+# Installation for the old version of xconq.
+
+install-xtconq: install-ximfconvs-only 
+	srcroot=`cd $(srcroot); pwd`; export srcroot; \
+	$(INSTALL_PROGRAM) $(XTCONQ_EXEC_NAME) $(bindir); \
+	chown $(GAMEUID) $(bindir)/xtconq; \
+	chgrp $(GAMEGRP) $(bindir)/xtconq; \
+	chmod $(GAMEPERM) $(bindir)/xtconq; \
+	$(INSTALL_DATA) Xtconq $(appdefaultsdir); \
+	$(INSTALL_DATA) Xtconq-color $(appdefaultsdir); \
+	$(INSTALL_PROGRAM) xshowimf $(bindir); \
+	chown $(GAMEUID) $(bindir)/xshowimf ; \
+	chgrp $(GAMEGRP) $(bindir)/xshowimf ; \
+	chmod $(IAPPPERM) $(bindir)/xshowimf ; \
+	$(INSTALL_DATA) XShowimf $(appdefaultsdir); \
+	$(INSTALL_DATA) XShowimf-color $(appdefaultsdir); \
+	$(INSTALL_DATA) xtconq.6 $(man6dir)
+
+# Installation of converter programs.
+
+install-ximfconvs-only: x2imf imf2x
+	srcroot=`cd $(srcroot); pwd`; export srcroot; \
+	$(INSTALL_PROGRAM) imf2x $(bindir); \
+	$(INSTALL_PROGRAM) x2imf $(bindir); \
+	chown $(GAMEUID) $(bindir)/imf2x $(bindir)/x2imf ; \
+	chgrp $(GAMEGRP) $(bindir)/imf2x $(bindir)/x2imf ; \
+	chmod $(IAPPPERM) $(bindir)/imf2x $(bindir)/x2imf
+
+# Installation of manpages.
+
+install-manpages-only: xconq.6
+	srcroot=`cd $(srcroot); pwd`; export srcroot; \
+	$(INSTALL_DATA) xconq.6 $(man6dir)
+
+# Cleanliness support.
+
+clean:
+	rm -f *.o lint.out core
+	rm -f xconq xconq.6 *.conq *.xconq Xconq.*
+	rm -f imf2x x2imf ximfapp xshowimf XShowimf XShowimf-color
+	rm -f xtconq Xtconq Xtconq-color xtconq.6
+
+distclean: clean
+	rm -f Makefile config.status
+
+extraclean: distclean
+	rm -f *~* .*~*
+
+realclean: distclean
+
+Makefile: Makefile.in $(host_makefile_frag) $(target_makefile_frag)
+        cd .. \
+          && CONFIG_FILES=x11/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+# Dependencies.
+
+xtconq.o:	$(ALL_H) $(X_H) $(krnsrcdir)/cmdline.h $(srcdir)/xtconqad.h
+xtmain.o:	$(ALL_H) $(X_H) $(krnsrcdir)/cmdline.h
+xinit.o:	$(ALL_H) $(X_H)
+xmap.o:		$(ALL_H) $(X_H)
+xcmd.o:		$(ALL_H) $(X_H)
+xdraw.o:	$(ALL_H) $(X_H)
+xcloseup.o:	$(ALL_H) $(X_H)
+xprint.o:	$(ALL_H) $(X_H)
+xdesign.o:	$(ALL_H) $(X_H)
+xhelp.o:	$(ALL_H) $(X_H)
+ximf.o:		$(ALL_H) $(X_H)

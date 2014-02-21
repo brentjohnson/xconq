@@ -1,0 +1,367 @@
+# Makefile for tcl/tk interface code in Xconq.
+# Copyright (C) 1998-2000 Stanley T. Shebs.
+# Copyright (C) 2003, 2004 Eric A. McDonald.
+
+# Xconq is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+prefix = @prefix@
+
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+datadir = @xconq_data_dir@
+mandir = @mandir@
+man6dir = $(mandir)/man6
+infodir = @infodir@
+docdir = $(datadir)/doc
+
+tcltkdir = $(datadir)/tcltk
+BWidgetdir = $(datadir)/tcltk/BWidget
+BWidgetimagesdir = $(datadir)/tcltk/BWidget/images
+BWidgetlangdir = $(datadir)/tcltk/BWidget/lang
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+krnsrcdir = $(srcdir)/../kernel
+
+GAMEUID = @gameuser@
+GAMEGRP = @gamegrp@
+
+GAMEPERM = 04755
+IAPPPERM = 0755
+DIRPERM  = 0755
+FILEPERM = 0644
+
+SHELL = /bin/sh
+
+INSTALL = install -c
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL)
+
+CC = @CXX@
+
+CFLAGS = @CXXFLAGS@
+
+AR = @AR@
+
+AR_FLAGS = rcu
+
+RANLIB = @RANLIB@
+
+WINDRES = windres
+
+LDFLAGS =
+
+LIB_RUNTIME_DIR = $(libdir)
+
+TKCONQ_EXEC_NAME = @TKCONQ_EXEC_NAME@
+
+ALLTARGET = all-@CONFIGTARGET@
+INSTALLTARGET = install-@CONFIGTARGET@
+
+XPM_CFLAGS =
+XPM_INCLUDE_FLAGS =
+#XPM_LIB = -lXpm
+XPM_LIB =
+
+X11_CFLAGS = $(XPM_CFLAGS)
+#X11_INCLUDE_FLAGS = @TK_XINCLUDES@ @XINCLUDES@ $(XPM_INCLUDE_FLAGS)
+X11_INCLUDE_FLAGS = @XINCLUDES@ $(XPM_INCLUDE_FLAGS)
+X11_LDFLAGS = @XLIBS@
+X11_LIBS = -lXext -lXmu -lX11 $(XPM_LIB)
+
+# Override this to disable SelFile calls.
+#SELFILE_CFLAGS = -DHAVE_SELFILE
+# Override this to point at or disable SelFile library.
+#SELFILE_LIB = -L$(srcdir)/../SelFile -lXgnu
+
+# There is some confusion here, because we want to support two
+# different modes: building with tcl and tk source dirs that are
+# siblings of this Makefile's directory, and building using the
+# installed tcl/tk.  The second is more common for Linux, and is
+# preferred if available, while the first is required for Windows
+# building and on Unixen without tcl.
+LIB_INSTALL_DIR = $(libdir)
+# This variable is needed when doing dynamic linking.
+LIB_RUNTIME_DIR = $(libdir)
+TCL_CFLAGS = @TCL_INCLUDE_SPEC@
+TK_CFLAGS = @TK_INCLUDE_SPEC@ 
+TCLTK_CFLAGS = $(TCL_CFLAGS) $(TK_CFLAGS)
+TCL_DL_LIBS = @TCL_DL_LIBS@
+TCL_LDFLAGS = @TCL_LD_SEARCH_FLAGS@ @TCL_LDFLAGS@
+TK_LDFLAGS = @TK_LDFLAGS@
+TCLTK_LDFLAGS =
+#TCLTK_LIBS = ./tcl84.lib ./tk84.lib -lm
+TCLTK_LIBS = $(TCL_LDFLAGS) $(TK_LDFLAGS) $(TCL_DL_LIBS)
+
+WITH_LIBS = 
+NET_EXTRA_LIBS =
+
+KERNEL_LIB = ../kernel/libconq.a
+LOW_LIB = ../kernel/libconqlow.a
+
+TKUI_LIB = ./libtkui.a
+TKIMF_LIB = ./libtkimf.a
+TKIAPP_LIB = ./libtkiapp.a
+
+XCUTIL_OBJ = ../x11/xcutil.o
+UNIX_XCONQ_OBJS = tkunix.o
+UNIX_IMFAPP_OBJS = iappunix.o $(XCUTIL_OBJ) 
+ALL_UNIX_CFLAGS = $(X11_CFLAGS) # $(SELFILE_CFLAGS)
+ALL_UNIX_INCLUDES = $(X11_INCLUDE_FLAGS)
+ALL_UNIX_LDFLAGS = $(X11_LDFLAGS)
+ALL_UNIX_LIBS = $(X11_LIBS)
+UNIX_XCONQ_TARGETS = $(UNIX_XCONQ_OBJS) $(TKUI_LIB) $(TKIMF_LIB) kernel-lib low-lib
+UNIX_IMFAPP_TARGETS = $(UNIX_IMFAPP_OBJS) $(TKIAPP_LIB) $(TKIMF_LIB) low-lib
+UNIX_ALL_TARGETS = all-libs $(TKCONQ_EXEC_NAME) imfapp x2imf imf2x manpages
+UNIX_INSTALL_TARGETS = all-xconq install-libs install-xconq-only install-imfapp-only install-ximfconvs-only install-manpages-only
+
+WIN32_XCONQ_OBJS = tkwin32.o xcqicon.o xlibstuff.o
+WIN32_IMFAPP_OBJS = iappwin32.o iappicon.o xlibstuff.o
+ALL_WIN32_CFLAGS = @WIN32_GUI_SUBSYS_FLAG@
+ALL_WIN32_INCLUDES =
+ALL_WIN32_LDFLAGS =
+ALL_WIN32_LIBS = @W32API_LIBS@
+WIN32_XCONQ_TARGETS = $(WIN32_XCONQ_OBJS) $(TKUI_LIB) $(TKIMF_LIB) kernel-lib low-lib
+WIN32_IMFAPP_TARGETS = $(WIN32_IMFAPP_OBJS) $(TKIAPP_LIB) $(TKIMF_LIB) low-lib
+WIN32_ALL_TARGETS = all-libs $(TKCONQ_EXEC_NAME) imfapp
+WIN32_INSTALL_TARGETS = all-xconq install-libs install-xconq-only install-imfapp-only 
+
+PLATFORM_CFLAGS = @PLATFORM_CFLAGS@
+PLATFORM_INCLUDES = @PLATFORM_INCLUDES@
+PLATFORM_LDFLAGS = @PLATFORM_LDFLAGS@
+PLATFORM_LIBS = @PLATFORM_LIBS@
+PLATFORM_XCONQ_OBJS = @PLATFORM_XCONQ_OBJS@
+PLATFORM_IMFAPP_OBJS = @PLATFORM_IMFAPP_OBJS@
+PLATFORM_XCONQ_TARGETS = @PLATFORM_XCONQ_TARGETS@
+PLATFORM_IMFAPP_TARGETS = @PLATFORM_IMFAPP_TARGETS@
+PLATFORM_ALL_TARGETS = @PLATFORM_ALL_TARGETS@
+PLATFORM_INSTALL_TARGETS = @PLATFORM_INSTALL_TARGETS@
+
+HFLAGS = @HFLAGS@
+
+ALL_COMMON_CFLAGS = $(CFLAGS) $(HFLAGS) -I$(srcdir) -I$(srcdir)/.. -I$(krnsrcdir) $(TCLTK_CFLAGS)
+ALL_COMMON_LDFLAGS = $(LDFLAGS) $(TCLTK_LDFLAGS)
+ALL_COMMON_LIBS1 = $(TKIMF_LIB) 
+ALL_COMMON_LIBS2 = $(LOW_LIB) 
+ALL_COMMON_LIBS3 = $(TCLTK_LIBS) $(WITH_LIBS) $(NET_EXTRA_LIBS) 
+
+ALL_CFLAGS = $(ALL_COMMON_CFLAGS) $(PLATFORM_CFLAGS) $(PLATFORM_INCLUDES)
+ALL_LDFLAGS = $(ALL_COMMON_LDFLAGS) $(PLATFORM_LDFLAGS)
+#ALL_LIBS = $(ALL_COMMON_LIBS) $(PLATFORM_LIBS)
+
+# Host and target-dependent makefile fragments come in here.
+####
+# End of host and target-dependent makefile fragments.
+
+GAME_H = $(krnsrcdir)/game.h \
+	 $(krnsrcdir)/gvar.def \
+	 $(krnsrcdir)/utype.def \
+	 $(krnsrcdir)/mtype.def \
+	 $(krnsrcdir)/ttype.def \
+	 $(krnsrcdir)/table.def
+
+UNIT_H = $(krnsrcdir)/unit.h \
+	 $(krnsrcdir)/action.def \
+	 $(krnsrcdir)/plan.def \
+	 $(krnsrcdir)/task.def
+
+AI_H = $(krnsrcdir)/aiscore.h \
+	$(krnsrcdir)/aiunit.h \
+	$(krnsrcdir)/aiunit2.h \
+	$(krnsrcdir)/aitact.h \
+	$(krnsrcdir)/aioprt.h
+
+ALL_H = $(krnsrcdir)/conq.h \
+	$(krnsrcdir)/config.h \
+	$(krnsrcdir)/misc.h \
+	$(krnsrcdir)/dir.h \
+	$(krnsrcdir)/lisp.h \
+	$(krnsrcdir)/module.h \
+	$(GAME_H) \
+	$(krnsrcdir)/player.h \
+	$(krnsrcdir)/side.h \
+	$(UNIT_H) \
+	$(krnsrcdir)/goal.def \
+	$(krnsrcdir)/world.h \
+	$(krnsrcdir)/score.h \
+	$(krnsrcdir)/history.h \
+	$(AI_H) \
+	$(krnsrcdir)/kpublic.h
+
+TK_H =	$(srcdir)/tkconq.h \
+	$(srcdir)/tkimf.h \
+	$(srcdir)/xlibstuff.h \
+	$(krnsrcdir)/cmd.def \
+	$(krnsrcdir)/imf.h \
+	$(krnsrcdir)/ui.h \
+	$(krnsrcdir)/print.h
+
+# Tk-specific object files.
+
+OBJS = \
+	tkmain.o \
+	tkinit.o \
+	tkcmd.o \
+	tkmap.o
+
+IMFOBJS = \
+	tkisamp.o \
+	tkimf.o
+
+.c.o:
+	$(CC) -c $(ALL_CFLAGS) $<
+
+# Default target builds nothing.
+all:
+
+# Build the Tk apps.
+all-xconq: $(PLATFORM_ALL_TARGETS)
+
+$(TKCONQ_EXEC_NAME): $(PLATFORM_XCONQ_TARGETS)
+	rm -f xconq xconq.exe tkconq tkconq.exe
+	$(CC) -o $(TKCONQ_EXEC_NAME) $(ALL_CFLAGS) $(ALL_LDFLAGS) $(PLATFORM_XCONQ_OBJS) $(TKUI_LIB) $(ALL_COMMON_LIBS1) $(KERNEL_LIB) $(ALL_COMMON_LIBS2) $(PLATFORM_LIBS) $(ALL_COMMON_LIBS3)
+
+imfapp: $(PLATFORM_IMFAPP_TARGETS)
+	rm -f imfapp imfapp.exe
+	$(CC) -o imfapp $(ALL_CFLAGS) $(ALL_LDFLAGS) $(PLATFORM_IMFAPP_OBJS) $(TKIAPP_LIB) $(ALL_COMMON_LIBS1) $(ALL_COMMON_LIBS2) $(PLATFORM_LIBS) $(ALL_COMMON_LIBS3) 
+
+$(XCUTIL_OBJ):
+	(cd ../x11 && $(MAKE) $(FLAGS_TO_PASS) xcutil.o)
+
+x2imf:
+	(cd ../x11 && $(MAKE) $(FLAGS_TO_PASS) x2imf)
+
+imf2x:
+	(cd ../x11 && $(MAKE) $(FLAGS_TO_PASS) imf2x)
+
+manpages:
+	(cd ../x11 && $(MAKE) $(FLAGS_TO_PASS) xconq.6)
+
+xcqicon.o: Xconq.RC Xconq.ico Xcdoc.ico
+	$(WINDRES) -I rc Xconq.RC xcqicon.o
+
+iappicon.o: Imfapp.RC Imfapp.ico
+	$(WINDRES) -I rc Imfapp.RC iappicon.o
+
+# Common Libraries
+
+kernel-lib:
+	(cd ../kernel && $(MAKE) $(FLAGS_TO_PASS) libconq.a)
+
+low-lib:
+	(cd ../kernel && $(MAKE) $(FLAGS_TO_PASS) libconqlow.a)
+
+# UI Libraries
+
+all-libs: libtkui.a libtkimf.a libtkiapp.a
+
+libtkui.a: $(OBJS)
+	rm -f libtkui.a
+	$(AR) $(AR_FLAGS) libtkui.a $(OBJS)
+	$(RANLIB) libtkui.a
+
+libtkimf.a: $(IMFOBJS)
+	rm -f libtkimf.a
+	$(AR) $(AR_FLAGS) libtkimf.a $(IMFOBJS)
+	$(RANLIB) libtkimf.a
+
+libtkiapp.a: tkiapp.o
+	rm -f libtkiapp.a
+	$(AR) $(AR_FLAGS) libtkiapp.a tkiapp.o
+	$(RANLIB) libtkiapp.a
+
+# Installation
+
+install: install-libs
+
+install-only: install-libs-only
+
+install-libs: all-libs install-libs-only
+
+install-xconq: $(PLATFORM_INSTALL_TARGETS)
+
+install-libs-only:
+	$(INSTALL_DATA) $(srcdir)/tkconq.tcl $(tcltkdir)
+	$(INSTALL_DATA) $(srcdir)/imfapp.tcl $(tcltkdir)
+	$(INSTALL_DATA) $(srcdir)/BWidget/*.* $(BWidgetdir)
+	$(INSTALL_DATA) $(srcdir)/BWidget/images/*.* $(BWidgetimagesdir)
+	$(INSTALL_DATA) $(srcdir)/BWidget/lang/*.* $(BWidgetlangdir)
+	chown $(GAMEUID) $(tcltkdir) $(BWidgetdir) $(BWidgetimagesdir) $(BWidgetlangdir) \
+				     $(tcltkdir)/*.* $(BWidgetdir)/*.* $(BWidgetimagesdir)/*.* $(BWidgetlangdir)/*.*
+	chgrp $(GAMEGRP) $(tcltkdir) $(BWidgetdir) $(BWidgetimagesdir) $(BWidgetlangdir) \
+				     $(tcltkdir)/*.* $(BWidgetdir)/*.* $(BWidgetimagesdir)/*.* $(BWidgetlangdir)/*.*
+	chmod $(DIRPERM) $(tcltkdir) $(BWidgetdir) $(BWidgetimagesdir) $(BWidgetlangdir)
+	chmod $(FILEPERM) $(tcltkdir)/*.* $(BWidgetdir)/*.* $(BWidgetimagesdir)/*.* $(BWidgetlangdir)/*.*
+
+install-xconq-only: $(TKCONQ_EXEC_NAME)
+	srcroot=`cd $(srcroot); pwd`; export srcroot; \
+	if [ -f $(TKCONQ_EXEC_NAME).exe ] ; then \
+		progname="$(TKCONQ_EXEC_NAME).exe" ; \
+	else \
+		progname="$(TKCONQ_EXEC_NAME)" ; \
+	fi; \
+	$(INSTALL_PROGRAM) $${progname} $(bindir); \
+	chown $(GAMEUID) $(bindir)/$${progname}; \
+	chgrp $(GAMEGRP) $(bindir)/$${progname}; \
+	chmod $(GAMEPERM) $(bindir)/$${progname}; 
+
+install-imfapp-only: imfapp
+	srcroot=`cd $(srcroot); pwd`; export srcroot; \
+	if [ -f imfapp.exe ] ; then \
+		progname="imfapp.exe" ; \
+	else \
+		progname="imfapp" ; \
+	fi; \
+	$(INSTALL_PROGRAM) $${progname} $(bindir); \
+	chown $(GAMEUID) $(bindir)/$${progname}; \
+	chgrp $(GAMEGRP) $(bindir)/$${progname}; \
+	chmod $(IAPPPERM) $(bindir)/$${progname};
+
+install-ximfconvs-only: x2imf imf2x
+	(cd ../x11 && $(MAKE) $(FLAGS_TO_PASS) install-ximfconvs-only)
+
+install-manpages-only: manpages
+	(cd ../x11 && $(MAKE) $(FLAGS_TO_PASS) install-manpages-only)
+
+# Usual cleaning, and flushing of anything junk-like.
+
+clean:
+	rm -f *.o lint.out core
+	rm -f *.log $(TKUI_LIB) $(TKIAPP_LIB) $(TKIMF_LIB) 
+	rm -f *conq *imfapp *.exe 
+
+distclean: clean
+	rm -f Makefile config.status config.cache
+
+realclean: distclean
+
+extraclean: distclean
+	rm -f *~* .*~*
+
+Makefile: $(srcdir)/Makefile.in
+        cd .. \
+          && CONFIG_FILES=tcltk/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+# All the .h dependencies.
+
+tkmain.o:	$(ALL_H) $(TK_H)
+tkinit.o:	$(ALL_H) $(TK_H)
+tkcmd.o:	$(ALL_H) $(TK_H)
+tkmap.o:	$(ALL_H) $(TK_H)
+tkimf.o:	$(ALL_H) $(TK_H)
+tkisamp.o:	$(ALL_H) $(TK_H)
+
+tkiapp.o:	$(ALL_H) $(TK_H)
+
+tkunix.o:	$(ALL_H) $(TK_H)
+iappunix.o:	$(ALL_H) $(TK_H)
+
+tkwin32.o:	$(ALL_H) $(TK_H)
+iappwin32.o:	$(ALL_H) $(TK_H)
+
+xlibstuff.o:	$(ALL_H) xlibstuff.h

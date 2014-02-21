@@ -1,0 +1,90 @@
+\input texinfo
+@setfilename playref.info
+@settitle Xconq Players Quick Reference
+
+@finalout
+@setchapternewpage off
+@iftex
+@raggedbottom
+@global@parindent=0pt
+@end iftex
+
+@titlepage
+@title Xconq Players Quick Reference
+@subtitle December 2000
+@author Stanley T. Shebs
+
+@iftex
+@headings off
+@everyheading  @| @thistitle @| @thispage
+@everyfooting Version 7.4 @| December 2000 @| (printed @today{})
+@end iftex
+
+@chapter Commands
+
+@section Generic Commands
+
+@clear FULL
+
+@include commands.texi
+
+@section X11 Interface Commands
+
+@section curses Interface Commands
+
+@section Mac Interface Commands
+
+@chapter Unit Properties
+
+@table @asis
+
+@item acp
+Action points.
+
+@item hp
+Hit points.
+
+@item cp
+Completeness points.
+
+@item supply
+Supply amounts (one for each material type).
+
+@item tp
+Tooling points (one for each unit type).
+
+@end table
+
+@chapter Cell Properties
+
+@table @asis
+
+@item terrain
+Main terrain type,
+border and connection in each direction for each border or connection type,
+and thickness of coating for each coating type.
+
+@item elevation
+Elevation.
+
+@item people
+People's side.
+
+@item materials
+Materials in terrain, for each material type.
+
+@item temperature
+Ambient temperature.
+
+@item wind
+Direction and force of wind.
+
+@item clouds
+Density, height and bottom elevation of clouds.
+
+@item feature
+Name of geographical feature.
+
+@end table
+
+@bye

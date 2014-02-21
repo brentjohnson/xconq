@@ -1,0 +1,137 @@
+# Makefile for Xconq tests.
+# Copyright (C) 1993-1999 Stanley T. Shebs.
+
+# Xconq is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+SHELL = /bin/sh
+
+# Host and target-dependent makefile fragments come in here.
+####
+# End of host and target-dependent makefile fragments
+
+all:
+	@echo "Pick something to test:"
+	@echo "cmds-diff      Comparison of commands in doc vs in source"
+	@echo "syms-diff      Comparison of GDL symbols in doc vs source"
+	@echo "game-diff      Comparison of library game definitions and uses"
+	@echo "imf-diff       Comparison of image family definitions and uses"
+	@echo "src.uses       References to GDL symbols in source code"
+	@echo "lib.uses       References to GDL symbols in lib and test games"
+	@echo "game.uses      References to games in library games"
+	@echo "imf.uses       References to image families in library games"
+	@echo "check-lib      Running of each library game module"
+	@echo "check-actions  Running of each type of action"
+	@echo "check-save     Saving and restoring"
+	@echo "check-test     Special-purpose test games"
+	@echo "check-dates    Consistency of dates everywhere"
+	@echo "check-versions Consistency of versions everywhere"
+
+cmds-diff:
+	$(srcdir)/cmd-diff.sh $(srcdir)
+
+syms-diff:
+	$(srcdir)/sym-diff.sh $(srcdir)
+
+syntax-diff:
+	$(srcdir)/syntax-diff.sh $(srcdir)
+
+game-diff:
+	$(srcdir)/game-diff.sh $(srcdir)
+
+imf-diff:
+	$(srcdir)/imf-diff.sh $(srcdir)
+
+src.uses:
+	$(srcdir)/src-uses.sh $(srcdir) >src.uses
+
+lib.uses:
+	$(srcdir)/lib-uses.sh $(srcdir) >lib.uses
+
+game.uses:
+	$(srcdir)/game-uses.sh $(srcdir) >game.uses
+
+imf.uses:
+	$(srcdir)/imf-uses.sh $(srcdir) >imf.uses
+
+all.g.uses:	$(srcdir)/all.g
+	sed -e 's/;.*//' $(srcdir)/all.g | tr '() ' '\012' | grep -v xxx | sort | uniq >all.g.uses
+
+check:	check-lib check-actions check-save check-test check-ai check-run check-long check-auto
+
+check-lib:
+	echo Testing library...
+	$(srcdir)/test-lib.sh $(srcdir)
+
+check-actions:
+	echo Testing actions...
+	$(srcdir)/test-acts.sh $(srcdir)
+
+check-save:
+	echo Testing save/restore...
+	$(srcdir)/test-save.sh $(srcdir)
+
+check-test:
+	echo Testing test cases...
+	$(srcdir)/test-test.sh $(srcdir)
+
+check-ai:
+	echo Testing AI...
+	$(srcdir)/test-ai.sh $(srcdir)
+
+check-run:
+	echo Testing running...
+	$(srcdir)/test-run.sh $(srcdir)
+
+check-long:
+	echo Testing long games...
+	$(srcdir)/test-long.sh $(srcdir)
+
+# Tests which run automatically and produce a pass/fail result.
+check-auto:
+	../kernel/skelconq --auto -f auto.g -L $(srcdir)/../lib
+
+check-perf:
+	echo Testing performance...
+	$(srcdir)/test-perf.sh $(srcdir)
+
+check-sync: syms.diff all.g.uses src.uses lib.uses
+
+check-dates:
+	@echo In sources:
+	@grep VERSION $(srcdir)/../kernel/version.h
+	@echo In documentation:
+	@grep " 199[5-9]" $(srcdir)/../doc/*.texi
+
+check-versions:
+	@echo In sources:
+	@grep VERSION $(srcdir)/../kernel/version.h
+	@grep Version: $(srcdir)/../xconq.spec
+	@echo In documentation:
+	@grep '@center Version' $(srcdir)/../doc/*.texi
+	@grep '@every' $(srcdir)/../doc/*.texi |grep Version
+
+install: all install-only
+
+install-only:
+
+clean:
+	rm -f *.log core *.xconq
+	rm -f *.sym *.syms *.uses *.diff *.cmds* joined.txt
+
+distclean: clean
+	rm -f Makefile config.status
+
+extraclean: distclean
+	rm -f *~* .*~*
+
+realclean: distclean
+
+Makefile: Makefile.in $(host_makefile_frag) $(target_makefile_frag)
+        cd .. \
+          && CONFIG_FILES=miac/$@ CONFIG_HEADERS= $(SHELL) ./config.status
