@@ -3046,7 +3046,7 @@ draw_borders_iso(MapW *mapw, int x, int y, int b)
 	    wid2 = wid / 2;
 	    XSetLineAttributes(dpy, gc, wid, LineSolid, CapButt, JoinMiter); 
 	    color = dside->ui->cell_color[b];
-	    if ((int)color < 0)
+	    if (!color)
 	      color = dside->ui->blackcolor;
 	    XSetForeground(dpy, gc, color->pixel);
 	    XSetBackground(dpy, gc, dside->ui->whitecolor->pixel);
@@ -3134,7 +3134,7 @@ draw_connections(MapW *mapw, int vx, int vyhi, int vylo, int c)
 	wid2 = wid / 2;
 	XSetLineAttributes(dpy, gc, wid, LineSolid, CapButt, JoinMiter); 
 	color = dside->ui->cell_color[c];
-	if ((int)color < 0)
+	if (!color)
 	  color = dside->ui->blackcolor;
 	XSetForeground(dpy, gc, color->pixel);
 	XSetBackground(dpy, gc, dside->ui->whitecolor->pixel);
@@ -3241,7 +3241,7 @@ draw_connections_iso(MapW *mapw, int x, int y, int c)
 	    wid2 = wid / 2;
 	    XSetLineAttributes(dpy, gc, wid, LineSolid, CapButt, JoinMiter); 
 	    color = dside->ui->cell_color[c];
-	    if ((int)color < 0)
+	    if (!color)
 	      color = dside->ui->blackcolor;
 	    XSetForeground(dpy, gc, color->pixel);
 	    XSetBackground(dpy, gc, dside->ui->whitecolor->pixel);
