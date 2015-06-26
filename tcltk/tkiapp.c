@@ -12,6 +12,7 @@ extern "C" {
 
 /* For tcltk 8.4 source compatibility. */
 #define USE_NON_CONST
+#define USE_INTERP_RESULT
 
 #ifdef MAC
 #include <tclMacCommonPch.h>
