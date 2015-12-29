@@ -13,7 +13,7 @@ any later version.  See the file COPYING.  */
 /*! \brief Scorekeeper Data. */
 typedef struct a_scorekeeper {
     short id;                   /*!< unique id number */
-    char *title;               	/*!< title by which this is displayed */
+    const char *title;         	/*!< title by which this is displayed */
     Obj *when;                  /*!< times at which this will run */
     Obj *who;                   /*!< which sides this applies to */
     SideMask whomask;           /*!< mask of sides this applies to */
@@ -84,5 +84,5 @@ extern void side_wins(Side *side, int why);
 extern void side_loses(Side *side, Side *side2, int why);
 extern void all_sides_draw(void);
 extern void record_into_scorefile(void);
-extern char *get_scores(Side *side);
+extern const char *get_scores(Side *side);
 

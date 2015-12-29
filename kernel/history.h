@@ -28,8 +28,8 @@ typedef enum {
  * of the event.
  */
 typedef struct a_hevt_defn {
-    char *name;         	/*!< Name of event. */
-    char *datadescs;	/*!< Drescription of event. */
+    const char *name;         	/*!< Name of event. */
+    const char *datadescs;	/*!< Drescription of event. */
 } HevtDefn;
 
 /*! \brief Historical Event. 
@@ -55,7 +55,7 @@ typedef struct a_histevent {
 typedef struct a_pastunit {
     short type;                 		/*!< type */
     int id;                     			/*!< truly unique id number */
-    char *name;                 		/*!< the name, if given */
+    const char *name;                 		/*!< the name, if given */
     int number;                 		/*!< semi-unique number */
     short x;                    			/*!< x position of unit in world */
     short y;                    			/*!< y position of unit in world */
@@ -116,7 +116,7 @@ extern void end_history(void);
 extern HistEvent *get_nth_history_line(Side *side, int n, HistEvent **nextevt);
 extern PastUnit *create_past_unit(int type, int id);
 extern PastUnit *find_past_unit(int n);
-extern char *past_unit_desig(PastUnit *pastunit);
+extern const char *past_unit_desig(PastUnit *pastunit);
 extern PastUnit *change_unit_to_past_unit(Unit *unit);
 extern void dump_statistics(void);
 

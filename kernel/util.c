@@ -493,7 +493,7 @@ xmalloc(int amt)
 /* Like sprintf, but appends. */
 
 void
-tprintf(char *buf, char *str, ...)
+tprintf(char *buf, const char *str, ...)
 {
     va_list ap;
     char line[TBUFSIZE];
@@ -505,7 +505,7 @@ tprintf(char *buf, char *str, ...)
 }
 
 void
-tnprintf(char *buf, int n, char *str, ...)
+tnprintf(char *buf, int n, const char *str, ...)
 {
     va_list ap;
     int n1 = n - strlen(buf);
@@ -520,7 +520,7 @@ tnprintf(char *buf, int n, char *str, ...)
 }
 
 void
-vtprintf(char *buf, char *str, va_list ap)
+vtprintf(char *buf, const char *str, va_list ap)
 {
     char line[TBUFSIZE];
 
@@ -560,7 +560,7 @@ select_by_weight(int *arr, int numvals)
 /* Copy a string to newly-allocated space.  The new space is never freed. */
 
 char *
-copy_string(char *str)
+copy_string(const char *str)
 {
     int len = strlen(str);
     char *rslt;
@@ -576,7 +576,7 @@ copy_string(char *str)
 /* Insert the given number of blanks between each char of the string. */
 
 char *
-pad_blanks(char *str, int n)
+pad_blanks(const char *str, int n)
 {
     char *pb;
     int i;
@@ -599,7 +599,7 @@ pad_blanks(char *str, int n)
    Return -1 on failed search. */
 
 int
-iindex(int ch, char *str)
+iindex(int ch, const char *str)
 {
     int i;
 
@@ -623,7 +623,7 @@ idifftime(time_t t1, time_t t0)
    data values. */
 
 void
-case_panic(char *str, int var)
+case_panic(const char *str, int var)
 {
     run_error("Panic! Unknown %s %d", str, var);
 }
@@ -796,7 +796,7 @@ char *buf;
 #endif
 
 void
-debug_printf(char *str, ...)
+debug_printf(const char *str, ...)
 {
     va_list ap;
 
@@ -806,7 +806,7 @@ debug_printf(char *str, ...)
 }
 
 void
-debugm_printf(char *str, ...)
+debugm_printf(const char *str, ...)
 {
     va_list ap;
 
@@ -816,7 +816,7 @@ debugm_printf(char *str, ...)
 }
 
 void
-debugg_printf(char *str, ...)
+debugg_printf(const char *str, ...)
 {
     va_list ap;
 
@@ -833,7 +833,7 @@ debugg_printf(char *str, ...)
 struct a_timeline_entry {
   int start;
   int end;
-  char *type;
+  const char *type;
   int detail1;
   int detail2;
 };
@@ -852,12 +852,12 @@ static int starting_trace = TRUE;
 
 static TimelineBlock *current_timeline_block;
 
-static char *current_activity;
+static const char *current_activity;
 
 static struct timeval initial_time;
 
 void
-record_activity_start(char *type, int detail)
+record_activity_start(const char *type, int detail)
 {
     TimelineBlock *tlblock;
     int usec;
@@ -891,7 +891,7 @@ record_activity_start(char *type, int detail)
 }
 
 void
-record_activity_end(char *type, int detail)
+record_activity_end(const char *type, int detail)
 {
     TimelineBlock *tlblock;
     int usec;
@@ -949,7 +949,7 @@ dump_activity_trace(void)
 /* Handling for various kinds of failures. */
 
 void
-init_error(char *str, ...)
+init_error(const char *str, ...)
 {
     char buf[BUFSIZE];
     va_list ap;
@@ -965,7 +965,7 @@ init_error(char *str, ...)
 }
 
 void
-init_warning(char *str, ...)
+init_warning(const char *str, ...)
 {
     char buf[BUFSIZE];
     va_list ap;
@@ -985,7 +985,7 @@ init_warning(char *str, ...)
 /* A run error is fatal. */
 
 void
-run_error(char *str, ...)
+run_error(const char *str, ...)
 {
     char buf[BUFSIZE];
     va_list ap;
@@ -1004,7 +1004,7 @@ run_error(char *str, ...)
    usually a problem with Xconq or a game design. */
 
 void
-run_warning(char *str, ...)
+run_warning(const char *str, ...)
 {
     char buf[BUFSIZE];
     va_list ap;
@@ -1025,7 +1025,7 @@ run_warning(char *str, ...)
    just in case the warning immediately precedes disaster. */
 
 void
-log_warning(char *typ, char *str)
+log_warning(const char *typ, const char *str)
 {
     static int first_warning = TRUE;
     static FILE *ewfp;

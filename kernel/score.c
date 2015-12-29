@@ -25,7 +25,7 @@ any later version.  See the file COPYING.  */
 #include "kernel.h"
 
 typedef struct a_score_record {
-    char *gamename;
+    const char *gamename;
     Obj *sides;
     Obj *raw;
     int numturns;
@@ -46,7 +46,7 @@ typedef struct a_score_record {
 
 static int read_scorefile(void);
 static int interp_score_record(Obj *form);
-static char *basic_player_name(Player *player);
+static const char *basic_player_name(Player *player);
 static void eval_sk_last_side_wins(Scorekeeper *sk);
 static void eval_sk_last_alliance_wins(Scorekeeper *sk);
 static void score_variant_desc(ScoreRecord *sr, char *varbuf);
@@ -447,7 +447,7 @@ sum_uprop(Side *side, Obj *form)
     Side *side2 = NULL;
     Unit *unit = NULL;
     int i = 0, usepointval = FALSE, sum = 0;
-    char *upropname = NULL;
+    const char *upropname = NULL;
     int (*intgetter)(int) = NULL;
 
     /* Sanity Checks. */
@@ -1077,10 +1077,10 @@ all_sides_draw(void)
 }
 
 /* (should move this to nlang.c?) */
-static char *
+static const char *
 basic_player_name(Player *player)
 {
-    char *playername;
+    const char *playername;
 
     playername = "";
     if (player) {
@@ -1101,7 +1101,8 @@ record_into_scorefile(void)
 {
     int i;
     int any_advantage_variation = FALSE, adv, adv2, advantage;
-    char *filename, *mversion, *playername, *varname;
+    const char *filename, *playername, *mversion;
+    const char *varname;
     Variant *variants, *var;
     FILE *fp;
     Side *side;
@@ -1240,7 +1241,7 @@ read_scorefile(void)
 {
     int startlineno = 1, endlineno = 1;
     int numrecs;
-    char *filename;
+    const char *filename;
     Obj *form;
     FILE *fp;
     ScoreRecord *sr;
@@ -1276,7 +1277,7 @@ read_scorefile(void)
 static int
 interp_score_record(Obj *form)
 {
-    char *propname;
+    const char *propname;
     Obj *props, *prop;
     ScoreRecord *sr;
 
@@ -1322,12 +1323,12 @@ interp_score_record(Obj *form)
    a fresh set of records each time, and allocates a new formatting
    buffer each time, so should be called sparingly. */
 
-char *
+const char *
 get_scores(Side *side)
 {
     int wins, losses, draws, plays, allplays;
     char *buf, sdadvbuf[20], varbuf[BUFSIZE];
-    char *thisgame, *thisgametitle, *playername, *sdnamestr, *sdfatestr;
+    const char *playername, *sdnamestr, *sdfatestr, *thisgame, *thisgametitle;
     Obj *sds, *sd, *sdname, *sdfate, *more, *more1;
     ScoreRecord *sr;
 

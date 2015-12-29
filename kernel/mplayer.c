@@ -50,7 +50,7 @@ static void change_to_adjacent_theater(Side *side, Unit *unit);
 static void mplayer_react_to_new_side(Side *side, Side *side2);
 static void mplayer_finish_movement(Side *side);
 static Unit *search_for_available_transport(Unit *unit, int purpose);
-static char *mplayer_at_desig(Side *side, int x, int y);
+static const char *mplayer_at_desig(Side *side, int x, int y);
 static int mplayer_theater_at(Side *side, int x, int y);
 static int mplayer_read_strengths(Side *side);
 static Obj *mplayer_save_state(Side *side);
@@ -2008,7 +2008,7 @@ search_for_available_transport(Unit *unit, int purpose)
 /* This is used by interfaces to display the name of the theater in
    use at a given point. */
 
-static char *
+static const char *
 mplayer_at_desig(Side *side, int x, int y)
 {
     Theater *theater;
@@ -2016,7 +2016,7 @@ mplayer_at_desig(Side *side, int x, int y)
     if (ai(side) == NULL)
       return "";
     theater = theater_at(side, x, y);
-    return (theater ? theater->name : (char *)"<no theater>");
+    return (theater ? theater->name : "<no theater>");
 }
 
 /* This is used by interfaces to display boundaries between theaters,
@@ -2040,7 +2040,7 @@ static int
 mplayer_read_strengths(Side *side)
 {
     int sn1, u, found = FALSE;
-    char *propname;
+    const char *propname;
     Obj *props, *bdg, *rest, *sidebdg, *urest;
     Side *side1;
     Strategy *strategy = ai(side);

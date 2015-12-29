@@ -37,4 +37,4 @@ typedef struct a_print_parameters {
 /* Prototypes. */
 
 extern void init_ps_print(PrintParameters *pp);
-extern void dump_ps_view(Side *side, PrintParameters *pp, char *filename);
+extern void dump_ps_view(Side *side, PrintParameters *pp, const char *filename);

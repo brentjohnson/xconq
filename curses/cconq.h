@@ -118,16 +118,16 @@ extern void do_dir_2(int dir, int n);
 extern void move_survey(int x, int y);
 extern void put_on_screen(int x, int y);
 
-extern int ask_bool(char *question, int dflt);
-extern int ask_unit_type(char *question, int *possibles);
-extern int ask_terrain_type(char *question, int *possibles);
-extern int ask_position(char *prompt, int *xp, int *yp);
+extern int ask_bool(const char *question, int dflt);
+extern int ask_unit_type(const char *question, int *possibles);
+extern int ask_terrain_type(const char *question, int *possibles);
+extern int ask_position(const char *prompt, int *xp, int *yp);
 extern void save_cur(void);
 extern void restore_cur(void);
-extern int ask_string(char *prompt, char *dflt, char **strp);
-extern Side *ask_side(char *prompt, Side *dflt);
+extern int ask_string(const char *prompt, const char *dflt, char **strp);
+extern Side *ask_side(const char *prompt, Side *dflt);
 extern int ask_unit(char *prompt, Unit **unitp);
-extern int ask_direction(char *prompt, int *dirp);
+extern int ask_direction(const char *prompt, int *dirp);
 extern void make_current(Unit *unit);
 extern void make_current_at(int x, int y);
 extern void interpret_help(void);
@@ -156,7 +156,7 @@ extern void show_help(void);
 extern void clear_window(struct ccwin *win);
 
 extern void draw_blast(int x, int y, int r);
-extern int draw_text(struct ccwin *win, int x, int y, char *str);
+extern int draw_text(struct ccwin *win, int x, int y, const char *str);
 extern int cur_at(struct ccwin *win, int x, int y);
 
 extern void cycle_list_type(void);

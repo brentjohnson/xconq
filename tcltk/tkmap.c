@@ -259,7 +259,7 @@ static void draw_unit_view(MapW *mapw, UnitView *uview, int sx, int sy,
 static void draw_unit_view_and_occs(MapW *mapw, UnitView *unitview, 
 				    int sx, int sy, int sw, int sh);
 static void draw_dots(MapW *mapw, int sx, int sy, int sw, int sh);
-static void draw_unit_name(MapW *mapw, char *name, int sx, int sy,
+static void draw_unit_name(MapW *mapw, const char *name, int sx, int sy,
 			   int sw, int sh);
 static void draw_unit_size(MapW *mapw, int size, int sx, int sy,
 			   int sw, int sh);
@@ -436,7 +436,7 @@ mapw_widget_cmd(ClientData cldata, Tcl_Interp *interp, int argc, char **argv)
 	    fraction = 0;
 	    fraction2 = 1;
 	    printf("map xview %g %g\n", fraction, fraction2);
-	    sprintf(interp->result, "%g %g", fraction, fraction2);
+	    sprintf(Tcl_GetStringResult(interp), "%g %g", fraction, fraction2);
 	} else {
 	    type = Tk_GetScrollInfo(interp, argc, argv, &fraction, &count);
 	    switch (type) {
@@ -466,7 +466,7 @@ mapw_widget_cmd(ClientData cldata, Tcl_Interp *interp, int argc, char **argv)
 	    fraction = 0;
 	    fraction2 = 1;
 	    printf("map yview %g %g\n", fraction, fraction2);
-	    sprintf(interp->result, "%g %g", fraction, fraction2);
+	    sprintf(Tcl_GetStringResult(interp), "%g %g", fraction, fraction2);
 	} else {
 	    type = Tk_GetScrollInfo(interp, argc, argv, &fraction, &count);
 	    switch (type) {
@@ -1650,7 +1650,7 @@ draw_feature_name(MapW *mapw, int f)
     int x = legend->ox, y = legend->oy;
     int dist = ((legend->dx + 1) * mapw->vp->hw * 9) / 10;
     int sx0, sy0, sxc, syc, namelength = 0;
-    char *name;
+    const char *name;
     Display *dpy = mapw->display;
     GC gc = mapw->gc;
     Tk_Font tkfont;
@@ -2671,7 +2671,7 @@ draw_dots(MapW *mapw, int sx, int sy, int sw, int sh)
 }
 
 static void
-draw_unit_name(MapW *mapw, char *name, int sx, int sy, int sw, int sh)
+draw_unit_name(MapW *mapw, const char *name, int sx, int sy, int sw, int sh)
 {
     char namebuf[BUFSIZE];
     Display *dpy = mapw->display;
@@ -3046,7 +3046,7 @@ draw_borders_iso(MapW *mapw, int x, int y, int b)
 	    wid2 = wid / 2;
 	    XSetLineAttributes(dpy, gc, wid, LineSolid, CapButt, JoinMiter); 
 	    color = dside->ui->cell_color[b];
-	    if ((int)color < 0)
+	    if ((long)color < 0)
 	      color = dside->ui->blackcolor;
 	    XSetForeground(dpy, gc, color->pixel);
 	    XSetBackground(dpy, gc, dside->ui->whitecolor->pixel);
@@ -3134,7 +3134,7 @@ draw_connections(MapW *mapw, int vx, int vyhi, int vylo, int c)
 	wid2 = wid / 2;
 	XSetLineAttributes(dpy, gc, wid, LineSolid, CapButt, JoinMiter); 
 	color = dside->ui->cell_color[c];
-	if ((int)color < 0)
+	if ((long)color < 0)
 	  color = dside->ui->blackcolor;
 	XSetForeground(dpy, gc, color->pixel);
 	XSetBackground(dpy, gc, dside->ui->whitecolor->pixel);
@@ -3241,7 +3241,7 @@ draw_connections_iso(MapW *mapw, int x, int y, int c)
 	    wid2 = wid / 2;
 	    XSetLineAttributes(dpy, gc, wid, LineSolid, CapButt, JoinMiter); 
 	    color = dside->ui->cell_color[c];
-	    if ((int)color < 0)
+	    if ((long)color < 0)
 	      color = dside->ui->blackcolor;
 	    XSetForeground(dpy, gc, color->pixel);
 	    XSetBackground(dpy, gc, dside->ui->whitecolor->pixel);
@@ -4103,7 +4103,7 @@ int
 draw_uimg_emblem(Image *img, MapW *mapw, int sx, int sy, int sidenum)
 {
     int sw = -1, sh = -1;
-    char *ename = NULL;
+    const char *ename = NULL;
     ImageFamily *eimf = NULL;
     int ex = -1, ey = -1, ew = -1, eh = -1;
 

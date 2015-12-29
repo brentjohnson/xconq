@@ -734,7 +734,7 @@ make_generic_image_data(ImageFamily *imf)
 }
 
 ImageFamily *
-tk_find_imf(char *name)
+tk_find_imf(const char *name)
 {
     int i;
     ImageFamily *imf;

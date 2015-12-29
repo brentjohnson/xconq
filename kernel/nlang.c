@@ -25,10 +25,10 @@ any later version.  See the file COPYING.  */
 #include "aitact.h"
 #include "aioprt.h"
 
-static void notify_combat(Unit *unit, Unit *atker, char *str);
+static void notify_combat(Unit *unit, Unit *atker, const char *str);
 static int pattern_matches_combat(Obj *pattern, Unit *unit, Unit *unit2);
 static void combat_desc_from_list(Side *side, Obj *lis, Unit *unit,
-				  Unit *unit2, char *str, char *buf);
+				  Unit *unit2, const char *str, char *buf);
 static void init_calendar(void);
 static void parse_date_step_range(Obj *form);
 static void maybe_mention_date(Side *side);
@@ -37,8 +37,8 @@ static int loss_count(Side *side, int u, int r);
 static int atkstats(Side *side, int a, int d);
 static int hitstats(Side *side, int a, int d);
 static void pad_out(char *buf, int n);
-static char *past_unit_handle(Side *side, PastUnit *past_unit);
-static char *short_side_title_with_adjective(Side *side, char *adjective);
+static const char *past_unit_handle(Side *side, PastUnit *past_unit);
+static const char *short_side_title_with_adjective(Side *side, char *adjective);
 
 static char *tmpnbuf;
 
@@ -48,7 +48,7 @@ static char *pluralbuf;
 
 /* Short names of directions. */
 
-char *dirnames[] = DIRNAMES;
+const char *dirnames[] = DIRNAMES;
 
 char *unitbuf = NULL;
 
@@ -56,9 +56,9 @@ char *past_unitbuf = NULL;
 
 static char *side_short_title = NULL;
 
-static char *gain_reason_names[] = { "Ini", "Bld", "Cap", "Oth" };
+static const char *gain_reason_names[] = { "Ini", "Bld", "Cap", "Oth" };
 
-static char *loss_reason_names[] = { "Cbt", "Cap", "Stv", "Acc", "Dis", "Oth" };
+static const char *loss_reason_names[] = { "Cbt", "Cap", "Stv", "Acc", "Dis", "Oth" };
 
 /* Calendar handling. */
 
@@ -97,8 +97,8 @@ typedef struct a_usualdatesteprange {
     int step_size;
 } UsualDateStepRange;
 
-static char *usual_date_string(int date);
-static void parse_usual_date(char *datestr, int range, UsualDate *udate);
+static const char *usual_date_string(int date);
+static void parse_usual_date(const char *datestr, int range, UsualDate *udate);
 
 static int turn_initial;
 
@@ -106,19 +106,19 @@ static UsualDateStepRange date_step_ranges[20];
 
 static int num_date_step_ranges;
 
-static char *months[] = {
+static const char *months[] = {
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "???" };
 
 static short monthdays[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 0 };
 
-static char *seasons[] = { "Win", "Spr", "Sum", "Aut" };
+static const char *seasons[] = { "Win", "Spr", "Sum", "Aut" };
 
 static UsualDate *usual_initial;
 
 char *datebuf;
 
-char *turn_name;
+const char *turn_name;
 
 char *featurebuf;
 
@@ -154,7 +154,7 @@ init_nlang(void)
 /* Send a message to everybody who's got a screen. */
 
 void
-notify_all(char *fmt, ...)
+notify_all(const char *fmt, ...)
 {
     va_list ap;
     Side *side;
@@ -173,7 +173,7 @@ notify_all(char *fmt, ...)
 }
 
 void
-notify(Side *side, char *fmt, ...)
+notify(Side *side, const char *fmt, ...)
 {
     va_list ap;
 
@@ -189,7 +189,7 @@ notify(Side *side, char *fmt, ...)
 }
 
 void
-vnotify(Side *side, char *fmt, va_list ap)
+vnotify(Side *side, const char *fmt, va_list ap)
 {
     if (!active_display(side))
       return;
@@ -232,7 +232,7 @@ pad_out(char *buf, int n)
 
 /* (should synth complete name/adjective from other parts of speech) */
 
-char *
+const char *
 side_name(Side *side)
 {
     return (side->name ? side->name :
@@ -242,17 +242,17 @@ side_name(Side *side)
 	       (char *)""))));
 }
 
-char *
+const char *
 side_adjective(Side *side)
 {
     return (side->adjective ? side->adjective :
 	    (side->noun ? side->noun :
 	     (side->pluralnoun ? side->pluralnoun :
 	      (side->name ? side->name :
-	       (char *)""))));
+	       (const char *)""))));
 }
 
-char *
+const char *
 short_side_title(Side *side)
 {
     if (side_short_title == NULL)
@@ -271,7 +271,7 @@ short_side_title(Side *side)
     return side_short_title;
 }
 
-char *
+const char *
 short_side_title_with_adjective(Side *side, char *adjective)
 {
     if (side_short_title == NULL)
@@ -333,7 +333,7 @@ short_side_title_plural_p(Side *side)
     }
 }
 
-char *
+const char *
 shortest_side_title(Side *side2, char *buf)
 {
     if (side2->name) {
@@ -350,7 +350,7 @@ shortest_side_title(Side *side2, char *buf)
     return buf;
 }
 
-char *
+const char *
 sidemask_desc(char *buf, SideMask sidemask)
 {
     int first = TRUE;
@@ -563,7 +563,7 @@ side_and_type_name(char *buf, Side *side, int u, Side *side2)
    basically consisting of indication of unit's side, then of unit
    itself. */
 
-char *
+const char *
 unit_handle(Side *side, Unit *unit)
 {
     Side *side2 = NULL;
@@ -577,10 +577,12 @@ unit_handle(Side *side, Unit *unit)
    unit's actual side, such as when describing an out-of-date image of
    a unit that may have been captured. */
 
-char *
+const char *
 apparent_unit_handle(Side *side, Unit *unit, Side *side2)
 {
-    char *utypename, *fmtstr, smallbuf[40], sidebuf[100];
+    const char *utypename;
+    char smallbuf[40], sidebuf[100];
+    const char *fmtstr;
     Side *side3;
     Obj *frest, *fmt1;
 
@@ -610,7 +612,7 @@ apparent_unit_handle(Side *side, Unit *unit, Side *side2)
 	/* If the side adjective is a genitive (ends in 's, s' or z')
 	   we should skip the definite article. */
 	int len = strlen(side_adjective(side2));
-	char *end = side_adjective(side2) + len - 2;
+	const char *end = side_adjective(side2) + len - 2;
 
 	if (strcmp(end, "'s") != 0
 	    && strcmp(end, "s'") != 0
@@ -709,7 +711,7 @@ apparent_unit_handle(Side *side, Unit *unit, Side *side2)
    suchlike, where the player will likely already know the side of the
    unit. */
 
-char *
+const char *
 short_unit_handle(Unit *unit)
 {
     int u;
@@ -743,7 +745,7 @@ short_unit_handle(Unit *unit)
 
 /* This version lists the side but skips original side etc. */
 
-char *
+const char *
 medium_long_unit_handle(Unit *unit)
 {
     if (unitbuf == NULL)
@@ -812,10 +814,10 @@ name_or_number(Unit *unit, char *buf)
    basically consisting of indication of unit's side, then of unit
    itself. */
 
-char *
+const char *
 past_unit_handle(Side *side, PastUnit *past_unit)
 {
-    char *utypename;
+    const char *utypename;
     Side *side2;
 
     if (past_unitbuf == NULL)
@@ -833,7 +835,7 @@ past_unit_handle(Side *side, PastUnit *past_unit)
 	/* If the side adjective is a genitive (ends in 's, s' or z')
 	   we should skip the definite article. */
 	int len = strlen(side_adjective(side2));
-	char *end = side_adjective(side2) + len - 2;
+	const char *end = side_adjective(side2) + len - 2;
 
 	if (strcmp(end, "'s") != 0
 	    && strcmp(end, "s'") != 0
@@ -1477,10 +1479,10 @@ event_desc_from_list(Side *side, Obj *lis, HistEvent *hevt, char *buf)
 
 /* Return a string describing the action's result. */
 
-char *
+const char *
 action_result_desc(int rslt)
 {
-    char *str;
+    const char *str;
     
     switch (rslt) {
       case A_ANY_OK:
@@ -1664,11 +1666,11 @@ elevation_desc(char *buf, int x, int y)
     }
 }
 
-char *
+const char *
 feature_desc(Feature *feature, char *buf)
 {
     int i, caps = FALSE;
-    char *str;
+    const char *str;
 
     if (feature == NULL)
       return NULL;
@@ -1719,7 +1721,7 @@ feature_desc(Feature *feature, char *buf)
 
 /* Generate a string describing what is at the given location. */
 
-char *
+const char *
 feature_name_at(int x, int y)
 {
     int fid = (features_defined() ? raw_feature_at(x, y) : 0);
@@ -1966,7 +1968,7 @@ void
 location_desc(char *buf, Side *side, Unit *unit, int u, int x, int y)
 {
     int t = terrain_at(x, y);
-    char *featurename;
+    const char *featurename;
 
     if (unit != NULL && unit->transport != NULL) {
 	sprintf(buf, "In %s", short_unit_handle(unit->transport));
@@ -2257,7 +2259,8 @@ void
 task_desc(char *buf, Side *side, Unit *unit, Task *task)
 {
     int i, slen, arg0, arg1, arg2, arg3, arg4, tp;
-    char *argtypes, *sidedesc, *utypedesc;
+    const char *argtypes;
+    char *sidedesc, *utypedesc;
     Unit *unit2;
 
     if (task == NULL) {
@@ -2558,11 +2561,11 @@ action_desc(char *buf, Action *action, Unit *unit)
 
 /* Describe a goal in a human-intelligible way. */
 
-char *
+const char *
 goal_desc(char *buf, Goal *goal)
 {
     int numargs, i, arg;
-    char *argtypes;
+    const char *argtypes;
     Unit *unit;
     
     if (goal == NULL)
@@ -2687,13 +2690,14 @@ void
 notify_doctrine(Side *side, char *spec)
 {
     int u;
-    char *arg, *rest, substr[BUFSIZE], outbuf[BUFSIZE];
+    const char *rest;
+    char *arg, substr[BUFSIZE], outbuf[BUFSIZE];
     Doctrine *doctrine;
 
     if (!empty_string(spec))
       rest = get_next_arg(spec, substr, &arg);
     else
-      arg = "";
+      arg = NULL;
     if ((doctrine = find_doctrine_by_name(arg)) != NULL) {
 	/* Found a specific named doctrine. */
 	/* (should say which of our own unit types use it) */
@@ -2770,11 +2774,11 @@ notify_doctrine_1(Side *side, Doctrine *doctrine)
       notify(side, "  Construction run:%s", abuf);
 }
 
-static int report_combat_special(Unit *unit1, Unit *unit2, char *str);
+static int report_combat_special(Unit *unit1, Unit *unit2, const char *str);
 int type_matches_symbol(Obj *sym, int u);
 
 void
-report_combat(Unit *atker, Unit *other, char *str)
+report_combat(Unit *atker, Unit *other, const char *str)
 {
     int rslt;
 
@@ -2818,7 +2822,7 @@ report_combat(Unit *atker, Unit *other, char *str)
 }
 
 static void
-notify_combat(Unit *unit1, Unit *unit2, char *str)
+notify_combat(Unit *unit1, Unit *unit2, const char *str)
 {
     char buf1[BUFSIZE], buf2[BUFSIZE];
     Side *side3;
@@ -2836,7 +2840,7 @@ notify_combat(Unit *unit1, Unit *unit2, char *str)
 }
 
 static int
-report_combat_special(Unit *unit1, Unit *unit2, char *str)
+report_combat_special(Unit *unit1, Unit *unit2, const char *str)
 {
     int found = FALSE;
     char abuf[BUFSIZE];
@@ -2902,7 +2906,7 @@ pattern_matches_combat(Obj *parms, Unit *unit, Unit *unit2)
 int
 type_matches_symbol(Obj *sym, int u)
 {
-    char *uname;
+    const char *uname;
     Obj *val, *rest, *head;
 
     if (!symbolp(sym))
@@ -2933,10 +2937,10 @@ type_matches_symbol(Obj *sym, int u)
 
 static void
 combat_desc_from_list(Side *side, Obj *lis, Unit *unit, Unit *unit2,
-		      char *str, char *buf)
+		      const char *str, char *buf)
 {
     int n;
-    char *symname;
+    const char *symname;
     Obj *rest, *item;
 
     buf[0] = '\0';
@@ -3038,7 +3042,7 @@ notify_all_of_resignation(Side *side, Side *side2)
 
 /* Given a number, figure out what suffix should go with it. */
 
-char *
+const char *
 ordinal_suffix(int n)
 {
     if (n % 100 == 11 || n % 100 == 12 || n % 100 == 13) {
@@ -3060,7 +3064,7 @@ ordinal_suffix(int n)
 /* There should probably be a test for when to add "es" instead of "s". */
 
 char *
-plural_form(char *word)
+plural_form(const char *word)
 {
     char endch = ' ', nextend = ' ';
     int len;
@@ -3110,7 +3114,7 @@ all_capitals(char *buf)
 
 /* Compose a readable form of the given date. */
 
-char *
+const char *
 absolute_date_string(int date)
 {
     /* The first time we ask for a date, interpret the calendar. */
@@ -3173,7 +3177,7 @@ static void
 parse_date_step_range(Obj *form)
 {
     int n;
-    char *stepnamestr;
+    const char *stepnamestr;
     UsualDateStepType steptype;
     Obj *step;
 
@@ -3223,7 +3227,7 @@ parse_date_step_range(Obj *form)
 /* Given two dates, figure out how many turns encompassed by them. */
 
 int
-turns_between(char *datestr1, char *datestr2)
+turns_between(const char *datestr1, const char *datestr2)
 {
     int rslt, turn1, turn2;
     UsualDate date1, date2;
@@ -3274,7 +3278,7 @@ turns_between(char *datestr1, char *datestr2)
 /* Given a date string, make it be the date of the first turn. */
 
 void
-set_initial_date(char *str)
+set_initial_date(const char *str)
 {
     if (calendar_type == cal_unknown)
       init_calendar();
@@ -3299,7 +3303,7 @@ set_initial_date(char *str)
 /* (should use strtol etc instead of sscanf) */
 
 static void
-parse_usual_date(char *datestr, int range, UsualDate *udate)
+parse_usual_date(const char *datestr, int range, UsualDate *udate)
 {
     char aname[BUFSIZE];
     int i, cnt;
@@ -3401,7 +3405,7 @@ parse_usual_date(char *datestr, int range, UsualDate *udate)
 
 static int ever_mentioned_bc;
 
-static char *
+static const char *
 usual_date_string(int date)
 {
     int year = 0, season = 0, month = 0, day = 0;
@@ -3704,7 +3708,7 @@ hitstats(Side *side, int a, int d)
 /* The following code formats a list of types that are missing images. */
 
 void
-record_missing_image(int typtyp, char *str)
+record_missing_image(int typtyp, const char *str)
 {
     if (missinglist == NULL) {
 	missinglist = (char *)xmalloc(BUFSIZE);

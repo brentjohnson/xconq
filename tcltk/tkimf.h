@@ -46,7 +46,7 @@ extern TkImage *get_tk_image(Image *img);
 extern ImageFamily *tk_load_imf(ImageFamily *imf);
 extern ImageFamily *tk_interp_imf(ImageFamily *imf, Image *img, int force);
 extern void reverse_bit_endianness(char *rawdata, int numbytes);
-extern ImageFamily *tk_find_imf(char *name);
+extern ImageFamily *tk_find_imf(const char *name);
 extern int imfsample_cmd(ClientData cldata, Tcl_Interp *interp,
 		  int argc, char *argv[]);
 

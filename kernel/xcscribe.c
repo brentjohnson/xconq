@@ -570,7 +570,7 @@ close_displays(void)
 }
 
 void
-cmd_error(Side *side, char *fmt, ...)
+cmd_error(Side *side, const char *fmt, ...)
 {
     char tmpnbuf[BUFSIZE];
     va_list ap;
@@ -666,7 +666,7 @@ update_event_display(Side *side, HistEvent *hevt, int rightnow)
 }
 
 void
-update_all_progress_displays(char *str, int s)
+update_all_progress_displays(const char *str, int s)
 {
     if (DebugG) {
 	printf("Update all progress displays\n");
@@ -765,7 +765,7 @@ announce_read_progress(void)
 int linemiddle = FALSE;
 
 void
-announce_lengthy_process(char *msg)
+announce_lengthy_process(const char *msg)
 {
     printf("%s; ", msg);
     fflush(stdout);
@@ -792,7 +792,7 @@ finish_lengthy_process(void)
 }
 
 int
-schedule_movie(Side *side, char *movie, ...)
+schedule_movie(Side *side, const char *movie, ...)
 {
     return FALSE;
 }
@@ -813,7 +813,7 @@ flush_display_buffers(Side *side)
 /* An init error needs to have the command re-run. */
 
 void
-low_init_error(char *str)
+low_init_error(const char *str)
 {
     if (linemiddle)
       printf("\n");
@@ -903,7 +903,7 @@ unit_research_dialog(Unit *unit)
 }
 
 void
-add_remote_locally(int rid, char *str)
+add_remote_locally(int rid, const char *str)
 {
 }
 

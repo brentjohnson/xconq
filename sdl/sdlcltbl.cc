@@ -774,7 +774,7 @@ RGBColorTableEntry stdcolors [] = {
 /* Find a SDL color by name in the given lookup table. */
 
 int
-find_sdl_color_by_name(char *name, RGBColorTableEntry *table, SDL_Color *color)
+find_sdl_color_by_name(const char *name, RGBColorTableEntry *table, SDL_Color *color)
 {
     int i = 0;
     ImageFamily *imf = NULL;
@@ -818,7 +818,7 @@ find_sdl_color_by_name(char *name, RGBColorTableEntry *table, SDL_Color *color)
 /* Find a RGB triplet by name in the given lookup table. */
 
 int
-find_rgb_triplet_by_name(char *name, RGBColorTableEntry *table, 
+find_rgb_triplet_by_name(const char *name, RGBColorTableEntry *table, 
 			 Uint8 *r, Uint8 *g, Uint8 *b)
 {
     SDL_Color color;

@@ -166,7 +166,7 @@ extern short ilsx[NUMPOWERS][6], ilsy[NUMPOWERS][6];
 
 extern short qx[NUMPOWERS][7], qy[NUMPOWERS][7];
 
-extern char *dirchars;
+extern const char *dirchars;
 
 /* How much space to leave for a unit image, if all images should get
    the same amount (such as for a list of unit types). Currently used
@@ -332,7 +332,7 @@ extern ImageFamily *get_emblem_images(Side *side, Side *side2);
 
 extern void record_imf_get(ImageFamily *imf);
 
-extern void describe_imf(Side *side, char *classname, char *imftype,
+extern void describe_imf(Side *side, const char *classname, const char *imftype,
 			 ImageFamily *imf);
 
 extern void init_ui_chars(void);
@@ -364,5 +364,5 @@ extern void execute_command(Side *side, int ch);
 extern void execute_long_command(Side *side, char *cmdstr);
 extern void parse_long_name_command(char *cmdstr, int *prefixp,
 				    char **namep, char **argp, char *buf);
-extern void describe_key_commands(int arg, char *key, TextBuffer *buf);
-extern void describe_long_commands(int arg, char *key, TextBuffer *buf);
+extern void describe_key_commands(int arg, const char *key, TextBuffer *buf);
+extern void describe_long_commands(int arg, const char *key, TextBuffer *buf);

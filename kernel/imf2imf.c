@@ -158,7 +158,7 @@ syntax_error(Obj *x, char *msg)
 }
 
 void
-low_init_error(char *str)
+low_init_error(const char *str)
 {
     fprintf(stderr, "Error: %s.\n", str);
     fflush(stderr);

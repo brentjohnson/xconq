@@ -29,7 +29,7 @@ typedef struct a_image {
     short numsubimages;		/*!< Number of sub images. */
     short subx;					/*!< Subimage x. */
     short suby;					/*!< Subimage y. */
-    char *embedname;				/*!< Name of an embedded subimage (imf name) */
+    const char *embedname;				/*!< Name of an embedded subimage (imf name) */
     short embedx;					/*!< Position to draw an embedded subimage - x. */
     short embedy;					/*!< Position to draw an embedded subimage - y. */
     short embedw;					/*!< Size of space for embedded subimage - width. */
@@ -92,7 +92,7 @@ typedef struct a_image_file {
    families. */
 
 typedef struct a_file_image {
-    char *name;
+    const char *name;
     short type;
     short loaded;
     short width, height;
@@ -132,8 +132,8 @@ extern short poor_memory;
 typedef void (*readimf_hook)(ImageFamily *, int);
 
 extern ImageFamily *clone_imf(ImageFamily *imf);
-extern ImageFamily *get_imf(char *name);
-extern ImageFamily *find_imf(char *name);
+extern ImageFamily *get_imf(const char *name);
+extern ImageFamily *find_imf(const char *name);
 extern Image *find_img(ImageFamily *imf, int w, int h);
 extern Image *get_img(ImageFamily *imf, int w, int h);
 extern int valid_imf_name(char *name);
@@ -153,7 +153,7 @@ extern Image *best_image_in_range(ImageFamily *imf, int w, int h,
 				  int wmin, int hmin, int wmax, int hmax);
 #define best_image(imf, w, h)  best_image_in_range(imf, w, h, 0, 0, -1, -1)
 extern Image *smallest_image(ImageFamily *imf);
-extern int emblem_position(Image *uimg, char *ename, ImageFamily *eimf,
+extern int emblem_position(Image *uimg, const char *ename, ImageFamily *eimf,
 			   int sw, int sh, int vpuh, int vphh,
 			   int *exxp, int *eyyp, int *ewp, int *ehp);
 
@@ -176,7 +176,7 @@ extern void validify_imf_name(char *buf);
 extern void compute_image_bboxes(ImageFamily *imf);
 extern void compute_image_bbox(Image *img);
 extern void write_imf_dir(char *filename, ImageFamily **imfimages, int num);
-extern char *find_color_name(int r, int g, int b);
+extern const char *find_color_name(int r, int g, int b);
 extern void parse_lisp_palette_entry(Obj *palentry, int *c,
 				     int *r, int *g, int *b);
 
@@ -190,4 +190,4 @@ extern int get_gif(FileImage *fimg);
 extern void make_raw_mono_data(Image *img, int force);
 extern FileImage *get_file_image(char *fname);
 
-extern ImageFamily *get_generic_images(char *name);
+extern ImageFamily *get_generic_images(const char *name);

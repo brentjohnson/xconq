@@ -47,14 +47,14 @@ struct AI_SKANode {
 
 struct AI_SKANode_UpropInt : public AI_SKANode {
     //! Uprop name.
-    char *upropname;
+    const char *upropname;
     //! Table of sides and utypes.
     PackedBoolTable *sides_and_utypes;
     //! Initializer.
     static void init(AI_SKANode_UpropInt *skanode);
     //! "Constructor".
     static AI_SKANode_UpropInt *construct(
-	char *upropname, int *utypeary, SideMask sideset);
+	const char *upropname, int *utypeary, SideMask sideset);
     //! Deep copy to a scorekeeper analysis node.
     void copy_to(AI_SKANode_UpropInt *skanode);
     //! Clone a scorekeeper analysis node.
@@ -67,7 +67,7 @@ struct AI_SKANode_UpropInt : public AI_SKANode {
     static void destroy_list(AI_SKANode_UpropInt **skanode);
     //! Merge or insert a scorekeeper analysis node.
     static void merge_or_insert_into_list(
-	AI_SKANode_UpropInt **skanodep, char *upropname, int *utypeary,
+	AI_SKANode_UpropInt **skanodep, const char *upropname, int *utypeary,
 	SideMask sideset);
 };
 

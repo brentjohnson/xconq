@@ -75,7 +75,7 @@ init(AI_SKANode_UpropInt *skanode)
 
 AI_SKANode_UpropInt *
 AI_SKANode_UpropInt::
-construct(char *upropname, int *utypeary, SideMask sideset)
+construct(const char *upropname, int *utypeary, SideMask sideset)
 {
     AI_SKANode_UpropInt *skanode = NULL;
     Side *side = NULL;
@@ -182,7 +182,7 @@ destroy_list(AI_SKANode_UpropInt **skanodep)
 void 
 AI_SKANode_UpropInt::
 merge_or_insert_into_list(
-        AI_SKANode_UpropInt **skanodep, char *upropname, int *utypeary, 
+        AI_SKANode_UpropInt **skanodep, const char *upropname, int *utypeary, 
 	SideMask sideset)
 {
     AI_SKANode_UpropInt *skanode = NULL;
@@ -581,7 +581,7 @@ analyze_sk_sum_uprop_test(
     Side *side, Scorekeeper *sk, Obj *sktest, AI_SKAnalysis *parent)
 {
     AI_SKAnalysis *skanal = NULL;
-    char *upropname = NULL;
+    const char *upropname = NULL;
     int u = NONUTYPE;
     Obj *uprop = lispnil;
 
@@ -2466,10 +2466,11 @@ analyze_scorekeeper(Side *side, Scorekeeper *sk)
     /* Allocate 1st scorekeeper analysis for this scorekeeper. */
     skanal = AI_SKAnalysis::construct();
     /* Tell someone what we are currently doing. */
-    if (!empty_string(sk->title))
+    if (!empty_string(sk->title)) {
       DMprintf("Analyzing \"%s\" scorekeeper.\n", sk->title);
-    else
+    } else {
       DMprintf("Analyzing scorekeeper %d.\n", sk->id);
+    }
     /* Start things off by doing an action analysis of the entire sk body. */
     skanal = analyze_sk_action(side, sk, sk->body, skanal);
     return skanal;

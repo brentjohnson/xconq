@@ -17,8 +17,8 @@ any later version.  See the file COPYING.  */
  */
 typedef struct a_variant {
     Obj *id;            	/*!< unique id */
-    char *name;         	/*!< displayable name */
-    char *help;         	/*!< help string */
+    const char *name;         	/*!< displayable name */
+    const char *help;         	/*!< help string */
     Obj *dflt;          	/*!< pointer to default value \Object */
     Obj *range;         	/*!< description of range of values */
     Obj *cases;         	/*!< actions to do on matches */
@@ -34,24 +34,24 @@ typedef struct a_variant {
  * how to write it out, etc. 
  */
 typedef struct a_module {
-    char *name;                     		/*!< the actual unique name of the module */
-    char *title;                    		/*!< a readable display name */
+    const char *name;                     		/*!< the actual unique name of the module */
+    const char *title;                    		/*!< a readable display name */
     Obj *blurb;              		/*!< game blurb */
-    char *picturename;              	/*!< name of a descriptive image */
-    char *basemodulename;           	/*!< name of the module that this one includes */
-    char *defaultbasemodulename;	/*!< what game to load if something missing */
-    char *basegame;                 	/*!< what general game this is based on */
+    const char *picturename;              	/*!< name of a descriptive image */
+    const char *basemodulename;           	/*!< name of the module that this one includes */
+    const char *defaultbasemodulename;	/*!< what game to load if something missing */
+    const char *basegame;                 	/*!< what general game this is based on */
     Obj *instructions;              	/*!< basic instructions */
     Obj *notes;                     		/*!< player notes */
     Obj *designnotes;               	/*!< designer notes */
-    char *version;                  		/*!< the version of this module */
+    const char *version;                  		/*!< the version of this module */
     Variant *variants;              	/*!< array of player-choosable variants */
-    char *origmodulename;           	/*!< module this was originally (before save) */
+    const char *origmodulename;           	/*!< module this was originally (before save) */
     Variant *origvariants;          	/*!< variants chosen for the original module */
-    char *origversion;              	/*!< the version of the original module */
+    const char *origversion;              	/*!< the version of the original module */
     char *contents;                 		/* a string with the actual contents */
-    char *sp;                       		/*!< "string pointer" a la file pointer */
-    char *filename;                 	/*!< the filename */
+    const char *sp;                    		/*!< "string pointer" a la file pointer */
+    const char *filename;                 	/*!< the filename */
     FILE *fp;                       		/*!< the stdio file buffer */
     int startlineno;                		/*!< line number being read at start of form */
     int endlineno;                  		/*!< line number being read at end of form */
@@ -127,10 +127,10 @@ extern Module *mainmodule;
 /* Declarations of module functions. */
 
 extern void clear_game_modules(void);
-extern Module *create_game_module(char *name);
-extern Module *find_game_module(char *name);
-extern Module *get_game_module(char *name);
-extern Module *add_game_module(char *name, Module *includer);
+extern Module *create_game_module(const char *name);
+extern Module *find_game_module(const char *name);
+extern Module *get_game_module(const char *name);
+extern Module *add_game_module(const char *name, Module *includer);
 extern void load_default_game(void);
 extern int load_game_description(Module *module);
 extern void load_game_module(Module *module, int dowarn);
@@ -144,10 +144,10 @@ extern int valid_reshape(Module *module);
 extern void close_module(Module *module);
 extern char *module_desig(Module *module);
 extern void do_module_variants(Module *module, Obj *lis);
-extern char *saved_game_filename(void);
-extern char *checkpoint_filename(int n);
-extern char *statistics_filename(void);
-extern char *preferences_filename(void);
-extern char *old_preferences_filename(void);
+extern const char *saved_game_filename(void);
+extern const char *checkpoint_filename(int n);
+extern const char *statistics_filename(void);
+extern const char *preferences_filename(void);
+extern const char *old_preferences_filename(void);
 
 

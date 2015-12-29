@@ -106,7 +106,7 @@ HistEvent *
 record_event(HistEventType type, SideMask observers, ...)
 {
     int i, val;
-    char *descs;
+    const char *descs;
     HistEvent *hevt;
     Side *side;
     va_list ap;
@@ -268,7 +268,7 @@ static void
 play_event_movies(Side *side, HistEvent *hevt)
 {
     int found = FALSE;
-    char *soundname;
+    const char *soundname;
     Obj *rest, *head, *parms, *msgdesc;
 
     if (!should_play_movies())
@@ -528,7 +528,7 @@ static void
 rewrite_unit_references_in_event(HistEvent *hevt, int oldid, int newid)
 {
     int i;
-    char *descs;
+    const char *descs;
 
     descs = hevtdefns[hevt->type].datadescs;
     /* Scan through the data description, looking for values that are
@@ -650,7 +650,7 @@ build_hist_contents(Side *side, int n, HistEvent **histcontents,
 void
 dump_statistics(void)
 {
-    char *fname;
+    const char *fname;
     Side *side;
     FILE *fp;
 
@@ -690,7 +690,7 @@ dump_statistics(void)
    rotate between them so we can call this more than once in a single
    printf. */
 
-char *
+const char *
 past_unit_desig(PastUnit *pastunit)
 {
     char *shortbuf;

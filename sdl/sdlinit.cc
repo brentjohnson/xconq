@@ -92,7 +92,7 @@ active_display(Side *side)
 }
 
 SDLCursor *
-get_cursor(char *name, int hotx, int hoty)
+get_cursor(const char *name, int hotx, int hoty)
 {
     ImageFamily *imf;
     Image *img;
@@ -272,7 +272,7 @@ init_emblem(Side *side2)
 
 /* Wired-in names that we assume are available. */
 
-char *blastnames[] = { "miss", "hit", "kill", "nuke1", "nuke2", "nuke3" };
+const char *blastnames[] = { "miss", "hit", "kill", "nuke1", "nuke2", "nuke3" };
 
 void
 init_other_images(void)

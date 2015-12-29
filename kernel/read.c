@@ -26,11 +26,11 @@ static void start_conditional(Obj *form, Module *module);
 static void start_else(Obj *form, Module *module);
 static void end_conditional(Obj *form, Module *module);
 static Variant *interp_variant_defns(Obj *lis);
-static void add_std_var(Variant *varray, int key, char *name, char *help,
+static void add_std_var(Variant *varray, int key, const char *name, const char *help,
 			Obj *dflt);
 static void interp_utype(Obj *form);
 static void fill_in_utype(int u, Obj *list);
-static int set_utype_property(int u, char *propname, Obj *val);
+static int set_utype_property(int u, const char *propname, Obj *val);
 static void interp_mtype(Obj *form);
 static void fill_in_mtype(int m, Obj *list);
 static void interp_ttype(Obj *form);
@@ -45,7 +45,7 @@ static void interp_one_clause(Obj *tablename, int tbl, int lim1, int lim2,
 static void interp_variable(Obj *form, int isnew);
 static void undefine_variable(Obj *form);
 static void add_properties(Obj *form);
-static int list_lengths_match(Obj *types, Obj *values, char *formtype,
+static int list_lengths_match(Obj *types, Obj *values, const char *formtype,
 			      Obj *form);
 static void add_to_utypes(Obj *types, Obj *prop, Obj *values);
 static void add_to_mtypes(Obj *types, Obj *prop, Obj *values);
@@ -71,7 +71,7 @@ static void fill_in_users(Obj *contents);
 static void interp_side(Obj *form, Side *side);
 static void interp_unit_views(Side *side, Obj *vlist);
 static void interp_standing_order(Side *side, Obj *form);
-static void check_name_uniqueness(Side *side, char *str, char *kind);
+static void check_name_uniqueness(Side *side, const char *str, const char *kind);
 static void merge_unit_namers(Side *side, Obj *lis);
 static void interp_side_value_list(short *arr, Obj *lis);
 static void interp_side_mask_list(SideMask *mask, Obj *lis);
@@ -94,7 +94,7 @@ static void interp_agreement(Obj *form);
 #endif
 static void interp_unit_defaults(Obj *form);
 static Unit *interp_unit(Obj *form);
-static Obj *find_unit_spec_by_name(char *name);
+static Obj *find_unit_spec_by_name(const char *name);
 static Obj *find_unit_spec_by_number(int num);
 static void interp_action(Action *action, Obj *props);
 static void interp_unit_plan(Unit *unit, Obj *props);
@@ -105,17 +105,17 @@ static void interp_scorekeeper(Obj *form);
 static void interp_history(Obj *form);
 static void interp_past_unit(Obj *form);
 
-static void unknown_property(char *type, char *inst, char *name);
+static void unknown_property(const char *type, const char *inst, const char *name);
 
-static int lookup_goal_type(char *name);
-static int lookup_action_type(char *name);
+static int lookup_goal_type(const char *name);
+static int lookup_action_type(const char *name);
 
-static void set_u_internal_name(int u, char *s);
-static void set_u_type_name(int u, char *s);
-static void set_m_type_name(int m, char *s);
-static void set_t_type_name(int t, char *s);
-static void set_a_type_name(int a, char *x);
-static int lookup_plan_type(char *name);
+static void set_u_internal_name(int u, const char *s);
+static void set_u_type_name(int u, const char *s);
+static void set_m_type_name(int m, const char *s);
+static void set_t_type_name(int t, const char *s);
+static void set_a_type_name(int a, const char *x);
+static int lookup_plan_type(const char *name);
 
 static void interp_utype_list(short *arr, Obj *lis);
 static void interp_utype_value_list(short *arr, Obj *lis);
@@ -196,7 +196,7 @@ int ignore_specials;
 /* This is the table of keywords. */
 
 struct a_key {
-    char *name;
+    const char *name;
     short key;
 } keywordtable[] = {
 
@@ -212,7 +212,7 @@ struct a_key {
    if found, else -1. */
 
 int
-keyword_code(char *str)
+keyword_code(const char *str)
 {
     int i;
 
@@ -224,7 +224,7 @@ keyword_code(char *str)
     return (-1);
 }
 
-char *
+const char *
 keyword_name(enum keywords k)
 {
     return keywordtable[k].name;
@@ -248,7 +248,7 @@ keyword_name(enum keywords k)
   }
 
 void  
-syntax_error(Obj *x, char *msg)
+syntax_error(Obj *x, const char *msg)
 {
     sprintlisp(readerrbuf, x, BUFSIZE);
     read_warning("syntax error in `%s' - %s", readerrbuf, msg);
@@ -269,7 +269,7 @@ syntax_error(Obj *x, char *msg)
   }
 
 void
-type_error(Obj *x, char *msg)
+type_error(Obj *x, const char *msg)
 {
     sprintlisp(readerrbuf, x, BUFSIZE);
     read_warning("type error in `%s' - %s", readerrbuf, msg);
@@ -372,7 +372,7 @@ void
 interp_form(Module *module, Obj *form)
 {
     Obj *thecar;
-    char *name;
+    const char *name;
 
     /* Put the passed-in module into a global; for use in error messages. */
     curmodule = module;
@@ -527,7 +527,7 @@ useless_form_warning(Module *module, Obj *form)
 static void
 include_module(Obj *form, Module *module)
 {
-    char *name;
+    const char *name;
     Obj *mname = cadr(form);
     Module *submodule;
 
@@ -710,7 +710,7 @@ interp_variant_defns(Obj *lis)
 }
 
 void
-add_std_var(Variant *varray, int key, char *name, char *help, Obj *dflt)
+add_std_var(Variant *varray, int key, const char *name, const char *help, Obj *dflt)
 {
     int i;
     Variant *var;
@@ -754,7 +754,7 @@ add_std_var(Variant *varray, int key, char *name, char *help, Obj *dflt)
 void
 interp_game_module(Obj *form, Module *module)
 {
-    char *name = NULL, *propname, *strval = NULL;
+    const char *name = NULL, *propname, *strval = NULL;
     Obj *props = cdr(form), *bdg, *propval;
 
     /* This can't work if the form appears out of context (such as when
@@ -879,7 +879,7 @@ interp_utype(Obj *form)
 static void
 fill_in_utype(int u, Obj *list)
 {
-    char *propname;
+    const char *propname;
     Obj *bdg, *val;
 
     for ( ; list != lispnil; list = cdr(list)) {
@@ -896,10 +896,10 @@ fill_in_utype(int u, Obj *list)
    definition of the property and set its value. */
 
 static int
-set_utype_property(int u, char *propname, Obj *val)
+set_utype_property(int u, const char *propname, Obj *val)
 {
     int i, found = FALSE, numval;
-    char *strval;
+    const char *strval;
 
     for (i = 0; utypedefns[i].name != NULL; ++i) {
 	if (strcmp(propname, utypedefns[i].name) == 0) {
@@ -926,7 +926,7 @@ set_utype_property(int u, char *propname, Obj *val)
 		    return TRUE;
 		}
 		strval = c_string(val);
-		TYPEPROP(utypes, u, utypedefns, i, char *) = strval;
+		TYPEPROP(utypes, u, utypedefns, i, const char *) = strval;
 	    } else {
 		TYPEPROP(utypes, u, utypedefns, i, Obj *) = val;
 	    }
@@ -998,9 +998,9 @@ static void
 fill_in_mtype(int m, Obj *list)
 {
     int i, found, numval;
-    char *strval;
+    const char *strval;
     Obj *bdg, *val;
-    char *propname;
+    const char *propname;
 
     for ( ; list != lispnil; list = cdr(list)) {
 	bdg = car(list);
@@ -1034,7 +1034,7 @@ fill_in_mtype(int m, Obj *list)
 			return;
 		    }
 		    strval = c_string(val);
-		    TYPEPROP(mtypes, m, mtypedefns, i, char *) = strval;
+		    TYPEPROP(mtypes, m, mtypedefns, i, const char *) = strval;
 		} else {
 		    TYPEPROP(mtypes, m, mtypedefns, i, Obj *) = val;
 		}
@@ -1054,9 +1054,9 @@ static void
 fill_in_atype(int a, Obj *list)
 {
     int i, found, numval;
-    char *strval;
+    const char *strval;
     Obj *bdg, *val;
-    char *propname;
+    const char *propname;
 
     for ( ; list != lispnil; list = cdr(list)) {
 	bdg = car(list);
@@ -1090,7 +1090,7 @@ fill_in_atype(int a, Obj *list)
 			return;
 		    }
 		    strval = c_string(val);
-		    TYPEPROP(atypes, a, atypedefns, i, char *) = strval;
+		    TYPEPROP(atypes, a, atypedefns, i, const char *) = strval;
 		} else {
 		    TYPEPROP(atypes, a, atypedefns, i, Obj *) = val;
 		}
@@ -1136,8 +1136,8 @@ static void
 fill_in_ttype(int t, Obj *list)
 {
     int i, found, numval;
-    char *strval;
-    char *propname;
+    const char *strval;
+    const char *propname;
     Obj *bdg, *val;
 
     for ( ; list != lispnil; list = cdr(list)) {
@@ -1172,7 +1172,7 @@ fill_in_ttype(int t, Obj *list)
 			return;
 		    }
 		    strval = c_string(val);
-		    TYPEPROP(ttypes, t, ttypedefns, i, char *) = strval;
+		    TYPEPROP(ttypes, t, ttypedefns, i, const char *) = strval;
 		} else {
 		    TYPEPROP(ttypes, t, ttypedefns, i, Obj *) = val;
 		}
@@ -1192,7 +1192,7 @@ interp_table(Obj *form)
 {
     int i, found, reset = TRUE;
     Obj *formsym = cadr(form), *body = cddr(form);
-    char *tablename;
+    const char *tablename;
 
     /* It's impossible to know whether all the types indexed by a
        specific table have been defined when the table form is
@@ -1397,7 +1397,7 @@ interp_variable(Obj *form, int isnew)
     int i, numval;
     Obj *var = cadr(form);
     Obj *val = eval(caddr(form));
-    char *name;
+    const char *name;
 
     SYNTAX(form, symbolp(var), "variable is not a symbol");
     name = c_string(var);
@@ -1498,7 +1498,7 @@ add_properties(Obj *form)
    they don't match up. */
 
 static int
-list_lengths_match(Obj *types, Obj *values, char *formtype, Obj *form)
+list_lengths_match(Obj *types, Obj *values, const char *formtype, Obj *form)
 {
     if (length(types) != length(values)) {
 	sprintlisp(spbuf, form, BUFSIZE);
@@ -1512,7 +1512,7 @@ list_lengths_match(Obj *types, Obj *values, char *formtype, Obj *form)
 static void
 add_to_utypes(Obj *types, Obj *prop, Obj *values)
 {
-    char *propname = c_string(prop);
+    const char *propname = c_string(prop);
     Obj *lis1, *lis2, *carlis1;
 
     if (utypep(types)) {
@@ -1646,7 +1646,7 @@ interp_world(Obj *form)
 {
     int numval;
     Obj *props, *bdg, *propval;
-    char *propname;
+    const char *propname;
 
     props = cdr(form);
     if (symbolp(car(props))) {
@@ -1695,7 +1695,7 @@ interp_area(Obj *form)
 {
     int newarea = FALSE, newwidth = 0, newheight = 0, numval;
     Obj *props, *subprop, *bdg, *propval, *rest, *val;
-    char *propname, *strval;
+    const char *propname, *strval;
 
     props = cdr(form);
     if (match_keyword(car(props), K_ADD)) {
@@ -2025,7 +2025,7 @@ static void
 add_to_area(Obj *spec)
 {
     int x0, y0, w, h, t, x, y;
-    char *propname;
+    const char *propname;
     Obj *val, *typeval;
 
     /* Collect the dimensions of the area to modify. */
@@ -2182,7 +2182,7 @@ void
 fill_in_side(Side *side, Obj *props, int userdata)
 {
     int numval, isnumber, permission, u;
-    char *propname, *strval = NULL, *checkuniq;
+    const char *propname, *strval = NULL, *checkuniq;
     Obj *bdg, *rest, *propval;
 
     /* Use this macro with every slot that the user may not arbitrarily
@@ -2240,7 +2240,7 @@ fill_in_side(Side *side, Obj *props, int userdata)
 	  case K_UNIT_NAMERS:
 	    // Allocate space if not already done so.
 	    if (side->unitnamers == NULL)
-	      side->unitnamers = (char **) xmalloc(numutypes * sizeof(char *));
+	      side->unitnamers = (const char **) xmalloc(numutypes * sizeof(const char *));
 	    merge_unit_namers(side, rest);
 	    break;
 	  case K_FEATURE_NAMERS:
@@ -2611,7 +2611,7 @@ interp_standing_order(Side *side, Obj *form)
 {
     enum sordercond condtyp;
     int u;
-    char *condname;
+    const char *condname;
     Obj *rest = form, *subform;
     StandingOrder *sorder;
 
@@ -2664,7 +2664,7 @@ interp_standing_order(Side *side, Obj *form)
 }
 
 static void
-check_name_uniqueness(Side *side, char *str, char *kind)
+check_name_uniqueness(Side *side, const char *str, const char *kind)
 {
     if (name_in_use(side, str)) {
 	init_warning("Side %s `%s' is already in use", kind, str);
@@ -2913,7 +2913,7 @@ static void
 read_default_doctrine(Side *side, Obj *props)
 {
     int id = 0;
-    char *name = NULL;
+    const char *name = NULL;
     Obj *ident = lispnil;
     Doctrine *doctrine = NULL;
 
@@ -2946,7 +2946,7 @@ static void
 read_utype_doctrine(Side *side, Obj *lis)
 {
     int u, id;
-    char *name;
+    const char *name;
     Obj *item, *rest, *ulist, *props, *ident;
     Doctrine *doctrine;
     
@@ -2993,7 +2993,7 @@ static void
 interp_doctrine(Obj *form)
 {
     int id = -1;
-    char *name = NULL;
+    const char *name = NULL;
     Obj *ident = lispnil, *props = cdr(form);
     Doctrine *doctrine = NULL;
 
@@ -3028,7 +3028,7 @@ static void
 fill_in_doctrine(Doctrine *doctrine, Obj *props)
 {
     int numval;
-    char *propname;
+    const char *propname;
     Obj *bdg, *val;
 
     for (; props != lispnil; props = cdr(props)) {
@@ -3089,7 +3089,7 @@ interp_player(Obj *form)
 static void
 fill_in_player(Player *player, Obj *props)
 {
-    char *propname, *strval;
+    const char *propname, *strval;
     Obj *bdg, *propval;
 
     for (; props != lispnil; props = cdr(props)) {
@@ -3195,7 +3195,7 @@ interp_unit_defaults(Obj *form)
 {
     int u, numval, wasnum, variablelength;
     Obj *props = form, *bdg, *val;
-    char *propname;
+    const char *propname;
 
     default_unit_spec = form;
     if (match_keyword(car(props), K_RESET)) {
@@ -3278,9 +3278,9 @@ interp_unit_defaults(Obj *form)
 /* (should move these elsewhere, but where?) */
 
 int
-utype_from_name(char *str)
+utype_from_name(const char *str)
 {
-    char *tmpstr;
+    const char *tmpstr;
     int u;
     Obj *sym;
 
@@ -3370,7 +3370,7 @@ ttype_from_name(char *str)
 int
 utype_from_symbol(Obj *sym)
 {
-    char *str, *tmpstr;
+    const char *str, *tmpstr;
     int u;
 
     if (boundp(sym) && utypep(symbol_value(sym)))
@@ -3401,7 +3401,7 @@ interp_unit(Obj *form)
 {
     int u, u2, tp_varies, numval, numval2, wasnum, nuid = 0, variablelength, unitnum;
     int nusn = -1, nuosn = -1;
-    char *propname, *unitname;
+    const char *propname, *unitname;
     Obj *head = car(form), *props = cdr(form), *bdg, *val, *bdgrest, *val2;
     Obj *save, *unitspec;
     Unit *unit, *unit2;
@@ -3775,10 +3775,10 @@ interp_unit(Obj *form)
 }
 
 static Obj *
-find_unit_spec_by_name(char *name)
+find_unit_spec_by_name(const char *name)
 {
     Obj *rest, *spec, *props, *bdg, *val;
-    char *propname;
+    const char *propname;
 
     for_all_list(unit_specs, rest) {
 	spec = car(car(rest));
@@ -3800,7 +3800,7 @@ static Obj *
 find_unit_spec_by_number(int num)
 {
     Obj *rest, *spec, *props, *bdg, *val;
-    char *propname;
+    const char *propname;
 
     for_all_list(unit_specs, rest) {
 	spec = car(car(rest));
@@ -3822,7 +3822,7 @@ static void
 interp_action(Action *action, Obj *form)
 {
     int atype, i, numargs;
-    char *argtypes;
+    const char *argtypes;
     Obj *actiontypesym, *arg;
 
     actiontypesym = car(form);
@@ -3858,7 +3858,7 @@ interp_unit_plan(Unit *unit, Obj *props)
 {
     int isnumber, numval;
     Obj *bdg, *propval, *plantypesym, *val, *trest;
-    char *propname;
+    const char *propname;
     Goal *goal;
     Plan *plan;
     Task *task, *task1;
@@ -3955,7 +3955,7 @@ static Task *
 interp_task(Obj *form)
 {
     int tasktype, numargs, i;
-    char *tasktypename, *argtypes;
+    const char *tasktypename, *argtypes;
     Obj *tasktypesym;
     Task *task;
 
@@ -3997,7 +3997,7 @@ static Goal *
 interp_goal(Obj *form)
 {
     int goaltype, tf, numargs, i;
-    char *argtypes;
+    const char *argtypes;
     Obj *goaltypesym;
     Goal *goal;
     Side *side;
@@ -4051,7 +4051,7 @@ static void
 interp_scorekeeper(Obj *form)
 {
     int id = 0;
-    char *propname;
+    const char *propname;
     Obj *props = cdr(form), *bdg, *propval;
     Scorekeeper *sk = NULL;
 
@@ -4118,7 +4118,7 @@ static void
 interp_past_unit(Obj *form)
 {
     int u = NONUTYPE, nid;
-    char *propname;
+    const char *propname;
     Obj *props, *bdg, *propval, *idval;
     PastUnit *pastunit;
 
@@ -4177,7 +4177,7 @@ static void
 interp_history(Obj *form)
 {
     int startdate, type, i;
-    char *evttype;
+    const char *evttype;
     SideMask observers;
     Obj *props, *val;
     HistEvent *hevt;
@@ -4239,7 +4239,7 @@ interp_history(Obj *form)
 /* Property name is unknown, either misspelled or misapplied. */
 
 static void
-unknown_property(char *type, char *inst, char *name)
+unknown_property(const char *type, const char *inst, const char *name)
 {
     read_warning("The %s form %s has no property named %s", type, inst, name);
 }
@@ -4247,7 +4247,7 @@ unknown_property(char *type, char *inst, char *name)
 /* This is like init_warning, but with a module and line(s) glued in. */
 
 void
-read_warning(char *str, ...)
+read_warning(const char *str, ...)
 {
     char buf[BUFSIZE];
     va_list ap;
@@ -4265,14 +4265,14 @@ read_warning(char *str, ...)
     low_init_warning(buf);
 }
 
-static void set_u_internal_name(int u, char *s) { utypes[u].iname = s; }
-static void set_u_type_name(int u, char *s) { utypes[u].name = s; }
-static void set_m_type_name(int m, char *s) { mtypes[m].name = s; }
-static void set_t_type_name(int t, char *s) { ttypes[t].name = s; }
-static void set_a_type_name(int a, char *s) { atypes[a].name = s; }
+static void set_u_internal_name(int u, const char *s) { utypes[u].iname = s; }
+static void set_u_type_name(int u, const char *s) { utypes[u].name = s; }
+static void set_m_type_name(int m, const char *s) { mtypes[m].name = s; }
+static void set_t_type_name(int t, const char *s) { ttypes[t].name = s; }
+static void set_a_type_name(int a, const char *s) { atypes[a].name = s; }
 
 static int
-lookup_action_type(char *name)
+lookup_action_type(const char *name)
 {
     int i;
 
@@ -4283,7 +4283,7 @@ lookup_action_type(char *name)
 }
 
 static int
-lookup_goal_type(char *name)
+lookup_goal_type(const char *name)
 {
     int i;
 
@@ -4294,10 +4294,10 @@ lookup_goal_type(char *name)
 }
 
 static int
-lookup_plan_type(char *name)
+lookup_plan_type(const char *name)
 {
     int i;
-    extern char *plantypenames[];
+    extern const char *plantypenames[];
 
     for (i = 0; plantypenames[i] != NULL; ++i)
       /* should get real enum */
@@ -4307,7 +4307,7 @@ lookup_plan_type(char *name)
 }
 
 int
-lookup_task_type(char *name)
+lookup_task_type(const char *name)
 {
     int i;
 
@@ -4545,7 +4545,7 @@ void
 read_layer(Obj *contents, void (*setter)(int, int, int))
 {
     int i, slen, n, ix, len, usechartable = FALSE;
-    char *str;
+    const char *str;
     short chartable[256];
     Obj *rest, *desc, *rest2, *subdesc, *sym, *num;
 
@@ -4662,7 +4662,8 @@ read_layer(Obj *contents, void (*setter)(int, int, int))
 void
 read_rle(Obj *contents, void (*setter)(int, int, int), short *chartable)
 {
-    char ch, *rowstr;
+    char ch;
+    const char *rowstr;
     int i, x, y, run, val, sawval, sawneg, sgn, x1, y1, numbadchars = 0;
     Obj *rest;
 

@@ -2880,11 +2880,13 @@ parse_location(Side *side, char *arg, int *xp, int *yp)
    by a player, generate a task object and return the rest
    of the string, if NULL if failure. */
 
-char *
-parse_task(Side *side, char *str, Task **taskp)
+const char *
+parse_task(Side *side, const char *str, Task **taskp)
 {
     int tasktype, i, x, y, n, dir, u, taskargs[MAXTASKARGS], numargs;
-    char *arg, *arg2, substr[BUFSIZE], *rest, *argtypes;
+    char *arg, *arg2, substr[BUFSIZE];
+    const char *rest;
+    const char *argtypes;
     Unit *unit;
 
     *taskp = NULL;
@@ -2935,7 +2937,7 @@ parse_task(Side *side, char *str, Task **taskp)
 		    return NULL;
 		}
 	    } else if (argtypes[i] == 'd') {
-		char *mydirchars = "ulnbhy"; /* (a local copy of ui.c thing) */
+		const char *mydirchars = "ulnbhy"; /* (a local copy of ui.c thing) */
 		/* Match on names or chars for directions. */
 		for_all_directions(dir) {
 		    if (strcmp(arg, dirnames[dir]) == 0) {
@@ -2987,7 +2989,7 @@ char *
 task_desig(Task *task)
 {
     int i, slen;
-    char *argtypes;
+    const char *argtypes;
 
     if (taskbuf == NULL)
       taskbuf = (char *)xmalloc(BUFSIZE);

@@ -108,7 +108,7 @@ int realtimepos = -1;
 
 int varrev[100];
 
-char *default_cursor_name;
+const char *default_cursor_name;
 
 SDLCursor *generic_cursor;
 
@@ -1789,7 +1789,7 @@ update_clock_display(Side *side, int rightnow)
 }
 
 void
-update_message_display(Side *side, Side *sender, char *str, int rightnow)
+update_message_display(Side *side, Side *sender, const char *str, int rightnow)
 {
     if (!active_display(side))
       return;
@@ -1799,7 +1799,7 @@ update_message_display(Side *side, Side *sender, char *str, int rightnow)
 }
 
 void
-update_all_progress_displays(char *str, int s)
+update_all_progress_displays(const char *str, int s)
 {
 }
 
@@ -1841,7 +1841,7 @@ close_displays()
 }
 
 int
-schedule_movie(Side *side, char *movie, ...)
+schedule_movie(Side *side, const char *movie, ...)
 {
 #if 0
     va_list ap;
@@ -2075,8 +2075,8 @@ static void
 interp_unix_ui_data(Obj *uispec)
 {
     int numval;
-    char *strval = NULL;
-    char *name;
+    const char *strval = NULL;
+    const char *name;
     Obj *rest, *bdg;
 
     for_all_list(uispec, rest) {
@@ -2319,7 +2319,7 @@ init_all_displays(void)
    vector of unit types, so as to be able to screen back when done. */
 
 int
-ask_unit_type(Screen *screen, char *prompt, int *possibles,
+ask_unit_type(Screen *screen, const char *prompt, int *possibles,
 	      void (*handler)(Screen *screen, int cancelled))
 {
     int u, numtypes = 0;
@@ -2404,7 +2404,7 @@ help_unit_type(Screen *screen)
 }
 
 int
-ask_terrain_type(Screen *screen, char *prompt, int *possibles,
+ask_terrain_type(Screen *screen, const char *prompt, int *possibles,
 		 void (*handler)(Screen *screen, int cancelled))
 {
     int numtypes = 0, t;
@@ -2475,7 +2475,7 @@ help_terrain_type(Screen *screen)
 /* (should change the cursor temporarily) */
 
 void
-ask_position(Screen *screen, char *prompt,
+ask_position(Screen *screen, const char *prompt,
 	     void (*handler)(Screen *screen, int cancel))
 {
     if (mouseover_buf == NULL)
@@ -2511,7 +2511,7 @@ grok_position(Screen *screen, int *xp, int *yp, Unit **unitp)
 /* Prompt for a yes/no answer with a settable default. */
 
 void
-ask_bool(Screen *screen, char *question, int dflt,
+ask_bool(Screen *screen, const char *question, int dflt,
 	 void (*handler)(Screen *screen, int cancelled))
 {
     if (mouseover_buf == NULL)
@@ -2542,7 +2542,7 @@ grok_bool(Screen *screen)
    text cursor (an underscore) is displayed. */
 
 void
-ask_string(Screen *screen, char *prompt, char *dflt,
+ask_string(Screen *screen, const char *prompt, const char *dflt,
 	   void (*handler)(Screen *screen, int cancelled))
 {
     if (mouseover_buf == NULL)
@@ -2587,7 +2587,7 @@ grok_string(Screen *screen, char **strp)
 }
 
 void
-ask_side(Screen *screen, char *prompt, Side *dfltside,
+ask_side(Screen *screen, const char *prompt, Side *dfltside,
 	 void (*handler)(Screen *screen, int cancelled))
 {
     char *dfltstr;
@@ -2666,7 +2666,7 @@ grok_side(Screen *screen, Side **side2p)
 }
 
 void
-add_remote_locally(int rid, char *str)
+add_remote_locally(int rid, const char *str)
 {
 #if 0
     eval_tcl_cmd("set master_rid %d", master_rid);
@@ -2725,7 +2725,7 @@ char *announcemsg = NULL;
 /* Announce the start of a time-consuming computation. */
 
 void
-announce_lengthy_process(char *msg)
+announce_lengthy_process(const char *msg)
 {
     n_seconds_elapsed(0);
     announcemsg = copy_string(msg);
@@ -2764,7 +2764,7 @@ finish_lengthy_process(void)
 /* An init error needs to have the command re-run. */
 
 void
-low_init_error(char *str)
+low_init_error(const char *str)
 {
     if (use_stdio) {
 	fprintf(stderr, "Error: %s.\n", str);

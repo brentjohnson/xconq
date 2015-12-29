@@ -34,7 +34,7 @@ extern void set_unit_view_image(UnitView *uview);
 
 void return_default_colorname(Side *side);
 
-static char *pick_default_colorname(Side *side);
+static const char *pick_default_colorname(Side *side);
 static void allocate_unit_view_block(void);
 static UnitView *create_bare_unit_view(void);
 static void init_visible_elevation(int x, int y);
@@ -99,7 +99,7 @@ int nextsideid;
 int
 fn_test_side_in_sideclass(Obj *osclass, ParamBox *pbox)
 {
-    char *sclass = NULL;
+    const char *sclass = NULL;
     int sid = -1;
     ParamBoxSide *paramboxs = NULL;
     Obj *rest = lispnil;
@@ -155,7 +155,7 @@ fn_test_side_in_sideclass(Obj *osclass, ParamBox *pbox)
    easily distinguished from each other. The indepside default emblem is
    set to "none" since it usually goes without emblem. */
 
-char *default_colornames[MAXSIDES + 1] = {
+const char *default_colornames[MAXSIDES + 1] = {
 	"lemon-chiffon",
 	"blue",
 	"red",
@@ -179,7 +179,7 @@ char *default_colornames[MAXSIDES + 1] = {
 
 static short default_colornames_used[MAXSIDES + 1];
 
-static char
+static const char
 *pick_default_colorname(Side *side) 
 {
 	int i;
@@ -732,7 +732,7 @@ side_n(int n)
 }
 
 Side *
-find_side_by_name(char *str)
+find_side_by_name(const char *str)
 {
     Side *side;
 
@@ -1341,7 +1341,7 @@ set_side_adjective(Side *side, Side *side2, char *newname)
 }
 
 void
-set_side_emblemname(Side *side, Side *side2, char *newname)
+set_side_emblemname(Side *side, Side *side2, const char *newname)
 {
     side2->emblemname = newname;
     update_side_display_all_sides(side2, TRUE);
@@ -1599,9 +1599,10 @@ set_side_self_unit(Side *side, Unit *unit)
 /* Message-forwarding function. */
 
 void
-send_message(Side *side, SideMask sidemask, char *str)
+send_message(Side *side, SideMask sidemask, const char *str)
 {
-    char *sidedesc, buf[BUFSIZE];
+    const char *sidedesc;
+    char buf[BUFSIZE];
     SideMask testmask;
     Side *side2, *sender;
 
@@ -1635,7 +1636,7 @@ send_message(Side *side, SideMask sidemask, char *str)
    actions, but the default is just to forward to AIs and displays. */
 
 void
-receive_message(Side *side, Side *sender, char *str)
+receive_message(Side *side, Side *sender, const char *str)
 {
     /* Look for specially-recognized messages. */
     if (strcmp("%reveal", str) == 0) {
@@ -1686,10 +1687,11 @@ reveal_side(Side *sender, Side *recipient, int *types)
 /* Modify doctrine according to a specification. */
 
 void
-set_doctrine(Side *side, char *spec)
+set_doctrine(Side *side, const char *spec)
 {
     int u;
-    char *arg, *arg2, *rest, substr[BUFSIZE];
+    const char *rest;
+    char *arg, *arg2, substr[BUFSIZE];
     Doctrine *doctrine;
 
     rest = get_next_arg(spec, substr, &arg);
@@ -4005,7 +4007,7 @@ new_doctrine(int id)
 }
 
 Doctrine *
-find_doctrine_by_name(char *name)
+find_doctrine_by_name(const char *name)
 {
     Doctrine *doctrine;
 
@@ -4126,7 +4128,7 @@ order_conds_match(StandingOrder *sorder, StandingOrder *sorder2)
 }
 
 int
-parse_standing_order(Side *side, char *cmdstr)
+parse_standing_order(Side *side, const char *cmdstr)
 {
     StandingOrder *sorder, *sorder2;
 
@@ -4160,10 +4162,11 @@ parse_standing_order(Side *side, char *cmdstr)
 
 /* (should all go to nlang.c?) */
 
-char *
-parse_unit_types(Side *side, char *str, char *utypevec)
+const char *
+parse_unit_types(Side *side, const char *str, char *utypevec)
 {
-    char *arg, substr[BUFSIZE], *rest;
+    const char *rest;
+    char *arg, substr[BUFSIZE];
     int u;
 
     rest = get_next_arg(str, substr, &arg);
@@ -4180,11 +4183,12 @@ parse_unit_types(Side *side, char *str, char *utypevec)
     return rest;
 }
 
-char *
-parse_order_cond(Side *side, char *str, StandingOrder *sorder)
+const char *
+parse_order_cond(Side *side, const char *str, StandingOrder *sorder)
 {
     int x = 0, y = 0, dist = 0;
-    char *arg, *arg2, substr[BUFSIZE], *rest;
+    char *arg, *arg2, substr[BUFSIZE];
+    const char *rest;
     Unit *unit;
 
     rest = get_next_arg(str, substr, &arg);
@@ -4278,8 +4282,8 @@ standing_order_desc(StandingOrder *sorder, char *buf)
 /* Collect the next whitespace-separated argument. */
 /* (should move to util.c or nlang.c) */
 
-char *
-get_next_arg(char *str, char *buf, char **rsltp)
+const char *
+get_next_arg(const char *str, char *buf, char **rsltp)
 {
     char *p;
 

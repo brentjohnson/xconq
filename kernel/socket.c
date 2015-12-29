@@ -362,7 +362,7 @@ accept_remote_connection(void)
    string has been delivered. */
 
 void
-low_send(int rid, char *buf)
+low_send(int rid, const char *buf)
 {
     int fd, len, cc;
 

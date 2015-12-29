@@ -950,7 +950,7 @@ check_overrun_action(Unit *unit, Unit *unit2, int x, int y, int z, int n)
     speed = unit_speed(unit2, x, y);
     mpavail = (unit->act->acp * speed) / 100;
     /* Zero mp always disallows movement, unless intra-cell. */
-    if (mpavail <= 0 && !(u2x == x && u2y == y && u2z == u2z))
+    if (mpavail <= 0 && !(u2x == x && u2y == y /*&& u2z == u2z*/))
       return A_MOVE_NO_MP;
     /* The free mp might get us enough moves, so add it before comparing. */
     if (mpavail + u_free_mp(u2) < totcost)

@@ -31,7 +31,7 @@ static void init_displays(void);
 static void get_input(void);
 static void interpret_command(Obj *cmd);
 static void list_one_unit(Unit *unit);
-static void interpret_help(Side *side, char *str);
+static void interpret_help(Side *side, const char *str);
 static int do_cmd(Side *side, Obj *cmd, Obj *parms);
 #ifdef DEBUGGING
 static void toggle_debug(Side *side, Obj *cmd, Obj *parms);
@@ -259,7 +259,7 @@ Unit *thisunit;
 static void
 interpret_command(Obj *origcmd)
 {
-    char *str;
+    const char *str;
     Obj *cmd, *verb = lispnil, *parms = lispnil;
     Side *side = NULL;
     Unit *unit = NULL;
@@ -448,7 +448,7 @@ static void
 do_task_cmd(Side *side, Obj *cmd, Obj *parms)
 {
     int i, j, numargs;
-    char *taskname;
+    const char *taskname;
     Obj *tasksym = car(parms), *taskparms = cdr(parms);
     Task *task;
 
@@ -544,7 +544,7 @@ do_help(Side *side, Obj *cmd, Obj *parms)
 static void
 do_print(Side *side, Obj *cmd, Obj *parms)
 {
-    char *fname;
+    const char *fname;
     FILE *fp;
 
     if (parms != lispnil) {
@@ -588,7 +588,7 @@ do_quit(Side *side, Obj *cmd, Obj *parms)
 }
 
 struct a_cmd {
-    char *cmd;
+    const char *cmd;
     void (*fn)(Side *side, Obj *cmd, Obj *parms);
 } cmdtable[] = {
     { "debug", toggle_debug },
@@ -619,7 +619,7 @@ static int
 do_cmd(Side *side, Obj *cmd, Obj *parms)
 {
     struct a_cmd *cmdentry = cmdtable;
-    char *cmdstr;
+    const char *cmdstr;
 
     if (!symbolp(cmd))
       return FALSE;
@@ -639,7 +639,8 @@ do_action(Side *side, Unit *unit, Obj *cmd, Obj *args)
 {
     int randomact = FALSE;
     ActionDefn *actdefn = actiondefns;
-    char *cmdstr, *argstr;
+    const char *cmdstr;
+    const char *argstr;
     char localbuf[BUFSIZE];
     int i = 0, rslt;
     Obj *rest;
@@ -730,7 +731,7 @@ close_displays(void)
 }
 
 void
-cmd_error(Side *side, char *fmt, ...)
+cmd_error(Side *side, const char *fmt, ...)
 {
     char tmpnbuf[BUFSIZE];
     va_list ap;
@@ -865,7 +866,7 @@ update_event_display(Side *side, HistEvent *hevt, int rightnow)
 }
 
 void
-update_all_progress_displays(char *str, int s)
+update_all_progress_displays(const char *str, int s)
 {
     if (DebugG) {
 	printf("Update all progress displays\n");
@@ -932,7 +933,7 @@ update_clock_display(Side *side, int rightnow)
 }
 
 void
-update_message_display(Side *side, Side *sender, char *str, int rightnow)
+update_message_display(Side *side, Side *sender, const char *str, int rightnow)
 {
     if (active_display(side) && DebugG) {
 	printf("Update %s: side %d sends \"%s\"%s\n",
@@ -955,7 +956,7 @@ action_point(Side *side, int x, int y)
 /* Generate a description of all the user input that is possible. */
 
 static void
-describe_commands(int arg, char *key, TextBuffer *buf)
+describe_commands(int arg, const char *key, TextBuffer *buf)
 {
     struct a_cmd *cmdentry;
 
@@ -966,7 +967,7 @@ describe_commands(int arg, char *key, TextBuffer *buf)
 }
 
 static void
-interpret_help(Side *side, char *topic)
+interpret_help(Side *side, const char *topic)
 {
     HelpNode *node;
 
@@ -1037,7 +1038,7 @@ announce_read_progress(void)
 int linemiddle = FALSE;
 
 void
-announce_lengthy_process(char *msg)
+announce_lengthy_process(const char *msg)
 {
     printf("%s; ", msg);
     fflush(stdout);
@@ -1064,7 +1065,7 @@ finish_lengthy_process(void)
 }
 
 int
-schedule_movie(Side *side, char *movie, ...)
+schedule_movie(Side *side, const char *movie, ...)
 {
     return FALSE;
 }
@@ -1085,7 +1086,7 @@ flush_display_buffers(Side *side)
 /* An init error needs to have the command re-run. */
 
 void
-low_init_error(char *str)
+low_init_error(const char *str)
 {
     if (linemiddle)
       printf("\n");
@@ -1183,7 +1184,7 @@ unit_research_dialog(Unit *unit)
 }
 
 void
-add_remote_locally(int rid, char *str)
+add_remote_locally(int rid, const char *str)
 {
 }
 

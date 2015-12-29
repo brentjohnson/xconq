@@ -16,7 +16,7 @@ static void draw_units(int x, int y);
 static void draw_people(int x, int y);
 static void draw_legend(int x, int y);
 static void draw_unit_details(Unit *unit);
-static void describe_cell(int x, int y, int tview, char *filler,
+static void describe_cell(int x, int y, int tview, const char *filler,
 				  char *buf);
 static void organize_list_contents(void);
 static void add_unit_to_list(Unit *unit);
@@ -364,7 +364,8 @@ static void
 draw_legend(int x, int y)
 {
     int sx, sy, pixlen;
-    char legend[100], *str;
+    char legend[100];
+    const char *str;
     Feature *feature;
     Unit *unit;
     UnitView *uview;
@@ -454,7 +455,7 @@ void
 show_closeup(void)
 {
     int u, t, tview;
-    char *filler = "Empty ";
+    const char *filler = "Empty ";
     Unit *unit = NULL;
     Side *side2;
     UnitView *uview;
@@ -506,10 +507,10 @@ show_closeup(void)
 }
 
 static void
-describe_cell(int x, int y, int tview, char *filler, char *buf)
+describe_cell(int x, int y, int tview, const char *filler, char *buf)
 {
     int t;
-    char *featname;
+    const char *featname;
 
     if (tview != UNSEEN) {
 	t = vterrain(tview);
@@ -596,7 +597,8 @@ draw_unit_details(Unit *unit)
 void
 show_side_list(void)
 {
-    char ismoving, progress[20], *dpyname;
+    char ismoving, progress[20];
+    const char *dpyname;
     int sy = 0, totacp;
     Side *side2;
     extern int curpriority;
@@ -711,7 +713,7 @@ void
 show_list(void)
 {
     int i = 0, line = 1;
-    char *maincat = "xxxxx", *filter = "?yyyy?";
+    const char *maincat = "xxxxx", *filter = "?yyyy?";
 
     clear_window(listwin);
     tmpbuf[0] = '\0';
@@ -938,8 +940,8 @@ clear_window(struct ccwin *win)
 	for (i = 0; i < win->h; ++i)
 	  mvaddstr(win->y + i, win->x, tmpbuf);
     } else {
-	printf("error: win %d is %dx%d @ %d,%d\n",
-	       (int) win, win->w, win->h, win->x, win->y);
+	printf("error: win %lu is %dx%d @ %d,%d\n",
+	       (size_t) win, win->w, win->h, win->x, win->y);
     }
 }
 
@@ -969,7 +971,7 @@ draw_blast(int x, int y, int r)
 /* Drawing text is easy, but we do need to do clipping manually. */
 
 int
-draw_text(struct ccwin *win, int x, int y, char *str)
+draw_text(struct ccwin *win, int x, int y, const char *str)
 {
     int i, slen, linestart = 0;
 

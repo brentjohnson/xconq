@@ -104,7 +104,7 @@ for ((dir) = 0; (dir) < NUMDIRS; ++(dir))
 #define random_dir() (xrandom(NUMDIRS))
 
 /*! \brief Direction name array. */
-extern char *dirnames[];
+extern const char *dirnames[];
 
 /*! \brief X delta array. */
 extern int dirx[];
