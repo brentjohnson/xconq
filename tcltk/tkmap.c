@@ -3046,7 +3046,11 @@ draw_borders_iso(MapW *mapw, int x, int y, int b)
 	    wid2 = wid / 2;
 	    XSetLineAttributes(dpy, gc, wid, LineSolid, CapButt, JoinMiter); 
 	    color = dside->ui->cell_color[b];
+<<<<<<< HEAD
 	    if ((long)color < 0)
+=======
+	    if (!color)
+>>>>>>> parent of 6632c7d... Revert "Fix compile error."
 	      color = dside->ui->blackcolor;
 	    XSetForeground(dpy, gc, color->pixel);
 	    XSetBackground(dpy, gc, dside->ui->whitecolor->pixel);
@@ -3134,7 +3138,11 @@ draw_connections(MapW *mapw, int vx, int vyhi, int vylo, int c)
 	wid2 = wid / 2;
 	XSetLineAttributes(dpy, gc, wid, LineSolid, CapButt, JoinMiter); 
 	color = dside->ui->cell_color[c];
+<<<<<<< HEAD
 	if ((long)color < 0)
+=======
+	if (!color)
+>>>>>>> parent of 6632c7d... Revert "Fix compile error."
 	  color = dside->ui->blackcolor;
 	XSetForeground(dpy, gc, color->pixel);
 	XSetBackground(dpy, gc, dside->ui->whitecolor->pixel);
@@ -3241,7 +3249,11 @@ draw_connections_iso(MapW *mapw, int x, int y, int c)
 	    wid2 = wid / 2;
 	    XSetLineAttributes(dpy, gc, wid, LineSolid, CapButt, JoinMiter); 
 	    color = dside->ui->cell_color[c];
+<<<<<<< HEAD
 	    if ((long)color < 0)
+=======
+	    if (!color)
+>>>>>>> parent of 6632c7d... Revert "Fix compile error."
 	      color = dside->ui->blackcolor;
 	    XSetForeground(dpy, gc, color->pixel);
 	    XSetBackground(dpy, gc, dside->ui->whitecolor->pixel);
