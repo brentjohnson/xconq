@@ -31,26 +31,26 @@ extern long randstate;
 #define ENDPKTESC '&'
 #define ESCAPEPKTESC '@'
 
-static void broadcast_command_5(char *cmd, int val, int val2, int val3,
+static void broadcast_command_5(const char *cmd, int val, int val2, int val3,
 				int val4, int val5);
-static void broadcast_side_property(Side *side, char *prop, int val);
-static void broadcast_side_property_2(Side *side, char *prop, int val,
+static void broadcast_side_property(Side *side, const char *prop, int val);
+static void broadcast_side_property_2(Side *side, const char *prop, int val,
 				      int val2);
-static void broadcast_side_str_property(Side *side, char *prop, char *val);
-static void broadcast_unit_property(Side *side, Unit *unit, char *prop,
+static void broadcast_side_str_property(Side *side, const char *prop, const char *val);
+static void broadcast_unit_property(Side *side, Unit *unit, const char *prop,
 				    int val);
-static void broadcast_unit_property_2(Side *side, Unit *unit, char *prop,
+static void broadcast_unit_property_2(Side *side, Unit *unit, const char *prop,
 				      int val, int val2);
-static void broadcast_unit_property_5(Side *side, Unit *unit, char *prop,
+static void broadcast_unit_property_5(Side *side, Unit *unit, const char *prop,
 				      int val, int val2, int val3, int val4,
 				      int val5);
-static void broadcast_unit_str_property(Side *side, Unit *unit, char *prop,
-					char *val);
+static void broadcast_unit_str_property(Side *side, Unit *unit, const char *prop,
+					const char *val);
 static void broadcast_add_task(Unit *unit, int pos, Task *task);
-static void broadcast_layer_change(char *layername, Side *side, int x, int y,
+static void broadcast_layer_change(const char *layername, Side *side, int x, int y,
 				   int a1, int a2, int a3, int a4);
 static void broadcast_packet(char *buf);
-static void save_outgoing_packet(int id, char *inbuf);
+static void save_outgoing_packet(int id, const char *inbuf);
 static void save_incoming_packet(int id, char *inbuf);
 static void remove_chars(char *buf, int n);
 static void receive_net_message(char *str);
@@ -75,7 +75,7 @@ static int fromhex(int x);
 static int flush_incoming_queue(int lim);
 static void send_game_checksum_error(int rid, int my_csum, int master_csum);
 
-static int send_packet(int id, char *buf);
+static int send_packet(int id, const char *buf);
 static void broadcast_game_checksum(void);
 static void broadcast_action(Unit *unit, int actee, ActionType atype,
 			     int arg0, int arg1, int arg2, int arg3);
@@ -85,7 +85,7 @@ static void download_game_module(int rid);
 static void send_remote_id(int rid);
 static void send_bugoff(int rid);
 
-static void csum_printf(char *str, ...);
+static void csum_printf(const char *str, ...);
 
 static int dumped_checksums = FALSE;
 static FILE *cfp = NULL;
@@ -322,7 +322,7 @@ add_remote_players(void)
    more. */
 
 int
-send_join(char *str)
+send_join(const char *str)
 {
     int successful;
 
@@ -440,7 +440,7 @@ net_rename_side_for_player(int n, int which)
 }
 
 void
-net_set_ai_for_player(int n, char *aitype)
+net_set_ai_for_player(int n, const char *aitype)
 {
     if (my_rid == master_rid) {
 	set_ai_for_player(n, aitype);
@@ -529,7 +529,7 @@ download_game_module(int rid)
 static char *notherbuf;
 
 void
-add_to_packet(char *str)
+add_to_packet(const char *str)
 {
     if (notherbuf == NULL)
       notherbuf = (char *)xmalloc(DOWNLOADPACKETSIZE + 10);
@@ -709,7 +709,7 @@ net_request_additional_side(char *playerspec)
 }
 
 void
-net_send_message(Side *side, SideMask sidemask, char *str)
+net_send_message(Side *side, SideMask sidemask, const char *str)
 {
     if (my_rid == master_rid) {
 	send_message(side, sidemask, str);
@@ -721,7 +721,7 @@ net_send_message(Side *side, SideMask sidemask, char *str)
 }
 
 static void
-broadcast_command_5(char *cmd, int a1, int a2, int a3, int a4, int a5)
+broadcast_command_5(const char *cmd, int a1, int a2, int a3, int a4, int a5)
 {
     sprintf(spbuf, "C%s %d %d %d %d %d", cmd, a1, a2, a3, a4, a5);
     broadcast_packet(spbuf);
@@ -827,7 +827,7 @@ net_set_side_adjective(Side *side, Side *side2, char *newname)
 }
 
 void
-net_set_side_emblemname(Side *side, Side *side2, char *newname)
+net_set_side_emblemname(Side *side, Side *side2, const char *newname)
 {
     if (my_rid == master_rid) {
 	set_side_emblemname(side, side2, newname);
@@ -937,7 +937,7 @@ net_set_side_self_unit(Side *side, Unit *unit)
 }
 
 void
-net_set_side_ai(Side *side, char *aitype)
+net_set_side_ai(Side *side, const char *aitype)
 {
     if (my_rid == master_rid) {
 	set_side_ai(side, aitype);
@@ -950,7 +950,7 @@ net_set_side_ai(Side *side, char *aitype)
 }
 
 void
-net_set_doctrine(Side *side, char *spec)
+net_set_doctrine(Side *side, const char *spec)
 {
     if (my_rid == master_rid) {
 	set_doctrine(side, spec);
@@ -1046,21 +1046,21 @@ net_paint_view(Side *side, int x, int y, int r, int tview, int uview)
 #endif /* DESIGNERS */
 
 static void
-broadcast_side_property(Side *side, char *prop, int val)
+broadcast_side_property(Side *side, const char *prop, int val)
 {
     sprintf(spbuf, "S%d %s %d", side_number(side), prop, val);
     broadcast_packet(spbuf);
 }
 
 static void
-broadcast_side_property_2(Side *side, char *prop, int val, int val2)
+broadcast_side_property_2(Side *side, const char *prop, int val, int val2)
 {
     sprintf(spbuf, "S%d %s %d %d", side_number(side), prop, val, val2);
     broadcast_packet(spbuf);
 }
 
 static void
-broadcast_side_str_property(Side *side, char *prop, char *val)
+broadcast_side_str_property(Side *side, const char *prop, const char *val)
 {
     sprintf(spbuf, "S%d %s %s", side_number(side), prop, val);
     broadcast_packet(spbuf);
@@ -1332,7 +1332,7 @@ net_designer_disband(Unit *unit)
 #endif /* DESIGNERS */
 
 Feature *
-net_create_feature(char *feattype, char *name)
+net_create_feature(const char *feattype, char *name)
 {
     Feature *rslt = NULL;
 
@@ -1402,7 +1402,7 @@ net_toggle_user_at(int u, int x, int y)
 }
 
 static void
-broadcast_unit_property(Side *side, Unit *unit, char *prop, int val)
+broadcast_unit_property(Side *side, Unit *unit, const char *prop, int val)
 {
     char buf[BUFSIZE];
 
@@ -1411,7 +1411,7 @@ broadcast_unit_property(Side *side, Unit *unit, char *prop, int val)
 }
 
 static void
-broadcast_unit_property_2(Side *side, Unit *unit, char *prop, int val, int val2)
+broadcast_unit_property_2(Side *side, Unit *unit, const char *prop, int val, int val2)
 {
     char buf[BUFSIZE];
 
@@ -1420,7 +1420,7 @@ broadcast_unit_property_2(Side *side, Unit *unit, char *prop, int val, int val2)
 }
 
 static void
-broadcast_unit_property_5(Side *side, Unit *unit, char *prop,
+broadcast_unit_property_5(Side *side, Unit *unit, const char *prop,
 			  int val, int val2, int val3, int val4, int val5)
 {
     char buf[BUFSIZE];
@@ -1431,7 +1431,7 @@ broadcast_unit_property_5(Side *side, Unit *unit, char *prop,
 }
 
 static void
-broadcast_unit_str_property(Side *side, Unit *unit, char *prop, char *val)
+broadcast_unit_str_property(Side *side, Unit *unit, const char *prop, const char *val)
 {
     char buf[BUFSIZE];
 
@@ -2375,7 +2375,8 @@ static void
 broadcast_add_task(Unit *unit, int pos, Task *task)
 {
     int numargs, i;
-    char buf[BUFSIZE], *argtypes;
+    char buf[BUFSIZE];
+    const char *argtypes;
 
     sprintf(buf, "T%d %d %d %d %d",
 	    unit->id, pos, task->type, task->execnum, task->retrynum);
@@ -2527,7 +2528,7 @@ net_paint_winds(Side *side, int x, int y, int r, int dir, int force)
 }
 
 static void
-broadcast_layer_change(char *layername, Side *side, int x, int y,
+broadcast_layer_change(const char *layername, Side *side, int x, int y,
 		       int a1, int a2, int a3, int a4)
 {
     char buf[BUFSIZE];
@@ -2577,7 +2578,7 @@ broadcast_packet(char *buf)
    chars, add checksum), send, and maybe wait for acknowledgement. */
 
 int
-send_packet(int id, char *inbuf)
+send_packet(int id, const char *inbuf)
 {
     int i, j, csum, numtimeouts;
     char buf[BUFSIZE];
@@ -2665,7 +2666,7 @@ struct q_entry {
 } *outgoing, *outgoing_last, *incoming, *incoming_last;
 
 static void
-save_outgoing_packet(int id, char *inbuf)
+save_outgoing_packet(int id, const char *inbuf)
 {
     struct q_entry *entry;
 
@@ -2918,7 +2919,7 @@ receive_data(int timeout, int lim)
 			    nothing_count, nothing_timeout);
 		    nothing_count = 0;
 		}
-		Dprintf("Rcvd: %d \"%s\"\n", rsltid, (buf ? buf : "<null>"));
+		Dprintf("Rcvd: %d \"%s\"\n", rsltid, (buf[0] ? buf : "<null>"));
 	    } else {
 		time_t now;
 
@@ -3755,7 +3756,7 @@ game_checksum(void)
 /* Checksums go to a file. */
 
 static void
-csum_printf(char *str, ...)
+csum_printf(const char *str, ...)
 {
 	va_list ap;
 
@@ -3813,14 +3814,16 @@ dump_checksums(char *str)
 		}
 		plan = unit->plan;
 		if (unit->plan) {
-			csum_printf("	PLAN %s\n", capitalize(plantypenames[plan->type]));
+		        /* csum_printf("	PLAN %s\n", capitalize(plantypenames[plan->type])); */
+			csum_printf("	PLAN %s\n", plantypenames[plan->type]);
 			csum_printf("	asleep %d\n", plan->asleep);
 			csum_printf("	reserve %d\n", plan->reserve);
 			csum_printf("	delayed %d\n", plan->delayed);
 			csum_printf("	waitingfortasks %d\n", plan->waitingfortasks);
 			csum_printf("	aicontrol %d\n", plan->aicontrol);
 			for_all_tasks(plan, task) {
-				csum_printf("		TASK %s\n", capitalize(taskdefns[task->type].display_name));
+			  /* csum_printf("\t\tTASK %s\n", capitalize(taskdefns[task->type].display_name)); */
+				csum_printf("\t\tTASK %s\n", taskdefns[task->type].display_name);
 				for (i = 0; i < MAXTASKARGS; ++i) {
 					csum_printf("		args %d: %d\n", i, task->args[i]);
 				}

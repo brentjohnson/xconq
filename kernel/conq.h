@@ -163,7 +163,7 @@ extern int warnings_logged;
 /* Declarations of functions that must be supplied by an interface. */
 
 extern void announce_read_progress(void);
-extern void announce_lengthy_process(char *msg);
+extern void announce_lengthy_process(const char *msg);
 extern void announce_progress(int pctdone);
 extern void finish_lengthy_process(void);
 
@@ -188,29 +188,29 @@ extern void update_clock_display(Side *side, int rightnow);
 extern void update_side_display(Side *side, Side *side2, int rightnow);
 extern void update_unit_display(Side *side, Unit *unit, int rightnow);
 extern void update_unit_acp_display(Side *side, Unit *unit, int rightnow);
-extern void update_message_display(Side *side, Side *side2, char *str, int rightnow);
+extern void update_message_display(Side *side, Side *side2, const char *str, int rightnow);
 extern void update_cell_display(Side *side, int x, int y, int flags);
-extern void update_all_progress_displays(char *str, int s);
+extern void update_all_progress_displays(const char *str, int s);
 extern void update_research_display(Side *side);
 extern void update_everything(void);
 extern void flush_display_buffers(Side *side);
 
-extern int schedule_movie(Side *side, char *movie, ...);
+extern int schedule_movie(Side *side, const char *movie, ...);
 extern void play_movies(SideMask sidemask);
 
 extern void action_point(Side *side, int x, int y);
 
-extern void notify_all(char *str, ...);
-extern void notify(Side *side, char *str, ...);
-extern void vnotify(Side *side, char *fmt, va_list ap);
-extern void cmd_error(Side *side, char *fmt, ...);
+extern void notify_all(const char *str, ...);
+extern void notify(Side *side, const char *str, ...);
+extern void vnotify(Side *side, const char *fmt, va_list ap);
+extern void cmd_error(Side *side, const char *fmt, ...);
 extern void low_notify(Side *side, char *str);
 
-extern void init_warning(char *str, ...);
+extern void init_warning(const char *str, ...);
 extern void low_init_warning(char *str);
-extern void init_error(char *str, ...);
-extern void low_init_error(char *str);
-extern void run_warning(char *str, ...);
+extern void init_error(const char *str, ...);
+extern void low_init_error(const char *str);
+extern void run_warning(const char *str, ...);
 extern void low_run_warning(char *str);
 extern void run_error(char *str, ...);
 extern void low_run_error(char *str);
@@ -298,7 +298,7 @@ extern int construction_possible(int u2);
 extern int any_construction_possible(void);
 extern int storage_possible(int m);
 extern int any_storage_possible(void);
-extern char *action_desig(Action *act);
+extern const char *action_desig(Action *act);
 extern int type_max_night_acp_from_any_terrains(int u);
 extern int type_max_acp_from_any_occs(int u);
 extern int type_max_acp(int u);
@@ -363,19 +363,19 @@ extern int *cache__type_max_speed;
 extern void init_ai(Side *side);
 extern void init_ai_types(void);
 extern void ai_init_shared(void);
-extern int find_ai_type(char *aitype);
-extern void set_side_ai(Side *side, char *aitype);
+extern int find_ai_type(const char *aitype);
+extern void set_side_ai(Side *side, const char *aitype);
 extern int run_local_ai(int when, int maxplanning);
-extern char *ai_type_name(int n);
-extern char *next_ai_type_name(char *aitype);
-extern char *ai_type_help(int n);
+extern const char *ai_type_name(int n);
+extern const char *next_ai_type_name(const char *aitype);
+extern const char *ai_type_help(int n);
 extern void ai_react_to_new_side(Side *side, Side *side2);
-extern void ai_receive_message(Side *side, Side *sender, char *str);
+extern void ai_receive_message(Side *side, Side *sender, const char *str);
 extern void ai_save_state(Side *side);
 extern int ai_region_at(Side *side, int x, int y);
-extern char *ai_at_desig(Side *side, int x, int y);
+extern const char *ai_at_desig(Side *side, int x, int y);
 extern Goal *create_goal(GoalType type, Side *side, int tf);
-extern char *goal_desig(Goal *goal);
+extern const char *goal_desig(Goal *goal);
 
 extern void ai_pick_side_research(Side *side);
 
@@ -490,9 +490,9 @@ extern void run_synth_methods(void);
 extern void final_init(void);
 extern void init_supply(Unit *unit);
 extern void assign_players_to_sides(void);
-extern char *version_string(void);
-extern char *copyright_string(void);
-extern char *license_string(void);
+extern const char *version_string(void);
+extern const char *copyright_string(void);
+extern const char *license_string(void);
 extern int already_seen_chance(Side *side, Unit *unit);
 extern int get_synth_method_uses(int methkey, int *calls, int *runs);
 extern int indepside_needed(void);
@@ -502,13 +502,13 @@ extern int indepside_needed(void);
 extern Obj *make_namer(Obj *sym, Obj *meth);
 extern void init_namers(void);
 extern void make_up_side_name(Side *side);
-extern int name_in_use(Side *side, char *str);
+extern int name_in_use(Side *side, const char *str);
 extern int name_units_randomly(int calls, int runs);
-extern char *unit_namer(Unit *unit);
-extern char *propose_unit_name(Unit *unit);
+extern const char *unit_namer(Unit *unit);
+extern const char *propose_unit_name(Unit *unit);
 extern void make_up_unit_name(Unit *unit);
 extern void assign_unit_number(Unit *unit);
-extern char *run_namer(Obj *namer);
+extern const char *run_namer(Obj *namer);
 
 /* mkrivers.c */
 
@@ -552,27 +552,27 @@ extern int can_move(Unit *actor, Unit *mover);
 /* nlang.c */
 
 extern void init_nlang(void);
-extern char *short_side_title(Side *side);
-extern char *shortest_side_title(Side *side2, char *buf);
+extern const char *short_side_title(Side *side);
+extern const char *shortest_side_title(Side *side2, char *buf);
 extern char *long_player_title(char *buf, Player *player,
 			       char *thisdisplayname);
 extern char *short_player_title(char *buf, Player *player,
 				char *thisdisplayname);
 extern char *simple_player_title(char *buf, Player *player);
 extern char *simple_player_name(char *buf, Player *player);
-extern char *unit_handle(Side *side, Unit *unit);
-extern char *short_unit_handle(Unit *unit);
-extern char *medium_long_unit_handle(Unit *unit);
+extern const char *unit_handle(Side *side, Unit *unit);
+extern const char *short_unit_handle(Unit *unit);
+extern const char *medium_long_unit_handle(Unit *unit);
 extern void name_or_number(Unit *unit, char *buf);
-extern char *apparent_unit_handle(Side *side, Unit *unit, Side *side2);
+extern const char *apparent_unit_handle(Side *side, Unit *unit, Side *side2);
 extern void construction_desc(char *buf, Unit *unit, int u);
 extern void research_desc(char *buf, Unit *unit, int a);
 extern void researchible_desc(char *buf, Unit *unit, int a);
 extern void constructible_desc(char *buf, Side *side, int u, Unit *unit);
 extern void historical_event_desc(Side *side, HistEvent *hevt, char *buf);
-extern char *action_result_desc(int rslt);
+extern const char *action_result_desc(int rslt);
 extern void advance_failure_desc(char *buf, Unit *unit, HistEventType reason);
-extern char *feature_desc(Feature *feature, char *buf);
+extern const char *feature_desc(Feature *feature, char *buf);
 extern void size_desc(char *buf, Unit *unit, int label);
 extern void hp_desc(char *buf, Unit *unit, int label);
 extern void acp_desc(char *buf, Unit *unit, int label);
@@ -584,18 +584,18 @@ extern void task_desc(char *buf, Side *side, Unit *unit, Task *task);
 extern void action_desc(char *buf, Action *action, Unit *unit);
 extern void time_desc(char *buf, int seconds, int maxtime);
 extern void notify_doctrine(Side *side, char *spec);
-extern void report_combat(Unit *unit, Unit *atker, char *str);
+extern void report_combat(Unit *unit, Unit *atker, const char *str);
 extern void report_give(Side *side, Unit *unit, Unit *unit2, short *rslts);
 extern void report_take(Side *side, Unit *unit, int needed, short *rslts);
-extern char *ordinal_suffix(int n);
-extern char *plural_form(char *word);
+extern const char *ordinal_suffix(int n);
+extern char *plural_form(const char *word);
 extern char *capitalize(char *buf);
 extern char *all_capitals(char *buf);
-extern char *absolute_date_string(int date);
+extern const char *absolute_date_string(int date);
 extern void write_unit_record(FILE *fp, Side *side);
 extern void write_side_results(FILE *fp, Side *side);
 extern void write_combat_results(FILE *fp, Side *side);
-extern void record_missing_image(int typtyp, char *str);
+extern void record_missing_image(int typtyp, const char *str);
 extern int missing_images(char *buf);
 extern void notify_all_of_resignation(Side *side, Side *side2);
 extern int short_side_title_plural_p(Side *side);
@@ -606,18 +606,18 @@ extern void destination_desc(char *buf, Side *side, Unit *unit,
 			     int x, int y, int z);
 extern int supply_desc(char *buf, Unit *unit, int mrow);
 extern int tooling_desc(char *buf, Unit *unit);
-extern char *sidemask_desc(char *buf, SideMask sidemask);
+extern const char *sidemask_desc(char *buf, SideMask sidemask);
 extern void latlong_desc(char *buf, int x, int y, int xf, int yf, int which);
 extern void others_here_desc(char *buf, Unit *unit);
 extern void occupants_desc(char *buf, Unit *unit);
-extern void set_initial_date(char *str);
+extern void set_initial_date(const char *str);
 extern int find_event_type(Obj *sym);
 extern int pattern_matches_event(Obj *pattern, HistEvent *hevt);
 extern void event_desc_from_list(Side *side, Obj *lis, HistEvent *hevt,
 				 char *buf);
-extern int turns_between(char *str1, char *str2);
-extern char *goal_desc(char *buf, Goal *goal);
-extern char *feature_name_at(int x, int y);
+extern int turns_between(const char *str1, const char *str2);
+extern const char *goal_desc(char *buf, Goal *goal);
+extern const char *feature_name_at(int x, int y);
 extern void linear_desc(char *buf, int x, int y);
 extern void elevation_desc(char *buf, int x, int y);
 extern void temperature_desc(char *buf, int x, int y);
@@ -641,7 +641,7 @@ extern int past_halfway_point(Unit *unit);
 
 	/* called by skelconq which should not do that. */
 
-extern void make_plausible_random_args(char *argtypestr, int i, int *args, Unit *unit);
+extern void make_plausible_random_args(const char *argtypestr, int i, int *args, Unit *unit);
 
 /* read.c */
 
@@ -649,13 +649,13 @@ extern void type_error(Obj *x, char *msg);
 extern void interp_form(Module *module, Obj *form);
 extern void interp_game_module(Obj *form, Module *module);
 extern void fill_in_side(Side *side, Obj *props, int userdata);
-extern void read_warning(char *str, ...);
-extern int utype_from_name(char *str);
+extern void read_warning(const char *str, ...);
+extern int utype_from_name(const char *str);
 extern int utype_from_symbol(Obj *sym);
 extern int mtype_from_name(char *str);
 extern int ttype_from_name(char *str);
 extern int atype_from_name(char *str);
-extern int lookup_task_type(char *name);
+extern int lookup_task_type(const char *name);
 
 /* run.c */
 
@@ -764,4 +764,4 @@ extern void dump_checksums(char *str);
 /* write.c */
 
 extern void init_write(void);
-extern int write_game_module(Module *module, char *fname);
+extern int write_game_module(Module *module, const char *fname);

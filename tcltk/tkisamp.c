@@ -91,7 +91,7 @@ typedef struct {
 
     XColor *fill_color;
 
-    char *main_imf_name;
+    const char *main_imf_name;
     int numimages;
     ImageFamily **imf_list;
 
@@ -178,10 +178,10 @@ static void imfsample_display(ClientData cldata);
 static void imfsample_event_proc(ClientData cldata, XEvent *eventPtr);
 static int imfsample_widget_cmd(ClientData cldata, Tcl_Interp *interp,
 				int argc, char **argv);
-static void imfsample_add_imf(Imfsample *imfsample, char *imfname);
+static void imfsample_add_imf(Imfsample *imfsample, const char *imfname);
 static void imfsample_replace_imf(Imfsample *imfsample, char *imfname);
 static void imfsample_replace_emblem(Imfsample *imfsample, char *imfname);
-static void imfsample_remove_imf(Imfsample *imfsample, char *imfname);
+static void imfsample_remove_imf(Imfsample *imfsample, const char *imfname);
 static void draw_one_main_image(Imfsample *imfsample, Drawable d, GC gc,
 				ImageFamily *imf,
 				int sx, int sy, int sw, int sh);
@@ -258,7 +258,7 @@ imfsample_cmd(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 	return TCL_ERROR;
     }
 
-    interp->result = Tk_PathName(imfsample->tkwin);
+    Tcl_SetResult(interp, Tk_PathName(imfsample->tkwin), TCL_VOLATILE);
     return TCL_OK;
 }
 
@@ -305,7 +305,7 @@ imfsample_widget_cmd(ClientData cldata, Tcl_Interp *interp, int argc, char **arg
 	}
     } else if ((c == 'c') && (strncmp(argv[1], "curselection", cmdlength) == 0)
 	       && (cmdlength >= 2)) {
-	sprintf(interp->result, "%d", imfsample->selected);
+        sprintf(Tcl_GetStringResult(interp), "%d", imfsample->selected);
     } else if ((c == 'a') && (strncmp(argv[1], "add", cmdlength) == 0)
 	       && (cmdlength >= 2)) {
 	if (strcmp(argv[2], "imf") == 0) {
@@ -346,7 +346,7 @@ imfsample_widget_cmd(ClientData cldata, Tcl_Interp *interp, int argc, char **arg
 		    sprintf(tclbuf, ".images.scroll set 0 1");
 		    rslt = Tcl_Eval(interp, tclbuf);
 		    if (rslt == TCL_ERROR) {
-			fprintf(stderr, "Error: %s\n", interp->result);
+		        fprintf(stderr, "Error: %s\n", Tcl_GetStringResult(interp));
 		    }
 	    }
 	}
@@ -410,7 +410,7 @@ imfsample_widget_cmd(ClientData cldata, Tcl_Interp *interp, int argc, char **arg
 		sprintf(tclbuf, ".images.scroll set %f %f", fraction, fraction2);
 		rslt = Tcl_Eval(interp, tclbuf);
 		if (rslt == TCL_ERROR) {
-			fprintf(stderr, "Error: %s\n", interp->result);
+		  fprintf(stderr, "Error: %s\n", Tcl_GetStringResult(interp));
 		}
 	}
     } else {
@@ -432,7 +432,7 @@ error:
 }
 
 static void
-imfsample_add_imf(Imfsample *imfsample, char *imfname)
+imfsample_add_imf(Imfsample *imfsample, const char *imfname)
 {
     int i;
     ImageFamily *imf = NULL;
@@ -448,12 +448,12 @@ imfsample_add_imf(Imfsample *imfsample, char *imfname)
 			images[i]->name);
 		rslt = Tcl_Eval(interp, tclbuf);
 		if (rslt == TCL_ERROR) {
-		    fprintf(stderr, "Error: %s\n", interp->result);
+		    fprintf(stderr, "Error: %s\n", Tcl_GetStringResult(interp));
 		}
 		sprintf(tclbuf, "update idletasks");
 		rslt = Tcl_Eval(interp, tclbuf);
 		if (rslt == TCL_ERROR) {
-		    fprintf(stderr, "Error: %s\n", interp->result);
+		    fprintf(stderr, "Error: %s\n", Tcl_GetStringResult(interp));
 		}
 	    }
 	    imf = tk_find_imf(images[i]->name);
@@ -514,7 +514,7 @@ imfsample_replace_emblem(Imfsample *imfsample, char *imfname)
 extern int numtkimages;
 
 static void
-imfsample_remove_imf(Imfsample *imfsample, char *imfname)
+imfsample_remove_imf(Imfsample *imfsample, const char *imfname)
 {
     if (imfsample->imfapp) {
 	    if (strcmp(imfname, "-all") == 0) {
@@ -782,7 +782,7 @@ imfsample_display(ClientData cldata)
 		    imfsample->height);
 	    rslt = Tcl_Eval(interp, tclbuf);
 	    if (rslt == TCL_ERROR) {
-		fprintf(stderr, "Error: %s\n", interp->result);
+	        fprintf(stderr, "Error: %s\n", Tcl_GetStringResult(interp));
 	    }
 	    /* Force a redraw of the scrollbar if the window was resized. */
 	    if (imfsample->numimages) {
@@ -792,7 +792,7 @@ imfsample_display(ClientData cldata)
 	   }
 	    rslt = Tcl_Eval(interp, tclbuf);
 	    if (rslt == TCL_ERROR) {
-		fprintf(stderr, "Error: %s\n", interp->result);
+	      fprintf(stderr, "Error: %s\n", Tcl_GetStringResult(interp));
 	    }
     }
     /* Now iterate through all the images we want to draw. */

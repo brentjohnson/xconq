@@ -66,7 +66,7 @@ static void hup_handler(int sig, int code, struct sigcontext *scp, char *addr);
 
 static int is_directory(const char *path);
 
-static char *score_file_pathname(char *name);
+static char *score_file_pathname(const char *name);
 
 /* Is the given path a directory? */
 static int 
@@ -88,13 +88,13 @@ default_library_pathname(void)
     char *name = NULL;
     int i = 0;
     int found = FALSE;
-    char *abspaths [] = {
+    const char *abspaths [] = {
 	"/usr/share/xconq/lib", "/usr/local/share/xconq/lib", 
 	"/opt/share/xconq/lib", "/opt/local/share/xconq/lib", 
 	"/usr/local/xconq/lib", "/opt/local/xconq/lib", 
 	"/usr/local/xconq/share/lib", "/opt/local/xconq/share/lib", NULL
     };
-    char *relpaths [] = {
+    const char *relpaths [] = {
 	"../share/xconq/lib", "xconq/lib", "../../xconq/lib", NULL
     };
 
@@ -127,13 +127,13 @@ default_images_pathname(char *libpath)
     char *name = NULL;
     int i = 0;
     int found = FALSE;
-    char *abspaths [] = {
+    const char *abspaths [] = {
 	"/usr/share/xconq/images", "/usr/local/share/xconq/images", 
 	"/opt/share/xconq/images", "/opt/local/share/xconq/images", 
 	"/usr/local/xconq/images", "/opt/local/xconq/images", 
 	"/usr/local/xconq/share/images", "/opt/local/xconq/share/images", NULL
     };
-    char *relpaths [] = {
+    const char *relpaths [] = {
 	"../share/xconq/images", "xconq/images", "../../xconq/images", NULL
     };
 
@@ -173,9 +173,9 @@ news_filename(void)
 }
 
 void
-save_game(char *fname)
+save_game(const char *fname)
 {
-    char *fullname;
+    const char *fullname;
     
     fullname = game_filename(NULL, fname);
     write_entire_game_state(fullname);
@@ -202,7 +202,9 @@ game_homedir(void)
 	strcpy(homedir, pwd->pw_dir);
 	strcat(homedir, "/.xconq");
     } else {
-	homedir = ".";
+	homedir = (char *)xmalloc(strlen(".") + 20);
+	strcpy(homedir, ".");
+	// homedir = ".";
     }
     /* Try to ensure that the directory exists. */
     if (access(homedir, F_OK) != 0) {
@@ -213,7 +215,7 @@ game_homedir(void)
 }
 
 char *
-game_filename(char *namevar, char* defaultname)
+game_filename(const char *namevar, const char* defaultname)
 {
     char *str, *home;
 
@@ -233,13 +235,13 @@ game_filename(char *namevar, char* defaultname)
    does absolutely nothing. */
 
 FILE *
-open_file(char *filename, char *mode)
+open_file(const char *filename, const char *mode)
 {
     return fopen(filename, mode);
 }
 
 FILE *
-open_library_file(char *filename)
+open_library_file(const char *filename)
 {
     char fullnamebuf[BUFSIZE];
     LibraryPath *p;
@@ -261,7 +263,7 @@ open_library_file(char *filename)
 }
 
 FILE *
-open_scorefile_for_reading(char *name)
+open_scorefile_for_reading(const char *name)
 {
     FILE *fp;
 
@@ -270,7 +272,7 @@ open_scorefile_for_reading(char *name)
 }
 
 FILE *
-open_scorefile_for_writing(char *name)
+open_scorefile_for_writing(const char *name)
 {
     FILE *fp;
 
@@ -294,18 +296,18 @@ close_scorefile_for_writing(FILE *fp)
    accounting for env vars etc. */
 
 static char *
-score_file_pathname(char *name)
+score_file_pathname(const char *name)
 {
     static char *scorenamebuf;
     char *scorepath = NULL, *gamehomepath = NULL, *dirpathbuf = NULL;
     int i = 0;
     int found = FALSE, da_scorepath = FALSE;
-    char *abspaths [] = {
+    const char *abspaths [] = {
 	"/var/lib/games/xconq", "/var/lib/xconq", 
 	"/var/lib/games/xconq/scores", "/var/lib/xconq/scores", 
 	"/usr/share/xconq/scores", NULL
     };
-    char *ghrelpaths [] = {
+    const char *ghrelpaths [] = {
 	"scores", "../xconq", "../xconq/scores", "../Xconq", 
 	"../Xconq/scores", ".", NULL
     };
@@ -318,8 +320,10 @@ score_file_pathname(char *name)
 	scorepath = getenv("XCONQ_SCORES");
 	/* If the environment does not provide a scores directory, then 
 	   try using the compiled in one. */
-	if (empty_string(scorepath))
-	  scorepath = XCONQSCORES;
+	if (empty_string(scorepath)) {
+	  scorepath = copy_string(XCONQSCORES);
+	  da_scorepath = TRUE;
+	}
 	if (is_directory(scorepath))
 	  found = TRUE;
 	/* If the compiled in scores directory is not present, then start 
@@ -327,7 +331,8 @@ score_file_pathname(char *name)
 	/* Absolute paths. */
 	for (i = 0; abspaths[i] && !found; ++i) {
 	    if (is_directory(abspaths[i])) {
-		scorepath = abspaths[i];
+	        scorepath = copy_string(abspaths[i]);
+		da_scorepath = TRUE;
 		found = TRUE;
 	    }
 	}
@@ -357,7 +362,8 @@ score_file_pathname(char *name)
 		da_scorepath = TRUE;
 	    }
 	    else {
-		scorepath = "scores";
+	        scorepath = copy_string("scores");
+		da_scorepath = TRUE;
 	    }
 	    free(dirpathbuf);
 	}
@@ -378,7 +384,7 @@ score_file_pathname(char *name)
 /* Future direction: would like to change the interface to return a
    freshly malloc'd array rather than all this BUFSIZE baloney. */
 void
-make_pathname(char *path, char *name, char *extn, char *pathbuf)
+make_pathname(const char *path, const char *name, const char *extn, char *pathbuf)
 {
     int pathbuf_size = 1;
     strcpy(pathbuf, "");
@@ -490,7 +496,7 @@ hup_handler(int sig, int code, struct sigcontext *scp, char *addr)
 #endif
 }
 
-char *
+const char *
 error_save_filename(void)
 {
     /* No need to cache name, will only get requested once. */

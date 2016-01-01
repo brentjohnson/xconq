@@ -146,7 +146,7 @@ news_filename()
 }
 
 void
-save_game(char *name)
+save_game(const char *name)
 {
 	Str255 tmpstr;
 	short	curvrefnum;
@@ -193,7 +193,7 @@ game_homedir(void)
 }
 
 char *
-game_filename(char *namevar, char* defaultname)
+game_filename(const char *namevar, const char* defaultname)
 {
     char *str, *home;
 
@@ -320,7 +320,7 @@ open_file(char *filename, char *mode)
 }
 
 FILE *
-open_library_file(char *filename)
+open_library_file(const char *filename)
 {
      char fullnamebuf[BUFSIZE];
     LibraryPath *p;
@@ -342,7 +342,7 @@ open_library_file(char *filename)
 }
 
 FILE *
-open_scorefile_for_reading(char *name)
+open_scorefile_for_reading(const char *name)
 {
     short curvrefnum;
     long curdirid;
@@ -359,7 +359,7 @@ open_scorefile_for_reading(char *name)
 }
 
 FILE *
-open_scorefile_for_writing(char *name)
+open_scorefile_for_writing(const char *name)
 {
     Str255 pname, tmpstr;
     char buf[255];
@@ -395,7 +395,7 @@ close_scorefile_for_writing(FILE *fp)
 }
 
 void
-make_pathname(char *path, char *name, char *extn, char *pathbuf)
+make_pathname(const char *path, const char *name, const char *extn, char *pathbuf)
 {
     strcpy(pathbuf, "");
     if (!empty_string(path)) {
@@ -504,7 +504,7 @@ close_remote_connection(int rid)
 }
 
 void
-low_send(int id, char *buf)
+low_send(int id, const char *buf)
 {
 }
 

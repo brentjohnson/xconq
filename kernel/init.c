@@ -68,7 +68,7 @@ short initially_no_ai;
 
 /* The name of the default game module. */
 
-char *standard_game_name;
+const char *standard_game_name;
 
 /* This is the main string printing buffer.  It is statically allocated
    because it is used even before the main data structures are inited. */
@@ -1278,7 +1278,7 @@ rename_side_for_player(int n, int which)
    position in the assignments array. */
 
 void
-set_ai_for_player(int n, char *aitype)
+set_ai_for_player(int n, const char *aitype)
 {
     Player *player;
 
@@ -2220,7 +2220,7 @@ prealloc_debug(void)
 
 /* Return the program version. */
 
-char *
+const char *
 version_string(void)
 {
     return VERSION;
@@ -2228,7 +2228,7 @@ version_string(void)
 
 /* Return the copyright notice. */
 
-char *
+const char *
 copyright_string(void)
 {
     return COPYRIGHT;
@@ -2236,7 +2236,7 @@ copyright_string(void)
 
 /* Return the license string. */
 
-char *
+const char *
 license_string(void)
 {
     return "\

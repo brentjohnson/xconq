@@ -4196,7 +4196,7 @@ should_play_movies(void)
 int
 execute_action(Unit *unit, Action *action)
 {
-    char *argtypestr;
+    const char *argtypestr;
     int u = unit->type, rslt = A_ANY_ERROR, n, i, a[4];
     Unit *unit2, *aunits[4];
     Side *asides[4];
@@ -4467,7 +4467,8 @@ static void
 notify_action(Unit *unit, Action *action)
 {
     int found = FALSE;
-    char *atypename, abuf[BUFSIZE];
+    const char *atypename;
+    char abuf[BUFSIZE];
     Obj *rest, *head, *pat, *msgdesc;
 
     atypename = actiondefns[(int) action->type].name;
@@ -4542,7 +4543,7 @@ action_desc_from_list(Side *side, Obj *lis, Unit *unit, Action *action,
 		      char *buf)
 {
     int n;
-    char *symname;
+    const char *symname;
     Obj *rest, *item;
     Unit *actee;
 
@@ -4580,7 +4581,7 @@ static void
 play_action_movies(Unit *unit, Action *action)
 {
     int found = FALSE;
-    char *soundname;
+    const char *soundname;
     Obj *rest, *head, *parms, *msgdesc;
 
     if (!should_play_movies())
@@ -4875,7 +4876,7 @@ any_storage_possible(void)
 
 /* Compose a legible description of a given action. */
 
-char *
+const char *
 action_desig(Action *act)
 {
     int i, slen;

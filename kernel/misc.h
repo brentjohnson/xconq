@@ -362,43 +362,43 @@ extern DiceRep multiply_dice2(DiceRep dice, int mult);
 
 extern void *xmalloc(int amt);
 extern void report_malloc(void);
-extern void tprintf(char *buf, char *str, ...);
-extern void tnprintf(char *buf, int n, char *str, ...);
+extern void tprintf(char *buf, const char *str, ...);
+extern void tnprintf(char *buf, int n, const char *str, ...);
 extern int select_by_weight(int *arr, int numvals);
-extern char *copy_string(char *str);
-extern char *pad_blanks(char *str, int n);
-extern int iindex(int ch, char *str);
+extern char *copy_string(const char *str);
+extern char *pad_blanks(const char *str, int n);
+extern int iindex(int ch, const char *str);
 extern long idifftime(time_t t1, time_t t0);
-extern void case_panic(char *str, int var);
+extern void case_panic(const char *str, int var);
 extern int isqrt(int i);
 extern void init_debug_to_stdout(void);
 extern void update_debugging(void);
 extern void toggle_debugging(int *flagp);
-extern void debug_printf(char *str, ...);
-extern void debugm_printf(char *str, ...);
-extern void debugg_printf(char *str, ...);
+extern void debug_printf(const char *str, ...);
+extern void debugm_printf(const char *str, ...);
+extern void debugg_printf(const char *str, ...);
 
 extern void prealloc_debug(void);
 
-extern void record_activity_start(char *type, int detail);
-extern void record_activity_end(char *type, int detail);
+extern void record_activity_start(const char *type, int detail);
+extern void record_activity_end(const char *type, int detail);
 extern void dump_activity_trace(void);
 
-extern void vtprintf(char *buf, char *str, va_list ap);
+extern void vtprintf(char *buf, const char *str, va_list ap);
 
-extern void log_warning(char *typ, char *str);
+extern void log_warning(const char *typ, const char *str);
 
 /* Needed for emergency game savers. */
-extern int write_entire_game_state(char *fname);
+extern int write_entire_game_state(const char *fname);
 
 /* Called from various places. */
-extern char *find_name(char *fname);
+extern char *find_name(const char *fname);
 
 /* New wrapper for fopen defined in mac.c and unix.c. */
-extern FILE *open_file(char *filename, char *mode);
+extern FILE *open_file(const char *filename, const char *mode);
 
 /* For coordinated saving of network games. */
-extern void save_game(char *fname);
+extern void save_game(const char *fname);
 
 /* Needed by Unix and Windows. */
 extern void close_displays(void);

@@ -16,13 +16,13 @@ any later version.  See the file COPYING.  */
  */
 typedef struct a_player {
     short id;               	/*!< unique id for the player */
-    char *name;             	/*!< proper name of the player */
-    char *configname;       	/*!< name of a particular configuration */
-    char *displayname;      	/*!< name of the desired display */
-    char *aitypename;       	/*!< name of an AI type */
+    const char *name;          	/*!< proper name of the player */
+    const char *configname;    	/*!< name of a particular configuration */
+    const char *displayname;   	/*!< name of the desired display */
+    const char *aitypename;    	/*!< name of an AI type */
     short advantage;        	/*!< player's desired initial advantage */
-    char *remotewanted;     	/*!< name of remote desired for player */
-    char *password;         	/*!< encrypted password of the player */
+    const char *remotewanted;  	/*!< name of remote desired for player */
+    const char *password;      	/*!< encrypted password of the player */
     int rid;                	/*!< identifier of the player's program */
     struct a_side *side;    	/*!< the \ref a_side "Side" being played */
     struct a_player *next;	/*!< pointer to the next Player */

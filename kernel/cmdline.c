@@ -17,15 +17,15 @@ extern short initially_no_ai;
 #include "kpublic.h"
 #include "cmdline.h"
 
-static void add_a_raw_player_spec(char *specstr);
+static void add_a_raw_player_spec(const char *specstr);
 static void version_info(void);
 static void general_usage_info(void);
 static void game_usage_info(void);
 static void player_usage_info(void);
 static void parse_world_option(char *str);
-static void parse_realtime_option(char *subopt, char *arg);
-static void parse_variant(char *str);
-static int find_variant_from_name(Module *module, char *name);
+static void parse_realtime_option(const char *subopt, const char *arg);
+static void parse_variant(const char *str);
+static int find_variant_from_name(Module *module, const char *name);
 
 /* The startup-settable options. */
 
@@ -43,7 +43,7 @@ char *option_game_to_join = NULL;
 
 int option_num_to_wait_for = 0;
 
-static char *default_ai_type = ",mplayer";
+static const char *default_ai_type = ",mplayer";
 
 /* Use this to record the options used to set up a game, so it can be
    reported to users. */
@@ -64,7 +64,7 @@ char *raw_default_player_spec;
 
 static Obj *variant_settings;
 
-static char *program_name = "";
+static const char *program_name = "";
 
 static int help_wanted = FALSE;
 
@@ -97,7 +97,8 @@ init_options(void)
 void
 parse_command_line(int argc, char *argv[], int spec)
 {
-    char *arg, *aispec, tmpspec[100], tmpargbuf[CLIBUFSIZE], blurb[BLURBSIZE];
+    const char *arg, *aispec;
+    char tmpspec[100], tmpargbuf[CLIBUFSIZE], blurb[BLURBSIZE];
     int i, n, numused, total_arg_space, tmpargbuflen = 0;
 
 /* This macro just checks that a required next argument is actually
@@ -286,12 +287,12 @@ parse_command_line(int argc, char *argv[], int spec)
 	    if (numused >= 1) {
 		strcat(args_used, " ");
 		strcat(args_used, argv[i]);
-		argv[i] = "";
+		argv[i] = NULL;
 	    }
 	    if (numused >= 2) {
 		strcat(args_used, " ");
 		strcat(args_used, argv[i+1]);
-		argv[i+1] = "";
+		argv[i+1] = NULL;
 	    }
 	    if (numused >= 1)
 	      i += (numused - 1);
@@ -326,10 +327,10 @@ parse_command_line(int argc, char *argv[], int spec)
 	      printf("%s (%s)\n", mainmodule->title, mainmodule->name);
 	    else
 	      printf("%s\n", mainmodule->name);
-	    printf("    %s\n");
+	    printf("    \n");
 	    if (mainmodule->blurb != lispnil) {
 	    	append_blurb_strings(blurb, mainmodule->blurb);
-	    	printf(blurb);
+	    	printf("%s", blurb);
 	    } else {
 	    	printf("(no description)");
 	    }
@@ -366,7 +367,7 @@ add_a_module(char *name, char *filename)
    on the command line. */
 
 static void
-add_a_raw_player_spec(char *specstr)
+add_a_raw_player_spec(const char *specstr)
 {
     struct raw_spec *spec =
       (struct raw_spec *) xmalloc (sizeof(struct raw_spec));
@@ -420,7 +421,7 @@ static void
 game_usage_info(void)
 {
     int i, wid, hgt, circumf, lat, lon, pergame, perside, perturn;
-    char *varid;
+    const char *varid;
     char buf[BUFSIZE];
     Variant *var;
     Obj *vardflt;
@@ -573,7 +574,7 @@ parse_world_option(char *str)
 }
 
 static void
-parse_realtime_option(char *subopt, char *arg)
+parse_realtime_option(const char *subopt, const char *arg)
 {
     if (strcmp(subopt, "-tgame") == 0) {
 	option_total_game_time = 60 * atoi(arg);
@@ -589,9 +590,10 @@ parse_realtime_option(char *subopt, char *arg)
 /* Given a variant, turn it into a list "(name val)". */
 
 static void
-parse_variant(char *str)
+parse_variant(const char *str)
 {
-    char *varname = NULL, *str2;
+    char *varname = NULL;
+    char *str2;
     Obj *varval = lispnil;
 
     if (strcmp(str, "") == 0) {
@@ -607,7 +609,7 @@ parse_variant(char *str)
 	    varname[str2 - str] = '\0';
 	} else {
 	    /* Assume varname by itself means "enable" (set to value of 1). */
-	    varname = str;
+	  varname = copy_string(str);
 	    varval = new_number(1);
 	}
 	if (varname)
@@ -637,7 +639,7 @@ void
 set_variants_from_options(void)
 {
     int which;
-    char *varname;
+    const char *varname;
     Obj *varrest, *varset;
 
     /* Only the host of a networked game can set variants. */
@@ -682,7 +684,7 @@ set_variants_from_options(void)
    -1 to indicate that it is not the name of a valid variant. */
 
 static int
-find_variant_from_name(Module *module, char *name)
+find_variant_from_name(Module *module, const char *name)
 {
     int i;
     Variant *var;

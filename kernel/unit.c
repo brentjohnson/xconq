@@ -2057,7 +2057,7 @@ change_unit_side(Unit *unit, Side *newside, int reason, Unit *agent)
 	/* Actually set the side slot of the unit here. */
 	set_unit_side(unit, newside);
 	// Release the side's operational role for the unit, if necessary.
-	if (oprole = find_oprole(oldside, unit->id))
+	if ((oprole = find_oprole(oldside, unit->id)))
 	    release_oprole(oprole);
 	/* Check if this was a self unit. */
 	if (oldside->self_unit == unit)
@@ -2813,7 +2813,7 @@ moves_till_low_supplies(Unit *unit)
    for debugging and warnings.  We use several buffers and rotate between
    them so we can call this more than once in a single printf. */
 
-char *
+const char *
 unit_desig(Unit *unit)
 {
     int i;
@@ -2851,7 +2851,7 @@ unit_desig(Unit *unit)
 /* Short, unreadable, but greppable listing of unit that omits anything
    that changes from turn to turn. */
 
-char *
+const char *
 unit_desig_no_loc(Unit *unit)
 {
     char *shortbuf;
@@ -2878,10 +2878,10 @@ unit_desig_no_loc(Unit *unit)
 
 /* Come up with a unit type name that fits in the given space. */
 
-char *
+const char *
 utype_name_n(int u, int n)
 {
-    char *utypename, *shortname, *rawname;
+  const char *utypename, *shortname, *rawname;
 
     utypename = u_type_name(u);
     if (n <= 0 || strlen(utypename) <= (size_t)n) {
@@ -3002,7 +3002,8 @@ shortest_unique_name(int u)
 char *
 shortest_generic_name(int u)
 {
-    char namebuf[BUFSIZE], *name1;
+    char namebuf[BUFSIZE];
+    const char *name1;
     int u1, u2, i, allhavechars, *firstuniq, firstuniq1;
 
     if (shortestgnames == NULL) {
@@ -3082,7 +3083,7 @@ shortest_generic_name(int u)
 
 /* This formats an actorstate readably. */
 
-char *
+const char *
 actorstate_desig(ActorState *as)
 {
     if (actorstatebuf == NULL)
@@ -3129,7 +3130,7 @@ find_unit_dead_or_alive(int n)
 /* Find a unit with the given name, either alive or dead. */
 
 Unit *
-find_unit_by_name(char *nm)
+find_unit_by_name(const char *nm)
 {
     Unit *unit;
 
@@ -4417,7 +4418,7 @@ void
 fill_utype_array_from_lisp(int *typeary, Obj *typeobj)
 {
     int u = NONUTYPE;
-    char *uname = NULL;
+    const char *uname = NULL;
     Obj *rest = lispnil, *curobj = lispnil;
 
     /* Sanity Checks. */

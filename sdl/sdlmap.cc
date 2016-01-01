@@ -80,7 +80,7 @@ static void draw_winds_row(Map *map, int x0, int y0, int len);
 static void draw_uviews_in_cell(Map *map, int x, int y);
 static void draw_unit_view_and_occs(Map *map, UnitView *uview, int sx, int sy, int sw, int sh);
 static void draw_dots(Map *map, int sx, int sy, int sw, int sh);
-static void draw_unit_name(Map *map, char *name, int sx, int sy,
+static void draw_unit_name(Map *map, const char *name, int sx, int sy,
 			   int sw, int sh);
 static void draw_unit_size(Map *map, int size, int sx, int sy,
 			   int sw, int sh);
@@ -1574,7 +1574,7 @@ draw_dots(Map *map, int sx, int sy, int sw, int sh)
 }
 
 static void
-draw_unit_name(Map *map, char *name, int sx, int sy, int sw, int sh)
+draw_unit_name(Map *map, const char *name, int sx, int sy, int sw, int sh)
 {
     char namebuf[BUFSIZE];
 
@@ -1680,7 +1680,7 @@ draw_feature_name(Map *map, int f)
     int x = legend->ox, y = legend->oy;
     int dist = ((legend->dx + 1) * map->vp->hw * 9) / 10;
     int sx0, sy0, sxc2, syc;
-    char *name;
+    const char *name;
 
     name = feature_desc(find_feature(f + 1), buffer);
     if (empty_string(name))
@@ -1818,7 +1818,7 @@ int
 draw_uimg_emblem(Image *img, Map *map, int sx, int sy, int sidenum)
 {
     int sw = -1, sh = -1;
-    char *ename = NULL;
+    const char *ename = NULL;
     ImageFamily *eimf = NULL;
     int ex = -1, ey = -1, ew = -1, eh = -1;
 

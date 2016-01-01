@@ -30,7 +30,7 @@ any later version.  See the file COPYING.  */
 
 /* ai.c */
 
-extern void net_set_side_ai(Side *side, char *aitype);
+extern void net_set_side_ai(Side *side, const char *aitype);
 
 /* module.c */
 
@@ -42,7 +42,7 @@ extern int net_add_side_and_player(void);
 extern int net_remove_side_and_player(int s);
 extern void net_set_player_advantage(int n, int newadv);
 extern void net_rename_side_for_player(int n, int which);
-extern void net_set_ai_for_player(int n, char *aitype);
+extern void net_set_ai_for_player(int n, const char *aitype);
 extern int net_exchange_players(int n, int n2);
 
 /* run2.c */
@@ -63,7 +63,7 @@ extern void net_set_side_shortname(Side *side, Side *side2, char *newname);
 extern void net_set_side_noun(Side *side, Side *side2, char *newname);
 extern void net_set_side_pluralnoun(Side *side, Side *side2, char *newname);
 extern void net_set_side_adjective(Side *side, Side *side2, char *newname);
-extern void net_set_side_emblemname(Side *side, Side *side2, char *newname);
+extern void net_set_side_emblemname(Side *side, Side *side2, const char *newname);
 extern void net_set_side_colorscheme(Side *side, Side *side2, char *newname);
 extern void net_become_designer(Side *side);
 extern void net_become_nondesigner(Side *side);
@@ -72,9 +72,9 @@ extern void net_set_autofinish(Side *side, int value);
 extern void net_set_autoresearch(Side *side, int value);
 extern void net_set_willing_to_save(Side *side, int flag);
 extern void net_set_willing_to_draw(Side *side, int flag);
-extern void net_send_message(Side *side, SideMask sidemask, char *str);
+extern void net_send_message(Side *side, SideMask sidemask, const char *str);
 extern void net_set_side_self_unit(Side *side, struct a_unit *unit);
-extern void net_set_doctrine(Side *side, char *spec);
+extern void net_set_doctrine(Side *side, const char *spec);
 extern void net_set_controlled_by(Side *side, Side *side2, int val);
 extern void net_set_side_research_topic(Side *side, int a);
 extern void net_set_side_research_goal(Side *side, int a);
@@ -121,7 +121,7 @@ extern void net_add_task(Unit *unit, int pos, Task *task);
 
 /* world.c */
 
-extern Feature *net_create_feature(char *feattype, char *name);
+extern Feature *net_create_feature(const char *feattype, char *name);
 extern void net_set_feature_type_name(Feature *feature, char *feattype);
 extern void net_set_feature_name(Feature *feature, char *name);
 extern void net_destroy_feature(Feature *feature);
@@ -153,7 +153,7 @@ extern void net_toggle_user_at(int u, int x, int y);
 
 	/* called by all interfaces. */
 
-extern int send_join(char *str);
+extern int send_join(const char *str);
 extern void receive_data(int timeout, int lim);
 extern int host_the_game(char *hostport);
 extern int try_join_game(char *hostport);
@@ -186,6 +186,6 @@ extern void broadcast_randstate(void);
 
 /* Declarations of functions that must be supplied by an interface. */
 
-extern void add_remote_locally(int rid, char *str);
+extern void add_remote_locally(int rid, const char *str);
 extern void send_chat(int rid, char *str);
 extern void make_default_player_spec(void);

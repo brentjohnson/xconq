@@ -187,7 +187,7 @@ void
 init_display(void)
 {
     int u, s, i;
-    char *dpyname;
+    const char *dpyname;
 
     dpyname = dside->player->displayname;
 
@@ -387,8 +387,8 @@ report_missing_images()
     Side *side2;
 
     for_all_terrain_types(t) {
-	if (dside->ui->timages[t] == NULL
-	    || dside->ui->timages[t]->ersatz)
+	if (dside->ui->timages[t] == NULL ||
+	    dside->ui->timages[t]->ersatz)
 	  record_missing_image(TTYP, t_type_name(t));
     }
     for_all_unit_types(u) {
@@ -571,7 +571,7 @@ make_cursor(Tk_Window tkwin, char *cursbits, char *maskbits, int x, int y)
 /* Get a pointer to the color of the given name. */
 
 XColor *
-request_color(char *name)
+request_color(const char *name)
 {
     XColor *rslt;
     Tk_Window tkwin = Tk_MainWindow(interp);
@@ -1004,7 +1004,9 @@ init_emblem_images(void)
 void
 init_emblem(Side *side2)
 {
-    char cbuf[BUFSIZ], *s, *c;
+    char cbuf[BUFSIZ];
+    const char *s;
+    char *c;
     int s2 = side_number(side2), i;
     ImageFamily *imf;
     Tk_Window tkwin = Tk_MainWindow(interp);
@@ -1047,7 +1049,7 @@ init_emblem(Side *side2)
 
 /* Wired-in names that we assume are available. */
 
-char *blastnames[] = { "miss", "hit", "kill", "nuke1", "nuke2", "nuke3" };
+const char *blastnames[] = { "miss", "hit", "kill", "nuke1", "nuke2", "nuke3" };
 
 void
 init_other_images(void)

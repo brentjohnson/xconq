@@ -81,7 +81,7 @@ extern int adj_unit(int x, int y);
 
 /* (should have a generic struct for all plan type attrs) */
 
-char *plantypenames[] = {
+const char *plantypenames[] = {
 
 #undef  DEF_PLAN
 #define DEF_PLAN(NAME,code) NAME,
@@ -2521,7 +2521,7 @@ could_capture_any(int u)
    actions' code.  This is mainly useful for testing. */
 
 void
-make_plausible_random_args(char *argtypestr, int i, int *args, Unit *unit)
+make_plausible_random_args(const char *argtypestr, int i, int *args, Unit *unit)
 {
     char argch;
     int	slen, arg;

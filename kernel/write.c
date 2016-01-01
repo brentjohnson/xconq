@@ -27,7 +27,7 @@ static void write_type_name_list(int typ, int *flags, int dim);
 static void write_type_value_list(int typ, int *flags, int dim,
 					   int (*getter)(int, int), int i);
 #endif
-static void write_table(char *name, int (*getter)(int, int), int dflt,
+static void write_table(const char *name, int (*getter)(int, int), int dflt,
 			int typ1, int typ2, int valtype, int compress);
 static void write_world(void);
 static void write_areas(Module *module);
@@ -88,9 +88,9 @@ static void write_images(void);
 static int reshaped_point(int x1, int y1, int *x2p, int *y2p);
 static int original_point(int x1, int y1, int *x2p, int *y2p);
 
-static void start_form(char *hd);
-static void add_to_form(char *x);
-static void add_to_form_no_space(char *x);
+static void start_form(const char *hd);
+static void add_to_form(const char *x);
+static void add_to_form_no_space(const char *x);
 static void add_char_to_form(int x);
 static void add_num_to_form(int x);
 static void add_num_to_form_no_space(int x);
@@ -99,28 +99,28 @@ static void add_form_to_form(Obj *x);
 static void end_form(void);
 static void newline_form(void);
 static void space_form(void);
-static void write_bool_prop(char *name, int value,
+static void write_bool_prop(const char *name, int value,
 			    int dflt, int nodefaulting, int addnewline);
-static void write_num_prop(char *name, int value,
+static void write_num_prop(const char *name, int value,
 			   int dflt, int nodefaulting, int addnewline);
-static void write_str_prop(char *name, char *value,
-			   char *dflt, int nodefaulting, int addnewline);
-static int string_not_default(char *str, char *dflt);
-static void write_lisp_prop(char *name, struct a_obj *value,
+static void write_str_prop(const char *name, const char *value,
+			   const char *dflt, int nodefaulting, int addnewline);
+static int string_not_default(const char *str, const char *dflt);
+static void write_lisp_prop(const char *name, struct a_obj *value,
 			    struct a_obj *dflt, int nodefaulting,
 			    int as_cdr, int addnewline);
-static void write_utype_value_list(char *name, short *arr,
+static void write_utype_value_list(const char *name, short *arr,
 				   int dflt, int addnewline);
-static void write_mtype_value_list(char *name, short *arr,
+static void write_mtype_value_list(const char *name, short *arr,
 				   int dflt, int addnewline);
-static void write_treasury_list(char *name, long *arr,
+static void write_treasury_list(const char *name, long *arr,
 				   int dflt, int addnewline);
-static void write_atype_value_list(char *name, short *arr,
+static void write_atype_value_list(const char *name, short *arr,
 				   int dflt, int addnewline);
-static void write_side_value_list(char *name, short *arr,
+static void write_side_value_list(const char *name, short *arr,
 				  int dflt, int addnewline);
-static void write_utype_string_list(char *name, char **arr,
-				    char *dflt, int addnewline);
+static void write_utype_string_list(const char *name, const char **arr,
+				    const char *dflt, int addnewline);
 static char *shortest_escaped_name(int u);
 
 /* The pointer to the file being written to. */
@@ -158,9 +158,9 @@ init_write(void)
    return a pointer to it (located within spare_file_name). */
 
 char *
-find_name(char *fname)
+find_name(const char *fname)
 {
-    char *delims;
+    const char *delims;
     char *name;
     char *token;
 
@@ -188,7 +188,7 @@ find_name(char *fname)
    exhaustion.  Returns TRUE if the save was successful. */
 
 int
-write_entire_game_state(char *fname)
+write_entire_game_state(const char *fname)
 {
     Module *module;
     int rslt;
@@ -230,7 +230,7 @@ write_entire_game_state(char *fname)
    containing the requested content.  Return true if all went OK. */
 
 int
-write_game_module(Module *module, char *fname)
+write_game_module(Module *module, const char *fname)
 {
     if (module->filename == NULL && tmprid == 0) {
 	/* (should be an error?) */
@@ -401,7 +401,7 @@ static void
 write_types(void)
 {
     int u, m, t, i, ival;
-    char *name, *sval;
+    const char *name, *sval;
     Obj *obj;
 
     /* (or write out all the default values first for doc, then
@@ -643,7 +643,7 @@ histo_compare(CONST void *x, CONST void *y)
    really large, but often have constant areas within them. */
 
 static void
-write_table(char *name, int (*getter)(int, int), int dflt, int typ1, int typ2,
+write_table(const char *name, int (*getter)(int, int), int dflt, int typ1, int typ2,
 	    int valtype, int compress)
 {
     int i, j, k, colvalue, constcol, next;
@@ -1624,7 +1624,7 @@ static void
 write_standing_orders(Side *side)
 {
     int u, u1, numtypes, numargs;
-    char *str = NULL;
+    const char *str = NULL;
     StandingOrder *sorder;
 
     for (sorder = side->orders; sorder != NULL; sorder = sorder->next) {
@@ -2209,7 +2209,7 @@ static void
 write_task(Task *task)
 {
     int i, numargs;
-    char *argtypes;
+    const char *argtypes;
 
     if (!is_task_type(task->type)) {
 	run_warning("Bad task type %d while writing, skipping it", task->type);
@@ -2229,7 +2229,7 @@ static void
 write_goal(Goal *goal, int keyword)
 {
     int i, numargs;
-    char *argtypes;
+    const char *argtypes;
 
     space_form();
     start_form(key((enum keywords)keyword));
@@ -2284,7 +2284,7 @@ static void
 write_historical_event(HistEvent *hevt)
 {
     int i;
-    char *descs;
+    const char *descs;
 
     /* Might be reasons not to write this event. */
     if (hevt->startdate < 0)
@@ -2499,7 +2499,7 @@ original_point(int x1, int y1, int *x2p, int *y2p)
 /* Little routines to do low-level syntax to either file or remote machine. */
 
 static void
-start_form(char *hd)
+start_form(const char *hd)
 {
     if (wfp) {
 	fprintf(wfp, "(%s", hd);
@@ -2510,7 +2510,7 @@ start_form(char *hd)
 }
 
 static void
-add_to_form(char *x)
+add_to_form(const char *x)
 {
     if (wfp) {
 	fprintf(wfp, " %s", x);
@@ -2521,7 +2521,7 @@ add_to_form(char *x)
 }
 
 static void
-add_to_form_no_space(char *x)
+add_to_form_no_space(const char *x)
 {
     if (wfp) {
 	fputs(x, wfp);
@@ -2637,7 +2637,7 @@ space_form(void)
 }
 
 static void
-write_bool_prop(char *name, int value, int dflt, int nodefaulting,
+write_bool_prop(const char *name, int value, int dflt, int nodefaulting,
 		int addnewline)
 {
     if (nodefaulting || value != dflt) {
@@ -2653,7 +2653,7 @@ write_bool_prop(char *name, int value, int dflt, int nodefaulting,
 }
 
 static void
-write_num_prop(char *name, int value, int dflt, int nodefaulting,
+write_num_prop(const char *name, int value, int dflt, int nodefaulting,
 	       int addnewline)
 {
     if (nodefaulting || value != dflt) {
@@ -2671,7 +2671,7 @@ write_num_prop(char *name, int value, int dflt, int nodefaulting,
 /* Handle the writing of a single string-valued property. */
 
 static void
-write_str_prop(char *name, char *value, char *dflt, int nodefaulting,
+write_str_prop(const char *name, const char *value, const char *dflt, int nodefaulting,
 	       int addnewline)
 {
     char *tmp = NULL;
@@ -2702,7 +2702,7 @@ write_str_prop(char *name, char *value, char *dflt, int nodefaulting,
 }
 
 static int
-string_not_default(char *str, char *dflt)
+string_not_default(const char *str, const char *dflt)
 {
     if (empty_string(dflt)) {
 	if (empty_string(str)) {
@@ -2720,7 +2720,7 @@ string_not_default(char *str, char *dflt)
 }
 
 static void
-write_lisp_prop(char *name, Obj *value, Obj *dflt, int nodefaulting,
+write_lisp_prop(const char *name, Obj *value, Obj *dflt, int nodefaulting,
 		int as_cdr, int addnewline)
 {
     Obj *rest;
@@ -2751,7 +2751,7 @@ write_lisp_prop(char *name, Obj *value, Obj *dflt, int nodefaulting,
 }
 
 static void
-write_utype_value_list(char *name, short *arr, int dflt, int addnewline)
+write_utype_value_list(const char *name, short *arr, int dflt, int addnewline)
 {
     int u, writeany;
 
@@ -2779,7 +2779,7 @@ write_utype_value_list(char *name, short *arr, int dflt, int addnewline)
 }
 
 static void
-write_mtype_value_list(char *name, short *arr, int dflt, int addnewline)
+write_mtype_value_list(const char *name, short *arr, int dflt, int addnewline)
 {
     int m, writeany;
 
@@ -2809,7 +2809,7 @@ write_mtype_value_list(char *name, short *arr, int dflt, int addnewline)
 /* Same as above but with long arr, so it can handle treasuries. */
 
 static void
-write_treasury_list(char *name, long *arr, int dflt, int addnewline)
+write_treasury_list(const char *name, long *arr, int dflt, int addnewline)
 {
     int m, writeany;
 
@@ -2837,7 +2837,7 @@ write_treasury_list(char *name, long *arr, int dflt, int addnewline)
 }
 
 static void
-write_atype_value_list(char *name, short *arr, int dflt, int addnewline)
+write_atype_value_list(const char *name, short *arr, int dflt, int addnewline)
 {
     int a, writeany;
 
@@ -2865,7 +2865,7 @@ write_atype_value_list(char *name, short *arr, int dflt, int addnewline)
 }
 
 static void
-write_side_value_list(char *name, short *arr, int dflt, int addnewline)
+write_side_value_list(const char *name, short *arr, int dflt, int addnewline)
 {
     int s, writeany;
 
@@ -2893,7 +2893,7 @@ write_side_value_list(char *name, short *arr, int dflt, int addnewline)
 }
 
 static void
-write_utype_string_list(char *name, char **arr, char *dflt, int addnewline)
+write_utype_string_list(const char *name, const char **arr, const char *dflt, int addnewline)
 {
     int u, writeany;
 
@@ -2926,7 +2926,7 @@ write_utype_string_list(char *name, char **arr, char *dflt, int addnewline)
 char *
 shortest_escaped_name(int u)
 {
-    char *internalname = u_internal_name(u);
+    const char *internalname = u_internal_name(u);
 
     sprintf(shortestbuf, "%s", escaped_symbol(internalname));
     return shortestbuf;

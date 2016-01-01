@@ -99,7 +99,7 @@ enum mapmode {
 /* Named color lookup table entry. */
 
 struct RGBColorTableEntry {
-    char *name;
+    const char *name;
     Uint8 r;
     Uint8 g;
     Uint8 b;
@@ -285,7 +285,7 @@ typedef struct a_panel {
     int full_w, full_h;
     int sd;
     int overlay;
-    char *label;
+    const char *label;
     int numbuttons;
     struct a_button *buttons[100];
     struct a_panel *in;
@@ -297,7 +297,7 @@ typedef struct a_panel {
 /* SDL UI Protobutton and Button */
 
 struct a_protobutton {
-    char *label;
+    const char *label;
     char help[BUFSIZE];
     ImageFamily *picture;
     void (*click_fn)(struct a_button *);
@@ -310,10 +310,10 @@ typedef struct a_button {
     int visible;
     int draw_bg;
     Uint32 bg;
-    char *label;
+    const char *label;
     ImageFamily *picture;
     SDL_Surface *pic_surface;
-    char *help;
+    const char *help;
     void (*click_fn)(struct a_button *);
     int data;
     Panel *panel;
@@ -341,7 +341,7 @@ extern Screen *sscreen;
 
 extern int use_cursors;
 
-extern char *default_cursor_name;
+extern const char *default_cursor_name;
 
 extern SDLCursor *generic_cursor;
 
@@ -380,23 +380,23 @@ extern int point_in_map(Map *map, int rawx, int rawy);
 extern void autoscroll(Screen *screen, int rawx, int rawy);
 extern void set_current_unit(Screen *screen, Unit *unit);
 
-extern int ask_unit_type(Screen *screen, char *prompt, int *possibles,
+extern int ask_unit_type(Screen *screen, const char *prompt, int *possibles,
 			 void (*handler)(Screen *screen, int cancelled));
 extern int grok_unit_type(Screen *screen, int *typep);
 extern void cancel_unit_type(Screen *screen);
-extern int ask_terrain_type(Screen *screen, char *prompt, int *poss,
+extern int ask_terrain_type(Screen *screen, const char *prompt, int *poss,
 			    void (*handler)(Screen *screen, int cancelled));
 extern int grok_terrain_type(Screen *screen, int *typep);
-extern void ask_position(Screen *screen, char *prompt,
+extern void ask_position(Screen *screen, const char *prompt,
 			 void (*handler)(Screen *screen, int cancelled));
 extern int grok_position(Screen *screen, int *xp, int *yp, Unit **unitp);
-extern void ask_bool(Screen *screen, char *question, int dflt,
+extern void ask_bool(Screen *screen, const char *question, int dflt,
 		     void (*handler)(Screen *screen, int cancelled));
 extern int grok_bool(Screen *screen);
-extern void ask_string(Screen *screen, char *prompt, char *dflt,
+extern void ask_string(Screen *screen, const char *prompt, const char *dflt,
 		       void (*handler)(Screen *screen, int cancelled));
 extern int grok_string(Screen *screen, char **strp);
-extern void ask_side(Screen *screen, char *prompt, Side *dfltside,
+extern void ask_side(Screen *screen, const char *prompt, Side *dfltside,
 		     void (*handler)(Screen *screen, int cancelled));
 extern int grok_side(Screen *screen, Side **side2p);
 
@@ -421,7 +421,7 @@ extern int screen_oneliner(Screen *screen);
 /* sdlinit.cc */
 
 extern void init_display(void);
-extern SDLCursor *get_cursor(char *name, int hotx, int hoty);
+extern SDLCursor *get_cursor(const char *name, int hotx, int hoty);
 
 /* sdlimf.cc */
 
@@ -450,7 +450,7 @@ extern void draw_rect(SDL_Surface *surf,
 		      int sx, int sy, int sw, int sh, Uint32 col);
 extern void draw_line(SDL_Surface *surf, int sx1, int sy1, int sx2, int sy2,
 		      Uint32 col);
-extern void draw_string(SDL_Surface *surf, int x0, int y0, char *str);
+extern void draw_string(SDL_Surface *surf, int x0, int y0, const char *str);
 extern int SDLIntersectRect(SDL_Rect *A, SDL_Rect *B, SDL_Rect *intersection);
 
 extern void draw_button(Screen *screen, Panel *panel, SDLButton *button);
@@ -480,5 +480,5 @@ extern void add_change_type_buttons(Screen *screen, Unit **units, int uvecsz);
 
 extern int find_sdl_color_by_name(char *name, RGBColorTableEntry *table, 
 				  SDL_Color *color);
-extern int find_rgb_triplet_by_name(char *name, RGBColorTableEntry *table,
+extern int find_rgb_triplet_by_name(const char *name, RGBColorTableEntry *table,
 				    Uint8 *r, Uint8 *g, Uint8 *b);

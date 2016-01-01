@@ -1096,7 +1096,7 @@ draw_line(SDL_Surface *surf, int sx1, int sy1, int sx2, int sy2, Uint32 col)
 /* Display a string in the small font. */
 
 void
-draw_string(SDL_Surface *surf, int x0, int y0, char *str)
+draw_string(SDL_Surface *surf, int x0, int y0, const char *str)
 {
     int i, n = 0, x, y;
     SDL_Rect rect1, rect2;

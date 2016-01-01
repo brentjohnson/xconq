@@ -97,7 +97,7 @@ PropertyDefn atypedefns[] = {
   int FNAME(int u) { checku(u); return utypes[u].SLOT; }
 #undef  DEF_UPROP_S
 #define DEF_UPROP_S(name,FNAME,doc,SLOT,dflt)  \
-  char *FNAME(int u) { checku(u); return utypes[u].SLOT; }
+  const char *FNAME(int u) { checku(u); return utypes[u].SLOT; }
 #undef  DEF_UPROP_L
 #define DEF_UPROP_L(name,FNAME,doc,SLOT)  \
   Obj *FNAME(int u) { checku(u); return utypes[u].SLOT; }
@@ -111,7 +111,7 @@ PropertyDefn atypedefns[] = {
   int FNAME(int m) { checkm(m); return mtypes[m].SLOT; }
 #undef  DEF_MPROP_S
 #define DEF_MPROP_S(name,FNAME,doc,SLOT,dflt)  \
-  char *FNAME(int m) { checkm(m);  return mtypes[m].SLOT; }
+  const char *FNAME(int m) { checkm(m);  return mtypes[m].SLOT; }
 #undef  DEF_MPROP_L
 #define DEF_MPROP_L(name,FNAME,doc,SLOT)  \
   Obj *FNAME(int m) { checkm(m);  return mtypes[m].SLOT; }
@@ -125,7 +125,7 @@ PropertyDefn atypedefns[] = {
   int FNAME(int t) { checkt(t); return ttypes[t].SLOT; }
 #undef  DEF_TPROP_S
 #define DEF_TPROP_S(name,FNAME,doc,SLOT,dflt)  \
-  char *FNAME(int t) { checkt(t); return ttypes[t].SLOT; }
+  const char *FNAME(int t) { checkt(t); return ttypes[t].SLOT; }
 #undef  DEF_TPROP_L
 #define DEF_TPROP_L(name,FNAME,doc,SLOT)  \
   Obj *FNAME(int t) { checkt(t); return ttypes[t].SLOT; }
@@ -139,7 +139,7 @@ PropertyDefn atypedefns[] = {
   int FNAME(int a) { checka(a); return atypes[a].SLOT; }
 #undef  DEF_APROP_S
 #define DEF_APROP_S(name,FNAME,doc,SLOT,dflt)  \
-  char *FNAME(int a) { checka(a); return atypes[a].SLOT; }
+  const char *FNAME(int a) { checka(a); return atypes[a].SLOT; }
 #undef  DEF_APROP_L
 #define DEF_APROP_L(name,FNAME,doc,SLOT)  \
   Obj *FNAME(int a) { checka(a); return atypes[a].SLOT; }

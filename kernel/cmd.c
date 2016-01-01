@@ -40,9 +40,9 @@ static int do_one_wake_all(Side *side, Unit *unit);
 
 typedef struct cmdtab {
     char fchar;			/* character to match against */
-    char *name;			/* Full name of command */
+    const char *name;		/* Full name of command */
     void (*fn)(Side *side);	/* Pointer to command's function */
-    char *help;                 /* short documentation string */
+    const char *help;           /* short documentation string */
 } CmdTab;
 
 #define C(c) ((c)-0x40)
@@ -208,7 +208,7 @@ parse_long_name_command(char *cmdstr, int *prefixp, char **namep, char **argp,
 /* Describe all the single-key commands for help. */
 
 void
-describe_key_commands(int arg, char *key, TextBuffer *buf)
+describe_key_commands(int arg, const char *key, TextBuffer *buf)
 {
     CmdTab *cmd;
 
@@ -220,7 +220,7 @@ describe_key_commands(int arg, char *key, TextBuffer *buf)
 /* Describe all the long-name commands for help. */
 
 void
-describe_long_commands(int arg, char *key, TextBuffer *buf)
+describe_long_commands(int arg, const char *key, TextBuffer *buf)
 {
     CmdTab *cmd;
 
@@ -363,7 +363,8 @@ do_agreement_term(Side *side)
 void
 do_ai_side(Side *side)
 {
-    char *arg, *rest, *aitypename = NULL;
+    char *arg;
+    const char *rest, *aitypename = NULL;
 
     DURING_GAME_ONLY(side);
     /* Look at the optional command argument, extract options and/or

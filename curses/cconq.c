@@ -43,7 +43,7 @@ extern int	LINES;
 extern int autofinish_start;
 extern int autofinish_count;
 
-static void describe_help(int arg, char *key, TextBuffer *buf);
+static void describe_help(int arg, const char *key, TextBuffer *buf);
 
 #ifdef MAC /* temporary */
 int use_mac_charcodes = TRUE;
@@ -211,7 +211,7 @@ enum movie_type {
 };
 
 struct a_movie {
-  char *type;
+  const char *type;
   enum movie_type itype;
   int args[5];
 };
@@ -722,7 +722,7 @@ put_on_screen(int x, int y)
 /* Prompt for a yes/no answer with a settable default. */
 
 int
-ask_bool(char *question, int dflt)
+ask_bool(const char *question, int dflt)
 {
     char ch;
 
@@ -744,7 +744,7 @@ ask_bool(char *question, int dflt)
    vector of unit types, so as to be able to map back when done. */
 
 int
-ask_unit_type(char *prompt, int *possibles)
+ask_unit_type(const char *prompt, int *possibles)
 {
     char ch;
     int numtypes = 0, u;
@@ -790,7 +790,7 @@ ask_unit_type(char *prompt, int *possibles)
    when done. */
 
 int
-ask_terrain_type(char *prompt, int *possibles)
+ask_terrain_type(const char *prompt, int *possibles)
 {
     char ch;
     int numtypes = 0, t, type;
@@ -831,7 +831,7 @@ ask_terrain_type(char *prompt, int *possibles)
 /* Ask for a direction. */
 
 int
-ask_direction(char *prompt, int *dirp)
+ask_direction(const char *prompt, int *dirp)
 {
     char ch;
 
@@ -867,7 +867,7 @@ ask_direction(char *prompt, int *dirp)
    '.' designates the final position. */
 
 int
-ask_position(char *prompt, int *xp, int *yp)
+ask_position(const char *prompt, int *xp, int *yp)
 {
     char ch;
     int dir, nx, ny;
@@ -932,7 +932,7 @@ restore_cur(void)
    cursor is displayed. */
 
 int
-ask_string(char *prompt, char *dflt, char **strp)
+ask_string(const char *prompt, const char *dflt, char **strp)
 {
     char ch;
     int done = FALSE, rslt = FALSE;
@@ -992,7 +992,7 @@ ask_string(char *prompt, char *dflt, char **strp)
 /* Ask for a side. */
 
 Side *
-ask_side(char *prompt, Side *dflt)
+ask_side(const char *prompt, Side *dflt)
 {
     char ch;
     Side *rslt = dflt;
@@ -1154,7 +1154,7 @@ interpret_help(void)
 }
 
 static void
-describe_help(int arg, char *key, TextBuffer *buf)
+describe_help(int arg, const char *key, TextBuffer *buf)
 {
     tbcat(buf, "' ' to page down through a node\n");
     tbcat(buf, "'n' to go to next help node\n");
@@ -1175,7 +1175,7 @@ announce_read_progress(void)
 /* Announce the start of a time-consuming computation. */
 
 void
-announce_lengthy_process(char *msg)
+announce_lengthy_process(const char *msg)
 {
     n_seconds_elapsed(0);
     announcemsg = copy_string(msg);
@@ -1377,7 +1377,7 @@ update_clock_display(Side *side, int rightnow)
 }
 
 void
-update_message_display(Side *side, Side *sender, char *str, int rightnow)
+update_message_display(Side *side, Side *sender, const char *str, int rightnow)
 {
     if (active_display(side)) {
 	notify(side, "%s", str);
@@ -1387,7 +1387,7 @@ update_message_display(Side *side, Side *sender, char *str, int rightnow)
 }
 
 void
-update_all_progress_displays(char *str, int s)
+update_all_progress_displays(const char *str, int s)
 {
 }
 
@@ -1423,7 +1423,7 @@ close_displays(void)
 /* An init error needs to have the command re-run. */
 
 void
-low_init_error(char *str)
+low_init_error(const char *str)
 {
     fprintf(stderr, "Error: %s.\n", str);
     fflush(stderr);
@@ -1481,7 +1481,7 @@ end_printing_forms(void)
 /* Even a curses interface can do simple "movies". */
 
 int
-schedule_movie(Side *side, char *movie, ...)
+schedule_movie(Side *side, const char *movie, ...)
 {
     int i, itype;
     va_list ap;
@@ -1561,7 +1561,7 @@ unit_research_dialog(Unit *unit)
 }
 
 void
-add_remote_locally(int rid, char *str)
+add_remote_locally(int rid, const char *str)
 {
 }
 

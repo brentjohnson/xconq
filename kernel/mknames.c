@@ -37,7 +37,7 @@ void
 make_up_side_name(Side *side)
 {
     int uniq, tries, n, found = FALSE;
-    char *colstr, *method, *sidename;
+    const char *colstr, *method, *sidename;
     Obj *sidelib, *subobj, *subelts, *head, *filler, *colorlib, *col;
 
     sidelib = g_side_lib();
@@ -147,7 +147,7 @@ make_up_side_name(Side *side)
 /* This tests whether a given string is already being used by a side. */
 
 int
-name_in_use(Side *side, char *str)
+name_in_use(Side *side, const char *str)
 {
     Side *side2;
 
@@ -209,7 +209,7 @@ name_units_randomly(int calls, int runs)
 
 /* Given a unit, return its naming method if it has one. */
 
-char *
+const char *
 unit_namer(Unit *unit)
 {
     Side *side = unit->side;
@@ -229,11 +229,11 @@ unit_namer(Unit *unit)
    methods in here, especially when the grammar-based or thematic methods
    don't give the desired results. */
 
-char *
+const char *
 propose_unit_name(Unit *unit)
 {
     int u;
-    char *method, *sidename;
+    const char *method, *sidename;
 
     if (unit == NULL)
       return NULL;
@@ -297,7 +297,7 @@ assign_unit_number(Unit *unit)
 
 /* Given a naming method, run it and get back a string. */
 
-char *
+const char *
 run_namer(Obj *namer)
 {
     int len, ix;
@@ -419,7 +419,7 @@ gen_from_rule(Obj *rule, Obj *rules, int depth, char *rslt)
 {
     int total, oldlen, maxtries = 100, tries, found;
     char buf[BUFSIZE];
-    char *rejstr;
+    const char *rejstr;
     Obj *rest, *subrule, *rejrest;
     
     if (depth >= maxdepth)

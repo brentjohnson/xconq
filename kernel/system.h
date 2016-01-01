@@ -19,24 +19,24 @@ extern char *default_library_pathname(void);
 extern char *default_images_pathname(char *libpath);
 extern char *news_filename(void);
 extern char *game_homedir(void);
-extern char *game_filename(char *namevar, char* defaultname);
-extern FILE *open_library_file(char *filename);
-extern FILE *open_scorefile_for_reading(char *name);
-extern FILE *open_scorefile_for_writing(char *name);
+extern char *game_filename(const char *namevar, const char* defaultname);
+extern FILE *open_library_file(const char *filename);
+extern FILE *open_scorefile_for_reading(const char *name);
+extern FILE *open_scorefile_for_writing(const char *name);
 extern void close_scorefile_for_writing(FILE *fp);
-extern void make_pathname(char *path, char *name, char *extn, char *pathbuf);
+extern void make_pathname(const char *path, const char *name, const char *extn, char *pathbuf);
 #ifdef WIN32
 extern void extract_dirname(char **dirname, char *pathname);
 #endif
 extern int remove_file(char *fname);
-extern char *error_save_filename(void);
+extern const char *error_save_filename(void);
 extern void init_signal_handlers(void);
 extern int n_seconds_elapsed(int n);
 extern int n_ms_elapsed(int n);
 extern void record_ms(void);
 
 extern int open_remote_connection(char *methodname, int willhost);
-extern void low_send(int rid, char *buf);
+extern void low_send(int rid, const char *buf);
 extern int low_receive(int *rid, char *buf, int maxchars, int timeout);
 extern void close_remote_connection(int rid);
 

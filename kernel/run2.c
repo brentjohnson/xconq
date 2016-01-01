@@ -84,7 +84,7 @@ int curyearpart = -1;
 
 /* The season name for the current turn. */
 
-char *curseasonname;
+const char *curseasonname;
 
 /* The full date/season/day-night string that interfaces should display. */
 
@@ -330,7 +330,7 @@ run_turn_end(void)
    risk confusing list traversals or AI calculations. */
 
 void
-request_additional_side(char *playerspec)
+request_additional_side(const char *playerspec)
 {
     if (numsides + new_sides_requested + 1 <= g_sides_max()) {
 	if (players_requested == NULL)
@@ -636,7 +636,7 @@ reset_all_reserves(void)
 static void
 save_checkpoint(int curturn)
 {
-    char *checkfname, *checkname;
+    const char *checkfname, *checkname;
 
     if (want_checkpoints
     	&& checkpoint_interval > 0 

@@ -90,7 +90,7 @@ extern void run_all_consumption(void);
 
 extern void set_player_advantage(int n, int newadv);
 extern void rename_side_for_player(int n, int which);
-extern void set_ai_for_player(int n, char *aitype);
+extern void set_ai_for_player(int n, const char *aitype);
 extern int exchange_players(int n, int n2);
 
 /* mkterr.c */
@@ -145,7 +145,7 @@ extern void resign_game(Side *side, Side *side2);
 
 extern void change_people_side_around(int x, int y, int u, Side *side);
 extern void maybe_starve(Unit *unit, int partial);
-extern void request_additional_side(char *playerspec);
+extern void request_additional_side(const char *playerspec);
 extern int total_acp_for_turn(Unit *unit);
 
 /* Functions in run2.c, only called from run.c. */
@@ -170,7 +170,7 @@ extern void set_side_shortname(Side *side, Side *side2, char *newname);
 extern void set_side_noun(Side *side, Side *side2, char *newname);
 extern void set_side_pluralnoun(Side *side, Side *side2, char *newname);
 extern void set_side_adjective(Side *side, Side *side2, char *newname);
-extern void set_side_emblemname(Side *side, Side *side2, char *newname);
+extern void set_side_emblemname(Side *side, Side *side2, const char *newname);
 extern void set_side_colorscheme(Side *side, Side *side2, char *newname);
 extern void become_designer(Side *side);
 extern void become_nondesigner(Side *side);
@@ -179,9 +179,9 @@ extern void set_autofinish(Side *side, int value);
 extern void set_autoresearch(Side *side, int value);
 extern void set_willing_to_save(Side *side, int flag);
 extern void set_willing_to_draw(Side *side, int flag);
-extern void send_message(Side *side, SideMask sidemask, char *str);
+extern void send_message(Side *side, SideMask sidemask, const char *str);
 extern void set_side_self_unit(Side *side, struct a_unit *unit);
-extern void set_doctrine(Side *side, char *spec);
+extern void set_doctrine(Side *side, const char *spec);
 extern void set_controlled_by(Side *side, Side *side2, int val);
 extern void set_side_research_topic(Side *side, int a);
 extern void set_side_research_goal(Side *side, int a);
@@ -204,7 +204,7 @@ extern Task *clone_task(Task *oldtask);
 
 extern void sort_directions(Unit *unit, int *dirs, int numdirs);
 extern void free_task(Task *task);
-extern char *parse_task(Side *side, char *str, Task **taskp);
+extern const char *parse_task(Side *side, const char *str, Task **taskp);
 extern char *task_desig(Task *task);
 
 extern int can_resupply_from_here(int x, int y);
@@ -225,7 +225,7 @@ extern void broadcast_players_assigned(void);
 
 		/* called in write.c. */
 
-extern void add_to_packet(char *str);
+extern void add_to_packet(const char *str);
 extern void flush_write(void);
 
 /* unit.c */
@@ -268,7 +268,7 @@ extern void fill_utype_array_from_lisp(int *typeary, Obj *typeobj);
 /* world.c */
 
 extern void divide_into_regions(char *tlayer, TRegion **rlayer, int liquid);
-extern Feature *create_feature(char *feattype, char *name);
+extern Feature *create_feature(const char *feattype, const char *name);
 extern void set_feature_type_name(Feature *feature, char *feattype);
 extern void set_feature_name(Feature *feature, char *name);
 extern void destroy_feature(Feature *feature);
