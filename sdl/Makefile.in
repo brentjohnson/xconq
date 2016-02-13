@@ -268,8 +268,8 @@ extraclean: distclean
 	rm -f *~* .*~*
 
 Makefile: $(srcdir)/Makefile.in
-        cd .. \
-          && CONFIG_FILES=sdl/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+	cd .. \
+	&& CONFIG_FILES=sdl/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
 # All the .h dependencies.
 

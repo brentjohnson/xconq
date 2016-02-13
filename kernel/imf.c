@@ -1755,7 +1755,7 @@ write_imf_dir(char *filename, ImageFamily **imfimages, int num)
 	fprintf(fp, "ImageFamilyName FileName\n");
 	for (i = 0; i < num; ++i) {
 	    imf = images[i];
-	    loc = "???";
+	    loc = NULL;
 	    if (imf->location && !empty_string(imf->location->name)) {
 		/* First remove any Unix, Mac or Windows pathnames. */
 		loc = copy_string(imf->location->name);
@@ -1768,7 +1768,7 @@ write_imf_dir(char *filename, ImageFamily **imfimages, int num)
 		/* Remove any leading dots left from Unix pathnames. */
 		loc += strspn(loc, ".");
 	    }
-	    fprintf(fp, "%s %s\n", imf->name, loc);
+	    fprintf(fp, "%s %s\n", imf->name, loc ? loc : "???");
 	    /* (to write imf files, should scan through images once for
 	       each file, writing all images found that are in that file) */
 	}

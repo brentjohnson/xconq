@@ -58,7 +58,7 @@ static char *side_short_title = NULL;
 
 static const char *gain_reason_names[] = { "Ini", "Bld", "Cap", "Oth" };
 
-static const char *loss_reason_names[] = { "Cbt", "Cap", "Stv", "Acc", "Dis", "Oth" };
+static const char *loss_reason_names[] = { "Cbt", "Cap", "Stv", "Acc", "Att", "Dis", "Oth" };
 
 /* Calendar handling. */
 

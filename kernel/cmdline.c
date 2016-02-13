@@ -593,7 +593,7 @@ static void
 parse_variant(const char *str)
 {
     char *varname = NULL;
-    char *str2;
+    const char *str2;
     Obj *varval = lispnil;
 
     if (strcmp(str, "") == 0) {

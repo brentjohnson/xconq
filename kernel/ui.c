@@ -3175,7 +3175,8 @@ embarkation_unit(Unit *unit)
 int
 char_to_dir(int ch, int *dir1p, int *dir2p, int *modp)
 {
-    char basech, *rawdir;
+    char basech;
+    const char *rawdir;
     int ndirs = 0;
 
     if (isupper(ch)) {
