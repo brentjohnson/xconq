@@ -37,7 +37,7 @@ Display *tmp_display;
 Window tmp_root_window;
 
 static Pixmap x11_load_bitmap(Display *dpy, Window rootwin,
-			      char *name, char *ext, int *w, int *h);
+			      const char *name, char *ext, int *w, int *h);
 static void x11_make_color_pixmap(Display *dpy, Window rootwin, Image *img);
 
 X11Image *
@@ -103,37 +103,37 @@ x11_load_imf(ImageFamily *imf)
 	rootwin = ximf->rootwin;
     }
     /* Grab at plausibly-named bitmaps. */
-    pic = x11_load_bitmap(dpy, rootwin, imf->name, "b", &w, &h);
+    pic = x11_load_bitmap(dpy, rootwin, imf->name, (char *) "b", &w, &h);
     if (pic != None) {
 	img = get_img(imf, w, h);
 	ximg = get_x11_image(img);
 	ximg->mono = pic;
     }
-    pic = x11_load_bitmap(dpy, rootwin, imf->name, "m", &w, &h);
+    pic = x11_load_bitmap(dpy, rootwin, imf->name, (char *) "m", &w, &h);
     if (pic != None) {
 	img = get_img(imf, w, h);
 	ximg = get_x11_image(img);
 	ximg->mask = pic;
     }
-    pic = x11_load_bitmap(dpy, rootwin, imf->name, "8.b", &w, &h);
+    pic = x11_load_bitmap(dpy, rootwin, imf->name, (char *) "8.b", &w, &h);
     if (pic != None) {
 	img = get_img(imf, w, h);
 	ximg = get_x11_image(img);
 	ximg->mono = pic;
     }
-    pic = x11_load_bitmap(dpy, rootwin, imf->name, "8.m", &w, &h);
+    pic = x11_load_bitmap(dpy, rootwin, imf->name, (char *) "8.m", &w, &h);
     if (pic != None) {
 	img = get_img(imf, w, h);
 	ximg = get_x11_image(img);
 	ximg->mask = pic;
     }
-    pic = x11_load_bitmap(dpy, rootwin, imf->name, "32.b", &w, &h);
+    pic = x11_load_bitmap(dpy, rootwin, imf->name, (char *) "32.b", &w, &h);
     if (pic != None) {
 	img = get_img(imf, w, h);
 	ximg = get_x11_image(img);
 	ximg->mono = pic;
     }
-    pic = x11_load_bitmap(dpy, rootwin, imf->name, "32.m", &w, &h);
+    pic = x11_load_bitmap(dpy, rootwin, imf->name, (char *) "32.m", &w, &h);
     if (pic != None) {
 	img = get_img(imf, w, h);
 	ximg = get_x11_image(img);
@@ -146,7 +146,8 @@ x11_load_imf(ImageFamily *imf)
    and the library dir. */
 
 static Pixmap
-x11_load_bitmap(Display *dpy, Window rootwin, char *name, char *ext, int *wp, int *hp)
+x11_load_bitmap(Display *dpy, Window rootwin, const char *name, char *ext,
+                int *wp, int *hp)
 {
     int hotx, hoty;
     unsigned int w, h;

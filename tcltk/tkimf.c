@@ -131,37 +131,37 @@ tk_load_imf(ImageFamily *imf)
 	rootwin = tkimf->rootwin;
     }
     /* Grab at plausibly-named bitmaps. */
-    pic = tk_load_bitmap(rootwin, imf->name, "b", &w, &h);
+    pic = tk_load_bitmap(rootwin, imf->name, (char *) "b", &w, &h);
     if (pic != None) {
 	img = get_img(imf, w, h);
 	tkimg = get_tk_image(img);
 	tkimg->mono = pic;
     }
-    pic = tk_load_bitmap(rootwin, imf->name, "m", &w, &h);
+    pic = tk_load_bitmap(rootwin, imf->name, (char *) "m", &w, &h);
     if (pic != None) {
 	img = get_img(imf, w, h);
 	tkimg = get_tk_image(img);
 	tkimg->mask = pic;
     }
-    pic = tk_load_bitmap(rootwin, imf->name, "8.b", &w, &h);
+    pic = tk_load_bitmap(rootwin, imf->name, (char *) "8.b", &w, &h);
     if (pic != None) {
 	img = get_img(imf, w, h);
 	tkimg = get_tk_image(img);
 	tkimg->mono = pic;
     }
-    pic = tk_load_bitmap(rootwin, imf->name, "8.m", &w, &h);
+    pic = tk_load_bitmap(rootwin, imf->name, (char *) "8.m", &w, &h);
     if (pic != None) {
 	img = get_img(imf, w, h);
 	tkimg = get_tk_image(img);
 	tkimg->mask = pic;
     }
-    pic = tk_load_bitmap(rootwin, imf->name, "32.b", &w, &h);
+    pic = tk_load_bitmap(rootwin, imf->name, (char *) "32.b", &w, &h);
     if (pic != None) {
 	img = get_img(imf, w, h);
 	tkimg = get_tk_image(img);
 	tkimg->mono = pic;
     }
-    pic = tk_load_bitmap(rootwin, imf->name, "32.m", &w, &h);
+    pic = tk_load_bitmap(rootwin, imf->name, (char *) "32.m", &w, &h);
     if (pic != None) {
 	img = get_img(imf, w, h);
 	tkimg = get_tk_image(img);
