@@ -45,11 +45,11 @@ struct a_unit_view;
 typedef struct a_unit {
     short type;                		/*!< type */
     int id;            			/*!< truly unique id number */
-    char *name;                		/*!< the name, if given */
+    const char *name;          		/*!< the name, if given */
     int number;                		/*!< semi-unique number */
     struct a_unit_view *uview;		/*!< master view of unit */
     struct a_image_family *imf;       	/*!< the image family */
-    char *image_name;			/*!< the name of the image, if given */
+    const char *image_name;		/*!< the name of the image, if given */
     short x;   				/*!< x position of unit in world */
     short y;   				/*!< y position of unit in world */
     short z;   				/*!< z position of unit in world */
@@ -131,9 +131,9 @@ typedef struct a_unit_view {
     short observer;		/*!< number of observing side */
     short type;        		/*!< type */
     short siden;       		/*!< side number of unit */
-    char *name;        		/*!< the name, if given */
+    const char *name;      	/*!< the name, if given */
     struct a_image_family *imf;	/*!< the image family */
-    char *image_name;		/*!< the name of the image, if given */
+    const char *image_name;	/*!< the name of the image, if given */
     short size;                	/*!< abstract size */
     short x;                   	/*!< x location of view */
     short y;                   	/*!< y location of view */
@@ -542,8 +542,8 @@ typedef enum actiontype {
 /*! \brief Action definition. */
 typedef struct a_actiondefn {
     ActionType typecode;    	/*!< Action type. */
-    char *name;             	/*!< Name. */
-    char *argtypes;         	/*!< argument type string. */
+    const char *name;           /*!< Name. */
+    const char *argtypes;       /*!< argument type string. */
 } ActionDefn;
 
 /*! \brief Maximum number of arguments to action. */
@@ -612,9 +612,9 @@ typedef enum goaltype GoalType;
 
 /*! \brief Goal definition. */
 typedef struct a_goaldefn {
-    char *name;             /*!< Name. */
-    char *display_name;     /*!< Display name. */
-    char *argtypes;         /*!< Type string of arguments. */
+    const char *name;             /*!< Name. */
+    const char *display_name;     /*!< Display name. */
+    const char *argtypes;         /*!< Type string of arguments. */
 } GoalDefn;
 
 /* The goal structure proper. */
@@ -676,9 +676,9 @@ typedef struct a_task {
 
 /*! \brief Task definition. */
 typedef struct a_taskdefn {
-    char *name;			/*!< name of the task type */
-    char *display_name;	/*!< name to display in interfaces */
-    char *argtypes;		/*!< string giving types of task's args */
+    const char *name;		/*!< name of the task type */
+    const char *display_name;	/*!< name to display in interfaces */
+    const char *argtypes;	/*!< string giving types of task's args */
     TaskOutcome (*exec)(Unit *unit, Task *task); /*!< Pointer to task function. */
 } TaskDefn;
 
@@ -761,7 +761,7 @@ extern GoalDefn goaldefns[];
 extern TaskDefn taskdefns[];
 
 /*! \brief Plan type name array. */
-extern char *plantypenames[];
+extern const char *plantypenames[];
 
 /* Declarations of unit-related functions that do not change the kernel state. 
 Those that actually do something have been moved to kernel.h. */
@@ -853,18 +853,18 @@ extern int see_chance(Unit *seer, Unit *tosee);
 
 /* Unit names and designations. */
 
-extern char *unit_desig(Unit *unit);
-extern char *unit_desig_no_loc(Unit *unit);
-extern char *utype_name_n(int u, int n);
+extern const char *unit_desig(Unit *unit);
+extern const char *unit_desig_no_loc(Unit *unit);
+extern const char *utype_name_n(int u, int n);
 extern char *shortest_unique_name(int u);
 extern char *shortest_generic_name(int u);
-extern char *actorstate_desig(struct a_actorstate *as);
+extern const char *actorstate_desig(struct a_actorstate *as);
 
 /* Unit locators. */
 
 extern Unit *find_unit(int n);
 extern Unit *find_unit_dead_or_alive(int n);
-extern Unit *find_unit_by_name(char *nm);
+extern Unit *find_unit_by_name(const char *nm);
 extern Unit *find_unit_by_number(int nb);
 extern Unit *find_unit_by_symbol(Obj *sym);
 

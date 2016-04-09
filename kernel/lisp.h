@@ -67,7 +67,7 @@ typedef struct a_obj {
     enum lisptype type;     	/*!< Type of the \Object */
     union {
 	int num;                	/*!< numeric value */
-	char *str;              	/*!< string value */
+	const char *str;              	/*!< string value */
 	struct a_symbol sym;	/*!< \ref a_symbol "Symbol Object". */
 	struct a_cons cons;     	/*!< \ref a_cons "list" object */
 	struct a_pointer ptr;	/*!< \ref a_pointer "pointer" object */
@@ -103,7 +103,7 @@ enum strmtype {
 typedef struct a_strm {
     	enum strmtype type;         		/*!< Type of stream. */
     	union {
-		char *sp;                   		/*!< String pointer */
+		const char *sp;        		/*!< String pointer */
 		FILE *fp;                   		/*!< file pointer */
 	} ptr;
 	char lastread[CONTEXTSIZE];	/*!< Last read buffer */
@@ -165,9 +165,9 @@ extern Obj *lispeof;
 
 extern void init_lisp(void);
 extern Obj *read_form(FILE *fp, int *p1, int *p2);
-extern Obj *read_form_from_string(char *str, int *p1, int *p2, char **endstr);
+extern Obj *read_form_from_string(const char *str, int *p1, int *p2, const char **endstr);
 extern int length(Obj *list);
-extern Obj *new_string(char *str);
+extern Obj *new_string(const char *str);
 extern Obj *new_number(int num);
 extern Obj *new_utype(int u);
 extern Obj *new_mtype(int r);
@@ -184,9 +184,9 @@ extern Obj *cddr(Obj *x);
 extern Obj *caddr(Obj *x);
 extern Obj *cdddr(Obj *x);
 extern void set_cdr(Obj *x, Obj *v);
-extern char *c_string(Obj *x);
+extern const char *c_string(Obj *x);
 extern int c_number(Obj *x);
-extern Obj *intern_symbol(char *str);
+extern Obj *intern_symbol(const char *str);
 extern Obj *symbol_value(Obj *sym);
 extern Obj *setq(Obj *sym, Obj *x);
 extern void makunbound(Obj *sym);
@@ -208,8 +208,8 @@ extern int equal(Obj *x, Obj *y);
 extern int member(Obj *x, Obj *lis);
 extern Obj *elt(Obj *lis, int n);
 extern Obj *reverse(Obj *lis);
-extern Obj *find_at_key(Obj *lis, char *key);
-extern Obj *replace_at_key(Obj *lis, char *key, Obj *newval);
+extern Obj *find_at_key(Obj *lis, const char *key);
+extern Obj *replace_at_key(Obj *lis, const char *key, Obj *newval);
 extern int is_quoted_lisp(Obj *x);
 
 namespace Xconq {
@@ -256,29 +256,29 @@ extern int interpolate_in_list_ext(int val, Obj *lis,
 			int maxdo, int maxval, int maxrslt,
 			int *rslt);
 
-extern char *escaped_symbol(char *str);
-extern char *escaped_string(char *str);
-extern char *safe_escaped_string(char *str, int len);
+extern const char *escaped_symbol(const char *str);
+extern char *escaped_string(const char *str);
+extern char *safe_escaped_string(const char *str, int len);
 extern void interp_short_array(short *arr, Obj *lis, int n);
 extern void interp_long_array(long *arr, Obj *lis, int n);
 extern int eval_number(Obj *val, int *isnumber);
-extern char *get_string(Obj *lis);
+extern const char *get_string(Obj *lis);
 
 /* Functions that the Lisp code needs to have defined. */
 
-extern void init_warning(char *str, ...);
+extern void init_warning(const char *str, ...);
 extern void low_init_warning(char *str);
-extern void init_error(char *str, ...);
-extern void low_init_error(char *str);
-extern void run_warning(char *str, ...);
+extern void init_error(const char *str, ...);
+extern void low_init_error(const char *str);
+extern void run_warning(const char *str, ...);
 extern void low_run_warning(char *str);
-extern void run_error(char *str, ...);
+extern void run_error(const char *str, ...);
 extern void low_run_error(char *str);
 extern void announce_read_progress(void);
-extern int keyword_code(char *str);
-extern char *keyword_name(enum keywords k);
+extern int keyword_code(const char *str);
+extern const char *keyword_name(enum keywords k);
 extern int lazy_bind(Obj *sym);
 extern void init_predefined_symbols(void);
-extern void syntax_error(Obj *x, char *msg);
+extern void syntax_error(Obj *x, const char *msg);
 
 #endif /* LISP_H */

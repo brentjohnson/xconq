@@ -48,7 +48,7 @@ static void write_pixmap(FILE *fp, int w, int h, int aw, int ah,
 			 int pixelsize, int orig_pixelsize,
 			 Obj *palette, int *rawpalette, int numcolors,
 			 Obj *lispdata, char *rawdata);
-static void write_bitmap(FILE *fp, char *subtyp, int w, int h,
+static void write_bitmap(FILE *fp, const char *subtyp, int w, int h,
 			 Obj *data, char *rawdata);
 static void write_palette_contents(FILE *fp, Obj *palette,
 				   int *rawpalette, int numcolors);
@@ -152,9 +152,9 @@ clone_imf(ImageFamily *imf)
    hyphens anywhere but as first char). */
 
 int
-valid_imf_name(char *name)
+valid_imf_name(const char *name)
 {
-    char *tmp;
+    const char *tmp;
 
     for (tmp = name; *tmp; ++tmp) {
 	if (!(isalnum(*tmp)
@@ -182,7 +182,7 @@ validify_imf_name(char *buf)
 /* Given a name, find or create an image family with that name. */
 
 ImageFamily *
-get_imf(char *name)
+get_imf(const char *name)
 {
     ImageFamily *imf = NULL;
     
@@ -342,7 +342,7 @@ interp_imf_form(Obj *form, char *filename, void (*imf_callback)(ImageFamily *imf
 /* Find the image family of the given name, if it exists. */
 
 ImageFamily *
-find_imf(char *name)
+find_imf(const char *name)
 {
     int i;
 
@@ -487,7 +487,7 @@ void
 interp_image(ImageFamily *imf, Obj *size, Obj *parts)
 {
     int w, h, imtype, emx, emy, emw, emh, numsubs, subi;
-    char *name;
+    const char *name;
     Image *img, *subimg;
     Obj *head, *rest, *typ, *prop, *proptype, *datalist;
     
@@ -660,7 +660,7 @@ compute_image_bbox(Image *img)
 {
     int numbytes, i, j = 0, byte, x, y, x1, x2, k;
     int xmin, ymin, xmax, ymax;
-    char *data = NULL;
+    const char *data = NULL;
     Obj *datalist, *next;
 
     datalist = img->maskdata;
@@ -1185,7 +1185,7 @@ void
 interp_bytes(Obj *datalist, int numbytes, char *destaddr, int jump)
 {
     int i, j = 0;
-    char *data = NULL;
+    const char *data = NULL;
 
     for (i = 0; i < numbytes; ++i) {
 	if (data == NULL || data[j] == '\0') {
@@ -1355,7 +1355,7 @@ largest_image(ImageFamily *imf)
 static int tmpbw;  /* work around Think C bug */
 
 int
-emblem_position(Image *uimg, char *ename, ImageFamily *eimf, int sw, int sh,
+emblem_position(Image *uimg, const char *ename, ImageFamily *eimf, int sw, int sh,
 		int vpuh, int vphh, int *exxp, int *eyyp, int *ewp, int *ehp)
 {
     int ew1, eh1, ex, ey, ew, eh, bx, by, bw, bh, overlap;
@@ -1716,7 +1716,7 @@ static int
 bitmaps_match(int w, int h, Obj *lispdata, char *rawdata)
 {
     int i, j = 0, rowbytes, numbytes, byte;
-    char *datastr = NULL;
+    const char *datastr = NULL;
 
     rowbytes = computed_rowbytes(w, 1);
     numbytes =  h * rowbytes;
@@ -1744,7 +1744,9 @@ void
 write_imf_dir(char *filename, ImageFamily **imfimages, int num)
 {
     int i;
-    char *loc, *token, *delims;
+    char *loc;
+    const char *delims;
+    char *token;
     ImageFamily *imf;
     FILE *fp;
 
@@ -1753,7 +1755,7 @@ write_imf_dir(char *filename, ImageFamily **imfimages, int num)
 	fprintf(fp, "ImageFamilyName FileName\n");
 	for (i = 0; i < num; ++i) {
 	    imf = images[i];
-	    loc = "???";
+	    loc = NULL;
 	    if (imf->location && !empty_string(imf->location->name)) {
 		/* First remove any Unix, Mac or Windows pathnames. */
 		loc = copy_string(imf->location->name);
@@ -1766,7 +1768,7 @@ write_imf_dir(char *filename, ImageFamily **imfimages, int num)
 		/* Remove any leading dots left from Unix pathnames. */
 		loc += strspn(loc, ".");
 	    }
-	    fprintf(fp, "%s %s\n", imf->name, loc);
+	    fprintf(fp, "%s %s\n", imf->name, loc ? loc : "???");
 	    /* (to write imf files, should scan through images once for
 	       each file, writing all images found that are in that file) */
 	}
@@ -1921,7 +1923,7 @@ color_matches_mono(Image *img)
 {
     int i, cj, mj, rowbytes, numbytes, cbyte, mbyte;
     int col[2], red[2], grn[2], blu[2];
-    char *cdatastr = NULL, *mdatastr = NULL;
+    const char *cdatastr = NULL, *mdatastr = NULL;
     Obj *clispdata = img->colrdata, *mlispdata = img->monodata, *palette;
 
     if (img->pixelsize != 1)
@@ -2029,7 +2031,7 @@ write_pixmap(FILE *fp, int w, int h, int actualw, int actualh,
 	     Obj *lispdata, char *rawdata)
 {
     int dolisp, i, j = 0, rowbytes, numbytes, byte;
-    char *datastr = NULL;
+    const char *datastr = NULL;
 
     actualw = (actualw != 0 ? actualw : w);
     actualh = (actualh != 0 ? actualh : h);
@@ -2072,11 +2074,11 @@ write_pixmap(FILE *fp, int w, int h, int actualw, int actualh,
 }
 
 static void
-write_bitmap(FILE *fp, char *subtyp, int w, int h, Obj *lispdata,
+write_bitmap(FILE *fp, const char *subtyp, int w, int h, Obj *lispdata,
 	     char *rawdata)
 {
     int dolisp, i, j = 0, rowbytes, numbytes, byte;
-    char *datastr = NULL;
+    const char *datastr = NULL;
 
     /* Lisp data overrides raw byte data. */	
     dolisp = (lispdata != lispnil);	
@@ -2145,7 +2147,7 @@ write_palette_contents(FILE *fp, Obj *palette, int *rawpalette, int numcolors)
 static void
 write_color(FILE *fp, int n, int r, int g, int b)
 {
-    char *colorname;
+    const char *colorname;
 
     if (n >= 0)
       fprintf(fp, " (%d", n);
@@ -2165,7 +2167,7 @@ write_color(FILE *fp, int n, int r, int g, int b)
 /* Given rgb components, return names of standard colors if the match
    is close. */
 
-char *
+const char *
 find_color_name(int r, int g, int b)
 {
     if (r > WHITE_THRESHOLD
@@ -2196,7 +2198,7 @@ void
 parse_lisp_palette_entry(Obj *palentry, int *col, int *red, int *grn, int *blu)
 {
     Obj *colorcomp;
-    char *colorname;
+    const char *colorname;
 
     *col = c_number(car(palentry));
     colorcomp = cdr(palentry);
@@ -2240,7 +2242,7 @@ parse_lisp_palette_entry(Obj *palentry, int *col, int *red, int *grn, int *blu)
 
 /* Given a filename, find or create a file image structure for it. */
 
-FileImage *get_file_image(char *fname)
+FileImage *get_file_image(const char *fname)
 {
     FileImage *fimg, *newfimg;
 
@@ -2420,7 +2422,7 @@ load_file_image(FileImage *fimg)
 static short imf_dir_loaded;
 
 ImageFamily *
-get_generic_images(char *name)
+get_generic_images(const char *name)
 {
     FILE *fp;
     ImageFamily *imf;

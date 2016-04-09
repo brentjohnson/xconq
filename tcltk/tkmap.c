@@ -106,83 +106,83 @@ typedef struct {
 } MapW;
 
 static Tk_ConfigSpec config_specs[] = {
-    {TK_CONFIG_INT, "-ai", "ai", "AI",
+    {TK_CONFIG_INT, (char *) "-ai", "ai", "AI",
 	"0", Tk_Offset(MapW, draw_ai), 0},
-    {TK_CONFIG_BORDER, "-background", "background", "Background",
+    {TK_CONFIG_BORDER, (char *) "-background", "background", "Background",
 	"gray", Tk_Offset(MapW, bg_border), TK_CONFIG_COLOR_ONLY},
-    {TK_CONFIG_BORDER, "-background", "background", "Background",
+    {TK_CONFIG_BORDER, (char *) "-background", "background", "Background",
 	"gray50", Tk_Offset(MapW, bg_border), TK_CONFIG_MONO_ONLY},
-    {TK_CONFIG_SYNONYM, "-bd", "borderWidth", (char *) NULL,
+    {TK_CONFIG_SYNONYM, (char *) "-bd", "borderWidth", (char *) NULL,
 	(char *) NULL, 0, 0},
-    {TK_CONFIG_SYNONYM, "-bg", "background", (char *) NULL,
+    {TK_CONFIG_SYNONYM, (char *) "-bg", "background", (char *) NULL,
 	(char *) NULL, 0, 0},
 #if 0 /* Although borderwidth is "standard", it's hard to make it work
 	 right with the cell drawing, and the effect can be achieved
 	 just by embedding the map in a frame, so omit it. */
-    {TK_CONFIG_PIXELS, "-borderwidth", "borderWidth", "BorderWidth",
+    {TK_CONFIG_PIXELS, (char *) "-borderwidth", "borderWidth", "BorderWidth",
 	"0", Tk_Offset(MapW, border_width), 0},
-    {TK_CONFIG_RELIEF, "-relief", "relief", "Relief",
+    {TK_CONFIG_RELIEF, (char *) "-relief", "relief", "Relief",
 	"sunken", Tk_Offset(MapW, relief), 0},
 #endif
-    {TK_CONFIG_INT, "-clouds", "clouds", "Clouds",
+    {TK_CONFIG_INT, (char *) "-clouds", "clouds", "Clouds",
 	"0", Tk_Offset(MapW, draw_clouds), 0},
-    {TK_CONFIG_INT, "-control", "control", "Control",
+    {TK_CONFIG_INT, (char *) "-control", "control", "Control",
 	"0", Tk_Offset(MapW, draw_control), 0},
-    {TK_CONFIG_INT, "-coverage", "coverage", "Coverage",
+    {TK_CONFIG_INT, (char *) "-coverage", "coverage", "Coverage",
      "0", Tk_Offset(MapW, draw_cover), 0},
-    {TK_CONFIG_ACTIVE_CURSOR, "-cursor", "cursor", "Cursor",
+    {TK_CONFIG_ACTIVE_CURSOR, (char *) "-cursor", "cursor", "Cursor",
 	"", Tk_Offset(MapW, cursor), TK_CONFIG_NULL_OK},
-    {TK_CONFIG_INT, "-dbl", "doubleBuffer", "DoubleBuffer",
+    {TK_CONFIG_INT, (char *) "-dbl", "doubleBuffer", "DoubleBuffer",
 	"1", Tk_Offset(MapW, double_buffer), 0},
-    {TK_CONFIG_INT, "-direction", "direction", "Direction",
+    {TK_CONFIG_INT, (char *) "-direction", "direction", "Direction",
 	"0", Tk_Offset(MapW, isodir), 0},
-    {TK_CONFIG_INT, "-elevations", "elevations", "Elevations",
+    {TK_CONFIG_INT, (char *) "-elevations", "elevations", "Elevations",
 	"0", Tk_Offset(MapW, draw_elevations), 0},
-    {TK_CONFIG_INT, "-featureboundaries", "featureboundaries", "FeatureBoundaries",
+    {TK_CONFIG_INT, (char *) "-featureboundaries", "featureboundaries", "FeatureBoundaries",
 	"0", Tk_Offset(MapW, draw_feature_boundaries), 0},
-    {TK_CONFIG_INT, "-featurenames", "featurenames", "FeatureNames",
+    {TK_CONFIG_INT, (char *) "-featurenames", "featurenames", "FeatureNames",
 	"1", Tk_Offset(MapW, draw_feature_names), 0},
-    {TK_CONFIG_FONT, "-mainfont", "mainfont", "MainFont",
+    {TK_CONFIG_FONT, (char *) "-mainfont", "mainfont", "MainFont",
 	"Courier -12", Tk_Offset(MapW, main_font), 0},
-    {TK_CONFIG_FONT, "-featurefont", "featurefont", "FeatureFont",
+    {TK_CONFIG_FONT, (char *) "-featurefont", "featurefont", "FeatureFont",
 	"Courier -12", Tk_Offset(MapW, feature_font), 0},
-    {TK_CONFIG_INT, "-grid", "grid", "Grid",
+    {TK_CONFIG_INT, (char *) "-grid", "grid", "Grid",
 	"0", Tk_Offset(MapW, draw_grid), 0},
-    {TK_CONFIG_PIXELS, "-height", "height", "Height",
+    {TK_CONFIG_PIXELS, (char *) "-height", "height", "Height",
 	"0", Tk_Offset(MapW, height), 0},
-    {TK_CONFIG_INT, "-isometric", "isometric", "Isometric",
+    {TK_CONFIG_INT, (char *) "-isometric", "isometric", "Isometric",
 	"0", Tk_Offset(MapW, isometric), 0},
-    {TK_CONFIG_INT, "-lighting", "lighting", "Lighting",
+    {TK_CONFIG_INT, (char *) "-lighting", "lighting", "Lighting",
 	"0", Tk_Offset(MapW, draw_lighting), 0},
-    {TK_CONFIG_INT, "-lines", "lines", "Lines",
+    {TK_CONFIG_INT, (char *) "-lines", "lines", "Lines",
 	"0", Tk_Offset(MapW, draw_lines), 0},
-    {TK_CONFIG_PIXELS, "-maxheight", "maxheight", "MaxHeight",
+    {TK_CONFIG_PIXELS, (char *) "-maxheight", "maxheight", "MaxHeight",
 	"0", Tk_Offset(MapW, maxheight), 0},
-    {TK_CONFIG_INT, "-meridians", "meridians", "Meridians",
+    {TK_CONFIG_INT, (char *) "-meridians", "meridians", "Meridians",
 	"0", Tk_Offset(MapW, draw_meridians), 0},
-    {TK_CONFIG_INT, "-meridianinterval", "meridianinterval", "MeridianInterval",
+    {TK_CONFIG_INT, (char *) "-meridianinterval", "meridianinterval", "MeridianInterval",
 	"0", Tk_Offset(MapW, meridian_interval), 0},
-    {TK_CONFIG_INT, "-people", "people", "People",
+    {TK_CONFIG_INT, (char *) "-people", "people", "People",
 	"0", Tk_Offset(MapW, draw_people), 0},
-    {TK_CONFIG_INT, "-power", "power", "Power",
+    {TK_CONFIG_INT, (char *) "-power", "power", "Power",
 	"5", Tk_Offset(MapW, power), 0},
-    {TK_CONFIG_INT, "-temperature", "temperature", "Temperature",
+    {TK_CONFIG_INT, (char *) "-temperature", "temperature", "Temperature",
 	"0", Tk_Offset(MapW, draw_temperature), 0},
-    {TK_CONFIG_INT, "-terrainimages", "terrain_images", "TerrainImages",
+    {TK_CONFIG_INT, (char *) "-terrainimages", "terrain_images", "TerrainImages",
 	"1", Tk_Offset(MapW, draw_terrain_images), 0},
-    {TK_CONFIG_INT, "-terrainpatterns", "terrain_patterns", "TerrainPatterns",
+    {TK_CONFIG_INT, (char *) "-terrainpatterns", "terrain_patterns", "TerrainPatterns",
 	"1", Tk_Offset(MapW, draw_terrain_patterns), 0},
-    {TK_CONFIG_INT, "-transitions", "transitions", "Transitions",
+    {TK_CONFIG_INT, (char *) "-transitions", "transitions", "Transitions",
 	"1", Tk_Offset(MapW, draw_transitions), 0},
-    {TK_CONFIG_INT, "-unitnames", "unitnames", "UnitNames",
+    {TK_CONFIG_INT, (char *) "-unitnames", "unitnames", "UnitNames",
 	"1", Tk_Offset(MapW, draw_names), 0},
-    {TK_CONFIG_INT, "-verticalscale", "verticalscale", "VerticalScale",
+    {TK_CONFIG_INT, (char *) "-verticalscale", "verticalscale", "VerticalScale",
 	"1", Tk_Offset(MapW, vertscale), 0},
-    {TK_CONFIG_PIXELS, "-width", "width", "Width",
+    {TK_CONFIG_PIXELS, (char *) "-width", "width", "Width",
 	"0", Tk_Offset(MapW, width), 0},
-    {TK_CONFIG_INT, "-winds", "winds", "Winds",
+    {TK_CONFIG_INT, (char *) "-winds", "winds", "Winds",
 	"0", Tk_Offset(MapW, draw_winds), 0},
-    {TK_CONFIG_INT, "-world", "world", "World",
+    {TK_CONFIG_INT, (char *) "-world", "world", "World",
 	"0", Tk_Offset(MapW, world), 0},
     {TK_CONFIG_END, (char *) NULL, (char *) NULL, (char *) NULL,
 	(char *) NULL, 0, 0}
@@ -261,7 +261,7 @@ static void draw_unit_view(MapW *mapw, UnitView *uview, int sx, int sy,
 static void draw_unit_view_and_occs(MapW *mapw, UnitView *unitview, 
 				    int sx, int sy, int sw, int sh);
 static void draw_dots(MapW *mapw, int sx, int sy, int sw, int sh);
-static void draw_unit_name(MapW *mapw, char *name, int sx, int sy,
+static void draw_unit_name(MapW *mapw, const char *name, int sx, int sy,
 			   int sw, int sh);
 static void draw_unit_size(MapW *mapw, int size, int sx, int sy,
 			   int sw, int sh);
@@ -438,7 +438,7 @@ mapw_widget_cmd(ClientData cldata, Tcl_Interp *interp, int argc, char **argv)
 	    fraction = 0;
 	    fraction2 = 1;
 	    printf("map xview %g %g\n", fraction, fraction2);
-	    sprintf(interp->result, "%g %g", fraction, fraction2);
+	    sprintf(Tcl_GetStringResult(interp), "%g %g", fraction, fraction2);
 	} else {
 	    type = Tk_GetScrollInfo(interp, argc, argv, &fraction, &count);
 	    switch (type) {
@@ -468,7 +468,7 @@ mapw_widget_cmd(ClientData cldata, Tcl_Interp *interp, int argc, char **argv)
 	    fraction = 0;
 	    fraction2 = 1;
 	    printf("map yview %g %g\n", fraction, fraction2);
-	    sprintf(interp->result, "%g %g", fraction, fraction2);
+	    sprintf(Tcl_GetStringResult(interp), "%g %g", fraction, fraction2);
 	} else {
 	    type = Tk_GetScrollInfo(interp, argc, argv, &fraction, &count);
 	    switch (type) {
@@ -1652,7 +1652,7 @@ draw_feature_name(MapW *mapw, int f)
     int x = legend->ox, y = legend->oy;
     int dist = ((legend->dx + 1) * mapw->vp->hw * 9) / 10;
     int sx0, sy0, sxc, syc, namelength = 0;
-    char *name;
+    const char *name;
     Display *dpy = mapw->display;
     GC gc = mapw->gc;
     Tk_Font tkfont;
@@ -2673,7 +2673,7 @@ draw_dots(MapW *mapw, int sx, int sy, int sw, int sh)
 }
 
 static void
-draw_unit_name(MapW *mapw, char *name, int sx, int sy, int sw, int sh)
+draw_unit_name(MapW *mapw, const char *name, int sx, int sy, int sw, int sh)
 {
     char namebuf[BUFSIZE];
     Display *dpy = mapw->display;
@@ -3048,7 +3048,7 @@ draw_borders_iso(MapW *mapw, int x, int y, int b)
 	    wid2 = wid / 2;
 	    XSetLineAttributes(dpy, gc, wid, LineSolid, CapButt, JoinMiter); 
 	    color = dside->ui->cell_color[b];
-	    if (!color)
+	    if ((long)color < 0)
 	      color = dside->ui->blackcolor;
 	    XSetForeground(dpy, gc, color->pixel);
 	    XSetBackground(dpy, gc, dside->ui->whitecolor->pixel);
@@ -3136,7 +3136,7 @@ draw_connections(MapW *mapw, int vx, int vyhi, int vylo, int c)
 	wid2 = wid / 2;
 	XSetLineAttributes(dpy, gc, wid, LineSolid, CapButt, JoinMiter); 
 	color = dside->ui->cell_color[c];
-	if (!color)
+	if ((long)color < 0)
 	  color = dside->ui->blackcolor;
 	XSetForeground(dpy, gc, color->pixel);
 	XSetBackground(dpy, gc, dside->ui->whitecolor->pixel);
@@ -3243,7 +3243,7 @@ draw_connections_iso(MapW *mapw, int x, int y, int c)
 	    wid2 = wid / 2;
 	    XSetLineAttributes(dpy, gc, wid, LineSolid, CapButt, JoinMiter); 
 	    color = dside->ui->cell_color[c];
-	    if (!color)
+	    if ((long)color < 0)
 	      color = dside->ui->blackcolor;
 	    XSetForeground(dpy, gc, color->pixel);
 	    XSetBackground(dpy, gc, dside->ui->whitecolor->pixel);
@@ -4105,7 +4105,7 @@ int
 draw_uimg_emblem(Image *img, MapW *mapw, int sx, int sy, int sidenum)
 {
     int sw = -1, sh = -1;
-    char *ename = NULL;
+    const char *ename = NULL;
     ImageFamily *eimf = NULL;
     int ex = -1, ey = -1, ew = -1, eh = -1;
 

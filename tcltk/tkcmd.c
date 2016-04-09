@@ -544,7 +544,8 @@ do_collect(Side *side)
     Map *map = side->ui->curmap;
     Unit *unit = map->curunit;
     int mtocollect;
-    char *arg, *rest;
+    char *arg;
+    const char *rest;
 
     if (!require_own_unit_during_game(map))
       return;
@@ -1875,7 +1876,7 @@ do_trace(Side *side)
 /* Generic command error feedback. */
 
 void
-cmd_error(Side *side, char *fmt, ...)
+cmd_error(Side *side, const char *fmt, ...)
 {
     va_list ap;
 

@@ -1389,7 +1389,7 @@ init_features(void)
 }
 
 Feature *
-create_feature(char *feattype, char *name)
+create_feature(const char *feattype, const char *name)
 {
     Feature *newfeature = (Feature *) xmalloc(sizeof(Feature));
 

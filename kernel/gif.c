@@ -69,7 +69,7 @@ static int ReadImage( FILE *fd, int len, int height, int gray, int interlace, in
 
 static int get_gif_from_file(FileImage *fimg, FILE *fp);
 
-extern void make_pathname(char *path, char *name, char *extn, char *pathbuf);
+extern void make_pathname(const char *path, const char *name, const char *extn, char *pathbuf);
 
 int
 get_gif(FileImage *fimg)
@@ -313,7 +313,7 @@ static int
 DoExtension(FILE *fd, int label)
 {
        static char     buf[256];
-       char            *str;
+       const char            *str;
 
        switch (label) {
        case 0x01:              /* Plain Text Extension */

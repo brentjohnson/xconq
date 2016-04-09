@@ -95,26 +95,26 @@ static HelpPageDefn hpagedefns [] = {
 
 /* Help system internal functions. */
 
-static void describe_help_system(int arg, char *key, TextBuffer *buf);
-static void describe_instructions(int arg, char *key, TextBuffer *buf);
+static void describe_help_system(int arg, const char *key, TextBuffer *buf);
+static void describe_instructions(int arg, const char *key, TextBuffer *buf);
 static void describe_synth_run(TextBuffer *buf, int methkey);
-static void describe_world(int arg, char *key, TextBuffer *buf);
+static void describe_world(int arg, const char *key, TextBuffer *buf);
 static int histogram_compare(const void *h1, const void *h2);
-static void describe_news(int arg, char *key, TextBuffer *buf);
-static void describe_concepts(int arg, char *key, TextBuffer *buf);
-static void describe_game_design(int arg, char *key, TextBuffer *buf);
-static void describe_utype(int u, char *key, TextBuffer *buf);
-static void describe_utype_movement(int u, char *key, TextBuffer *buf);
-static void describe_utype_actions(int u, char *key, TextBuffer *buf);
-static void describe_utype_side_attributes(int u, char *key, TextBuffer *buf);
-static void describe_utype_ai_attributes(int u, char *key, TextBuffer *buf);
-static void describe_mtype(int m, char *key, TextBuffer *buf);
-static void describe_ttype(int t, char *key, TextBuffer *buf);
-static void describe_atype(int t, char *key, TextBuffer *buf);
+static void describe_news(int arg, const char *key, TextBuffer *buf);
+static void describe_concepts(int arg, const char *key, TextBuffer *buf);
+static void describe_game_design(int arg, const char *key, TextBuffer *buf);
+static void describe_utype(int u, const char *key, TextBuffer *buf);
+static void describe_utype_movement(int u, const char *key, TextBuffer *buf);
+static void describe_utype_actions(int u, const char *key, TextBuffer *buf);
+static void describe_utype_side_attributes(int u, const char *key, TextBuffer *buf);
+static void describe_utype_ai_attributes(int u, const char *key, TextBuffer *buf);
+static void describe_mtype(int m, const char *key, TextBuffer *buf);
+static void describe_ttype(int t, const char *key, TextBuffer *buf);
+static void describe_atype(int t, const char *key, TextBuffer *buf);
 
-static void describe_scorekeepers(int arg, char *key, TextBuffer *buf);
-static void describe_setup(int arg, char *key, TextBuffer *buf);
-static void describe_game_modules(int arg, char *key, TextBuffer *buf);
+static void describe_scorekeepers(int arg, const char *key, TextBuffer *buf);
+static void describe_setup(int arg, const char *key, TextBuffer *buf);
+static void describe_game_modules(int arg, const char *key, TextBuffer *buf);
 static void describe_game_module_aux(TextBuffer *buf, Module *module,
 				     int level);
 static void describe_module_notes(TextBuffer *buf, Module *module);
@@ -140,16 +140,16 @@ static void t_property_desc(TextBuffer *buf, int (*fn)(int),
 			    void (*formatter)(TextBuffer *, int));
 static void uu_table_row_desc(TextBuffer *buf, int u, int (*fn)(int, int),
 			      void (*formatter)(TextBuffer *, int),
-			      char *connect);
+			      const char *connect);
 static void uu_table_column_desc(TextBuffer *buf, int u, int (*fn)(int, int),
 				 void (*formatter)(TextBuffer *, int),
 				 char *connect);
 static void uu_table_rowcol_desc(TextBuffer *buf, int u, int (*fn)(int, int),
 				 void (*formatter)(TextBuffer *, int),
-				 char *connect, int rowcol);
+				 const char *connect, int rowcol);
 static void ut_table_row_desc(TextBuffer *buf, int u, int (*fn)(int, int),
 			      void (*formatter)(TextBuffer *, int),
-			      char *connect);
+			      const char *connect);
 static void um_table_row_desc(TextBuffer *buf, int u, int (*fn)(int, int),
 			      void (*formatter)(TextBuffer *, int));
 static void ua_table_row_desc(TextBuffer *buf, int u, int (*fn)(int, int),
@@ -178,7 +178,7 @@ static void tb_bool_desc(TextBuffer *buf, int val);
 #if 0
 static void append_number(TextBuffer *buf, int value, int dflt);
 #endif
-static void append_help_phrase(TextBuffer *buf, char *phrase);
+static void append_help_phrase(TextBuffer *buf, const char *phrase);
 static void append_notes(TextBuffer *buf, Obj *notes);
 
 static void init_help_pages(void);
@@ -191,14 +191,14 @@ static void meta_finish_help_cc(HelpPage hpage, int hpageidx,
 static void finish_help_cc_toc(void);
 static void flush_help_cc(FILE *ccfile, HelpNode *helpnode);
 static void write_help_file_navbar(FILE *ccfilep, HelpPage hpage, int hpageidx);
-static void write_help_section_header(FILE *ccfile, char *headerdata);
-static void write_help_section_footer(FILE *ccfilep, char *footerdata);
-static void write_help_subsection_header(FILE *ccfile, char *headerdata);
-static void write_help_subsection_footer(FILE *ccfile, char *footerdata);
+static void write_help_section_header(FILE *ccfile, const char *headerdata);
+static void write_help_section_footer(FILE *ccfilep, const char *footerdata);
+static void write_help_subsection_header(FILE *ccfile, const char *headerdata);
+static void write_help_subsection_footer(FILE *ccfile, const char *footerdata);
 static void write_help_subsection_break(FILE *ccfile);
 
-static char *help_newline(void);
-static char *help_indent(unsigned int spaces);
+static const char *help_newline(void);
+static const char *help_indent(unsigned int spaces);
 
 /* The first help node in the chain. */
 
@@ -305,7 +305,7 @@ void
 create_game_help_nodes(void)
 {
     int u, m, t, a;
-    char *name, *longname;
+    const char *name, *longname;
     HelpNode *node;
 
     add_help_node("--- MODULE INFO ---", NULL, 0, NULL);
@@ -402,7 +402,7 @@ create_help_node(void)
 /* Add a help node after the given node. */
 
 HelpNode *
-add_help_node(char *key, void (*fn)(int t, char *key, TextBuffer *buf),
+add_help_node(const char *key, void (*fn)(int t, const char *key, TextBuffer *buf),
 	      int arg, HelpNode *prevnode)
 {
     HelpNode *node, *nextnode;
@@ -429,7 +429,7 @@ add_help_node(char *key, void (*fn)(int t, char *key, TextBuffer *buf),
 /* Given a string and node, find the next node whose key matches. */
 
 HelpNode *
-find_help_node(HelpNode *node, char *str)
+find_help_node(HelpNode *node, const char *str)
 {
     HelpNode *tmp;
 
@@ -485,7 +485,7 @@ get_help_text(HelpNode *node)
 }
 
 static void
-describe_help_system(int arg, char *key, TextBuffer *buf)
+describe_help_system(int arg, const char *key, TextBuffer *buf)
 {
     tbcatline(buf, "This is the header node of the Xconq help system.");
     tbcatline(buf, "Go forward or backward from here to see the online help.");
@@ -495,7 +495,7 @@ describe_help_system(int arg, char *key, TextBuffer *buf)
    except for the topics node itself. */
 
 void
-describe_topics(int arg, char *key, TextBuffer *buf)
+describe_topics(int arg, const char *key, TextBuffer *buf)
 {
     HelpNode *topics, *tmp;
 
@@ -513,7 +513,7 @@ describe_topics(int arg, char *key, TextBuffer *buf)
 /* Get the news file and put it into text buffer. */
 
 static void
-describe_news(int arg, char *key, TextBuffer *buf)
+describe_news(int arg, const char *key, TextBuffer *buf)
 {
     FILE *fp;
 
@@ -535,7 +535,7 @@ describe_news(int arg, char *key, TextBuffer *buf)
    irrelevant to the specific game). */
 
 static void
-describe_concepts(int arg, char *key, TextBuffer *buf)
+describe_concepts(int arg, const char *key, TextBuffer *buf)
 {
     tbcat(buf, "Hit points (HP) represent the overall condition of ");
     tbcatline(buf, "the unit.");
@@ -562,7 +562,7 @@ describe_concepts(int arg, char *key, TextBuffer *buf)
 }
 
 static void
-describe_instructions(int arg, char *key, TextBuffer *buf)
+describe_instructions(int arg, const char *key, TextBuffer *buf)
 {
     Obj *instructions = mainmodule->instructions;
 
@@ -576,7 +576,7 @@ describe_instructions(int arg, char *key, TextBuffer *buf)
 /* Spit out all the general game_design parameters in a readable fashion. */
 
 static void
-describe_game_design(int arg, char *key, TextBuffer *buf)
+describe_game_design(int arg, const char *key, TextBuffer *buf)
 {
     int u, m, t, a;
     
@@ -774,7 +774,7 @@ describe_game_design(int arg, char *key, TextBuffer *buf)
 /* Display game module info to a side. */
 
 static void
-describe_game_modules(int arg, char *key, TextBuffer *buf)
+describe_game_modules(int arg, const char *key, TextBuffer *buf)
 {
     if (mainmodule != NULL) {
 	/* First put out basic module info. */
@@ -909,7 +909,7 @@ any_enter_indep(int u)
 /* Full details on the given type of unit. */
 
 static void
-describe_utype(int u, char *key, TextBuffer *buf)
+describe_utype(int u, const char *key, TextBuffer *buf)
 {
     int m, usesm, a;
 
@@ -1773,7 +1773,7 @@ describe_utype(int u, char *key, TextBuffer *buf)
 /* Describe the unit type's ability to move. */
 
 static void
-describe_utype_movement(int u, char *key, TextBuffer *buf)
+describe_utype_movement(int u, const char *key, TextBuffer *buf)
 {
     int speedvaries = FALSE;
 
@@ -1879,7 +1879,7 @@ describe_utype_movement(int u, char *key, TextBuffer *buf)
 /* Describe the unit type's ability to act. */
 
 static void
-describe_utype_actions(int u, char *key, TextBuffer *buf)
+describe_utype_actions(int u, const char *key, TextBuffer *buf)
 {
     tbcatline(buf, "Actions and Action Points (ACP):");
     /* (Should enumerate possible actions here.) */
@@ -1959,7 +1959,7 @@ describe_utype_actions(int u, char *key, TextBuffer *buf)
 /* Describe the unit type's relevance to the sides. */
 
 static void
-describe_utype_side_attributes(int u, char *key, TextBuffer *buf)
+describe_utype_side_attributes(int u, const char *key, TextBuffer *buf)
 {
     int hasattribs = FALSE, first = TRUE;
     Side *side = NULL;
@@ -2018,7 +2018,7 @@ describe_utype_side_attributes(int u, char *key, TextBuffer *buf)
 /* Describe the unit type's AI attributes. */
 
 static void
-describe_utype_ai_attributes(int u, char *key, TextBuffer *buf)
+describe_utype_ai_attributes(int u, const char *key, TextBuffer *buf)
 {
     int hasattribs = FALSE;
 
@@ -2113,7 +2113,7 @@ dump_material_unit_summary(TextBuffer * buf,const char * category,
 }
 
 static void
-describe_mtype(int m, char *key, TextBuffer *buf)
+describe_mtype(int m, const char *key, TextBuffer *buf)
 {
     int u;
     int cnt;
@@ -2221,7 +2221,7 @@ describe_mtype(int m, char *key, TextBuffer *buf)
 }
 
 static void
-describe_ttype(int t, char *key, TextBuffer *buf)
+describe_ttype(int t, const char *key, TextBuffer *buf)
 {
     int m, ct;
     int u;
@@ -2458,7 +2458,7 @@ describe_ttype(int t, char *key, TextBuffer *buf)
 }
 
 static void
-describe_atype(int a, char *key, TextBuffer *buf)
+describe_atype(int a, const char *key, TextBuffer *buf)
 {
     int	u, found = FALSE;
     
@@ -2506,7 +2506,7 @@ describe_atype(int a, char *key, TextBuffer *buf)
 }
 
 static void
-describe_scorekeepers(int arg, char *key, TextBuffer *buf)
+describe_scorekeepers(int arg, const char *key, TextBuffer *buf)
 {
     int i = 1;
     Scorekeeper *sk;
@@ -2538,7 +2538,7 @@ describe_scorekeepers(int arg, char *key, TextBuffer *buf)
 /* List each synthesis method and its parameters. */
 
 static void
-describe_setup(int arg, char *key, TextBuffer *buf)
+describe_setup(int arg, const char *key, TextBuffer *buf)
 {
     int u, t, t2, methkey;
     Obj *synthlist, *methods, *method;
@@ -2957,7 +2957,7 @@ describe_synth_run(TextBuffer *buf, int methkey)
 }
 
 static void
-describe_world(int arg, char *key, TextBuffer *buf)
+describe_world(int arg, const char *key, TextBuffer *buf)
 {
     tbprintf(buf, "World circumference: %d.%s", world.circumference, 
 	     help_newline());
@@ -3026,7 +3026,7 @@ describe_world(int arg, char *key, TextBuffer *buf)
    interfaces can use. */
 
 void
-describe_command (int ch, char *name, char *help, int onechar, TextBuffer *buf)
+describe_command (int ch, const char *name, const char *help, int onechar, TextBuffer *buf)
 {
     if (onechar && ch != '\0') {
 	if (ch < ' ' || ch > '~') { 
@@ -3370,7 +3370,7 @@ t_property_desc(TextBuffer *buf, int (*fn)(int i),
 
 static void
 uu_table_row_desc(TextBuffer *buf, int u, int (*fn)(int i, int j),
-		  void (*formatter)(TextBuffer *buf, int val), char *connect)
+		  void (*formatter)(TextBuffer *buf, int val), const char *connect)
 {
     uu_table_rowcol_desc(buf, u, fn, formatter, connect, 0);
 }
@@ -3386,7 +3386,7 @@ uu_table_column_desc(TextBuffer *buf, int u, int (*fn)(int i, int j),
 static void
 uu_table_rowcol_desc(TextBuffer *buf, int u, int (*fn)(int i, int j),
 		     void (*formatter)(TextBuffer *buf, int val),
-		     char *connect, int rowcol)
+		     const char *connect, int rowcol)
 {
     int val, val2, u2, constant = TRUE, found;
     int i, numentries, first;
@@ -3466,7 +3466,7 @@ uu_table_rowcol_desc(TextBuffer *buf, int u, int (*fn)(int i, int j),
 
 static void
 ut_table_row_desc(TextBuffer *buf, int u, int (*fn)(int i, int j),
-		  void (*formatter)(TextBuffer *buf, int val), char *connect)
+		  void (*formatter)(TextBuffer *buf, int val), const char *connect)
 {
     int val = (*fn)(u, 0), val2, t, constant = TRUE, found;
     int i, numentries, first;
@@ -3545,7 +3545,7 @@ um_table_row_desc(TextBuffer *buf, int u, int (*fn)(int i, int j),
 {
     int val = (*fn)(u, 0), val2, m, constant = TRUE, found;
     int i, numentries, first;
-    char *connect = "vs";
+    const char *connect = "vs";
 
     if (formatter == NULL)
       formatter = tb_value_desc;
@@ -3619,7 +3619,7 @@ ua_table_row_desc(TextBuffer *buf, int u, int (*fn)(int i, int j),
 {
     int val = (*fn)(u, 0), val2, a, constant = TRUE, found;
     int i, numentries, first;
-    char *connect = "vs";
+    const char *connect = "vs";
 
     if (formatter == NULL)
       formatter = tb_value_desc;
@@ -3859,7 +3859,7 @@ int value, dflt;
 #endif
 
 static void
-append_help_phrase(TextBuffer *buf, char *phrase)
+append_help_phrase(TextBuffer *buf, const char *phrase)
 {
     if (empty_string(phrase))
       return;
@@ -3873,7 +3873,7 @@ append_help_phrase(TextBuffer *buf, char *phrase)
 static void
 append_notes(TextBuffer *buf, Obj *notes)
 {
-    char *notestr;
+    const char *notestr;
     Obj *rest;
 
     if (stringp(notes)) {
@@ -3896,7 +3896,7 @@ append_notes(TextBuffer *buf, Obj *notes)
 void
 append_blurb_strings(char *buf, Obj *notes)
 {
-    char *str;
+    const char *str;
     Obj *rest;
 
     if (stringp(notes)) {
@@ -4056,7 +4056,7 @@ tb_bool_desc(TextBuffer *buf, int val)
 }
 
 void
-tbprintf(TextBuffer *buf, char *str, ...)
+tbprintf(TextBuffer *buf, const char *str, ...)
 {
     va_list ap;
     char line[300];
@@ -4071,20 +4071,20 @@ tbprintf(TextBuffer *buf, char *str, ...)
 #define bcopy(a,b,c) memcpy(b,a,c)
 
 void
-tbcat(TextBuffer *buf, char *str)
+tbcat(TextBuffer *buf, const char *str)
 {
     obstack_grow(&(buf->ostack), str, strlen(str));
 }
 
 void
-tbcat_si(TextBuffer *buf, char *str)
+tbcat_si(TextBuffer *buf, const char *str)
 {
     tbprintf(buf, "%s", help_indent(2));
     obstack_grow(&(buf->ostack), str, strlen(str));
 }
 
 void
-tbcatline(TextBuffer *buf, char *str)
+tbcatline(TextBuffer *buf, const char *str)
 {
     assert_error(buf, "Tried to concatenate a line to a NULL text buffer");
     assert_error(str, "Tried to concatenate a NULL string to a text buffer");
@@ -4093,7 +4093,7 @@ tbcatline(TextBuffer *buf, char *str)
 }
 
 void
-tbcatline_si(TextBuffer *buf, char *str)
+tbcatline_si(TextBuffer *buf, const char *str)
 {
     assert_error(buf, "Tried to concatenate a line to a NULL text buffer");
     assert_error(str, "Tried to concatenate a NULL string to a text buffer");
@@ -4101,7 +4101,7 @@ tbcatline_si(TextBuffer *buf, char *str)
 }
 
 /* Prepares a newline for the help system in the current output format. */
-static char *
+static const char *
 help_newline(void)
 {
     switch (help_output_mode) {
@@ -4116,7 +4116,7 @@ help_newline(void)
 }
 
 /* Prepares an indent for the help system in the current output format. */
-static char *
+static const char *
 help_indent(unsigned int spaces)
 {
     int i = 0;
@@ -4155,8 +4155,8 @@ help_indent(unsigned int spaces)
 void
 prep_help_cc_toc(void)
 {
-    char *ccfilebname = "index";
-    char *ccfileext = NULL;
+    const char *ccfilebname = "index";
+    const char *ccfileext = NULL;
     char ccfilename [BUFSIZE];
 
     if (HELP_OUTPUT_CC_NONE == help_output_cc)
@@ -4215,7 +4215,7 @@ meta_prep_help_cc(HelpPage hpage, int hpageidx)
 void
 prep_help_cc_any(char *ccfilebname, char *sectionname)
 {
-    char *ccfileext = NULL;
+    const char *ccfileext = NULL;
     char ccfilename [BUFSIZE];
 
     if (HELP_OUTPUT_CC_NONE == help_output_cc)
@@ -4263,10 +4263,10 @@ prep_help_file(char *hfilename)
 #define HELP_PLAIN_TEXT_IDX_TRUNC_COL	39
 
 void
-write_help_toc_entry(char *hfilebname, char *sectionname, int indentlvl)
+write_help_toc_entry(const char *hfilebname, const char *sectionname, int indentlvl)
 {
     char ccfilename [BUFSIZE];
-    char *ccfileext = NULL;
+    const char *ccfileext = NULL;
     char ptextbuf [HELP_PLAIN_TEXT_COLS_MAX];
     int lookupwidth = 0, indexpos = 0;
 
@@ -4421,7 +4421,7 @@ finish_help_file(FILE *hfilep)
 /* Writes header for help file. */
 
 void
-write_help_file_header(FILE *hfile, char *headerdata)
+write_help_file_header(FILE *hfile, const char *headerdata)
 {
     if (HELP_OUTPUT_CC_NONE == help_output_cc)
       return;
@@ -4455,7 +4455,7 @@ write_help_file_header(FILE *hfile, char *headerdata)
 /* Writes footer for help file. */
 
 void
-write_help_file_footer(FILE *hfile, char *footerdata)
+write_help_file_footer(FILE *hfile, const char *footerdata)
 {
     if (HELP_OUTPUT_CC_NONE == help_output_cc)
       return;
@@ -4488,7 +4488,7 @@ help_file_brand(void)
 /* Writes header for a help section. */
 
 void
-write_help_section_header(FILE *ccfile, char *headerdata)
+write_help_section_header(FILE *ccfile, const char *headerdata)
 {
     if (HELP_OUTPUT_CC_NONE == help_output_cc)
       return;
@@ -4508,7 +4508,7 @@ write_help_section_header(FILE *ccfile, char *headerdata)
 /* Writes footer for help section. */
 
 void
-write_help_section_footer(FILE *ccfilep, char *footerdata)
+write_help_section_footer(FILE *ccfilep, const char *footerdata)
 {
     if (HELP_OUTPUT_CC_NONE == help_output_cc)
       return;
@@ -4581,7 +4581,7 @@ write_help_subsection_break(FILE *ccfile)
 
 /* Returns help file's extension. */
 
-char *
+const char *
 get_help_file_extension(void)
 {
     switch (help_output_mode) {
@@ -4640,13 +4640,13 @@ init_help_pages(void)
 void
 write_help_file_navbar(FILE *ccfilep, HelpPage hpage, int hpageidx)
 {
-    char *tocfilebname = "index";
-    char *prevfilebname = NULL;
-    char *nextfilebname = NULL;
-    char *tocname = "Table of Contents";
-    char *prevname = NULL;
-    char *nextname = NULL;
-    char *navfileext = NULL;
+    const char *tocfilebname = "index";
+    const char *prevfilebname = NULL;
+    const char *nextfilebname = NULL;
+    const char *tocname = "Table of Contents";
+    const char *prevname = NULL;
+    const char *nextname = NULL;
+    const char *navfileext = NULL;
     int prevhpageidx = -1, nexthpageidx = -1;
     char prevnumbuf [BUFSIZE], nextnumbuf [BUFSIZE];
 

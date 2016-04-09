@@ -23,8 +23,8 @@ typedef enum a_game_class {
 
 /*! AI operation? */
 typedef struct a_ai_op {
-    char *name;
-    char *help;
+    const char *name;
+    const char *help;
     int (*to_test_compat)(void);
     void (*to_init)(Side *side);
     void (*to_init_turn)(Side *side);
@@ -36,7 +36,7 @@ typedef struct a_ai_op {
     void (*to_finish_movement)(Side *side);
     Obj *(*to_save_state)(Side *side);
     int (*region_at)(Side *side, int x, int y);
-    char *(*at_desig)(Side *side, int x, int y);
+    const char *(*at_desig)(Side *side, int x, int y);
 } AI_ops;
 
 /* Definition common to all ai types. (?) */
@@ -114,7 +114,7 @@ typedef struct a_strategy {
 
 typedef struct a_theater {
     short id;
-    char *name;			/* an informative name for this theater */
+    const char *name;		/* an informative name for this theater */
     short x, y;			/* center of the theater */
     short xmin, ymin;
     short xmax, ymax;
@@ -181,8 +181,8 @@ extern int bhw_max;
 
 /* Common functions shared between ai.c and specific AIs. */
 
-extern void try_to_draw(Side *side, int flag, char *ainame);
-extern void give_up(Side *side, char *ainame);
+extern void try_to_draw(Side *side, int flag, const char *ainame);
+extern void give_up(Side *side, const char *ainame);
 extern int goal_truth(Side *side, Goal *goal);
 extern int accelerable(int u);
 extern int accelerator(int u1, int u2);

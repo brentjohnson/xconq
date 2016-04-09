@@ -110,7 +110,7 @@ static int unit_w = 16;
 
 /* PostScript fonts description */
 
-static char *ps_name[3] = {
+static const char *ps_name[3] = {
   "Helvetica-Narrow",
   "Helvetica",
   "Helvetica-Bold"
@@ -232,7 +232,7 @@ static short ps_width[3][128 /*256*/] = {
 };
 
 typedef struct a_ps_image_family {
-  char *name;
+  const char *name;
   ImageFamily *imf;
   Image *img;
   char *hexmonodata;
@@ -246,7 +246,7 @@ static int conn_x[NUMDIRS], conn_y[NUMDIRS],
 
 /* Local functions. */
 
-static char *add_esc_string(char *str);
+static char *add_esc_string(const char *str);
 
 static void ps_cook_imf(void);
 static void ps_initialize_imf(PsImage *psim);
@@ -260,8 +260,8 @@ static int nearest_valid_x(int x, int y);
 static int sideno_of_seen_unit_at(int x, int y, Side *side);
 static char *name_of_seen_unit_at(int x, int y, Side *side);
 static char *summary_of_seen_units_at(int x, int y, Side *side);
-static int ps_string_width(char *str, int font);
-static int print_unit_legends(FILE *fp, char *name, char *summary, char *m,
+static int ps_string_width(const char *str, int font);
+static int print_unit_legends(FILE *fp, const char *name, char *summary, char *m,
 			      int dir, int cx, int cy);
 
 static void
@@ -478,9 +478,10 @@ img_untile(char *tiled, int w, int h, int istile, int dither, int scale, int gra
    '\' to '\\', '(' to '\(', ')' to '\)'.  */
 
 static char *
-add_esc_string(char *str)
+add_esc_string(const char *str)
 {
-    char *ps, *pb;
+  const char *ps;
+  char *pb;
 
     if (escbuf == NULL)
       escbuf = (char *)xmalloc(BUFSIZE);
@@ -789,7 +790,7 @@ static void
 page_init(FILE *fp, int page, int i, int j, char *stime)
 {
     int x, xx, y, y0, nx, ny;
-    char *gametitle;
+    const char *gametitle;
     
     fprintf(fp, "%%%%Page: %d %d\n", page, page);
     fprintf(fp, "%g %g translate ",
@@ -952,14 +953,15 @@ summary_of_seen_units_at(int x, int y, Side *side)
 /* This routine could still use a cleanup */
 
 void
-dump_ps_view(Side *side, PrintParameters *ipp, char *filename)
+dump_ps_view(Side *side, PrintParameters *ipp, const char *filename)
 {
     int x, y, xx, i, j, t, nx, utype, page, d, cx, cy, skip, nsp;
     int f, nf, tw, th, font, named_unit_max=100, xmin, ymin, xmin1;
     int l, l1, x1, y1, x2, y2, d1, mvalue, nvalue, pad;
     FILE *fp;
-    char stime[42], *name, *summary, tmppsbuf[BUFSIZE];
+    char stime[42], *summary, tmppsbuf[BUFSIZE];
     char *name_layer, *name_position;
+    const char *name;
     time_t tnow;
     Legend *legs = NULL, *lp;
     double dlength, magnif;
@@ -1411,7 +1413,7 @@ dump_ps_view(Side *side, PrintParameters *ipp, char *filename)
    "nominal size". */
 
 static int 
-ps_string_width(char *str, int font)
+ps_string_width(const char *str, int font)
 {
     int ch, i = 0, esc = 0;
     
@@ -1435,7 +1437,7 @@ ps_string_width(char *str, int font)
 }
 
 static int
-print_unit_legends(FILE *fp, char *name, char *summary, char *m, int dir, int cx, int cy)
+print_unit_legends(FILE *fp, const char *name, char *summary, char *m, int dir, int cx, int cy)
 {
     int left, wide_name, wide_summ, down;
     

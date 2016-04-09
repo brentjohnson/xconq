@@ -37,7 +37,7 @@ clear_game_modules(void)
 /* Create a brand-new game module. */
 
 Module *
-create_game_module(char *name)
+create_game_module(const char *name)
 {
     Module *module = (Module *) xmalloc(sizeof(Module));
 
@@ -54,7 +54,7 @@ create_game_module(char *name)
 }
 
 Module *
-find_game_module(char *name)
+find_game_module(const char *name)
 {
     Module *module;
 
@@ -71,7 +71,7 @@ find_game_module(char *name)
 /* Produce a module of the given name, either by finding it or creating it. */
 
 Module *
-get_game_module(char *name)
+get_game_module(const char *name)
 {
     Module *module = find_game_module(name);
 
@@ -84,7 +84,7 @@ get_game_module(char *name)
    list of another module. */
 
 Module *
-add_game_module(char *name, Module *includer)
+add_game_module(const char *name, Module *includer)
 {
     Module *module = NULL, *other = NULL;
 
@@ -128,7 +128,7 @@ void
 load_default_game(void)
 {
     extern char *standard_game_name;
-    char *defaultname = standard_game_name;
+    const char *defaultname = standard_game_name;
     Module *module, *module2;
 
     /* If we have a different default module, use it instead. */
@@ -157,7 +157,7 @@ int
 load_game_description(Module *module)
 {
     Obj *form, *thecar;
-    char *name;
+    const char *name;
 
     /* Module is already open, don't mess with it. */
     if (module->open)
@@ -235,7 +235,7 @@ load_game_module(Module *module, int dowarn)
 void
 load_base_module(Module *module)
 {
-    char *basename = module->basemodulename;
+    const char *basename = module->basemodulename;
     Module *basemodule;
 
     if (!empty_string(basename)) {
@@ -535,7 +535,7 @@ do_one_variant(Module *module, Variant *var, Obj *varsetdata)
     int val, caseval;
     int width = 0, height = 0, circumference /*, latitude, longitude*/;
     int rtime, rtimeperturn, rtimeperside;
-    char *vartypename = c_string(var->id);
+    const char *vartypename = c_string(var->id);
     Obj *restcases, *headcase, *rest, *filler, *rawcaseval;
 
     if (Debug) {
@@ -709,7 +709,7 @@ do_one_variant(Module *module, Variant *var, Obj *varsetdata)
 void
 copy_module(Module *module, Module *origmodule)
 {
-    char *name;
+    const char *name;
     Module *next, *incl, *nextincl, *lastincl;
 
     /* No matter what, preserve the existing name. */
@@ -832,41 +832,43 @@ module_desig(Module *module)
     return moduledesigbuf;
 }
 
-char *
+const char *
 saved_game_filename(void)
 {
-    char *str, name[BUFSIZE];
+    const char *str;
+    char name[BUFSIZE];
 
     sprintf(name, "%s-%d.xcq", mainmodule->name, g_turn());
     str = game_filename("XCONQSAVEFILE", name);
     return str;
 }
 
-char *
+const char *
 checkpoint_filename(int n)
 {
-    char *str, name[BUFSIZE];
+    const char *str;
+    char name[BUFSIZE];
 
     sprintf(name, "check%d.xcq", n);
     str = game_filename(NULL, name);
     return str;
 }
 
-char *
+const char *
 statistics_filename(void)
 {
     /* No need to cache name, will only get requested once. */
     return game_filename("XCONQSTATSFILE", STATSFILE);
 }
 
-char *
+const char *
 preferences_filename(void)
 {
     return game_filename("XCONQPREFERENCES", PREFERENCESFILE);
 }
 
 /* Legacy filename support. */
-char *
+const char *
 old_preferences_filename(void)
 {
     return game_filename("XCONQPREFERENCES", OLD_PREFERENCESFILE);

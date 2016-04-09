@@ -32,13 +32,13 @@ using namespace Xconq::AI;
 
 static void compute_q(void);
 static int module_name_compare(CONST void *a1, CONST void *a2);
-static int special_strcmp(char *str1, char *str2);
+static int special_strcmp(const char *str1, const char *str2);
 static void calc_view_misc(VP *vp);
 static int blocking_utype(int u, int block);
 static ImageFamily *add_default_terrain_image(ImageFamily *imf, int t);
 static ImageFamily *add_default_material_image(ImageFamily *imf, int m);
 static ImageFamily *add_default_unit_image(ImageFamily *imf, int u);
-static ImageFamily *get_generic_utype_images(int u, char *name);
+static ImageFamily *get_generic_utype_images(int u, const char *name);
 static ImageFamily *add_default_emblem_image(ImageFamily *imf, int s2);
 static UnitView *find_unit_or_occ_view(Side *side, VP *vp, UnitView *uview,
 				       int usx, int usy, int usw, int ush,
@@ -49,11 +49,11 @@ static int can_use_oversized_img(UnitView *uview, VP *vp);
 
 /* The two games that should be always be available. */
 
-char *first_game_name = INTRO_GAME;
+const char *first_game_name = INTRO_GAME;
 
-char *second_game_name = STANDARD_GAME;
+const char *second_game_name = STANDARD_GAME;
 
-char *second_game_title;
+const char *second_game_title;
 
 /* The side with a display open. */
 
@@ -242,7 +242,7 @@ short uw_elli[NUMPOWERS][NUMPOWERS] = {
 
 /* The traditional direction characters. */
 
-char *dirchars = "ulnbhy";
+const char *dirchars = "ulnbhy";
 
 /* The unit images. */
 
@@ -301,7 +301,7 @@ int numgames = 0;
 static int
 module_name_compare(CONST void *a1, CONST void *a2)
 {
-    char *title1, *title2, *basetitle1, *basetitle2;
+    const char *title1, *title2, *basetitle1, *basetitle2;
     Module *mp1, *mp2, *base1, *base2;
     int rslt;
 
@@ -326,7 +326,7 @@ module_name_compare(CONST void *a1, CONST void *a2)
 }
 
 static int
-special_strcmp(char *str1, char *str2)
+special_strcmp(const char *str1, const char *str2)
 {
     if (strcmp(str1, second_game_title) == 0) {
 	if (strcmp(str2, second_game_title) == 0)
@@ -347,7 +347,8 @@ void
 collect_possible_games(void)
 {
     int len;
-    char *modulename = NULL, *modulecontents = NULL;
+    const char *modulename = NULL;
+    char *modulecontents = NULL;
     Obj *lis;
     Module *module, *basemodule;
     FILE *fp;
@@ -2800,7 +2801,8 @@ oneliner(Side *side, VP *vp, int sx, int sy)
     int x, y, xf, yf;
     Unit *unit, *unit2, *user;
     int t2, u, ps = NOBODY, cs = NOBODY, dep, sayin = FALSE, userid;
-    char *peopdesc = NULL, *str;
+    const char *peopdesc = NULL;
+    const char *str;
     char descbuf[80], ctrlbuf[80], buf[BUFSIZE];
     Side *side2, *side3;
     Feature *feature;
@@ -3173,7 +3175,8 @@ embarkation_unit(Unit *unit)
 int
 char_to_dir(int ch, int *dir1p, int *dir2p, int *modp)
 {
-    char basech, *rawdir;
+    char basech;
+    const char *rawdir;
     int ndirs = 0;
 
     if (isupper(ch)) {
@@ -3926,7 +3929,7 @@ ImageFamily *
 get_unit_type_images(Side *side, int u)
 {
     Obj *image_name, *rest;
-    char *name;
+    const char *name;
     ImageFamily *imf = NULL, *nextimf;
 
     if (!numuimages) {
@@ -3962,7 +3965,7 @@ get_unit_type_images(Side *side, int u)
 }
 
 ImageFamily *
-get_generic_utype_images(int u, char *name)
+get_generic_utype_images(int u, const char *name)
 {
     ImageFamily *imf = NULL;
 
@@ -4021,7 +4024,7 @@ add_default_unit_image(ImageFamily *imf, int u)
 ImageFamily *
 get_material_type_images(Side *side, int m)
 {
-    char *name;
+    const char *name;
     ImageFamily *imf;
 
     if (!empty_string(m_image_name(m)))
@@ -4075,7 +4078,7 @@ add_default_material_image(ImageFamily *imf, int m)
 ImageFamily *
 get_terrain_type_images(Side *side, int t)
 {
-    char *name;
+    const char *name;
     ImageFamily *imf;
 
     if (!empty_string(t_image_name(t)))
@@ -4131,7 +4134,8 @@ get_unseen_images(Side *side)
 ImageFamily *
 get_emblem_images(Side *side, Side *side2)
 {
-    char *s, *c, *name, tmpembuf[BUFSIZE];
+    char *c, tmpembuf[BUFSIZE];
+    const char *s, *name;
     int s2 = side_number(side2);
     ImageFamily *imf;
 
@@ -4243,7 +4247,7 @@ record_imf_get(ImageFamily *imf)
 /* Output a general description of an image family. */
 
 void
-describe_imf(Side *side, char *classname, char *imftype, ImageFamily *imf)
+describe_imf(Side *side, const char *classname, const char *imftype, ImageFamily *imf)
 {
     Image *img;
 
@@ -4283,7 +4287,7 @@ void
 init_ui_chars(void)
 {
     int u, t;
-    char *str;
+    const char *str;
 
     if (unitchars == NULL) {
 	unitchars = (char *)xmalloc(numutypes);

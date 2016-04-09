@@ -24,8 +24,8 @@ extern int convert_mac_charcodes(int ch);
 /* Declarations of local functions. */
 
 static Obj *newobj(void);
-static Symentry *lookup_string(char *str);
-static int hash_name(char *str);
+static Symentry *lookup_string(const char *str);
+static int hash_name(const char *str);
 
 static int strmgetc(Strm *strm);
 static void strmungetc(int ch, Strm *strm);
@@ -33,9 +33,9 @@ static void sprintf_context(char *buf, int n, int *start, int *end,
 			    Strm *strm);
 static Obj *read_form_aux(Strm *strm);
 static Obj *read_list(Strm *strm);
-static int read_delimited_text(Strm *strm, char *delim, int spacedelimits,
+static int read_delimited_text(Strm *strm, const char *delim, int spacedelimits,
 			       int eofdelimits);
-static void internal_type_error(char *funname, Obj *x, char *errtype);
+static void internal_type_error(const char *funname, Obj *x, const char *errtype);
 
 /* Pointer to "nil", the empty list. */
 
@@ -216,7 +216,7 @@ read_form(FILE *fp, int *p1, int *p2)
 }
 
 Obj *
-read_form_from_string(char *str, int *p1, int *p2, char **endstr)
+read_form_from_string(const char *str, int *p1, int *p2, const char **endstr)
 {
     Obj *rslt;
     Strm tmpstrm;
@@ -521,7 +521,7 @@ read_list(Strm *strm)
    possibly also by whitespace or EOF. */
 
 static int
-read_delimited_text(Strm *strm, char *delim, int spacedelimits,
+read_delimited_text(Strm *strm, const char *delim, int spacedelimits,
 		    int eofdelimits)
 {
     int ch, octch, j = 0, warned = FALSE;
@@ -583,7 +583,7 @@ length(Obj *list)
 /* Basic allocation routines. */
 
 Obj *
-new_string(char *str)
+new_string(const char *str)
 {
     Obj *N = newobj();
 
@@ -668,7 +668,7 @@ cons(Obj *x, Obj *y)
 }
 
 void
-type_warning(char *funname, Obj *x, char *errtype, Obj *subst)
+type_warning(const char *funname, Obj *x, const char *errtype, Obj *subst)
 {
     char buf1[BUFSIZE], buf2[BUFSIZE];
 
@@ -681,7 +681,7 @@ type_warning(char *funname, Obj *x, char *errtype, Obj *subst)
 /* This routine reports fatal errors with handling objects. */
 
 static void
-internal_type_error(char *funname, Obj *x, char *errtype)
+internal_type_error(const char *funname, Obj *x, const char *errtype)
 {
     char buf1[BUFSIZE];
 
@@ -749,7 +749,7 @@ set_cdr(Obj *x, Obj *v)
 
 /* Return the string out of both strings and symbols. */
 
-char *
+const char *
 c_string(Obj *x)
 {
     if (x->type == STRING) {
@@ -782,7 +782,7 @@ c_number(Obj *x)
 }
 
 Obj *
-intern_symbol(char *str)
+intern_symbol(const char *str)
 {
     int n;
     Symentry *se;
@@ -813,7 +813,7 @@ intern_symbol(char *str)
 /* Given a string, try to find a symbol entry with that as its name. */
 
 static Symentry *
-lookup_string(char *str)
+lookup_string(const char *str)
 {
     Symentry *se;
 
@@ -825,7 +825,7 @@ lookup_string(char *str)
 }
 
 static int
-hash_name(char *str)
+hash_name(const char *str)
 {
     int rslt = 0;
 
@@ -1027,7 +1027,7 @@ reverse(Obj *lis)
 }
 
 Obj *
-find_at_key(Obj *lis, char *key)
+find_at_key(Obj *lis, const char *key)
 {
     Obj *rest, *bdgs, *bdg;
 
@@ -1042,7 +1042,7 @@ find_at_key(Obj *lis, char *key)
 }
 
 Obj *
-replace_at_key(Obj *lis, char *key, Obj *newval)
+replace_at_key(Obj *lis, const char *key, Obj *newval)
 {
     Obj *rest, *bdgs, *bdg;
 
@@ -1135,7 +1135,7 @@ void
 fprintlisp(FILE *fp, Obj *oobj)
 {
     int needescape;
-    char *str, *tmp;
+    const char *str, *tmp;
     Obj *obj = NULL;
     int i = -1;
 
@@ -1319,10 +1319,10 @@ sprint_list(char *buf, Obj *obj, int maxlen)
 /* These two routines make sure that any symbols and strings can
    be read in again. */
 
-char *
-escaped_symbol(char *str)
+const char *
+escaped_symbol(const char *str)
 {
-    char *tmp = str;
+    const char *tmp = str;
 
     if (str[0] == '|' && str[strlen(str)-1] == '|')
       return str;
@@ -1344,9 +1344,10 @@ escaped_symbol(char *str)
    strings of length 0. */
 
 char *
-escaped_string(char *str)
+escaped_string(const char *str)
 {
-    char *tmp = str, *rslt = escapedthingbuf;
+    const char *tmp = str;
+    char *rslt = escapedthingbuf;
 
     *rslt++ = '"';
     if (str != NULL) {
@@ -1371,9 +1372,9 @@ escaped_string(char *str)
 */
 
 char *
-safe_escaped_string(char *str, int len)
+safe_escaped_string(const char *str, int len)
 {
-    char *tmp = str;
+    const char *tmp = str;
     char *rsltbase = NULL;
     char *rslt = NULL;
     int amt = len*2 + 3;
@@ -1666,7 +1667,7 @@ eval_boolean_expression(Obj *expr)
 int
 eval_boolean_expression(Obj *expr, int (*fn)(Obj *), int dflt)
 {
-    char *opname;
+    const char *opname;
 
     if (expr == lispnil) {
 	return dflt;
@@ -1695,7 +1696,7 @@ int
 eval_boolean_expression(Obj *expr, int (*fn)(Obj *, ParamBox *), int dflt, 
 			ParamBox *pbox)
 {
-    char *opname;
+    const char *opname;
 
     if (expr == lispnil) {
 	return dflt;
@@ -2232,10 +2233,10 @@ interp_long_array(long *arr, Obj *lis, int n)
     }
 }
 
-char *
+const char *
 get_string(Obj *lis)
 {
-    char *str = NULL;
+    const char *str = NULL;
 
     if (lis != lispnil) {
 	if (stringp(lis)) {

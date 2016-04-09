@@ -199,7 +199,7 @@ init_run(void)
    turn or the turn ending) are also counted as actions, so that this
    function's callers will know that something was done. */
 
-static void save_run_state(char *suffix);
+static void save_run_state(const char *suffix);
 
 int
 run_game(int maxactions)
@@ -210,7 +210,7 @@ run_game(int maxactions)
     time_t rungamestart, rungameend;
     Side *side;
     extern long randstate;
-    char *activity = "run_game";
+    const char *activity = "run_game";
 
     in_run_game = TRUE;
     record_activity_start(activity, maxactions);
@@ -391,7 +391,7 @@ run_game(int maxactions)
 static int save_run_states = 0;
 
 void
-save_run_state(char *suffix)
+save_run_state(const char *suffix)
 {
     if (numremotes > 0 && save_run_states) {
 	sprintf(spbuf, "states/%dstate%06d%s",

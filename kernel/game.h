@@ -109,14 +109,14 @@ enum terrain_subtype {
  * of a type, such as a unit type's maximum speed.
  * */
 typedef struct propertydefn {
-    char *name;                 		/*!< name */
+    const char *name;                 		/*!< name */
     int (*intgetter)(int);      		/*!< function to get n'th integer property */
-    char *(*strgetter)(int);    	/*!< function to get n'th string property */
+    const char *(*strgetter)(int);    	/*!< function to get n'th string property */
     Obj *(*objgetter)(int);		/*!< function to get n'th \Object property */
     short offset;               		/*!< offset (to what ?) */
-    char *doc;                  		/*!< documentation */
+    const char *doc;                  		/*!< documentation */
     short dflt;                 		/*!< default ? */
-    char *dfltstr;              		/*!< default string ? */
+    const char *dfltstr;              		/*!< default string ? */
     short lo;                   			/*!< low limit */
     short hi;                   		/*!< high limit */
 } PropertyDefn;
@@ -126,9 +126,9 @@ typedef struct propertydefn {
  * This is the structure with info about a table.
  */
 typedef struct tabledefn {
-    char *name;                 		/*!< name of the table */
+    const char *name;                 		/*!< name of the table */
     int (*getter)(int, int);    	/*!< accessor function */
-    char *doc;                  		/*!< documentation string */
+    const char *doc;                  		/*!< documentation string */
     short **table;              		/*!< pointer to table itself */
     short dflt;                 		/*!< default value of entries */
     short lo;                   			/*!< lower bound of table values */
@@ -144,16 +144,16 @@ typedef struct tabledefn {
  * and variables.
  */
 typedef struct vardefn {
-    char *name;                 		/*!< name of the global */
+    const char *name;          		/*!< name of the global */
     int   (*intgetter)(void);   	/*!< accessor if integer type */
-    char *(*strgetter)(void);   	/*!< accessor if string type */
+    const char *(*strgetter)(void);   	/*!< accessor if string type */
     Obj  *(*objgetter)(void);   	/*!< accessor if \Object type */
     void (*intsetter)(int);     	/*!< setter if integer type */
-    void (*strsetter)(char *);  	/*!< setter if string type */
+    void (*strsetter)(const char *);  	/*!< setter if string type */
     void (*objsetter)(Obj *);   	/*!< setter if object type */
-    char *doc;                  		/*!< documentation string */
+    const char *doc;           		/*!< documentation string */
     int dflt;                   			/*!< default value if integer type */
-    char *dfltstr;              		/*!< default value if string type */
+    const char *dfltstr;              		/*!< default value if string type */
     Obj *(*dfltfn)(void);       		/*<! function to return default value if object type */
     int lo;                     			/*!< lower bound of integer value. */
     int hi;                     			/*!< upper bound of integer value */
@@ -173,7 +173,7 @@ extern short numatypes;
     short SLOT; /*!< doc */
 #undef  DEF_UPROP_S
 #define DEF_UPROP_S(name,fname,doc,SLOT,dflt)  \
-    char *SLOT; /*!< doc */
+    const char *SLOT; /*!< doc */
 #undef  DEF_UPROP_L
 #define DEF_UPROP_L(name,fname,doc,SLOT)  \
     Obj *SLOT;  /*!< doc */
@@ -197,7 +197,7 @@ typedef struct utype {
     short SLOT;
 #undef  DEF_MPROP_S
 #define DEF_MPROP_S(name,fname,doc,SLOT,dflt)  \
-    char *SLOT;
+    const char *SLOT;
 #undef  DEF_MPROP_L
 #define DEF_MPROP_L(name,fname,doc,SLOT)  \
     Obj *SLOT;
@@ -218,7 +218,7 @@ typedef struct mtype {
     short SLOT;
 #undef  DEF_TPROP_S
 #define DEF_TPROP_S(name,fname,doc,SLOT,dflt)  \
-    char *SLOT;
+    const char *SLOT;
 #undef  DEF_TPROP_L
 #define DEF_TPROP_L(name,fname,doc,SLOT)  \
     Obj *SLOT;
@@ -238,7 +238,7 @@ typedef struct ttype {
     short SLOT;
 #undef  DEF_APROP_S
 #define DEF_APROP_S(name,fname,doc,SLOT,dflt)  \
-    char *SLOT;
+    const char *SLOT;
 #undef  DEF_APROP_L
 #define DEF_APROP_L(name,fname,doc,SLOT)  \
     Obj *SLOT;
@@ -258,7 +258,7 @@ typedef struct atype {
     int VAR;
 #undef  DEF_VAR_S
 #define DEF_VAR_S(name,fname,setfname,doc,VAR,dflt)  \
-    char *VAR;
+    const char *VAR;
 #undef  DEF_VAR_L
 #define DEF_VAR_L(name,fname,setfname,doc,VAR,dflt)  \
     Obj *VAR;
@@ -277,7 +277,7 @@ typedef struct a_globals {
 #undef  DEF_UPROP_I
 #define DEF_UPROP_I(name,FNAME,doc,slot,lo,dflt,hi)  int FNAME(int u);
 #undef  DEF_UPROP_S
-#define DEF_UPROP_S(name,FNAME,doc,slot,dflt)  char *FNAME(int u);
+#define DEF_UPROP_S(name,FNAME,doc,slot,dflt)  const char *FNAME(int u);
 #undef  DEF_UPROP_L
 #define DEF_UPROP_L(name,FNAME,doc,slot)  Obj *FNAME(int u);
 
@@ -286,7 +286,7 @@ typedef struct a_globals {
 #undef  DEF_MPROP_I
 #define DEF_MPROP_I(name,FNAME,doc,slot,lo,dflt,hi)  int FNAME(int m);
 #undef  DEF_MPROP_S
-#define DEF_MPROP_S(name,FNAME,doc,slot,dflt)  char *FNAME(int m);
+#define DEF_MPROP_S(name,FNAME,doc,slot,dflt)  const char *FNAME(int m);
 #undef  DEF_MPROP_L
 #define DEF_MPROP_L(name,FNAME,doc,slot)  Obj *FNAME(int m);
 
@@ -295,7 +295,7 @@ typedef struct a_globals {
 #undef  DEF_TPROP_I
 #define DEF_TPROP_I(name,FNAME,doc,slot,lo,dflt,hi)  int FNAME(int t);
 #undef  DEF_TPROP_S
-#define DEF_TPROP_S(name,FNAME,doc,slot,dflt)  char *FNAME(int t);
+#define DEF_TPROP_S(name,FNAME,doc,slot,dflt)  const char *FNAME(int t);
 #undef  DEF_TPROP_L
 #define DEF_TPROP_L(name,FNAME,doc,slot)  Obj *FNAME(int t);
 
@@ -304,7 +304,7 @@ typedef struct a_globals {
 #undef  DEF_APROP_I
 #define DEF_APROP_I(name,FNAME,doc,slot,lo,dflt,hi)  int FNAME(int a);
 #undef  DEF_APROP_S
-#define DEF_APROP_S(name,FNAME,doc,slot,dflt)  char *FNAME(int a);
+#define DEF_APROP_S(name,FNAME,doc,slot,dflt)  const char *FNAME(int a);
 #undef  DEF_APROP_L
 #define DEF_APROP_L(name,FNAME,doc,slot)  Obj *FNAME(int a);
 
@@ -315,7 +315,7 @@ typedef struct a_globals {
   int FNAME(void); 
 #undef  DEF_VAR_S
 #define DEF_VAR_S(str,FNAME,SETFNAME,doc,var,dflt)  \
-  char *FNAME(void);
+  const char *FNAME(void);
 #undef  DEF_VAR_L
 #define DEF_VAR_L(str,FNAME,SETFNAME,doc,var,dflt)  \
   Obj *FNAME(void);
@@ -327,7 +327,7 @@ typedef struct a_globals {
   void SETFNAME(int val);
 #undef  DEF_VAR_S
 #define DEF_VAR_S(str,FNAME,SETFNAME,doc,var,dflt)  \
-  void SETFNAME(char *val);
+  void SETFNAME(const char *val);
 #undef  DEF_VAR_L
 #define DEF_VAR_L(str,FNAME,SETFNAME,doc,var,dflt)  \
   void SETFNAME(Obj *val);
@@ -857,25 +857,25 @@ extern int table_default(int (*getter)(int, int));
 //! Default value for integer uprop.
 extern short uprop_i_default(int (*intgetter)(int));
 //! Default value for string uprop.
-extern char *uprop_s_default(char *(*strgetter)(int));
+extern const char *uprop_s_default(const char *(*strgetter)(int));
 //! Default value for Lisp uprop.
 extern Obj *uprop_l_default(Obj *(*objgetter)(int));
 //! Default value for integer tprop.
 extern short tprop_i_default(int (*intgetter)(int));
 //! Default value for string tprop.
-extern char *tprop_s_default(char *(*strgetter)(int));
+extern const char *tprop_s_default(const char *(*strgetter)(int));
 //! Default value for Lisp tprop.
 extern Obj *tprop_l_default(Obj *(*objgetter)(int));
 //! Default value for integer mprop.
 extern short mprop_i_default(int (*intgetter)(int));
 //! Default value for string mprop.
-extern char *mprop_s_default(char *(*strgetter)(int));
+extern const char *mprop_s_default(const char *(*strgetter)(int));
 //! Default value for Lisp mprop.
 extern Obj *mprop_l_default(Obj *(*objgetter)(int));
 //! Default value for integer aprop.
 extern short aprop_i_default(int (*intgetter)(int));
 //! Default value for string aprop.
-extern char *aprop_s_default(char *(*strgetter)(int));
+extern const char *aprop_s_default(const char *(*strgetter)(int));
 //! Default value for Lisp aprop.
 extern Obj *aprop_l_default(Obj *(*objgetter)(int));
 //! Default value for integer gvar.

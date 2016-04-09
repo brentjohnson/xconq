@@ -51,7 +51,7 @@ close_displays(void)
 /* This is needed because error handling refers to it. */
 
 int
-write_entire_game_state(char *fname)
+write_entire_game_state(const char *fname)
 {
     return 0;
 }
@@ -64,14 +64,14 @@ announce_read_progress(void)
 }
 
 void  
-syntax_error(Obj *x, char *msg)
+syntax_error(Obj *x, const char *msg)
 {
     sprintlisp(readerrbuf, x, BUFSIZE);
     init_warning("syntax error in `%s' - %s", readerrbuf, msg);
 }
 
 void
-low_init_error(char *str)
+low_init_error(const char *str)
 {
     fprintf(stderr, "Error: %s.\n", str);
     fflush(stderr);
@@ -106,7 +106,7 @@ low_run_warning(char *str)
 /* Fake definitions of unneeded routines called by lisp.c. */
 
 int
-keyword_code(char *str)
+keyword_code(const char *str)
 {
     run_warning("fake keyword_code being called");
     return 0;
@@ -115,7 +115,7 @@ keyword_code(char *str)
 /* Make the table so keyword lookup works. */
 
 struct a_key {
-    char *name;
+    const char *name;
 } keywordtable[] = {
 
 #undef  DEF_KWD
@@ -126,7 +126,7 @@ struct a_key {
     { NULL }
 };
 
-char *
+const char *
 keyword_name(enum keywords k)
 {
     return keywordtable[k].name;
@@ -561,7 +561,7 @@ read_any_file(char *filename, readimf_hook hook)
 {
     ImageFamily *imf;
     Image *img;
-    char *ext;
+    const char *ext;
 
     /* Find the extension. */
     for (ext = filename + strlen(filename) - 1; ext > filename; ext--) {

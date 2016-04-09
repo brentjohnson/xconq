@@ -264,7 +264,7 @@ static int withdraw_window(const char *, Tcl_Interp *);
 static void tcl_cmd(char *name, TclCmdFn tcmd);
 
 static void
-tcl_cmd(char *name, TclCmdFn tcmd)
+tcl_cmd(const char *name, TclCmdFn tcmd)
 {
     Tcl_CreateCommand(interp, name, tcmd,
 		      (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
@@ -315,11 +315,11 @@ initial_ui_init(void)
     interp = Tcl_CreateInterp();
 
     if (Tcl_Init(interp) == TCL_ERROR) {
-	init_error("tcl init failed (%s), exiting", interp->result);
+      init_error("tcl init failed (%s), exiting", Tcl_GetStringResult(interp));
     }
 
     if (Tk_Init(interp) == TCL_ERROR) {
-	init_error("tk init failed (%s), exiting", interp->result);
+	init_error("tk init failed (%s), exiting", Tcl_GetStringResult(interp));
     }
 
     tcl_cmd("version_string", tk_version_string);
@@ -445,11 +445,11 @@ initial_ui_init(void)
 	FILE *fp;
 	LibraryPath *p;
 #ifndef MAC
-	char *relpaths [] = {
+	const char *relpaths [] = {
 	    "../share/xconq/tcltk/tkconq", "tcltk/tkconq", "tkconq", 
 	    "xconq/tcltk/tkconq", NULL
 	};
-	char *librelpaths [] = {
+	const char *librelpaths [] = {
 	    "../tcltk/tkconq", "../tkconq", NULL
 	};
 #else
@@ -463,13 +463,13 @@ initial_ui_init(void)
 
 	/* First try paths relative to the working directory. */
 	for (i = 0; relpaths[i]; ++i) {
-	    make_pathname("", relpaths[i], "tcl", pathbuf);
+	  make_pathname("", relpaths[i], "tcl", pathbuf);
 	    if ((fp = fopen(pathbuf, "r")) != NULL) {
 		fclose(fp);
 		rslt = Tcl_EvalFile(interp, pathbuf);
 		if (rslt == TCL_ERROR)
 		  init_error("Error reading tcl from %s: %s",
-			     pathbuf, interp->result);
+			     pathbuf, Tcl_GetStringResult(interp));
 		loaded = TRUE;
 		break;
 	    }
@@ -484,7 +484,7 @@ initial_ui_init(void)
 			rslt = Tcl_EvalFile(interp, pathbuf);
 			if (rslt == TCL_ERROR)
 			  init_error("Error reading tcl from %s: %s",
-				     pathbuf, interp->result);
+				     pathbuf, Tcl_GetStringResult(interp));
 			loaded = TRUE;
 			break;
 		    }
@@ -573,28 +573,28 @@ int
 tk_numgames(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
     collect_possible_games();
-    sprintf(interp->result, "%d", numgames);
+    sprintf(Tcl_GetStringResult(interp), "%d", numgames);
     return TCL_OK;
 }
 
 int
 tk_any_variants(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    sprintf(interp->result, "%d", any_variants);
+    sprintf(Tcl_GetStringResult(interp), "%d", any_variants);
     return TCL_OK;
 }
 
 int
 tk_listallgames(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    sprintf(interp->result, "%d", listallgames);
+    sprintf(Tcl_GetStringResult(interp), "%d", listallgames);
     return TCL_OK;
 }
 
 int
 tk_side_lib_size(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    sprintf(interp->result, "%d", length(g_side_lib()));
+    sprintf(Tcl_GetStringResult(interp), "%d", length(g_side_lib()));
     return TCL_OK;
 }
 
@@ -602,12 +602,12 @@ int
 tk_side_lib_entry(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
     int entryi;
-    char *name;
     Obj *entry, *rest, *anelt;
+    const char *name = "?name?";
 
     entryi = strtol(argv[1], NULL, 10);
     entry = elt(g_side_lib(), entryi);
-    name = "?name?";
+
     for_all_list(entry, rest) {
 	anelt = car(rest);
 	if (consp(anelt) && stringp(cadr(anelt))) {
@@ -615,7 +615,10 @@ tk_side_lib_entry(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 	    break;
 	}
     }
-    Tcl_SetResult(interp, name, TCL_VOLATILE);
+
+    char* rslt = strcpy(Tcl_Alloc(strlen(name)+1), name);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -624,7 +627,7 @@ tk_side_lib_entry_available(ClientData cldata, Tcl_Interp *interp,
 			    int argc, char *argv[])
 {
     int entryi, rslt;
-    char *name;
+    const char *name;
     Obj *entry, *rest, *anelt;
 
     entryi = strtol(argv[1], NULL, 10);
@@ -640,7 +643,7 @@ tk_side_lib_entry_available(ClientData cldata, Tcl_Interp *interp,
 	    break;
 	}
     }
-    sprintf(interp->result, "%d", rslt);
+    sprintf(Tcl_GetStringResult(interp), "%d", rslt);
     return TCL_OK;
 }
 
@@ -677,63 +680,63 @@ tk_set_variant_value(ClientData cldata, Tcl_Interp *interp,
 int
 tk_numttypes(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    sprintf(interp->result, "%d", numttypes);
+    sprintf(Tcl_GetStringResult(interp), "%d", numttypes);
     return TCL_OK;
 }
 
 int
 tk_numutypes(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    sprintf(interp->result, "%d", numutypes);
+    sprintf(Tcl_GetStringResult(interp), "%d", numutypes);
     return TCL_OK;
 }
 
 int
 tk_nummtypes(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    sprintf(interp->result, "%d", nummtypes);
+    sprintf(Tcl_GetStringResult(interp), "%d", nummtypes);
     return TCL_OK;
 }
 
 int
 tk_numatypes(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    sprintf(interp->result, "%d", numatypes);
+    sprintf(Tcl_GetStringResult(interp), "%d", numatypes);
     return TCL_OK;
 }
 
 int
 tk_numsides(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    sprintf(interp->result, "%d", numsides);
+    sprintf(Tcl_GetStringResult(interp), "%d", numsides);
     return TCL_OK;
 }
 
 int
 tk_maxsides(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    sprintf(interp->result, "%d", g_sides_max());
+    sprintf(Tcl_GetStringResult(interp), "%d", g_sides_max());
     return TCL_OK;
 }
 
 int
 tk_minsides(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    sprintf(interp->result, "%d", g_sides_min());
+    sprintf(Tcl_GetStringResult(interp), "%d", g_sides_min());
     return TCL_OK;
 }
 
 int
 tk_numfeatures(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    sprintf(interp->result, "%d", numfeatures);
+    sprintf(Tcl_GetStringResult(interp), "%d", numfeatures);
     return TCL_OK;
 }
 
 int
 tk_numscorekeepers(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    sprintf(interp->result, "%d", numscorekeepers);
+    sprintf(Tcl_GetStringResult(interp), "%d", numscorekeepers);
     return TCL_OK;
 }
 
@@ -746,7 +749,7 @@ tk_numtreasury(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 	if (m_treasury(m))
 	  ++rslt;
     }
-    sprintf(interp->result, "%d", rslt);
+    sprintf(Tcl_GetStringResult(interp), "%d", rslt);
     return TCL_OK;
 }
 
@@ -762,7 +765,7 @@ tk_curmap_number(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 		break;
 	}
     }
-    sprintf(interp->result, "%d", n);
+    sprintf(Tcl_GetStringResult(interp), "%d", n);
     return TCL_OK;
 }
 
@@ -770,12 +773,16 @@ int
 tk_ttype_name(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
     int t;
+    const char *name = "?t?";
 
     t = strtol(argv[1], NULL, 10);
+
     if (is_terrain_type(t))
-      Tcl_SetResult(interp, t_type_name(t), TCL_VOLATILE);
-    else
-      Tcl_SetResult(interp, "?t?", TCL_VOLATILE);
+      name = t_type_name(t);
+
+    char *rslt = strcpy(Tcl_Alloc(strlen(name)+1), name);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -783,12 +790,16 @@ int
 tk_atype_name(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
     int a;
+    const char *name = "?a?";
 
     a = strtol(argv[1], NULL, 10);
+
     if (is_advance_type(a))
-      Tcl_SetResult(interp, a_type_name(a), TCL_VOLATILE);
-    else
-      Tcl_SetResult(interp, "?a?", TCL_VOLATILE);
+      name = a_type_name(a);
+
+    char *rslt = strcpy(Tcl_Alloc(strlen(name)+1), name);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -796,16 +807,18 @@ int
 tk_t_image_name(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
     int t;
-    char *str;
+    const char *name = "?t?";
 
     t = strtol(argv[1], NULL, 10);
     if (is_terrain_type(t)) {
-	str = t_image_name(t);
-	if (empty_string(str))
-	  str = t_type_name(t);
-        Tcl_SetResult(interp, str, TCL_VOLATILE);
-    } else
-      Tcl_SetResult(interp, "?t?", TCL_VOLATILE);
+	name = t_image_name(t);
+	if (empty_string(name))
+	  name = t_type_name(t);
+    }
+    
+    char *rslt = strcpy(Tcl_Alloc(strlen(name)+1), name);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -813,12 +826,15 @@ int
 tk_utype_name(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
     int u;
+    const char *name = "?u?";
 
     u = strtol(argv[1], NULL, 10);
     if (is_unit_type(u))
-      Tcl_SetResult(interp, u_type_name(u), TCL_VOLATILE);
-    else
-      Tcl_SetResult(interp, "?u?", TCL_VOLATILE);
+      name = u_type_name(u);
+    
+    char *rslt = strcpy(Tcl_Alloc(strlen(name)+1), name);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -826,7 +842,7 @@ int
 tk_u_image_name(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
     int u = -1, i = 0, choice = -1;
-    char *str = NULL;
+    const char *str = "?u?";
     ImageFamily *imf = NULL;
 
     u = strtol(argv[1], NULL, 10);
@@ -854,10 +870,11 @@ tk_u_image_name(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 	/* Else use unit's name, and hope for the best. */
 	else 
 	  str = u_internal_name(u);
-	Tcl_SetResult(interp, str, TCL_VOLATILE);
-    } else {
-	Tcl_SetResult(interp, "?u?", TCL_VOLATILE);
     }
+        
+    char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -865,12 +882,15 @@ int
 tk_mtype_name(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
     int m;
+    const char *str = "?m?";
 
     m = strtol(argv[1], NULL, 10);
     if (is_material_type(m))
-      Tcl_SetResult(interp, m_type_name(m), TCL_VOLATILE);
-    else
-      Tcl_SetResult(interp, "?m?", TCL_VOLATILE);
+      str = m_type_name(m);
+        
+    char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -878,14 +898,16 @@ int
 tk_m_image_name(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
     int m;
-    char *str;
+    const char *str = "?m?";
 
     m = strtol(argv[1], NULL, 10);
     if (is_material_type(m)) {
 	str = m_image_name(m);
-        Tcl_SetResult(interp, str, TCL_VOLATILE);
-    } else
-      Tcl_SetResult(interp, "?m?", TCL_VOLATILE);
+    }
+        
+    char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -893,12 +915,15 @@ int
 tk_side_name(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
     int s;
+    const char *str = "?s?";
 
     s = strtol(argv[1], NULL, 10);
     if (between(0, s, numsides))
-      Tcl_SetResult(interp, side_name(side_n(s)), TCL_VOLATILE);
-    else
-      Tcl_SetResult(interp, "?s?", TCL_VOLATILE);
+      str = side_name(side_n(s));
+        
+    char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -906,12 +931,15 @@ int
 tk_side_adjective(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
     int s;
+    const char *str = "?s?";
 
     s = strtol(argv[1], NULL, 10);
     if (between(0, s, numsides))
-      Tcl_SetResult(interp, side_adjective(side_n(s)), TCL_VOLATILE);
-    else
-      Tcl_SetResult(interp, "?s?", TCL_VOLATILE);
+      str = side_adjective(side_n(s));
+        
+    char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -919,22 +947,26 @@ int
 tk_side_emblem(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
     int s;
+    const char *str = "?s?";
 
     s = strtol(argv[1], NULL, 10);
     if (s == 0)
-      Tcl_SetResult(interp, indepside->emblemname, TCL_VOLATILE);
+      str = indepside->emblemname;
     else if (between(1, s, numsides)) {
 	/* Try to get the emblem that was actually set up - it may be
 	   a default or something else different from the official
 	   emblem name. */
 	if (dside && dside->ui && dside->ui->eimages[s])
-          Tcl_SetResult(interp, dside->ui->eimages[s]->name, TCL_VOLATILE);
+          str = dside->ui->eimages[s]->name;
 	else if (side_n(s)->emblemname)
-          Tcl_SetResult(interp, (side_n(s))->emblemname, TCL_VOLATILE);
+          str = (side_n(s))->emblemname;
 	else
-          Tcl_SetResult(interp, "null", TCL_VOLATILE);
-    } else
-      Tcl_SetResult(interp, "?s?", TCL_VOLATILE);
+          str = "null";
+    }
+        
+    char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -942,13 +974,16 @@ int
 tk_short_side_title(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
     int s;
+    const char *str = "?s?";
 
     s = strtol(argv[1], NULL, 10);
     if (between(0, s, numsides))
       /* (should handle empty string?) */
-      Tcl_SetResult(interp, short_side_title(side_n(s)), TCL_VOLATILE);
-    else
-      Tcl_SetResult(interp, "?s?", TCL_VOLATILE);
+      str = short_side_title(side_n(s));
+        
+    char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -956,12 +991,18 @@ int
 tk_side_ingame(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
     int s;
+    char ingame[10];
+    const char *str = "?s?";
 
     s = strtol(argv[1], NULL, 10);
-    if (between(0, s, numsides))
-      sprintf(interp->result, "%d", side_n(s)->ingame);
-    else
-      Tcl_SetResult(interp, "?s?", TCL_VOLATILE);
+    if (between(0, s, numsides)) {
+      sprintf(ingame, "%d", side_n(s)->ingame);
+      str = ingame;
+    }
+        
+    char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -1001,7 +1042,7 @@ tk_player_advantage(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[
 
     p = strtol(argv[1], NULL, 10);
     player = find_player(p);
-    sprintf(interp->result, "%d", (player ? player->advantage : 0));
+    sprintf(Tcl_GetStringResult(interp), "%d", (player ? player->advantage : 0));
     return TCL_OK;
 }
 
@@ -1010,13 +1051,16 @@ tk_player_aitypename(ClientData cldata, Tcl_Interp *interp, int argc, char *argv
 {
     int p;
     Player *player;
+    const char *str = "";
 
     p = strtol(argv[1], NULL, 10);
     player = find_player(p);
     if (player->aitypename)
-      Tcl_SetResult(interp, player->aitypename, TCL_VOLATILE);
-    else
-      Tcl_SetResult(interp, "", TCL_VOLATILE);
+      str = player->aitypename;
+
+    char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -1025,13 +1069,16 @@ tk_player_displayname(ClientData cldata, Tcl_Interp *interp, int argc, char *arg
 {
     int p;
     Player *player;
+    const char *str = "";
 
     p = strtol(argv[1], NULL, 10);
     player = find_player(p);
     if (player->displayname)
-      Tcl_SetResult(interp, player->displayname, TCL_VOLATILE);
-    else
-      Tcl_SetResult(interp, "", TCL_VOLATILE);
+      str = player->displayname;
+
+    char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -1043,7 +1090,7 @@ tk_min_advantage(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 
     s = strtol(argv[1], NULL, 10);
     side = side_n(s);
-    sprintf(interp->result, "%d", (side ? side->minadvantage : 0));
+    sprintf(Tcl_GetStringResult(interp), "%d", (side ? side->minadvantage : 0));
     return TCL_OK;
 }
 
@@ -1055,7 +1102,7 @@ tk_max_advantage(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 
     s = strtol(argv[1], NULL, 10);
     side = side_n(s);
-    sprintf(interp->result, "%d", (side ? side->maxadvantage : 0));
+    sprintf(Tcl_GetStringResult(interp), "%d", (side ? side->maxadvantage : 0));
     return TCL_OK;
 }
 
@@ -1068,9 +1115,11 @@ tk_assigned_side(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
     i = strtol(argv[1], NULL, 10);
     if (between(0, i, numsides)) {
 	side = assignments[i].side;
-	sprintf(interp->result, "%d", side->id);
+	sprintf(Tcl_GetStringResult(interp), "%d", side->id);
     } else {
-        Tcl_SetResult(interp, "?s?", TCL_VOLATILE);
+        const char *str = "?s?";
+        char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+	Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
     }
     return TCL_OK;
 }
@@ -1085,9 +1134,11 @@ tk_assigned_player(ClientData cldata, Tcl_Interp *interp,
     i = strtol(argv[1], NULL, 10);
     if (between(0, i, numsides)) {
 	player = assignments[i].player;
-	sprintf(interp->result, "%d", (player ? player->id : 0));
+	sprintf(Tcl_GetStringResult(interp), "%d", (player ? player->id : 0));
     } else {
-        Tcl_SetResult(interp, "?s?", TCL_VOLATILE);
+        const char *str = "?s?";
+        char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+	Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
     }
     return TCL_OK;
 }
@@ -1100,7 +1151,7 @@ tk_can_rename(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 
     s = strtol(argv[1], NULL, 10);
     side = side_n(s);
-    sprintf(interp->result, "%d", side != NULL && !side->nameslocked);
+    sprintf(Tcl_GetStringResult(interp), "%d", side != NULL && !side->nameslocked);
     return TCL_OK;
 }
 
@@ -1126,7 +1177,7 @@ tk_add_side_and_player(ClientData cldata, Tcl_Interp *interp,
 
     n = net_add_side_and_player();
     /* Return the position of the new side/player in the assignment array. */
-    sprintf(interp->result, "%d", n);
+    sprintf(Tcl_GetStringResult(interp), "%d", n);
     return TCL_OK;
 }
 
@@ -1139,7 +1190,7 @@ tk_remove_side_and_player(ClientData cldata, Tcl_Interp *interp,
     s = strtol(argv[1], NULL, 10);
     rslt = net_remove_side_and_player(s);
     /* Return TRUE or FALSE depending on the outcome. */
-    sprintf(interp->result, "%d", rslt);
+    sprintf(Tcl_GetStringResult(interp), "%d", rslt);
     return TCL_OK;
 }
 
@@ -1160,7 +1211,7 @@ tk_set_ai_for_player(ClientData cldata, Tcl_Interp *interp,
 		     int argc, char *argv[])
 {
     int n;
-    char *aitype;
+    const char *aitype;
     Player *player;
 
     n = strtol(argv[1], NULL, 10);
@@ -1184,9 +1235,11 @@ tk_exchange_players(ClientData cldata, Tcl_Interp *interp,
     n2 = strtol(argv[2], NULL, 10);
     if (between(0, n, numsides)) {
 	n2 = net_exchange_players(n, n2);
-	sprintf(interp->result, "%d", n2);
+	sprintf(Tcl_GetStringResult(interp), "%d", n2);
     } else {
-        Tcl_SetResult(interp, "?s?", TCL_VOLATILE);
+        const char *str = "?s?";
+        char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+	Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
     }
     return TCL_OK;
 }
@@ -1230,7 +1283,7 @@ tk_set_indepside_options(ClientData cldata, Tcl_Interp *interp,
 int
 tk_dside(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    sprintf(interp->result, "%d", dside->id);
+    sprintf(Tcl_GetStringResult(interp), "%d", dside->id);
     return TCL_OK;
 }
 
@@ -1243,20 +1296,25 @@ tk_feature_info(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
     fid = strtol(argv[1], NULL, 10);
     feature = find_feature(fid);
     if (feature == NULL)
-      sprintf(interp->result, "{\"%s\" \"%s\"}", "no %t", "feature");
+      sprintf(Tcl_GetStringResult(interp), "{\"%s\" \"%s\"}", "no %t", "feature");
     else if (feature->name != NULL || feature->feattype != NULL)
-      sprintf(interp->result, "{\"%s\" \"%s\"}",
+      sprintf(Tcl_GetStringResult(interp), "{\"%s\" \"%s\"}",
 	      (feature->name ? feature->name : ""),
 	      (feature->feattype ? feature->feattype : ""));
-    else
-      Tcl_SetResult(interp, "{?name? ?type?}", TCL_VOLATILE);
+    else {
+      const char *str = "{?name? ?type?}";
+      char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+      Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+    }
+    
     return TCL_OK;
 }
 
 int
 tk_feature_desc(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    char abuf[BUFSIZE], *fdesc;
+    char abuf[BUFSIZE];
+    const char *fdesc;
     int fid;
     Feature *feature;
 
@@ -1267,7 +1325,10 @@ tk_feature_desc(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
        of feature_desc might prefer something else. */
     if (fdesc == NULL)
       fdesc = "no feature";
-    Tcl_SetResult(interp, fdesc, TCL_VOLATILE);
+
+    char *rslt = strcpy(Tcl_Alloc(strlen(fdesc)+1), fdesc);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -1294,7 +1355,10 @@ int
 tk_version_string(ClientData cldata, Tcl_Interp *interp, int argc,
 		  char *argv[])
 {
-    Tcl_SetResult(interp, version_string(), TCL_VOLATILE);
+    const char *str = version_string();
+    char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -1302,7 +1366,10 @@ int
 tk_copyright_string(ClientData cldata, Tcl_Interp *interp, int argc,
 		  char *argv[])
 {
-    Tcl_SetResult(interp, copyright_string(), TCL_VOLATILE);
+    const char *str = copyright_string();
+    char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -1310,14 +1377,17 @@ int
 tk_game_homedir(ClientData cldata, Tcl_Interp *interp, int argc,
 		  char *argv[])
 {
-    Tcl_SetResult(interp, game_homedir(), TCL_VOLATILE);
+    const char *str = game_homedir();
+    char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
 int
 tk_game_info(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    char *name, *title, *version, *bname, *picture, *bmodule, *bpicture = NULL;
+    const char *name, *title, *version, *bname, *picture, *bmodule, *bpicture = NULL;
     char blurb[BLURBSIZE], bigbuf[BLURBSIZE + 25];
     int gamei, rslt;
     Module *basemodule;
@@ -1362,7 +1432,7 @@ tk_game_info(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
     sprintf (bigbuf, "set game_blurb(%d) \"%s\"", gamei, blurb);
     rslt = Tcl_GlobalEval(interp, bigbuf);
     if (rslt == TCL_ERROR) {
-	fprintf(stderr, "Error: %s\n", interp->result);
+	fprintf(stderr, "Error: %s\n", Tcl_GetStringResult(interp));
 	fprintf(stderr, "Error: while processing the %s blurb.\n", name);
     }
     return TCL_OK;
@@ -1462,7 +1532,7 @@ tk_try_join_game(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
     int rslt;
 
     rslt = try_join_game(argv[1]);
-    sprintf(interp->result, "%d", rslt);
+    sprintf(Tcl_GetStringResult(interp), "%d", rslt);
     return TCL_OK;
 }
 
@@ -1546,7 +1616,7 @@ tk_run_game(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 #else
       interval = 50;
 #endif
-    sprintf(interp->result, "%d", interval);
+    sprintf(Tcl_GetStringResult(interp), "%d", interval);
     return TCL_OK;
 }
 
@@ -1555,7 +1625,7 @@ tk_run_game_idle(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
     Map *map;
     Unit *unit, *unit2;
-    char *activity = "tk_rg_idle";
+    const char *activity = "tk_rg_idle";
 
     if (!active_display(dside))
       return TCL_OK;
@@ -1621,7 +1691,7 @@ tk_animate_selection(ClientData cldata, Tcl_Interp *interp,
 		     int argc, char *argv[])
 {
     Map *map;
-    char *activity = "tk_anim_sel";
+    const char *activity = "tk_anim_sel";
 
     if (active_display(dside)) {
 	for_all_maps(map) {
@@ -1758,10 +1828,10 @@ update_mouseover(Map *map, int rawx, int rawy)
 	  set_tool_cursor(map, 0);
 	}
 	/* Check if we need to do any autoscrolling. */
-	if (rawx > 0 && rawx < autoscroll_width && vp->sx > vp->sxmin
-	    || rawy > 0 && rawy < autoscroll_width && vp->sy > vp->symin
-	    || rawx > (vp->pxw - autoscroll_width) && vp->sx < vp->sxmax
-	    || rawy > (vp->pxh - autoscroll_width) && vp->sy < vp->symax) {
+	if ((rawx > 0 && rawx < autoscroll_width && vp->sx > vp->sxmin)
+	    || (rawy > 0 && rawy < autoscroll_width && vp->sy > vp->symin)
+	    || (rawx > (vp->pxw - autoscroll_width) && vp->sx < vp->sxmax)
+	    || (rawy > (vp->pxh - autoscroll_width) && vp->sy < vp->symax)) {
 	autoscroll(map, vp, 0, rawx, rawy);
 	/* If not, reset the scroll mode. */
 	} else {
@@ -1837,10 +1907,10 @@ update_world_mouseover(Map *map, int rawx, int rawy)
     if ((rawx >= 0 || rawy >= 0) && map->worldw != NULL) {
 	vp = worldw_vp(map);
 	/* Check if we need to do any autoscrolling. */
-	if (rawx > 0 && rawx < autoscroll_width && vp->sx > vp->sxmin
-	    || rawy > 0 && rawy < autoscroll_width && vp->sy > vp->symin
-	    || rawx > (vp->pxw - autoscroll_width) && vp->sx < vp->sxmax
-	    || rawy > (vp->pxh - autoscroll_width) && vp->sy < vp->symax) {
+	if ((rawx > 0 && rawx < autoscroll_width && vp->sx > vp->sxmin)
+	    || (rawy > 0 && rawy < autoscroll_width && vp->sy > vp->symin)
+	    || (rawx > (vp->pxw - autoscroll_width) && vp->sx < vp->sxmax)
+	    || (rawy > (vp->pxh - autoscroll_width) && vp->sy < vp->symax)) {
 		autoscroll(map, vp, 1, rawx, rawy);
 	/* If not, reset the scroll mode. */
 	} else {
@@ -2517,7 +2587,7 @@ update_clock_display(Side *side, int rightnow)
 }
 
 void
-update_message_display(Side *side, Side *sender, char *str, int rightnow)
+update_message_display(Side *side, Side *sender, const char *str, int rightnow)
 {
     if (!active_display(side))
       return;
@@ -2527,7 +2597,7 @@ update_message_display(Side *side, Side *sender, char *str, int rightnow)
 }
 
 void
-update_all_progress_displays(char *str, int s)
+update_all_progress_displays(const char *str, int s)
 {
 }
 
@@ -2568,7 +2638,7 @@ close_displays()
 }
 
 int
-schedule_movie(Side *side, char *movie, ...)
+schedule_movie(Side *side, const char *movie, ...)
 {
     va_list ap;
     int i;
@@ -2967,8 +3037,8 @@ static void
 interp_unix_ui_data(Obj *uispec)
 {
     int numval;
-    char *strval = NULL;
-    char *name;
+    const char *strval = NULL;
+    const char *name;
     Obj *rest, *bdg;
 
     for_all_list(uispec, rest) {
@@ -3098,10 +3168,10 @@ HelpNode **node_stack;
 
 int node_stack_pos;
 
-static void describe_map(int arg, char *key, TextBuffer *buf);
+static void describe_map(int arg, const char *key, TextBuffer *buf);
 
 static void
-describe_map(int arg, char *key, TextBuffer *buf)
+describe_map(int arg, const char *key, TextBuffer *buf)
 {
     tbcat(buf, "** In MOVE mode (crosshair cursor):\n");
     tbcat(buf, "The next unit that can do anything will be selected ");
@@ -3202,7 +3272,8 @@ extern HelpNode *help_system_node;
 int
 tk_help_goto(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    char *arg = argv[1], *nclassname;
+    char *arg = argv[1];
+    const char *nclassname;
     int i, rslt;
     HelpNode *node, *tmp, *prev;
     TextBuffer tclbuf;
@@ -3299,7 +3370,7 @@ tk_help_goto(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
     rslt = Tcl_Eval(interp, tclbuf);
 #endif
     if (rslt == TCL_ERROR) {
-	fprintf(stderr, "Error: %s\n", interp->result);
+	fprintf(stderr, "Error: %s\n", Tcl_GetStringResult(interp));
 	fprintf(stderr, "Error: while updating help node %s\n",
 		cur_help_node->key);
     }
@@ -3402,7 +3473,7 @@ tk_interp_key(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 	}
 	map->prefixarg += (map->inpch - '0');
 	/* Return the prefix arg so we can display it. */
-	sprintf(interp->result, "%d", map->prefixarg);
+	sprintf(Tcl_GetStringResult(interp), "%d", map->prefixarg);
 	return TCL_OK;
     } else {
 	/* In any other situation, the character is a single-letter
@@ -3420,7 +3491,7 @@ tk_interp_key(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
     if (map->modalhandler == NULL)
       map->prefixarg = -1;
     /* Return the prefix arg so we can display it. */
-    sprintf(interp->result, "%d", map->prefixarg);
+    sprintf(Tcl_GetStringResult(interp), "%d", map->prefixarg);
     return TCL_OK;
 }
 
@@ -3644,7 +3715,7 @@ tk_set_design_data(ClientData cldata, Tcl_Interp *interp,
     for_all_maps(map) {
 	set_tool_cursor(map, 0);
     }
-    sprintf(interp->result, "%d", val);
+    sprintf(Tcl_GetStringResult(interp), "%d", val);
     return TCL_OK;
 }
 
@@ -3663,7 +3734,7 @@ tk_create_new_feature(ClientData cldata, Tcl_Interp *interp,
     dside->ui->legends = NULL;
     /* (this won't work if networking is on, feature might not
        exist yet) */
-    sprintf(interp->result, "%d", (feature ? feature->id : 0));
+    sprintf(Tcl_GetStringResult(interp), "%d", (feature ? feature->id : 0));
     return TCL_OK;
 }
 
@@ -3775,7 +3846,7 @@ tk_numutypes_available(ClientData cldata, Tcl_Interp *interp,
 	if (utype_indexes[u] >=0)
 	  ++num;
     }
-    sprintf(interp->result, "%d", num);
+    sprintf(Tcl_GetStringResult(interp), "%d", num);
     return TCL_OK;
 }
 
@@ -3787,12 +3858,12 @@ tk_utype_actual(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
     n = strtol(argv[1], NULL, 10);
     for_all_unit_types(u) {
 	if (utype_indexes[u] == n) {
-	    sprintf(interp->result, "%d", u);
+	    sprintf(Tcl_GetStringResult(interp), "%d", u);
 	    return TCL_OK;
 	}
     }
     /* (should make error) */
-    sprintf(interp->result, "%d", -1);
+    sprintf(Tcl_GetStringResult(interp), "%d", -1);
     return TCL_OK;
 }
 
@@ -3804,12 +3875,12 @@ tk_mtype_actual(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
     n = strtol(argv[1], NULL, 10);
     for_all_material_types(m) {
 	if (mtype_indexes[m] == n) {
-	    sprintf(interp->result, "%d", m);
+	    sprintf(Tcl_GetStringResult(interp), "%d", m);
 	    return TCL_OK;
 	}
     }
     /* (should make error) */
-    sprintf(interp->result, "%d", -1);
+    sprintf(Tcl_GetStringResult(interp), "%d", -1);
     return TCL_OK;
 }
 
@@ -3819,7 +3890,7 @@ tk_map_size_at_power(ClientData cldata, Tcl_Interp *interp, int argc, char *argv
     int viewpow;
 
     viewpow = strtol(argv[1], NULL, 10);
-    sprintf(interp->result, "%d %d", area.width * hws[viewpow], 0);
+    sprintf(Tcl_GetStringResult(interp), "%d %d", area.width * hws[viewpow], 0);
     return TCL_OK;
 }
 
@@ -3844,7 +3915,7 @@ tk_center_on_unit(ClientData cldata, Tcl_Interp *interp,
     if (n == 1 && in_play(unit)) {
 	recenter(map, unit->x, unit->y);
     }
-    sprintf(interp->result, "%d", n);
+    sprintf(Tcl_GetStringResult(interp), "%d", n);
     return TCL_OK;
 }
 
@@ -3859,14 +3930,18 @@ tk_available_advance(ClientData cldata, Tcl_Interp *interp,
     for_all_advance_types(a) {
 	if (side_can_research(dside, a)) {
 	    if (i == n) {
-                Tcl_SetResult(interp, a_type_name(a), TCL_VOLATILE);
+	        const char *str = a_type_name(a);
+		char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+		Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
 		return TCL_OK;
 	    } else {
 		++i;
 	    }
 	}
     }
-    Tcl_SetResult(interp, "?", TCL_VOLATILE);
+    const char *str = "?";
+    char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
     return TCL_OK;
 }
 
@@ -3881,11 +3956,11 @@ tk_advance_needed_to_research(ClientData cldata, Tcl_Interp *interp,
     if (numatypes > 0 
         && is_advance_type(this_advance)
         && is_advance_type(needed_advance)) {        
-          sprintf(interp->result, "%d", aa_needed_to_research(this_advance, needed_advance));
+          sprintf(Tcl_GetStringResult(interp), "%d", aa_needed_to_research(this_advance, needed_advance));
 	return TCL_OK;
     } else {
 	/* (should make error) */
-	sprintf(interp->result, "%d", -1);
+	sprintf(Tcl_GetStringResult(interp), "%d", -1);
 	return TCL_OK;
     }
 }
@@ -3894,14 +3969,18 @@ int
 tk_current_advance(ClientData cldata, Tcl_Interp *interp,
 		     int argc, char *argv[])
 {
-    if (dside->research_topic == NOADVANCE
-        || dside->research_topic == NONATYPE) {
-        Tcl_SetResult(interp, "Nothing", TCL_VOLATILE);
-	return TCL_OK;
-    } else {
-        Tcl_SetResult(interp, a_type_name(dside->research_topic), TCL_VOLATILE);
-	return TCL_OK;
-    }
+    const char *str;
+
+    if (dside->research_topic == NOADVANCE ||
+	dside->research_topic == NONATYPE)
+      str = "Nothing";
+    else
+      str = a_type_name(dside->research_topic);
+    
+    char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+    
+    return TCL_OK;
 }
 
 int
@@ -3962,7 +4041,9 @@ tk_agreements(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 int
 tk_get_scores(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    Tcl_SetResult(interp, get_scores(dside), TCL_VOLATILE);
+    const char *str = get_scores(dside);
+    char *rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
     return TCL_OK;
 }
 
@@ -4004,7 +4085,7 @@ place_legends(Side *side)
 }
 
 void
-eval_tcl_cmd(char *fmt, ...)
+eval_tcl_cmd(const char *fmt, ...)
 {
     char tclbuf[500], backup[500];
     int rslt;
@@ -4019,7 +4100,7 @@ eval_tcl_cmd(char *fmt, ...)
     strcpy(backup, tclbuf);
     rslt = Tcl_GlobalEval(interp, tclbuf);
     if (rslt == TCL_ERROR) {
-	fprintf(stderr, "Error: %s\n", interp->result);
+	fprintf(stderr, "Error: %s\n", Tcl_GetStringResult(interp));
 	fprintf(stderr, "Error: while evaluating `%s'\n", backup);
     }
 }
@@ -4033,8 +4114,8 @@ void
 interpret_variants(void)
 {
     int i;
-    char *vartypename;
-    char *gamename;
+    const char *vartypename;
+    const char *gamename;
     Variant *var;
 
     any_variants = FALSE;
@@ -4207,7 +4288,7 @@ enable_in_unit_type_list(Side *side, Map *map, int u, int flag)
    vector of unit types, so as to be able to map back when done. */
 
 int
-ask_unit_type(Side *side, Map *map, char *prompt, int *possibles,
+ask_unit_type(Side *side, Map *map, const char *prompt, int *possibles,
 	      void (*handler)(Side *side, Map *map, int cancelled))
 {
     int u, numtypes = 0;
@@ -4306,7 +4387,7 @@ help_unit_type(Side *side, Map *map)
 }
 
 int
-ask_terrain_type(Side *side, Map *map, char *prompt, int *possibles,
+ask_terrain_type(Side *side, Map *map, const char *prompt, int *possibles,
 		 void (*handler)(Side *side, Map *map, int cancelled))
 {
     int numtypes = 0, t;
@@ -4379,7 +4460,7 @@ help_terrain_type(Side *side, Map *map)
 /* (should change the cursor temporarily) */
 
 void
-ask_position(Side *side, Map *map, char *prompt,
+ask_position(Side *side, Map *map, const char *prompt,
 	     void (*handler)(Side *side, Map *map, int cancel))
 {
     eval_tcl_cmd("ask_position_mode %d {%s [click to set]}",
@@ -4409,7 +4490,7 @@ grok_position(Side *side, Map *map, int *xp, int *yp, Unit **unitp)
 /* Prompt for a yes/no answer with a settable default. */
 
 void
-ask_bool(Side *side, Map *map, char *question, int dflt,
+ask_bool(Side *side, Map *map, const char *question, int dflt,
 	 void (*handler)(Side *side, Map *map, int cancelled))
 {
     eval_tcl_cmd("ask_bool_mode %d {%s} %d", map->number, question, dflt);
@@ -4436,7 +4517,7 @@ grok_bool(Side *side, Map *map)
    text cursor (an underscore) is displayed. */
 
 void
-ask_string(Side *side, Map *map, char *prompt, char *dflt,
+ask_string(Side *side, Map *map, const char *prompt, const char *dflt,
 	   void (*handler)(Side *side, Map *map, int cancelled))
 {
     /* Default must be non-NULL. */
@@ -4479,10 +4560,10 @@ grok_string(Side *side, Map *map, char **strp)
 }
 
 void
-ask_side(Side *side, Map *map, char *prompt, Side *dfltside,
+ask_side(Side *side, Map *map, const char *prompt, Side *dfltside,
 	 void (*handler)(Side *side, Map *map, int cancelled))
 {
-    char *dfltstr;
+    const char *dfltstr;
 
     dfltstr = (dfltside == NULL ? (char *)"nobody" : side_name(dfltside));
     strcpy(map->answer, dfltstr);
@@ -4558,7 +4639,7 @@ grok_side(Side *side, Map *map, Side **side2p)
 }
 
 void
-add_remote_locally(int rid, char *str)
+add_remote_locally(int rid, const char *str)
 {
     eval_tcl_cmd("set master_rid %d", master_rid);
     eval_tcl_cmd("add_program %d %d {%s}", my_rid, rid, str);
@@ -4619,7 +4700,7 @@ char *announcemsg = NULL;
 /* Announce the start of a time-consuming computation. */
 
 void
-announce_lengthy_process(char *msg)
+announce_lengthy_process(const char *msg)
 {
     n_seconds_elapsed(0);
     announcemsg = copy_string(msg);
@@ -4658,7 +4739,7 @@ finish_lengthy_process(void)
 /* An init error needs to have the command re-run. */
 
 void
-low_init_error(char *str)
+low_init_error(const char *str)
 {
     if (use_stdio) {
 	fprintf(stderr, "Error: %s.\n", str);

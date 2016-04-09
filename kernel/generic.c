@@ -162,8 +162,8 @@ VarDefn vardefns[] = {
   void SETFNAME(int v) { globals.VAR = v; }
 #undef  DEF_VAR_S
 #define DEF_VAR_S(str,FNAME,SETFNAME,doc,VAR,dflt)  \
-  char *FNAME(void) { return globals.VAR; }  \
-  void SETFNAME(char *v) { globals.VAR = v; }
+  const char *FNAME(void) { return globals.VAR; }  \
+  void SETFNAME(const char *v) { globals.VAR = v; }
 #undef  DEF_VAR_L
 #define DEF_VAR_L(str,FNAME,SETFNAME,doc,VAR,DFLT)  \
   Obj *FNAME(void) { return globals.VAR; }  \
@@ -588,8 +588,8 @@ uprop_i_default(int (*intgetter)(int))
 
 //! Default value for string uprop.
 
-char *
-uprop_s_default(char *(*strgetter)(int))
+const char *
+uprop_s_default(const char *(*strgetter)(int))
 {
     int i = 0;
 
@@ -628,8 +628,8 @@ tprop_i_default(int (*intgetter)(int))
 
 //! Default value for string tprop.
 
-char *
-tprop_s_default(char *(*strgetter)(int))
+const char *
+tprop_s_default(const char *(*strgetter)(int))
 {
     int i = 0;
 
@@ -668,8 +668,8 @@ mprop_i_default(int (*intgetter)(int))
 
 //! Default value for string mprop.
 
-char *
-mprop_s_default(char *(*strgetter)(int))
+const char *
+mprop_s_default(const char *(*strgetter)(int))
 {
     int i = 0;
 
@@ -708,8 +708,8 @@ aprop_i_default(int (*intgetter)(int))
 
 //! Default value for string aprop.
 
-char *
-aprop_s_default(char *(*strgetter)(int))
+const char *
+aprop_s_default(const char *(*strgetter)(int))
 {
     int i = 0;
 
@@ -748,8 +748,8 @@ gvar_i_default(int (*intgetter)(void))
 
 //! Default value for string gvar.
 
-char *
-gvar_s_default(char *(*strgetter)(void))
+const char *
+gvar_s_default(const char *(*strgetter)(void))
 {
     int i = 0;
 

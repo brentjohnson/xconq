@@ -214,7 +214,8 @@ void
 do_collect(Side *side)
 {
     int mtocollect;
-    char *arg, *rest;
+    char *arg;
+    const char *rest;
 
     REQUIRE_UNIT();
     mtocollect = NONMTYPE;
@@ -946,7 +947,7 @@ do_trace(Side *side)
 /* Generic command error routine just does a notify. */
 
 void
-cmd_error(Side *side, char *fmt, ...)
+cmd_error(Side *side, const char *fmt, ...)
 {
     char tmpnbuf[BUFSIZE];
     va_list ap;

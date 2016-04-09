@@ -65,7 +65,7 @@ Tk_Window tkwin;
 
 int depth, screen;
 
-char *read_suggest="", *write_suggest="";
+const char *read_suggest="", *write_suggest="";
 
 Tcl_Interp *interp;
 
@@ -133,14 +133,14 @@ tk_save_imf_file(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 static int
 get_imf_status_cmd(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    sprintf(interp->result, "%d image families loaded", numimages);
+    sprintf(Tcl_GetStringResult(interp), "%d image families loaded", numimages);
     return TCL_OK;
 }
 
 static int
 get_numimages_cmd(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
-    sprintf(interp->result, "%d", numimages);
+    sprintf(Tcl_GetStringResult(interp), "%d", numimages);
     return TCL_OK;
 }
 
@@ -148,13 +148,16 @@ static int
 get_imf_name_cmd(ClientData cldata, Tcl_Interp *interp, int argc, char *argv[])
 {
     int n;
+    const char *str = "";
 
     n = strtol(argv[1], NULL, 10);
     if (between(0, n, numimages - 1)) {
-	Tcl_SetResult(interp, images[n]->name, TCL_VOLATILE);
-    } else {
-	Tcl_SetResult(interp, "", TCL_VOLATILE);
+        str = images[n]->name;
     }
+
+    char* rslt = strcpy(Tcl_Alloc(strlen(str)+1), str);
+    Tcl_SetResult(interp, rslt, TCL_DYNAMIC);
+
     return TCL_OK;
 }
 
@@ -168,7 +171,7 @@ get_imf_numsizes_cmd(ClientData cldata, Tcl_Interp *interp, int argc, char *argv
     for_all_images(images[n], img)
       if (!img->synthetic)
 	++rslt;
-    sprintf(interp->result, "%d", rslt);
+    sprintf(Tcl_GetStringResult(interp), "%d", rslt);
     return TCL_OK;
 }
 
@@ -224,18 +227,18 @@ ui_init(void)
 	LibraryPath *p;
 	char pathbuf[PATH_SIZE];
 #ifndef MAC
-	char *relpaths [] = {
+	const char *relpaths [] = {
 	    "../share/xconq/tcltk/imfapp", "tcltk/imfapp", "imfapp",
 	    "xconq/tcltk/imfapp", NULL
 	};
-	char *librelpaths [] = {
+	const char *librelpaths [] = {
 	    "../tcltk/imfapp", "../imfapp", NULL
 	};
 #else
-	char *relpaths [] = {
+	const char *relpaths [] = {
 	    ":tcltk:imfapp", ":imfapp", "::tcltk:imfapp", NULL
 	};
-	char *librelpaths [] = {
+	const char *librelpaths [] = {
 	    NULL
 	};
 #endif
@@ -250,7 +253,7 @@ ui_init(void)
 		rslt = Tcl_EvalFile(interp, pathbuf);
 		if (rslt == TCL_ERROR)
 		  init_error("Error reading tcl from %s: %s",
-			     pathbuf, interp->result);
+			     pathbuf, Tcl_GetStringResult(interp));
 		loaded = TRUE;
 		break;
 	    }
@@ -265,7 +268,7 @@ ui_init(void)
 			rslt = Tcl_EvalFile(interp, pathbuf);
 			if (rslt == TCL_ERROR)
 			  init_error("Error reading tcl from %s: %s",
-				     pathbuf, interp->result);
+				     pathbuf, Tcl_GetStringResult(interp));
 			loaded = TRUE;
 			break;
 		    }

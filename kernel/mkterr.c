@@ -35,17 +35,17 @@ static int random_solid_terrain(void);
 static int random_room_terrain(void);
 static int random_passage_terrain(void);
 static void set_room_interior(int x, int y);
-static void name_highest_peaks(char *specificname, Obj *parms);
+static void name_highest_peaks(const char *specificname, Obj *parms);
 static int high_point(int x, int y);
-static void name_islands(char *specificname, Obj *parms);
-static void name_continents(char *specificname, Obj *parms);
-static void name_lakes(char *specificname, Obj *parms);
-static void name_seas(char *specificname, Obj *parms);
-static void name_bays(char *specificname, Obj *parms);
+static void name_islands(const char *specificname, Obj *parms);
+static void name_continents(const char *specificname, Obj *parms);
+static void name_lakes(const char *specificname, Obj *parms);
+static void name_seas(const char *specificname, Obj *parms);
+static void name_bays(const char *specificname, Obj *parms);
 static int bay_point(int x, int y);
-static void name_terrain(int t, char *name, Obj *parms);
-static char *name_feature_at(int x, int y, char *feattype);
-static char *name_feature_using(Obj *namerlist, char *feattype);
+static void name_terrain(int t, const char *name, Obj *parms);
+static const char *name_feature_at(int x, int y, const char *feattype);
+static const char *name_feature_using(Obj *namerlist, const char *feattype);
 static void fix_adjacent_terrain(void);
 static void flatten_liquid_terrain(void);
 static void set_edge_values(int x, int y, int t);
@@ -1096,7 +1096,7 @@ add_random_changes(void)
 int
 name_geographical_features(int calls, int runs)
 {
-    char *classname, *specificname;
+    const char *classname, *specificname;
     Obj *rest, *head, *parms;
     short t, found;
     
@@ -1168,10 +1168,10 @@ name_geographical_features(int calls, int runs)
 /* Identify the highest high points as "peaks". */
 
 static void
-name_highest_peaks(char *name, Obj *parms)
+name_highest_peaks(const char *name, Obj *parms)
 {
     int density, x, y, maxpeaks, numpeaks, *peakx, *peaky, i, lo;
-    char *fname;
+    const char *fname;
     Feature *mountain;
 
     /* If no possibility of peaks, return quietly.  (A warning here seemed like
@@ -1240,11 +1240,11 @@ high_point(int x, int y)
 }
 
 static void
-name_islands(char *name, Obj *parms)
+name_islands(const char *name, Obj *parms)
 {
 	int sizemin, sizemax, x, y;
 	TRegion *region;
-	char *fname;
+	const char *fname;
 	Feature *island;
 
 	if (area.landsea_regions == NULL) {
@@ -1288,11 +1288,11 @@ name_islands(char *name, Obj *parms)
 }
 
 static void
-name_continents(char *name, Obj *parms)
+name_continents(const char *name, Obj *parms)
 {
 	int sizemin, sizemax, x, y;
 	TRegion *region;
-	char *fname;
+	const char *fname;
 	Feature *continent;
 	extern TRegion *landsea_region_list;
 
@@ -1340,11 +1340,11 @@ name_continents(char *name, Obj *parms)
    non-liquid terrain. */
 
 static void
-name_lakes(char *name, Obj *parms)
+name_lakes(const char *name, Obj *parms)
 {
     int sizemin, sizemax, x, y;
     TRegion *region;
-    char *fname;
+    const char *fname;
     Feature *lake;
 
 	if (area.landsea_regions == NULL) {
@@ -1388,11 +1388,11 @@ name_lakes(char *name, Obj *parms)
 }
 
 static void
-name_seas(char *name, Obj *parms)
+name_seas(const char *name, Obj *parms)
 {
     int sizemin, sizemax, x, y;
     TRegion *region;
-    char *fname;
+    const char *fname;
     Feature *sea;
 
 	if (area.landsea_regions == NULL) {
@@ -1439,10 +1439,10 @@ name_seas(char *name, Obj *parms)
    mostly surrounded by non-liquid terrain. */
 
 static void
-name_bays(char *name, Obj *parms)
+name_bays(const char *name, Obj *parms)
 {
     int x, y;
-    char *fname;
+    const char *fname;
     Feature *bay;
 
     for_all_interior_cells(x, y) {
@@ -1489,11 +1489,11 @@ bay_point(int x, int y)
 /* Name patches of the given terrain type. */
 
 static void
-name_terrain(int t, char *name, Obj *parms)
+name_terrain(int t, const char *name, Obj *parms)
 {
 	int sizemin, sizemax, x, y;
 	TRegion *region;
-	char *fname;
+	const char *fname;
 	Feature *terrain;
 
 	/* Get the min size for regions. */
@@ -1554,10 +1554,10 @@ name_terrain(int t, char *name, Obj *parms)
 	}
 }
 
-static char *
-name_feature_at(int x, int y, char *feattype)
+static const char *
+name_feature_at(int x, int y, const char *feattype)
 {
-    char *rslt;
+    const char *rslt;
     Obj *namerlist;
     Side *side;
 
@@ -1581,8 +1581,8 @@ name_feature_at(int x, int y, char *feattype)
     return name_feature_using(namerlist, feattype);
 }
 
-static char *
-name_feature_using(Obj *namerlist, char *feattype)
+static const char *
+name_feature_using(Obj *namerlist, const char *feattype)
 {
     Obj *rest, *head, *namerspec;
 

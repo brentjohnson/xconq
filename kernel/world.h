@@ -68,7 +68,7 @@ typedef struct a_area {
     short sunx;             				/*!< x location at which sun is overhead */
     short suny;             				/*!< y location at which sun is overhead */
     Obj *temp_year;       	  		/*!< cycle of temperatures within year */
-    char *image_name;				/*!< name of image to display for map */
+    const char *image_name;			/*!< name of image to display for map */
     /*!< Pointers to the various "layers". */
     struct a_unit **units;  			/*!< pointer to units if any <I>layer</I>*/
     char *terrain;          			/*!< terrain type at this spot <I>layer</I>*/
@@ -101,8 +101,8 @@ typedef struct a_area {
 typedef struct a_feature {
     int type;               		/*!< index of the general type */
     short id;         		      	/*!< which one this is */
-    char *name;             	/*!< the name of the region */
-    char *feattype;         	/*!< its category, such as "island" or "bay"
+    const char *name;             	/*!< the name of the region */
+    const char *feattype;         	/*!< its category, such as "island" or "bay"
     					*   something for syntax? "foo bay" vs "bay of foo" */
     struct a_feature *next;	/*!< arranged in a linked list */
     /* caches */

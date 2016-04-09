@@ -18,13 +18,13 @@ extern int autotest(void);
 static unsigned int errs = 0;
 static unsigned int passes = 0;
 static void
-fail(char *msg) {
+fail(const char *msg) {
     printf ("FAIL: %s\n", msg);
     ++errs;
 }
 /** Assert that CONDITION is true. */
 static void
-assert_true(char *msg, int condition) {
+assert_true(const char *msg, int condition) {
     if (!condition) {
 	fail(msg);
     } else {
@@ -33,7 +33,7 @@ assert_true(char *msg, int condition) {
 }
 
 static char *
-make_longer_msg(char *msg, char *expected, char *actual)
+make_longer_msg(const char *msg, const char *expected, const char *actual)
 {
     size_t length = strlen(msg) + strlen(expected) + strlen(actual) + 100;
     char *longer_msg = (char *) xmalloc(length);
@@ -43,7 +43,7 @@ make_longer_msg(char *msg, char *expected, char *actual)
 }
 
 static void
-assert_string_equals(char *msg, char *expected, char *actual)
+assert_string_equals(const char *msg, const char *expected, const char *actual)
 {
     char *longer_msg = make_longer_msg(msg, expected, actual);
     assert_true(longer_msg, strcmp(expected, actual) == 0);
@@ -51,7 +51,7 @@ assert_string_equals(char *msg, char *expected, char *actual)
 }
 
 static char *
-make_longer_msg_long(char *msg, long expected, long actual)
+make_longer_msg_long(const char *msg, long expected, long actual)
 {
     size_t length = strlen(msg)
         + (sizeof(expected)<<3) + (sizeof(actual)<<3) + 100;
@@ -63,7 +63,7 @@ make_longer_msg_long(char *msg, long expected, long actual)
 }
 
 static void
-assert_long_equals(char *msg, long expected, long actual)
+assert_long_equals(const char *msg, long expected, long actual)
 {
     char *longer_msg = make_longer_msg_long(msg, expected, actual);
     assert_true(longer_msg, expected == actual);

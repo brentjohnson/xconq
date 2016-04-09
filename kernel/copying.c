@@ -4,7 +4,7 @@
 #include "conq.h"
 
 void
-describe_copyright(int arg, char *key, TextBuffer *buf)
+describe_copyright(int arg, const char *key, TextBuffer *buf)
 {
     tbcatline(buf, "		    GNU GENERAL PUBLIC LICENSE");
     tbcatline(buf, "		       Version 2, June 1991");
@@ -266,7 +266,7 @@ describe_copyright(int arg, char *key, TextBuffer *buf)
 }
 
 void
-describe_warranty(int arg, char *key, TextBuffer *buf)
+describe_warranty(int arg, const char *key, TextBuffer *buf)
 {
     tbcatline(buf, "			    NO WARRANTY");
     tbcatline(buf, "");

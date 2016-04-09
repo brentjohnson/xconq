@@ -60,8 +60,8 @@ typedef enum help_page {
 
 /* \brief Help page description struct. */
 typedef struct help_page_defn {
-    char *filebname;
-    char *name;
+    const char *filebname;
+    const char *name;
     HelpPage tocpage;
     HelpPage prevpage;
     HelpPage nextpage;
@@ -78,9 +78,9 @@ typedef struct a_textbuffer {
 
 /*! \brief Help Node. */
 typedef struct a_helpnode {
-    char *key;			/*!< key. */ 
+    const char *key;		/*!< key. */ 
     /*!< Pointer to function. (hash???) */
-    void (*fn)(int arg, char *key, TextBuffer *buf);
+    void (*fn)(int arg, const char *key, TextBuffer *buf);
     enum nodeclass nclass;	/*!< Node type. */
     int arg;			/*!< Argument. ??? */
     char *text;			/*!< text string. */
@@ -97,23 +97,23 @@ extern HelpNode *copying_help_node;
 /*! Pointer to "Warranty" help node. */
 extern HelpNode *warranty_help_node;
 
-extern void tbprintf(TextBuffer *buf, char *str, ...);
-extern void tbcat(TextBuffer *buf, char *str);
-extern void tbcat_si(TextBuffer *buf, char *str);
-extern void tbcatline(TextBuffer *buf, char *str);
-extern void tbcatline_si(TextBuffer *buf, char *str);
+extern void tbprintf(TextBuffer *buf, const char *str, ...);
+extern void tbcat(TextBuffer *buf, const char *str);
+extern void tbcat_si(TextBuffer *buf, const char *str);
+extern void tbcatline(TextBuffer *buf, const char *str);
+extern void tbcatline_si(TextBuffer *buf, const char *str);
 
 extern void init_help(void);
 extern HelpNode *create_help_node(void);
-extern HelpNode *add_help_node(char *key,
-			       void (*fn)(int, char *, TextBuffer *),
+extern HelpNode *add_help_node(const char *key,
+			       void (*fn)(int, const char *, TextBuffer *),
 			       int arg, HelpNode *prevnode);
-extern HelpNode *find_help_node(HelpNode *node, char *str);
+extern HelpNode *find_help_node(HelpNode *node, const char *str);
 extern void create_game_help_nodes(void);
 extern char *get_help_text(HelpNode *node);
 
-extern void describe_topics(int arg, char *key, TextBuffer *buf);
-extern void describe_command(int ch, char *name, char *help, int onechar, 
+extern void describe_topics(int arg, const char *key, TextBuffer *buf);
+extern void describe_command(int ch, const char *name, const char *help, int onechar, 
 			     TextBuffer *buf);
 extern void append_blurb_strings(char *buf, Obj *notes);
 extern void notify_instructions(void);
@@ -121,8 +121,8 @@ extern void notify_instructions(void);
 extern void print_any_news(void);
 extern void print_game_description_to_file(FILE *fp);
 
-extern void describe_copyright(int arg, char *key, TextBuffer *buf);
-extern void describe_warranty(int arg, char *key, TextBuffer *buf);
+extern void describe_copyright(int arg, const char *key, TextBuffer *buf);
+extern void describe_warranty(int arg, const char *key, TextBuffer *buf);
 
 extern void set_help_output_cc(int cctarget);
 extern void set_help_output_mode(HelpOutputMode houtmode);
@@ -131,9 +131,9 @@ extern void set_help_toc_filep(FILE *htocfilep);
 
 extern FILE *prep_help_file(char *hfilename);
 extern void finish_help_file(FILE *hfilep);
-extern void write_help_file_header(FILE *hfile, char *headerdata);
-extern void write_help_file_footer(FILE *hfile, char *footerdata);
-extern void write_help_toc_entry(char *hfilebname, char *sectionname,
+extern void write_help_file_header(FILE *hfile, const char *headerdata);
+extern void write_help_file_footer(FILE *hfile, const char *footerdata);
+extern void write_help_toc_entry(const char *hfilebname, const char *sectionname,
 				 int indentlvl);
 extern char *help_file_brand(void);
-extern char *get_help_file_extension(void);
+extern const char *get_help_file_extension(void);

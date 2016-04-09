@@ -73,7 +73,7 @@ not implemented yet
  */
 typedef struct a_doctrine {
     short id;  			/*!< a unique id */
-    char *name;        		/*!< a distinguishing name for the doctrine */
+    const char *name;  		/*!< a distinguishing name for the doctrine */
     short resupply_percent;	/*!< do resupply task if below this */
     short rearm_percent;     	/*!< do resupply of ammo if below this */
     short repair_percent;     	/*!< do repairs if hp at or below this */
@@ -133,29 +133,29 @@ typedef Xconq::AI::AI_Side AI_Side;
 typedef struct a_side {
     int id;			/*!< a unique id */
     Obj *symbol;		/*!< a symbol bound to side's id */
-    char *name;			/*!< This is the proper name of a side, 
+    const char *name;		/*!< This is the proper name of a side, 
 				 *   as a country or alliance name. Examples 
 				 *   include "Axis" and "Hyperborea". */
-    char *longname;		/*!< This is the long form of a side's name, 
+    const char *longname;      	/*!< This is the long form of a side's name, 
 				 *   as in "People's Republic of Hyperborea". 
 				 *   Defaults to be the same as the side's 
 				 *   name. */
-    char *shortname;		/*!< This is an short name or acronym for the 
+    const char *shortname;	/*!< This is an short name or acronym for the 
 				 *   side, often just the letters of the long 
 				 *   name, as in "PRH". */
-    char *noun;			/*!< This is the name of an individual unit or 
+    const char *noun;		/*!< This is the name of an individual unit or 
 				 *   person belonging to the side. Defaults 
 				 *   to "", which suppresses any mention of 
 				 *   the side when (textually) describing the 
 				 *   individual. */
-    char *pluralnoun;		/*!< This is what you would call a group of 
+    const char *pluralnoun;	/*!< This is what you would call a group of 
 				 *   individuals. Defaults to the most common 
 				 *   plural form of the noun (in English, 
 				 *   the default pluralizer adds an "s"), so 
 				 *   any alternative plural noun, such as 
 				 *   "Chinese", will need an explicit 
 				 *   plural-noun value. */
-    char *adjective;		/*!< This is an adjective that can be used of 
+    const char *adjective;	/*!< This is an adjective that can be used of 
 				 *   individuals on the side, as in "Spanish".  
 				 *   Defaults to "", which suppresses use of 
 				 *   the adjective. As a complete example, a 
@@ -163,19 +163,19 @@ typedef struct a_side {
 				 *   name "Kingdom of Poland", short name 
 				 *   "Po", noun "Pole", plural noun "Poles", 
 				 *   and adjective "Polish". */
-    char *colorscheme;		/*!< This is a comma-separated list of colors 
+    const char *colorscheme;	/*!< This is a comma-separated list of colors 
 				 *   that represents the side. Defaults to 
 				 *   "black". */
-    char *default_color;	/*!< default color used in the absence of 
+    const char *default_color;	/*!< default color used in the absence of 
 				 *   emblems and at low magnifications 
 				 *   <I>name</I> */
-    char *emblemname;		/*!< This property is the name of a graphical 
+    const char *emblemname;	/*!< This property is the name of a graphical 
 				 *   icon that represents the side. An emblem 
 				 *   name of "none" suppresses any emblem 
 				 *   display for the side. Defaults to "", 
 				 *   which gives the side a randomly-selected 
 				 *   emblem. */
-    char **unitnamers;		/*!< This specifies which namers will be used 
+    const char **unitnamers;	/*!< This specifies which namers will be used 
 				 *   with which types that the side starts out 
 				 *   with or creates new units. These will not 
 				 *   be run automatically on captured units or 
@@ -185,7 +185,7 @@ typedef struct a_side {
 				 *   initial country (if if has one). */
     short nameslocked;		/*!< True if names may not be changed by 
 				 *   player. */
-    char *sideclass;		/*!< This is a side's class, which is a 
+    const char *sideclass;	/*!< This is a side's class, which is a 
 				 *   keyword that characterizes the side. Any 
 				 *   number of sides may be in the same 
 				 *   class. */
@@ -1397,11 +1397,11 @@ extern void init_doctrine(Side *side);
 extern void init_self_unit(Side *side);
 extern int init_view(Side *side);
 extern void calc_start_xy(Side *side);
-extern char *side_name(Side *side);
-extern char *side_adjective(Side *side);
+extern const char *side_name(Side *side);
+extern const char *side_adjective(Side *side);
 extern int side_number(Side *side);
 extern Side *side_n(int n);
-extern Side *find_side_by_name(char *str);
+extern Side *find_side_by_name(const char *str);
 extern int side_controls_side(Side *side, Side *side2);
 extern int side_controls_unit(Side *side, struct a_unit *unit);
 extern int side_sees_unit(Side *side, struct a_unit *unit);
@@ -1430,7 +1430,7 @@ extern int enemy_side(Side *s1, Side *s2);
 extern int allied_side(Side *s1, Side *s2);
 extern int neutral_side(Side *s1, Side *s2);
 extern void reveal_side(Side *sender, Side *recipient, int *types);
-extern void receive_message(Side *side, Side *sender, char *str);
+extern void receive_message(Side *side, Side *sender, const char *str);
 extern struct a_unit_view *unit_view_at(Side *side, int x, int y);
 extern struct a_unit_view *unit_view_next(Side *side, int x, int y,
 					  struct a_unit_view *uview);
@@ -1462,16 +1462,16 @@ extern int actual_advantage(Side *side);
 
 extern Doctrine *new_doctrine(int id);
 extern Doctrine *find_doctrine(int id);
-extern Doctrine *find_doctrine_by_name(char *name);
+extern Doctrine *find_doctrine_by_name(const char *name);
 extern Doctrine *clone_doctrine(Doctrine *doctrine);
-extern void set_doctrine(Side *side, char *spec);
+extern void set_doctrine(Side *side, const char *spec);
 
 extern StandingOrder *new_standing_order(void);
 extern void add_standing_order(Side *side, StandingOrder *sorder, int pos);
-extern int parse_standing_order(Side *side, char *cmdstr);
-extern char *parse_unit_types(Side *side, char *str, char *utypevec);
-extern char *parse_order_cond(Side *side, char *str, StandingOrder *sorder);
-extern char *get_next_arg(char *str, char *buf, char **rsltp);
+extern int parse_standing_order(Side *side, const char *cmdstr);
+extern const char *parse_unit_types(Side *side, const char *str, char *utypevec);
+extern const char *parse_order_cond(Side *side, const char *str, StandingOrder *sorder);
+extern const char *get_next_arg(const char *str, char *buf, char **rsltp);
 extern char *standing_order_desc(StandingOrder *sorder, char *buf);
 #if 0
 extern void init_agreements(void);

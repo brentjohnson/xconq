@@ -156,7 +156,7 @@ init_ai_types(void)
 /* Given an AI type name, find its numerical index. */
 
 int
-find_ai_type(char *aitype)
+find_ai_type(const char *aitype)
 {
     int i;
 
@@ -169,7 +169,7 @@ find_ai_type(char *aitype)
 
 /* Given a numerical index, return the name. */
 
-char *
+const char *
 ai_type_name(int n)
 {
     if (!between(1, n, numaitypes))
@@ -180,11 +180,11 @@ ai_type_name(int n)
 /* Given an AI type name, return the next name in the list of types,
    or NULL if the name is the last in the list. */
 
-char *
-next_ai_type_name(char *aitype)
+const char *
+next_ai_type_name(const char *aitype)
 {
     int i;
-    char *name;
+    const char *name;
 
     if (aitype == NULL)
       return all_ai_ops[1].name;
@@ -198,7 +198,7 @@ next_ai_type_name(char *aitype)
 
 /* Given a numerical index, return the name. */
 
-char *
+const char *
 ai_type_help(int n)
 {
     if (!between(1, n, numaitypes))
@@ -214,7 +214,7 @@ void
 init_ai(Side *side)
 {
     int i;
-    char *aitype;
+    const char *aitype;
     int (*test)(void);
     void (*fn)(Side *side);
 
@@ -256,7 +256,7 @@ init_ai(Side *side)
 /* Change the AI running a side. */
 
 void
-set_side_ai(Side *side, char *aitype)
+set_side_ai(Side *side, const char *aitype)
 {
     Unit *unit;
     Side *side2;
@@ -338,7 +338,7 @@ run_local_ai(int when, int maxplanning)
 {
     Side *side;
     Unit *unit;
-    char *activity = "run_local_ai";
+    const char *activity = "run_local_ai";
 
     /* Make sure we know how many local AIs are present. */
     if (num_local_ais < 0) {
@@ -655,7 +655,7 @@ has_unsatisfied_goal(Side *side, GoalType goaltype)
 }
 
 void
-ai_receive_message(Side *side, Side *sender, char *str)
+ai_receive_message(Side *side, Side *sender, const char *str)
 {
     /* First detect standard messages. */
     if (strcmp(str, "Eh?") == 0) {
@@ -710,10 +710,10 @@ ai_region_at(Side *side, int x, int y)
 /* Provide textual information about the AI's usage or opinion of the
    given location. */
 
-char *
+const char *
 ai_at_desig(Side *side, int x, int y)
 {
-    char *(*fn)(Side *side, int x, int y);
+    const char *(*fn)(Side *side, int x, int y);
 
     fn = all_ai_ops[side->aitype].at_desig;
     if (fn)
@@ -725,7 +725,7 @@ ai_at_desig(Side *side, int x, int y)
 /* Set willingness to declare a draw. */
 
 void
-try_to_draw(Side *side, int flag, char *ainame)
+try_to_draw(Side *side, int flag, const char *ainame)
 {
     /* If no change, nothing to say or do. */
     if (flag == side->willingtodraw)
@@ -747,7 +747,7 @@ try_to_draw(Side *side, int flag, char *ainame)
 /* If an AI resigns, it tries to help its friends. */
 
 void
-give_up(Side *side, char *ainame)
+give_up(Side *side, const char *ainame)
 {
     Side *side1;
 
@@ -879,11 +879,11 @@ goal_truth(Side *side, Goal *goal)
 
 char *goalbuf = NULL;
 
-char *
+const char *
 goal_desig(Goal *goal)
 {
     int numargs, i, arg;
-    char *argtypes;
+    const char *argtypes;
 
     if (goal == NULL)
       return "<null goal>";

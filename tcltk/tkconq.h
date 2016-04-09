@@ -93,7 +93,7 @@ enum movie_type {
 };
 
 struct a_movie {
-  char *type;
+  const char *type;
   enum movie_type itype;
   int args[5];
 };
@@ -283,7 +283,7 @@ extern short *mtype_indexes;
 extern void XSetTile(Display *dpy, GC gc, Pixmap pm);
 #endif
 
-extern XColor *request_color(char *name);
+extern XColor *request_color(const char *name);
 
 extern void recenter(Map *map, int x, int y);
 extern void put_on_screen(Map *map, int x, int y);
@@ -294,7 +294,7 @@ extern VP *widget_vp(Map *map);
 extern VP *worldw_vp(Map *map);
 
 extern char *c_to_tcl_string(char **cstr);
-extern void eval_tcl_cmd(char *fmt, ...);
+extern void eval_tcl_cmd(const char *fmt, ...);
 
 extern void set_current_unit(Map *map, Unit *unit);
 extern void update_cell(Map *map, int x, int y);
@@ -325,24 +325,24 @@ extern void get_preferences(void);
 extern void create_map(void);
 extern void popup_help(Side *side, HelpNode *node);
 
-extern int ask_unit_type(Side *side, Map *map, char *prompt, int *possibles,
+extern int ask_unit_type(Side *side, Map *map, const char *prompt, int *possibles,
 			 void (*handler)(Side *side, Map *map, int cancelled));
 extern int grok_unit_type(Side *side, Map *map, int *typep);
 extern void cancel_unit_type(Side *side, Map *map);
-extern int ask_terrain_type(Side *side, Map *map, char *prompt, int *poss,
+extern int ask_terrain_type(Side *side, Map *map, const char *prompt, int *poss,
 			    void (*handler)(Side *side, Map *map,
 					    int cancelled));
 extern int grok_terrain_type(Side *side, Map *map, int *typep);
-extern void ask_position(Side *side, Map *map, char *prompt,
+extern void ask_position(Side *side, Map *map, const char *prompt,
 			 void (*handler)(Side *side, Map *map, int cancelled));
 extern int grok_position(Side *side, Map *map, int *xp, int *yp, Unit **unitp);
-extern void ask_bool(Side *side, Map *map, char *question, int dflt,
+extern void ask_bool(Side *side, Map *map, const char *question, int dflt,
 		     void (*handler)(Side *side, Map *map, int cancelled));
 extern int grok_bool(Side *side, Map *map);
-extern void ask_string(Side *side, Map *map, char *prompt, char *dflt,
+extern void ask_string(Side *side, Map *map, const char *prompt, const char *dflt,
 		       void (*handler)(Side *side, Map *map, int cancelled));
 extern int grok_string(Side *side, Map *map, char **strp);
-extern void ask_side(Side *side, Map *map, char *prompt, Side *dfltside,
+extern void ask_side(Side *side, Map *map, const char *prompt, Side *dfltside,
 		     void (*handler)(Side *side, Map *map, int cancelled));
 extern int grok_side(Side *side, Map *map, Side **side2p);
 
