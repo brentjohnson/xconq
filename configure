@@ -5067,8 +5067,8 @@ versioned_files="kernel/version.h pkg/xconq.spec pkg/xconq.nsi"
 
 
 save_CPPFLAGS="$CPPFLAGS"
-save_CFLAGS="$CFLAGS"
-save_CXXFLAGS="$CXXFLAGS"
+save_CFLAGS="$CFLAGS -fpermissive -Wno-write-strings"
+save_CXXFLAGS="$CXXFLAGS -fpermissive -Wno-write-strings"
 
 
 if test "x$x_includes" != "x"; then
@@ -5420,6 +5420,8 @@ case "$host" in
   *)
     possible_dirs="/lib /usr/lib /usr/local/lib /opt/lib /opt/local/lib"
     possible_dirs="${possible_dirs} /opt/share/lib ../lib ../curses"
+    possible_dirs="${possible_dirs} /usr/lib/x86_64-linux-gnu"
+    possible_dirs="${possible_dirs} /usr/lib/x86-linux-gnu"
     ;;
 esac
 for d in ${possible_dirs}; do

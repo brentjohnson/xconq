@@ -1,0 +1,14 @@
+[Desktop Entry]
+Categories=Game;StrategyGame;
+Comment=Starts a game of XConq
+Comment[en_US]=Starts a game of XConq
+Encoding=UTF-8
+Exec=/usr/local/bin/xconq
+Hidden=false
+Icon=xconq.png
+Icon[en_US]=xconq.png
+Name=Xconq
+Name[en_US]=Xconq
+Terminal=false
+Type=Application
+Version=7.5pre

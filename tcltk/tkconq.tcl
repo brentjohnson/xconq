@@ -874,7 +874,7 @@ proc add_world_size_dialog_items {} {
     global bgcolor hbcolor fgcolor afcolor stdfont boldfont
 
     if { !"[ winfo exists .newgame.top.world ]" } {
-	canvas .newgame.top.world -width 380 -height 240 -bg gray \
+	canvas .newgame.top.world -width 370 -height 240 -bg gray \
 	-bg $bgcolor -highlightbackground $hbcolor
 	set wtop [ expr 120 - 60 ]
 	set wbot [ expr 120 + 60 ]
@@ -1094,12 +1094,17 @@ proc add_player_dialog_items {} {
    	   
     # Enforce the same pixel positions as for the text in sp_entry below.
     grid columnconfig .newgame.top.listheadings 0 -minsize 38 -weight 0
-    grid columnconfig .newgame.top.listheadings 1 -minsize 126 -weight 0
-    grid columnconfig .newgame.top.listheadings 2 -minsize 84 -weight 0
+    grid columnconfig .newgame.top.listheadings 1 -minsize 136 -weight 0
+    grid columnconfig .newgame.top.listheadings 2 -minsize 94 -weight 0
     grid columnconfig .newgame.top.listheadings 3 -minsize 68 -weight 0
     grid columnconfig .newgame.top.listheadings 4 -minsize 6 -weight 0
 
-    set maxheight [ expr $maxs * (24 + 4 + 2) + 2 ]
+    set bufwidth 10
+    set setuplineheight 30
+    set innersetuplineheight [ expr $setuplineheight - 1 ]
+    set maxheight [ expr $maxs * ($setuplineheight + 2) + 2 ]
+    set maxwidth 370
+    set innerwidth [ expr $maxwidth - $bufwidth ]
 
     frame .newgame.top.f1 -bg $bgcolor
     pack .newgame.top.f1 -side left -fill both -anchor nw -padx 8
@@ -1112,8 +1117,8 @@ proc add_player_dialog_items {} {
     frame .newgame.top.f1.f11 -borderwidth 2 -relief sunken -bg $lcolor
     pack .newgame.top.f1.f11 -side left -fill both -expand false
 
-    canvas .newgame.top.f1.f11.c -width 360 -height $maxheight \
-	    -scrollregion [ list 0 0 360 $maxheight ] \
+    canvas .newgame.top.f1.f11.c -width $maxwidth -height $maxheight \
+	    -scrollregion [ list 0 0 $maxwidth $maxheight ] \
 	    -yscrollcommand { .newgame.top.f1.yscroll set } \
 	    -bg $lcolor -highlightbackground $lcolor
     pack .newgame.top.f1.f11.c -side left -fill both
@@ -1129,21 +1134,21 @@ proc add_player_dialog_items {} {
     # We make entries for all sides including the indepside, but we
     # choose whether to pack the indepside based on whether it is
     # active in the game or not.
-    canvas .newgame.top.f1.f11.c.f2.dummy -width 360 -height -3 -borderwidth 0 \
+    canvas .newgame.top.f1.f11.c.f2.dummy -width $maxwidth -height -3 -borderwidth 0 \
 	     -bg $lcolor -highlightbackground $lcolor
     pack .newgame.top.f1.f11.c.f2.dummy -side top -fill x
     for { set i 0 } { $i <= $maxs } { incr i } {
 	set sp_entry .newgame.top.f1.f11.c.f2.s$i
-	canvas $sp_entry -width 360 -height 24 -borderwidth 0 \
+	canvas $sp_entry -width $maxwidth -height $setuplineheight -borderwidth 0 \
 		 -bg $lcolor -highlightbackground $lcolor
 	# Although indicating the current side/player by raising and
 	# sinking relief seems good, it's visually confusing in practice;
 	# so use a surrounding rect and make it thicker for selected side.
-	$sp_entry create rect 32 3 350 23 -tag outline -outline gray
-	$sp_entry create text 40 6 -tag side -anchor nw -text "" -font $bigfont -fill $fgcolor
-	$sp_entry create text 166 6 -tag player -anchor nw -text "" -font $bigfont -fill $fgcolor
-	$sp_entry create text 250 6 -tag aitype -anchor nw -text "" -font $bigfont -fill $fgcolor
-	$sp_entry create text 326 6 -tag advantage -anchor nw -text "" -font $bigfont -fill $fgcolor
+	$sp_entry create rect 32 3 $innerwidth $innersetuplineheight -tag outline -outline gray
+	$sp_entry create text 40 4 -tag side -anchor nw -text "" -font $bigfont -fill $fgcolor
+	$sp_entry create text 176 4 -tag player -anchor nw -text "" -font $bigfont -fill $fgcolor
+	$sp_entry create text 270 4 -tag aitype -anchor nw -text "" -font $bigfont -fill $fgcolor
+	$sp_entry create text 346 4 -tag advantage -anchor nw -text "" -font $bigfont -fill $fgcolor
 	imfsample $sp_entry.emblem -width 16 -height 16 -iwidth 16 -iheight 16 -bg $lcolor
 	$sp_entry create window 6 6 -window $sp_entry.emblem -anchor nw
 	if { $i <= $nums } {
@@ -1562,9 +1567,11 @@ proc set_indepside { mode } {
 	.newgame.top.plbuttons.indepside config -text "Activate"
     }
     # Recompute the length of the player list.
-    set maxheight [ expr $maxs * (24 + 4 + 2) + 2 ]
-    .newgame.top.f1.f11.c config -width 360 -height $maxheight \
-	    -scrollregion [ list 0 0 360 $maxheight ]
+    set setuplineheight 30
+    set maxheight [ expr $maxs * ($setuplineheight + 2) + 2 ]
+    set maxwidth 370
+    .newgame.top.f1.f11.c config -width $maxwidth -height $maxheight \
+	    -scrollregion [ list 0 0 $maxwidth $maxheight ]
 }
 
 proc popup_indepside_config {} {
