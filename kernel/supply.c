@@ -379,6 +379,10 @@ init_supply_system(void)
     if (mclass_count) extend_workspace(0);
 
     /* Finally, trim memory taken by material_stats. */
+    if (ms == mstats) {
+		/* Defends against a portability bug */
+		ms = mstats + 1;
+    } 
     if (!realloc(mstats, (size_t)ms - (size_t)mstats)) {
 		Dprintf("realloc() failed; exiting");
 		exit(1);
