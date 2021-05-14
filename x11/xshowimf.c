@@ -32,12 +32,7 @@ extern "C" {
 }
 #endif
 
-/* Try to humor both C++ and pedantic ANSI C. */
-#ifdef __cplusplus
-#define BMAP_BYTE char
-#else
 #define BMAP_BYTE unsigned char
-#endif
 #include <bitmaps/check.b>
 
 #include "config.h"
