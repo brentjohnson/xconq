@@ -7,13 +7,7 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2, or (at your option)
 any later version.  See the file COPYING.  */
 
-/* Try to humor both C++ and pedantic ANSI C. */
-#if (defined (__cplusplus) || defined (__MWERKS__))
-#define BMAP_BYTE char
-#else
 #define BMAP_BYTE unsigned char
-#endif
-
 #define NUMPOWERS 8
 
 /* Xform flags for unit views. */
