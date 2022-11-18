@@ -13,10 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: install
-      run:  find / -name tclConfig.sh 2>/dev/null
     - name: configure
-      run: ./configure
+      run: ./configure --with-tclconfig=/usr/share/miniconda/lib
     - name: make
       run: make
     - name: make check
