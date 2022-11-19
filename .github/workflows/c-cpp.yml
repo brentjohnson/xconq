@@ -16,7 +16,7 @@ jobs:
     - name: install tools
       run: sudo apt-get update && sudo apt-get install -y --no-install-recommends autoconf automake g++ gcc libsdl1.2-dev libxmu-dev libxaw7-dev make tcl-dev tk-dev
     - name: configure
-      run: ./configure --with-tclconfig=/usr/share/miniconda/lib
+      run: ./configure
     - name: make
       run: make
     - name: make check
