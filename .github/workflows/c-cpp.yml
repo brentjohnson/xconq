@@ -16,7 +16,7 @@ jobs:
     - name: install
       run:  sudo apt update && sudo apt install -y tcl-dev tk-dev
     - name: configure
-      run: ./configure
+      run: SDL_CONFIG=/usr/bin/sdl2-config ./configure
     - name: make
       run: make
     - name: make check
