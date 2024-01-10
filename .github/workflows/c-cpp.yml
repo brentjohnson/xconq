@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: install
-      run:  sudo apt update && sudo apt install -y tcl-dev tk-dev
+      run:  sudo apt update && sudo apt install -y tcl-dev tk-dev libsdl2-dev
     - name: configure
       run: SDL_CONFIG=/usr/bin/sdl2-config ./configure
     - name: make
