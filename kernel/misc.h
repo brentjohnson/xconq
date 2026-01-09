@@ -40,6 +40,15 @@ any later version.  See the file COPYING.  */
 #define ABS(x) (((x) < 0) ? (0 - (x)) : (x))
 #endif
 
+#ifdef __cplusplus
+#include <cmath>
+constexpr const long& min(const long& a, const long& b) {
+	return std::min(a, b);
+}
+constexpr const long& max(const long& a, const long& b) {
+	return std::max(a, b);
+}
+#else
 #ifndef min
 /*! \brief Minimum value.
  *
@@ -63,6 +72,7 @@ any later version.  See the file COPYING.  */
  */
 #define max(x,y) (((x) > (y)) ? (x) : (y))
 #endif
+#endif /* __cplusplus */
 
 /*! \brief Is between.
  *
