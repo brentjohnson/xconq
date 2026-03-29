@@ -41,7 +41,7 @@ any later version.  See the file COPYING.  */
 #endif
 
 #ifdef __cplusplus
-#include <cmath>
+#include <algorithm>
 constexpr const long& min(const long& a, const long& b) {
 	return std::min(a, b);
 }
