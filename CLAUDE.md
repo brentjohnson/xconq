@@ -47,8 +47,10 @@ ctest --test-dir build -R check-lib     # or check-actions, check-save, check-te
 ```
 
 Caveats: the test scripts always exit 0 (they only detect crashes of the harness, not
-game errors — inspect `build/test/*.log` for real results), and `check-auto` is disabled
-because of a pre-existing kernel assertion crash in `do_toolup_action` (kernel/actions.c).
+game errors — inspect `build/test/*.log` for real results). Two tests are disabled for
+pre-existing kernel bugs: `check-auto` (assertion crash in `do_toolup_action`,
+kernel/actions.c) and `check-ai` (infinite loop on `lib/cil-rules.g` that fills the disk
+with log output).
 
 Consistency-check scripts also live in `test/` (`*-diff.sh`, `*-uses.sh`), runnable by hand:
 - `check-lib` / `test-lib.sh` — load & run every library game module
