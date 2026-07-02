@@ -12,14 +12,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: install
-      run:  sudo apt update && sudo apt install -y tcl-dev tk-dev libsdl2-dev
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y tcl-dev tk-dev libncurses-dev \
+          libsdl1.2-compat-dev libxaw7-dev libxmu-dev libxpm-dev
     - name: configure
-      run: SDL_CONFIG=/usr/bin/sdl2-config ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+      run: cmake -B build
+    - name: build
+      run: cmake --build build -j$(nproc)
+    - name: test
+      run: ctest --test-dir build --output-on-failure --label-exclude long

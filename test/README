@@ -23,36 +23,32 @@ cmd-diff.sh:
 
 syntax-diff.sh:
 
-make-check-sync: This runs all of the above scripts.
-
-make check-dates: This lists everything that might be a user-visible
-date in the sources and documentation.  Examine manually to see if
-everything is as it should be.
-
-make check-versions: This lists all the version numbers in sources and
-documentation.  Examine manually to see any errors.
+These consistency-analysis scripts are not wired into the build; run
+them by hand from this directory, passing it as the argument, e.g.
+"./sym-diff.sh .".
 
 EXECUTION TESTS
 
-Note that although the test runs require skelconq to exist in
-../kernel, it is not normally built, so as to save space.  You have to
-go into ../kernel and do "make skelconq" there.
+The execution tests are wired into CTest and use the skelconq binary
+built as part of the normal CMake build.  Run them all with
+"ctest --test-dir <builddir>", or one at a time with "ctest -R <name>".
+The scripts write their logs into <builddir>/test/.
 
-test-lib.sh (make check-lib): This runs skelconq and does some
+test-lib.sh (ctest -R check-lib): This runs skelconq and does some
 assorted random actions on random units, for each .g file in the
 library, and collects all output into a log.  This is useful for
 finding errors in the kernel and in library games.
 
-test-save.sh (make check-save): This does multiple save and restore,
+test-save.sh (ctest -R check-save): This does multiple save and restore,
 and compares the results.
 
-test-run.sh (make check-run):
+test-run.sh (ctest -R check-run):
 
-test-long.sh (make check-long):
+test-long.sh (ctest -R check-long):
 
-test-ai.sh (make check-ai):
+test-ai.sh (ctest -R check-ai):
 
-test-test.sh (make check-test):
+test-test.sh (ctest -R check-test):
 
 TEST GAMES
 

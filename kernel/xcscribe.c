@@ -733,7 +733,7 @@ update_clock_display(Side *side, int rightnow)
 }
 
 void
-update_message_display(Side *side, Side *sender, char *str, int rightnow)
+update_message_display(Side *side, Side *sender, const char *str, int rightnow)
 {
     if (active_display(side) && DebugG) {
 	printf("Update %s: side %d sends \"%s\"%s\n",

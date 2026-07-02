@@ -243,12 +243,33 @@ void mark_changed(ImageFamily *imf, int dummy);
 
 #ifdef HAVE_SELFILE
 #include <sys/stat.h>
-extern FILE *XsraSelFile(Widget toplevel, char *prompt, char *ok,
-			 char *cancel, char *failed, char *init_path,
-			 char *mode,
-			 int (*show_entry)(char *, char **, struct stat *),
-			 char **name_return);
+/* SelFile is compiled as plain C. */
+extern "C" FILE *XsraSelFile(Widget toplevel, char *prompt, char *ok,
+			     char *cancel, char *failed, char *init_path,
+			     char *mode,
+			     int (*show_entry)(char *, char **, struct stat *),
+			     char **name_return);
 #endif
+
+/* Fakes for kernel table machinery referenced by lisp.c but not used
+   when viewing images (same trick as in x2imf.c). */
+
+struct fake_tabledefn {
+    const char *name;
+    int (*getter)(int, int);
+    const char *doc;
+    short **table;
+    short dflt;
+    short lo;
+    short hi;
+    char index1;
+    char index2;
+    char valtype;
+} tabledefns[] = {
+    { NULL }
+};
+
+int numtypes_from_index_type(int x) {return 0;}
 
 int
 main(int argc, char *argv[])

@@ -2689,7 +2689,7 @@ update_unit_controls(Side *side, Map *map)
     set_control_state(side, map, UNIT_MOVE,
 		      (map->curunit != NULL && can_move_at_all(map->curunit)), FALSE);
     set_control_state(side, map, UNIT_SHOOT,
-		      (map->curunit != NULL && can_fire(map->curunit)), FALSE);
+		      (map->curunit != NULL && can_fire(map->curunit, map->curunit)), FALSE);
     set_control_state(side, map, UNIT_BUILD,
     		      (map->curunit != NULL && can_build(map->curunit)), FALSE);
 }

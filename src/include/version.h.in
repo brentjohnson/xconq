@@ -1,3 +1,0 @@
-#define VERSION "@XCONQ_VERSION_MAIN@ (@XCONQ_VERSION_RELEASE@)"
-
-#define COPYRIGHT "Copyright 1986-2000 Stanley T. Shebs"

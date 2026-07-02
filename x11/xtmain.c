@@ -581,7 +581,7 @@ update_clock_display(Side *side, int rightnow)
 }
 
 void
-update_message_display(Side *side, Side *sender, char *str, int rightnow)
+update_message_display(Side *side, Side *sender, const char *str, int rightnow)
 {
     if (active_display(side)) {
 	notify(side, "From %s: \"%s\"",
@@ -592,7 +592,7 @@ update_message_display(Side *side, Side *sender, char *str, int rightnow)
 }
 
 void
-update_all_progress_displays(char *str, int s)
+update_all_progress_displays(const char *str, int s)
 {
 }
 
@@ -754,8 +754,16 @@ low_notify(Side *side, char *str)
     }
 }
 
+/* Mandatory UI Definition: handle UI events while kernel or AI
+   processing is taking place. */
+
+void
+run_ui_idler(void)
+{
+}
+
 int
-schedule_movie(Side *side, char *movie, ...)
+schedule_movie(Side *side, const char *movie, ...)
 {
     int i;
     enum movie_type itype;

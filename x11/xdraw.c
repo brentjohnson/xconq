@@ -1813,7 +1813,7 @@ draw_unit_image(ImageFamily *imf, Side *side, Window win, int sx, int sy, int sw
     if (between(0, s2, numsides)) {
 	ename = (side_n(s2) ? side_n(s2)->emblemname : NULL);
 	if (emblem_position(uimg, ename, NULL /* eimg */, sw, sh,
-			    &ex, &ey, &ew, &eh)) {
+			    sh, sh, &ex, &ey, &ew, &eh)) {
 	    draw_side_emblem(side, win, sx + ex, sy + ey, ew, eh, s2, 0);
 	}
     }

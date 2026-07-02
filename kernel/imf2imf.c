@@ -150,8 +150,8 @@ announce_read_progress()
 {
 }
 
-void  
-syntax_error(Obj *x, char *msg)
+void
+syntax_error(Obj *x, const char *msg)
 {
     sprintlisp(readerrbuf, x, BUFSIZE);
     init_warning("syntax error in `%s' - %s", readerrbuf, msg);
@@ -193,7 +193,7 @@ low_run_warning(char *str)
 /* Fake definitions of unneeded routines called by lisp.c. */
 
 int
-keyword_code(char *str)
+keyword_code(const char *str)
 {
     run_warning("fake keyword_code being called");
     return 0;
@@ -213,7 +213,7 @@ struct a_key {
     { NULL }
 };
 
-char *
+const char *
 keyword_name(enum keywords k)
 {
     return keywordtable[k].name;
@@ -234,4 +234,36 @@ lazy_bind(Obj *sym)
 void
 prealloc_debug(void)
 {
+}
+
+/* More fakes: newer lisp.c and unix.c reference kernel table machinery
+   and game saving, neither of which is used when converting images. */
+
+struct fake_tabledefn {
+    const char *name;
+    int (*getter)(int, int);
+    const char *doc;
+    short **table;
+    short dflt;
+    short lo;
+    short hi;
+    char index1;
+    char index2;
+    char valtype;
+} tabledefns[] = {
+    { NULL }
+};
+
+int
+numtypes_from_index_type(int x)
+{
+    run_warning("fake numtypes_from_index_type being called");
+    return 0;
+}
+
+int
+write_entire_game_state(const char *fname)
+{
+    run_warning("fake write_entire_game_state being called");
+    return FALSE;
 }

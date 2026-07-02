@@ -32,7 +32,7 @@
 
 #include "SFinternal.h"
 
-#include "../kernel/acdefs.h"
+#include "acdefs.h"
 
 #if HAVE_DIRENT_H
 #include <dirent.h>

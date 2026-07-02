@@ -217,7 +217,7 @@ make_default_player_spec(void)
 /* An init error needs to have the command re-run. */
 
 void
-low_init_error(char *str)
+low_init_error(const char *str)
 {
     fprintf(stderr, "Error: %s.\n", str);
     fflush(stderr);
@@ -337,7 +337,7 @@ announce_read_progress()
 /* Announce the start of a time-consuming computation. */
 
 void
-announce_lengthy_process(char *msg)
+announce_lengthy_process(const char *msg)
 {
     n_seconds_elapsed(0);
     announcemsg = copy_string(msg);
@@ -439,7 +439,7 @@ unit_research_dialog(Unit *unit)
 }
 
 void
-add_remote_locally(int rid, char *str)
+add_remote_locally(int rid, const char *str)
 {
 }
 

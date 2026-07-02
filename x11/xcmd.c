@@ -245,7 +245,7 @@ do_build(Side *side)
 	break;
       case 1:
 	/* Only one type to build - do it. */
-	impl_build(side, unit, ufirst, 0, 0, map->prefixarg);
+	impl_build(side, unit, ufirst, unit, unit->x, unit->y, map->prefixarg);
 	break;
       default:
 	/* Player has to choose a type to build. */
@@ -270,7 +270,7 @@ aux_build(Side *side, Map *map, int cancel)
 	if (u2 != NONUTYPE) {
 	    unit = find_unit(map->argunitid);
 	    if (in_play(unit) && side_controls_unit(side, unit)) {
-		impl_build(side, unit, u2, 0, 0, map->prefixarg);
+		impl_build(side, unit, u2, unit, unit->x, unit->y, map->prefixarg);
 	    } else {
 		cmd_error(side, "unit disappeared!?");
 	    }
@@ -1688,7 +1688,7 @@ do_trace(Side *side)
 /* Generic command error feedback. */
 
 void
-cmd_error(Side *side, char *fmt, ...)
+cmd_error(Side *side, const char *fmt, ...)
 {
     if (!empty_string(fmt)) {
 	va_list ap;
