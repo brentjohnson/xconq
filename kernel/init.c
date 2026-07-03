@@ -760,6 +760,14 @@ patch_object_references(void)
 	    side->self_unit = find_unit(side->self_unit_id);
 	}
     }
+    /* Unit views read from a save file only carry unit ids; link them
+       to their units so that view_unit() works.  Without the link, a
+       restored view of a live unit looks like a view of a vanished
+       one, and the first sighting of its cell flushes and re-dates it. */
+    for (uview = viewlist; uview != NULL; uview = uview->vnext) {
+	if (uview->unit == NULL)
+	  uview->unit = find_unit(uview->id);
+    }
     for_all_units(unit) {
 	/* It's possible that dead units got read in, so check. */
 	if (alive(unit)) {
@@ -815,7 +823,11 @@ patch_object_references(void)
 	    } else {
 		/* Check that the unit's location is meaningful. */
 		if (!inside_area(unit->x, unit->y)) {
-		    if (inside_area(unit->prevx, unit->prevy)) {
+		    if (!terrain_defined()) {
+			/* Can't test placement without terrain (it may
+			   still be synthesized later); leave the unit
+			   for check_consistency to sort out. */
+		    } else if (inside_area(unit->prevx, unit->prevy)) {
 			/* First try to just drop the unit in the cell. */
 			if (type_can_occupy_cell(unit->type, 
 						 unit->prevx, unit->prevy)
@@ -1835,6 +1847,11 @@ init_view_cell(int x, int y)
     /* If this cell is under observation, don't need to do anything special. */
     if (cover(tmpside, x, y) > 0)
       return;
+    /* If a set of unit views was read in (game restore), it is
+       authoritative; recomputing views here would re-date them all to
+       the current turn. */
+    if (tmpside->unit_view_restored)
+      return;
     /* Scan all the units here to see if any are visible. */
     for_all_stack(x, y, unit) {
     	if (in_play(unit)) {
@@ -1934,8 +1951,13 @@ init_ranged_views(void)
     if (g_see_all() || g_terrain_seen())
       return;
     announce_lengthy_process("Computing ranged and people views");
-    /* Compute the view for each side. */ 
+    /* Compute the view for each side. */
     for_all_sides(side) {
+	/* A side whose unit views were read in (game restore) has its
+	   entire view state from the save file; recomputing would
+	   flush the restored views and re-date them all. */
+	if (side->unit_view_restored)
+	  continue;
 	/* Set this so the helper fn has a side to use. */
 	tmpside = side;
 	/* View from our own and other units. */

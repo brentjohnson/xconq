@@ -690,11 +690,14 @@ update_side_display(Side *side, Side *side2, int rightnow)
 void
 update_research_display(Side *side)
 {
+    /* There is no display side here; pick research for the side the
+       kernel is asking about. */
     if (numatypes > 0
+	&& side != NULL
 	&& g_side_can_research()
-	&& dside->research_topic == NOADVANCE) {
+	&& side->research_topic == NOADVANCE) {
 	/* Should eventually pop up a side research dialog instead. */
-	auto_pick_side_research(dside);
+	auto_pick_side_research(side);
     }
 }
 

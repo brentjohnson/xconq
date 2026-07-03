@@ -3,24 +3,15 @@
 # do some simple commands, and quit.
 
 srcdir=$1
-
-if [ -r ../kernel/skelconq ] ; then
-	echo "skelconq found"
-else
-	echo "Error: skelconq not found, exiting"
-	exit 1
-fi
+. $srcdir/common.sh
 
 logname=libtest.log
 
-/bin/rm -f $logname
+rm -f $logname
 touch $logname
 echo Test started on `date` >> $logname
 for i in $srcdir/../lib/*.g ; do
 	echo $i
-	echo "" >> $logname
-	echo ">>> Running skelconq on: " $i "<<<" >> $logname
-	echo "" >> $logname
-	../kernel/skelconq -f $i -L $srcdir/../lib <$srcdir/libtest.inp >> $logname
+	run_one $i $srcdir/libtest.inp
 done
-echo Test finished on `date` >> $logname
+finish

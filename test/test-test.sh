@@ -1,26 +1,30 @@
 #!/bin/sh
 # Iterate through all test modules, attempting to start up,
 # do some simple commands, and quit.
+#
+# The test modules are the suite's own inputs, so they are all held to
+# the strict no-diagnostics policy, except that the error*.g and warn.g
+# modules exist to exercise error handling and must produce diagnostics,
+# and extreme2.g (the terrain-type limit test) legitimately warns while
+# synthesizing terrain for its 130 percentile-less terrain types.
 
 srcdir=$1
+. $srcdir/common.sh
 
-if [ -r ../kernel/skelconq ] ; then
-	echo "skelconq found"
-else
-	echo "Error: skelconq not found, exiting"
-	exit 1
-fi
+ALL_STRICT=yes
 
 logname=test.log
 
-/bin/rm -f $logname
+rm -f $logname
 touch $logname
 echo Test started on `date` >> $logname
 for i in $srcdir/../test/*.g ; do
 	echo $i
-	echo "" >> $logname
-	echo ">>> Running skelconq on: " $i "<<<" >> $logname
-	echo "" >> $logname
-	../kernel/skelconq -f $i -L $srcdir/../lib <$srcdir/libtest.inp >> $logname 2>&1
+	case `basename $i` in
+	error*.g|warn.g|extreme2.g)
+		run_expect_diag $i $srcdir/libtest.inp ;;
+	*)
+		run_one $i $srcdir/libtest.inp ;;
+	esac
 done
-echo Test finished on `date` >> $logname
+finish

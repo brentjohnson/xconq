@@ -147,7 +147,7 @@ DEF_UA_TABLE("advance-to-change-type", ua_to_change_type,
 
 DEF_UU_TABLE("ai-base-worth-for", uu_ai_base_worth_for,
 	"worth of u as a base for u2",
-	uuaibaseworthfor, constuuaibaseworthfor, -1, -1, TABHI, TABINT)
+	uuaibaseworthfor, constuuaibaseworthfor, TABLO, -1, TABHI, TABINT)
 
 DEF_UU_TABLE("alt-complete-occs-on-completion", 
 	uu_alt_complete_occs_on_completion,

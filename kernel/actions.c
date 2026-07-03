@@ -4206,16 +4206,37 @@ execute_action(Unit *unit, Action *action)
 	    unit_desig(unit), action_desig(action), unit->act->acp);
     if (!alive(unit) || !unit->act || unit->act->acp < u_acp_min(u))
       return A_ANY_ERROR;
+    /* The actor must be in play and complete; scripted and remote
+       commands can name units that are not, and the check/do functions
+       assert it. */
+    if (!is_active(unit))
+      return A_ANY_ERROR;
     if (!unit->side->could_act_with[u])
 	return A_ANY_CANNOT_DO;
     argtypestr = actiondefns[(int) action->type].argtypes;
     n = strlen(argtypestr);
     for (i = 0; i < n; ++i) {
 	switch (argtypestr[i]) {
-	  case 'n':
+	  /* Type-valued arguments must be valid types; actions come in
+	     from scripts, the network, and saved tasks, so reject bad
+	     ones here instead of tripping assertions in the
+	     check/do functions. */
 	  case 'u':
+	    if (!is_unit_type(action->args[i]))
+	      return A_ANY_ERROR;
+	    a[i] = action->args[i];
+	    break;
 	  case 'm':
+	    if (!is_material_type(action->args[i]))
+	      return A_ANY_ERROR;
+	    a[i] = action->args[i];
+	    break;
 	  case 't':
+	    if (!is_terrain_type(action->args[i]))
+	      return A_ANY_ERROR;
+	    a[i] = action->args[i];
+	    break;
+	  case 'n':
 	  case 'x':
 	  case 'y':
 	  case 'z':
@@ -4525,6 +4546,9 @@ pattern_matches_action(Obj *parms, Unit *unit, Action *action)
       actee = unit;
     else
       actee = find_unit(action->actee);
+    /* The actee may be gone (died before the action resolved). */
+    if (actee == NULL)
+      return FALSE;
     if (!(symbolp(head) && strcmp(c_string(head), u_type_name(actee->type)) == 0)
 	 || match_keyword(head, K_USTAR)
 	 || (symbolp(head)

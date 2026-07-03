@@ -141,7 +141,13 @@ main(int argc, char *argv[])
     multicmd = lispnil;
     while (1) {
 	if (freerunturns > 0) {
-	    if (probability(10)) {
+	    if (beforestart) {
+		/* A game that has not started (no side with both a
+		   display and units) can never advance turns, so a
+		   free run would spin forever. */
+		printf("Game has not started, cancelling the run.\n");
+		freerunturns = 0;
+	    } else if (probability(10)) {
 	    	printf("No apparent progress, forcing the turn to finish.\n");
 	    	do_finish_all(NULL, lispnil, lispnil);
 	    }
@@ -890,11 +896,14 @@ update_side_display(Side *side, Side *side2, int rightnow)
 void
 update_research_display(Side *side)
 {
+    /* There is no display side here; pick research for the side the
+       kernel is asking about. */
     if (numatypes > 0
+	&& side != NULL
 	&& g_side_can_research()
-	&& dside->research_topic == NOADVANCE) {
+	&& side->research_topic == NOADVANCE) {
 	/* Should eventually pop up a side research dialog instead. */
-	auto_pick_side_research(dside);
+	auto_pick_side_research(side);
     }
 }
 

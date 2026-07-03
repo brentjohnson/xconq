@@ -802,7 +802,14 @@ interp_game_module(Obj *form, Module *module)
 	    module->basegame = strval;
 	    break;
 	  case K_FILENAME:
-	    module->filename = strval;
+	    /* A declared filename must never override the file the
+	       module is actually being read from; save files record
+	       the filename they were written to (e.g. "save.xcq"),
+	       and clobbering the real filename here made a reload
+	       re-resolve the module by name and silently load the
+	       original library game instead of the saved state. */
+	    if (empty_string(module->filename))
+	      module->filename = strval;
 	    break;
 	  case K_INSTRUCTIONS:
 	    /* The instructions are a list of strings. */
@@ -850,9 +857,14 @@ interp_utype(Obj *form)
     Obj *name = cadr(form), *utype;
 
     TYPECHECK(symbolp, name, "unit-type name not a symbol");
-    if (!canaddutype)
-      read_warning("Should not be defining more unit types");
-    u = create_unit_type();
+    if (!canaddutype) {
+	read_warning("Should not be defining more unit types");
+	/* Late tolerated definition; scratch arrays and side arrays
+	   must be resized to cover the new type. */
+	u = create_unit_type();
+	disallow_more_unit_types();
+    } else
+	u = create_unit_type();
     utype = new_utype(u);
     /* Set default values for the unit type's props first. */
     /* Any default type name shouldn't confuse the code below. */
@@ -948,9 +960,12 @@ interp_mtype(Obj *form)
     Obj *name = cadr(form), *mtype;
     
     TYPECHECK(symbolp, name, "material-type name not a symbol");
-    if (!canaddmtype)
-      read_warning("Should not be defining more material types");
-    m = create_material_type();
+    if (!canaddmtype) {
+	read_warning("Should not be defining more material types");
+	m = create_material_type();
+	disallow_more_material_types();
+    } else
+	m = create_material_type();
     mtype = new_mtype(m);
     /* Set default values for the material type's properties first. */
     default_material_type(m);
@@ -974,9 +989,12 @@ interp_atype(Obj *form)
     Obj *name = cadr(form), *atype;
     
     TYPECHECK(symbolp, name, "advance type name not a symbol");
-    if (!canaddatype)
-      read_warning("Should not be defining more advance types");
-    a = create_advance_type();
+    if (!canaddatype) {
+	read_warning("Should not be defining more advance types");
+	a = create_advance_type();
+	disallow_more_advance_types();
+    } else
+	a = create_advance_type();
     atype = new_atype(a);
     /* Set default values for the material type's properties first. */
     default_advance_type(a);
@@ -1112,8 +1130,6 @@ interp_ttype(Obj *form)
     Obj *name = cadr(form), *ttype;
 
     TYPECHECK(symbolp, name, "terrain-type name not a symbol");
-    if (!canaddttype)
-      read_warning("Should not be defining more terrain types");
     t = create_terrain_type();
     ttype = new_ttype(t);
     /* Set default values for the terrain type's props first. */
@@ -1124,6 +1140,13 @@ interp_ttype(Obj *form)
     /* If no type name string given, use the defined name. */
     if (empty_string(t_type_name(t)))
       set_t_type_name(t, c_string(name));
+    if (!canaddttype) {
+	read_warning("Should not be defining more terrain types");
+	/* Late tolerated definition; the subtype chains and scratch
+	   arrays must be resized to cover the new type (after its
+	   subtype is known, i.e. after fill_in_ttype). */
+	disallow_more_terrain_types();
+    }
     /* Blast and remake any cached list of all types. */
     makunbound(intern_symbol(keyword_name(K_TSTAR)));
     eval_symbol(intern_symbol(keyword_name(K_TSTAR)));
@@ -2568,10 +2591,12 @@ interp_unit_views(Side *side, Obj *vlist)
 	    uview->siden = c_number(eval(car(props)));
 	    props = cdr(props);
 	}
-	if (symbolp(car(props))) {
-             uview->name = c_string(car(props));
-         	    props = cdr(props);
-         }
+	/* The name is written as a string (it may contain spaces),
+	   but accept a symbol too for old save files. */
+	if (stringp(car(props)) || symbolp(car(props))) {
+	    uview->name = c_string(car(props));
+	    props = cdr(props);
+	}
 	if (numberp(car(props))) {
 	    uview->size = c_number(car(props));
 	    props = cdr(props);
@@ -3405,6 +3430,7 @@ interp_unit(Obj *form)
     Obj *head = car(form), *props = cdr(form), *bdg, *val, *bdgrest, *val2;
     Obj *save, *unitspec;
     Unit *unit, *unit2;
+    Side *side2;
     extern int nextid;
 
     if (!g_create_units()) {
@@ -3762,11 +3788,20 @@ interp_unit(Obj *form)
     }
     if (nusn >= 0) {
 	/* (should check that this is an allowed side?) */
-	set_unit_side(unit, side_n(nusn));
+	side2 = side_n(nusn);
+	if (side2 == NULL)
+	  read_warning("%s cannot join side %d, no such side; leaving independent",
+		       unit_desig(unit), nusn);
+	else
+	  set_unit_side(unit, side2);
     }
     if (nuosn >= 0) {
 	/* (should check that this is an allowed side?) */
-	set_unit_origside(unit, side_n(nuosn));
+	side2 = side_n(nuosn);
+	if (side2 == NULL)
+	  read_warning("%s cannot have original side %d, no such side; using its current side",
+		       unit_desig(unit), nuosn);
+	set_unit_origside(unit, side2 != NULL ? side2 : unit->side);
     } else {
 	set_unit_origside(unit, unit->side);
     }

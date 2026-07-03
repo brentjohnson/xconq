@@ -206,9 +206,13 @@ typedef struct a_side {
 				 *   <I>relationship</I> */
     short *trades;		/*!< true if side trades with another side. 
 				 *   <I>relationship</I> */
-    short *startwith;		/*!< how many units of each type at start of 
+    short *startwith;		/*!< how many units of each type at start of
 				 *   game <I>relationship</I> */
-    short *counts;		/*!< array of numbers for identifying units 
+    short numutypesalloced;	/*!< how many unit types the per-utype
+				 *   arrays below cover; sides can be
+				 *   created before all types are
+				 *   defined (see grow_side_utype_arrays) */
+    short *counts;		/*!< array of numbers for identifying units
 				 *   <I>relationship</I> */
     short *tech;		/*!< tech level for each unit type 
 				 *   <I>relationship</I> */
@@ -1392,6 +1396,7 @@ extern int n_units_on_side(Side *side);
 extern void init_sides(void);
 extern Side *create_side(void);
 extern void init_side_unithead(Side *side);
+extern void grow_side_utype_arrays(void);
 extern int side_has_units(Side *side);
 extern void init_doctrine(Side *side);
 extern void init_self_unit(Side *side);

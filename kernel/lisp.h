@@ -258,6 +258,13 @@ extern int interpolate_in_list_ext(int val, Obj *lis,
 
 extern const char *escaped_symbol(const char *str);
 extern char *escaped_string(const char *str);
+
+/* Hooks installed by init_types so that fprintlisp can print type
+   objects by name (readable GDL) instead of debug notation. */
+extern const char *(*utype_name_hook)(int u);
+extern const char *(*mtype_name_hook)(int m);
+extern const char *(*ttype_name_hook)(int t);
+extern const char *(*atype_name_hook)(int a);
 extern char *safe_escaped_string(const char *str, int len);
 extern void interp_short_array(short *arr, Obj *lis, int n);
 extern void interp_long_array(long *arr, Obj *lis, int n);

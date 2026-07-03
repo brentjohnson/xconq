@@ -2474,7 +2474,11 @@ retreat_in_dir(Unit *unit, int dir)
     retreating = TRUE;
     rslt = check_move_action(unit, unit, nx, ny, unit->z);
     if (valid(rslt)) {
-	unit->act->acp += uu_acp_retreat(unit->type, retreating_from);
+	/* (retreating_from is NONUTYPE when occupants are being
+	   rescued from a doomed transport rather than retreating from
+	   an attacker; there is no attacker type to index by then.) */
+	if (is_unit_type(retreating_from))
+	  unit->act->acp += uu_acp_retreat(unit->type, retreating_from);
 	do_move_action(unit, unit, nx, ny, unit->z);
 	retreating = FALSE;
 	retreating_from = NONUTYPE;
@@ -2484,7 +2488,8 @@ retreat_in_dir(Unit *unit, int dir)
     for_all_stack(nx, ny, other) {
 	rslt = check_enter_action(unit, unit, other);
 	if (valid(rslt)) {
-	    unit->act->acp += uu_acp_retreat(unit->type, retreating_from);
+	    if (is_unit_type(retreating_from))
+	      unit->act->acp += uu_acp_retreat(unit->type, retreating_from);
 	    do_enter_action(unit, unit, other);
 	    retreating = FALSE;
 	    retreating_from = NONUTYPE;

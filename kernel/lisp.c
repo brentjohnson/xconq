@@ -548,7 +548,9 @@ read_delimited_text(Strm *strm, const char *delim, int spacedelimits,
 		ch = octch;
 	    }
 	}
-	if (j >= BIGBUF) {
+	/* (The -1 leaves room for the terminating NUL; writing it at
+	   lispstrbuf[BIGBUF] was a one-byte heap overrun.) */
+	if (j >= BIGBUF - 1) {
 	    /* Warn about buffer overflow, but only once per string,
 	       then still read chars but discard them. */
 	    if (!warned) {
@@ -1131,13 +1133,21 @@ fprinttable(FILE *fp, int n)
     fprintf(fp, ")\n");
 }
 
+/* Printers for the names of type objects, installed by init_types;
+   this low-level library cannot reach the type property accessors
+   itself. */
+
+const char *(*utype_name_hook)(int u) = NULL;
+const char *(*mtype_name_hook)(int m) = NULL;
+const char *(*ttype_name_hook)(int t) = NULL;
+const char *(*atype_name_hook)(int a) = NULL;
+
 void
 fprintlisp(FILE *fp, Obj *oobj)
 {
     int needescape;
     const char *str, *tmp;
     Obj *obj = NULL;
-    int i = -1;
 
     /* Doublecheck, just in case caller is not so careful. */
     if (oobj == NULL) {
@@ -1193,13 +1203,12 @@ fprintlisp(FILE *fp, Obj *oobj)
 	} else {
 	    fprintf(fp, "%s", str);
 	}
-	/* Check to see if we are dealing with a table. */
-	for (i = 0; tabledefns[i].name != NULL; ++i) {
-	    if (!strcmp(str, tabledefns[i].name)) {
-		fprinttable(fp, i);
-		break;
-	    }
-	}
+	/* (Note that a symbol naming a table must print as just the
+	   symbol; this printer is also used to write save files, and
+	   dumping table contents here corrupted every saved form that
+	   mentioned a table by name, e.g. module variants.  The
+	   interactive print command dumps tables instead - see
+	   print_form_and_value.) */
 	break;
       case CONS:
 	fprintf(fp, "(");
@@ -1207,17 +1216,35 @@ fprintlisp(FILE *fp, Obj *oobj)
 	/* Note that there are no dotted pairs in our version of Lisp. */
 	fprint_list(fp, cdr(obj));
 	break;
+      /* Print type objects as their defining symbols; the "u#n"
+	 debug notation is not readable GDL, so it corrupted any save
+	 file containing a type object (e.g. in ai-next-goal).  The
+	 name accessors live above this library, so the kernel proper
+	 installs them as hooks (see init_types); programs linking only
+	 the low-level library keep the debug notation. */
       case UTYPE:
-	fprintf(fp, "u#%d", obj->v.num);
+	if (utype_name_hook)
+	  fprintf(fp, "%s", escaped_symbol((*utype_name_hook)(obj->v.num)));
+	else
+	  fprintf(fp, "u#%d", obj->v.num);
 	break;
       case MTYPE:
-	fprintf(fp, "m#%d", obj->v.num);
+	if (mtype_name_hook)
+	  fprintf(fp, "%s", escaped_symbol((*mtype_name_hook)(obj->v.num)));
+	else
+	  fprintf(fp, "m#%d", obj->v.num);
 	break;
       case TTYPE:
-	fprintf(fp, "t#%d", obj->v.num);
+	if (ttype_name_hook)
+	  fprintf(fp, "%s", escaped_symbol((*ttype_name_hook)(obj->v.num)));
+	else
+	  fprintf(fp, "t#%d", obj->v.num);
 	break;
       case ATYPE:
-	fprintf(fp, "a#%d", obj->v.num);
+	if (atype_name_hook)
+	  fprintf(fp, "%s", escaped_symbol((*atype_name_hook)(obj->v.num)));
+	else
+	  fprintf(fp, "a#%d", obj->v.num);
 	break;
       case POINTER:
 	fprintlisp(fp, obj->v.ptr.sym);
@@ -1415,8 +1442,18 @@ dlisp(Obj *x)
 void
 print_form_and_value(FILE *fp, Obj *form)
 {
+    int i;
+
     fprintlisp(fp, form);
     if (symbolp(form)) {
+	/* If the symbol names a table, show the table's contents. */
+	for (i = 0; tabledefns[i].name != NULL; ++i) {
+	    if (strcmp(c_string(form), tabledefns[i].name) == 0) {
+		fprinttable(fp, i);
+		fprintf(fp, "\n");
+		return;
+	    }
+	}
 	if (boundp(form)) {
 	    fprintf(fp, " -> ");
 	    fprintlisp(fp, symbol_value(form));

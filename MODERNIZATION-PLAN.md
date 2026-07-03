@@ -9,6 +9,58 @@ Step 0 (done, July 2026): replaced autoconf with CMake, removed the abandoned
 `src/` automake rework, wired the test suite into CTest, fixed the bit-rot
 needed to get all four UIs + tools compiling again, CI green on Ubuntu.
 
+Step 1 (done, July 2026): test honesty + the §2 bug fixes. The `test-*.sh`
+scripts now fail on crashes for every module and on any diagnostic/save
+mismatch for playable games (those in `lib/game.dir`); runs are seeded,
+bounded (time + output size), and use a hermetic `XCONQHOME` (see
+`test/common.sh`). `check-auto` and `check-ai` are fixed and re-enabled.
+Honest tests immediately exposed and led to fixes for: a NULL-`dside` crash
+in `update_research_display` (skelconq/xcscribe) that killed every
+advances-based game under skelconq, a segfault on unit forms naming
+nonexistent sides (`read.c`/`set_unit_side`), a segfault probing terrain
+before any terrain is defined (`init.c`/`patch_object_references`),
+`goal_truth` panicking on `no-goal`/`keep-formation`, the skelconq free-run
+infinite loop on games that never start (the `check-ai` hang), an AI-test
+crash indexing the `acp-retreat` table with `NONUTYPE` when rescuing
+occupants (`combat.c`), a broken save-file comparison that had made
+`check-save` a no-op, and a pile of stale GDL in `test/*.g` and `lib/`
+(valhalla's unplaceable Listening Post, ancient `by-name` syntax, removed
+properties/goals in `all.g`).
+
+The revived `check-save` then exposed that save/restore was deeply broken,
+all fixed: reloading a save silently loaded the *original library game*
+instead of the saved state (the save's `(filename ...)` property clobbered
+the real filename and the module was re-resolved by name); `fprintlisp`
+dumped a table's entire contents after any symbol naming a table, corrupting
+every saved module-variant clause (and growing the save each cycle); table
+clauses were written as unreadable glued symbols like `u*0` (missing space
+in `add_num_or_dice_to_form`); type objects inside stored forms were written
+as unreadable `u#n`/`a#n` debug notation (now printed as type names, via
+hooks installed by `init_types`); unit views were written with literal
+`"(null)"` names and read positionally as garbage; restored unit views were
+never linked to their units and so were flushed and re-dated on first
+sight; restoring re-rolled probabilistic see-chances while placing units
+(views now stay authoritative during pre-game init of a restore); and the
+AI-computed `ai-*-worth` properties declared a lower bound of -1 although
+the AI stores negative pm-scale values, making every save of an AI game
+unreadable. Also fixed along the way: sides defined before their base
+module's types left every per-type side array (and the terrain subtype
+chains) undersized — a memory-corruption class that made `spec.g` hang in
+terrain generation; a one-byte heap overflow in the GDL reader's token
+buffer (`read_delimited_text` wrote the NUL terminator past `BIGBUF`); the
+help system warned on empty or quoted `notes`; `execute_action` now
+rejects invalid type arguments and inactive actors instead of tripping
+assertions (scripted, network, and saved actions are untrusted).
+
+Remaining known save-fidelity gaps, waived explicitly in `test-save.sh`
+(`KNOWN_UNFAITHFUL`) and to be burned down later: some views of a side's
+own stacked units get re-dated/re-ordered on restore (dates and per-cell
+order are normalized in the comparison); ten modules (awls-*, opal-*,
+mod-usa, omniterr, spec, u-e1-1938, voyages) still fail the equality check
+for deeper reasons — weather-view re-derivation on restore, the indepside
+in-game decision being recomputed from tables rather than restored, and
+layer drift in some experimental modules.
+
 ## 1. Language & toolchain
 
 - **[M] Make the code valid without `-fpermissive`.** Fix what the flag papers
@@ -37,24 +89,36 @@ needed to get all four UIs + tools compiling again, CI green on Ubuntu.
 
 ## 2. Known bugs (pre-existing, found while migrating)
 
-- **[M] `check-auto` assertion crash:** `skelconq --auto` dies in
-  `do_toolup_action` (`kernel/actions.c:2284`) — the actor fails an in-play/
-  completeness precondition. The autotest is disabled in CTest until fixed.
-- **[M] `check-ai` infinite loop:** the AI test loops forever on
-  `lib/cil-rules.g`, printing "run_game: tested for game start." until the disk
-  fills (it produced a 13 GB log before being caught). Also disabled. Likely an
-  AI planning loop that never consumes ACP; bisecting `cil-rules.g` against
-  `cil.g` should localize it.
-- **[S] Audit other library games for the same loop class** by running
-  `check-ai` per-game with the CTest timeout, then re-enable the test.
+- ~~**[M] `check-auto` assertion crash**~~ *(fixed 7/2026)*: the autotest
+  called `do_toolup_action` on an incomplete, unplaced unit; the test setup
+  now creates a complete on-map actor. Re-enabled in CTest.
+- ~~**[M] `check-ai` infinite loop**~~ *(fixed 7/2026)*: not an ACP loop —
+  `cil-rules.g` (a rules fragment with no units) never passes
+  `test_for_game_start`, and skelconq's free-run loop spun forever waiting
+  for a turn to advance. skelconq now cancels a `run` when the game has not
+  started. Re-enabled; each game run is also bounded by a 10-minute timeout
+  and a 100 MB output cap (`ulimit -f`), so this class of hang can no longer
+  eat the disk.
+- ~~**[S] Audit other library games for the same loop class**~~ *(done
+  7/2026)*: full `check-ai` sweeps over all 174 modules run to completion
+  under the per-game bounds (10 min, 100 MB output). Findings for the
+  future AI work: `battles.g` and `conquest.g` drive the AI into runaway
+  attack/capture-retry loops (contained by the output cap); a dozen big
+  games (galaxy, advances, fantasy, insects, 3rd-age, spec, several
+  ww2-*) exceed 10 minutes of AI self-play and fail on the per-game
+  timeout; `classic.g` produces "unit occupying cell (x,y), was at
+  (-x y)" consistency warnings. `check-ai` is enabled but carries the
+  `long` CTest label, since an honest AI sweep does not fit a quick CI
+  lane.
 
 ## 3. Testing & CI
 
-- **[M] Make the test scripts actually fail.** Today every `test-*.sh` exits 0
-  no matter what; only harness crashes are detected. Grep the logs for
-  `Error:`/`Warning:`/assertion output and return nonzero, or replace the shell
-  scripts with a small CTest driver. This is the single highest-leverage
-  quality investment — right now CI green means "it didn't segfault."
+- ~~**[M] Make the test scripts actually fail.**~~ *(done 7/2026)*: shared
+  policy in `test/common.sh` — crashes fail everywhere; playable games
+  (`lib/game.dir`) also fail on diagnostics and save/restore mismatches;
+  runs are seeded, time- and output-bounded, and hermetic. The csh scripts
+  (`test-run`, `test-long`) were converted to sh. The first honest run
+  exposed eleven crashing library games (all fixed).
 - **[S] Split `check-lib`/`check-actions` into one CTest per game module** so
   failures name the offending `.g` file and run in parallel.
 - **[M] Add a CI matrix:** GCC + Clang, Debug + Release, and a macOS job
@@ -168,7 +232,8 @@ needed to get all four UIs + tools compiling again, CI green on Ubuntu.
 
 ## Suggested sequencing
 
-1. §3 test honesty (fail on errors) + §2 bug fixes — make green mean something.
+1. ~~§3 test honesty (fail on errors) + §2 bug fixes~~ (done 7/2026) — green
+   means something now.
 2. §1 language cleanup through the C++17 bump — unblocks tooling and Clang.
 3. §4 Tcl/Tk 9 port (urgent: distros are dropping 8.x) or the SDL2/3 port,
    whichever the project wants as its future face.

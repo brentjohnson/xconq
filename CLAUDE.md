@@ -46,11 +46,17 @@ built as part of the normal build). CTest names mirror the old targets:
 ctest --test-dir build -R check-lib     # or check-actions, check-save, check-test, check-ai
 ```
 
-Caveats: the test scripts always exit 0 (they only detect crashes of the harness, not
-game errors — inspect `build/test/*.log` for real results). Two tests are disabled for
-pre-existing kernel bugs: `check-auto` (assertion crash in `do_toolup_action`,
-kernel/actions.c) and `check-ai` (infinite loop on `lib/cil-rules.g` that fills the disk
-with log output).
+The scripts fail honestly (July 2026 rework; policy in `test/common.sh`): any game
+that crashes fails the test, and a *playable* game (one listed in `lib/game.dir`) also
+fails on any `Error:` output or logged warning, on failure to save, or on a
+save/restore mismatch. Runs use `-w` so a warning doesn't abort the game; warnings
+are collected from the `Xconq.Warnings` log instead, with the AI planner-recovery
+class ("trying multiple bad actions") tolerated (`AI_TOLERATED`). Other modules are
+include-fragments that legitimately warn when run standalone, so they are only
+crash-checked. Each game run is bounded (10 min, 100 MB output, fixed random seed
+`-R 1`) and runs under a hermetic `XCONQHOME` in the build dir. Ten modules with
+known save-fidelity bugs are waived by name in `test-save.sh` (`KNOWN_UNFAITHFUL`).
+Full per-game output still lands in `build/test/*.log`.
 
 Consistency-check scripts also live in `test/` (`*-diff.sh`, `*-uses.sh`), runnable by hand:
 - `check-lib` / `test-lib.sh` — load & run every library game module

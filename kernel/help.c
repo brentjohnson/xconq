@@ -3876,9 +3876,15 @@ append_notes(TextBuffer *buf, Obj *notes)
     const char *notestr;
     Obj *rest;
 
-    if (stringp(notes)) {
+    if (notes == lispnil) {
+	/* No notes; nothing to append. */
+    } else if (consp(notes) && match_keyword(car(notes), K_QUOTE)) {
+	/* Games usually write (add u notes '("..." ...)), which stores
+	   the quoted form unevaluated. */
+	append_notes(buf, cadr(notes));
+    } else if (stringp(notes)) {
 	notestr = c_string(notes);
-	if (strlen(notestr) > 0) { 
+	if (strlen(notestr) > 0) {
 	    tbcat(buf, notestr);
 	    tbcat(buf, " ");
 	} else {

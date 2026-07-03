@@ -67,21 +67,26 @@ DEF_UPROP_I("action-priority", u_action_priority,
 	"relative order in which the unit acts",
 	actionpriority, 0, 0, PROPHI)
 
+/* The ai-*-worth properties are computed by the AI on a plus-minus
+   scale (normalize_on_pmscale, -10000..10000), so negative values are
+   legitimate and must survive a save/restore; -1 remains the "not
+   yet computed" default. */
+
 DEF_UPROP_I("ai-base-worth", u_ai_base_worth,
 	    "worth to AI as a base",
-	    aibaseworth, -1, -1, PROPHI)
+	    aibaseworth, PROPLO, -1, PROPHI)
 
 DEF_UPROP_I("ai-depot-worth", u_ai_depot_worth,
 	    "worth to AI as a depot",
-	    aidepotworth, -1, -1, PROPHI)
+	    aidepotworth, PROPLO, -1, PROPHI)
 
 DEF_UPROP_I("ai-distributor-worth", u_ai_distributor_worth,
 	    "worth to AI as a distributor of materials",
-	    aidistributorworth, -1, -1, PROPHI)
+	    aidistributorworth, PROPLO, -1, PROPHI)
 
 DEF_UPROP_I("ai-explorer-worth", u_ai_explorer_worth,
 	    "worth to AI as an explorer",
-	    aiexplorerworth, -1, -1, PROPHI)
+	    aiexplorerworth, PROPLO, -1, PROPHI)
 
 DEF_UPROP_I("ai-minimal-size-goal", u_ai_minimal_size_goal,
 	    "AI's minimal size goal for advanced unit",
@@ -89,19 +94,19 @@ DEF_UPROP_I("ai-minimal-size-goal", u_ai_minimal_size_goal,
 
 DEF_UPROP_I("ai-mover-worth", u_ai_mover_worth,
 	    "worth to AI as a mobile unit",
-	    aimoverworth, -1, -1, PROPHI)
+	    aimoverworth, PROPLO, -1, PROPHI)
 
 DEF_UPROP_I("ai-prod-enhancer-worth", u_ai_prod_enhancer_worth,
 	    "worth to AI as an enhancer of materials production",
-	    aiprodenhancerworth, -1, -1, PROPHI)
+	    aiprodenhancerworth, PROPLO, -1, PROPHI)
 
 DEF_UPROP_I("ai-producer-worth", u_ai_producer_worth,
 	    "worth to AI as a producer of materials",
-	    aiproducerworth, -1, -1, PROPHI)
+	    aiproducerworth, PROPLO, -1, PROPHI)
 
 DEF_UPROP_I("ai-seer-worth", u_ai_seer_worth,
 	    "worth to AI as a seer",
-	    aiseerworth, -1, -1, PROPHI)
+	    aiseerworth, PROPLO, -1, PROPHI)
 
 DEF_UPROP_I("already-seen", u_already_seen,
 	"chance the unit is seen initially if its cell is seen",

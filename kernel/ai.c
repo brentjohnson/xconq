@@ -831,6 +831,12 @@ goal_truth(Side *side, Goal *goal)
 
     if (goal == NULL) return 0;
     switch (goal->type) {
+      case GOAL_NO:
+	/* An empty goal is never satisfied and never disproven. */
+	return 0;
+      case GOAL_KEEP_FORMATION:
+	/* Formation-keeping is open-ended, never "achieved". */
+	return 0;
       case GOAL_POSITIONS_KNOWN:
 	/* what if no enemies present? then this is undefined? */
 	/* should goals have preconditions or prerequisites? */

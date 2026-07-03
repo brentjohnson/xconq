@@ -2330,6 +2330,10 @@ set_unit_side(Unit *unit, Side *side)
     int u = unit->type;
     Side *oldside, *newside;
 
+    /* Independent units are represented by the indepside object, not
+       by a null side. */
+    if (side == NULL)
+      side = indepside;
     /* Might not have anything to do. */
     if (unit->side == side)
       return;

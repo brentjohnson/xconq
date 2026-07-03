@@ -135,6 +135,13 @@ init_types(void)
     mtypes = (Mtype *) xmalloc(sizeof(Mtype) * curmaxmtypes);
     ttypes = (Ttype *) xmalloc(sizeof(Ttype) * curmaxttypes);
     atypes = (Atype *) xmalloc(sizeof(Atype) * curmaxatypes);
+    /* Let the low-level lisp printer print type objects by their
+       defining names, so they are readable GDL (needed by the save
+       machinery, which prints stored forms with fprintlisp). */
+    utype_name_hook = u_type_name;
+    mtype_name_hook = m_type_name;
+    ttype_name_hook = t_type_name;
+    atype_name_hook = a_type_name;
 }
 
 VarDefn vardefns[] = {
@@ -434,37 +441,46 @@ numtypes_from_index_type(int x)
 		  : numatypes)));
 }
 
+/* Note that the disallow_more_*_types functions can run again when a
+   module defines types even later (which draws a read_warning but is
+   not fatal), so all the sizing they do must be redoable. */
+
 void
 disallow_more_unit_types(void)
 {
     int u = NONUTYPE;
+    static int alloced_utypes = 0;
+
+    extern void grow_side_utype_arrays(void);
 
     canaddutype = FALSE;
-    if (tmp_u_array == NULL)
-      tmp_u_array = (int *) xmalloc(numutypes * sizeof(int));
-    if (!tmp_u2_array)
-      tmp_u2_array = (int *) xmalloc(numutypes * sizeof(int));
-    if (!tmp_uu_array) {
+    /* Any sides created before all the types were defined need their
+       per-unit-type arrays grown to match. */
+    grow_side_utype_arrays();
+    if (alloced_utypes < numutypes) {
+	tmp_u_array = (int *) xmalloc(numutypes * sizeof(int));
+	tmp_u2_array = (int *) xmalloc(numutypes * sizeof(int));
 	tmp_uu_array = (int **) xmalloc(numutypes * sizeof(int *));
 	for_all_unit_types(u)
 	  tmp_uu_array[u] = (int *) xmalloc(numutypes * sizeof(int));
+	alloced_utypes = numutypes;
     }
 }
 
 void
 disallow_more_terrain_types(void)
 {
+    static int alloced_ttypes = 0;
+
     canaddttype = FALSE;
-    if (tmp_t_array == NULL)
-      tmp_t_array = (int *) xmalloc(numttypes * sizeof(int));
-    if (next_auxt_type == NULL)
-      next_auxt_type = (short *) xmalloc(numttypes * sizeof(short));
-    if (next_bord_type == NULL)
-      next_bord_type = (short *) xmalloc(numttypes * sizeof(short));
-    if (next_conn_type == NULL)
-      next_conn_type = (short *) xmalloc(numttypes * sizeof(short));
-    if (aux_terrain_type_index == NULL)
-      aux_terrain_type_index = (short *) xmalloc(numttypes * sizeof(short));
+    if (alloced_ttypes < numttypes) {
+	tmp_t_array = (int *) xmalloc(numttypes * sizeof(int));
+	next_auxt_type = (short *) xmalloc(numttypes * sizeof(short));
+	next_bord_type = (short *) xmalloc(numttypes * sizeof(short));
+	next_conn_type = (short *) xmalloc(numttypes * sizeof(short));
+	aux_terrain_type_index = (short *) xmalloc(numttypes * sizeof(short));
+	alloced_ttypes = numttypes;
+    }
     count_terrain_subtypes();
 }
 
@@ -474,9 +490,13 @@ disallow_more_terrain_types(void)
 void
 disallow_more_material_types(void)
 {
+    static int alloced_mtypes = 0;
+
     canaddmtype = FALSE;
-    if (tmp_m_array == NULL)
-      tmp_m_array = (int *) xmalloc(nummtypes * sizeof(int));
+    if (alloced_mtypes < nummtypes) {
+	tmp_m_array = (int *) xmalloc(nummtypes * sizeof(int));
+	alloced_mtypes = nummtypes;
+    }
 }
 
 /* Prevent more advance types from being added, and prepare some integer 
@@ -485,9 +505,13 @@ disallow_more_material_types(void)
 void
 disallow_more_advance_types(void)
 {
+    static int alloced_atypes = 0;
+
     canaddatype = FALSE;
-    if (tmp_a_array == NULL)
-      tmp_a_array = (int *) xmalloc(numatypes * sizeof(int));
+    if (alloced_atypes < numatypes) {
+	tmp_a_array = (int *) xmalloc(numatypes * sizeof(int));
+	alloced_atypes = numatypes;
+    }
 }
 
 /* Calculate and cache some info about terrain types. */

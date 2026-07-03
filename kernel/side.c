@@ -387,7 +387,11 @@ create_side(void)
     newside->knows_about = ALLSIDES; /* for now */
     newside->trusts = (short *) xmalloc((g_sides_max() + 1) * sizeof(short));
     newside->trades = (short *) xmalloc((g_sides_max() + 1) * sizeof(short));
-    /* Set up per-unit-type slots. */
+    /* Set up per-unit-type slots.  Record how many types the arrays
+       cover; a module can define sides before its base module defines
+       the unit types, and the arrays are then grown when the type set
+       is frozen (see grow_side_utype_arrays). */
+    newside->numutypesalloced = numutypes;
     newside->counts = (short *) xmalloc(numutypes * sizeof(short));
     newside->tech = (short *) xmalloc(numutypes * sizeof(short));
     newside->inittech = (short *) xmalloc(numutypes * sizeof(short));
@@ -491,6 +495,74 @@ create_side(void)
     /* numtotsides also includes indepside. */
     ++numtotsides;
     return newside;
+}
+
+/* Return a copy of the given short array grown to newn entries; the
+   new entries are zero-filled by xmalloc. */
+
+static short *
+grown_short_array(short *arr, int oldn, int newn)
+{
+    short *newarr;
+
+    newarr = (short *) xmalloc(newn * sizeof(short));
+    if (arr != NULL && oldn > 0)
+      memcpy(newarr, arr, oldn * sizeof(short));
+    return newarr;
+}
+
+/* Grow the per-unit-type arrays of every side to cover unit types
+   defined after the side was created; a module can define its sides
+   before its base module (or the default game) defines the unit
+   types.  Called when the set of unit types is frozen. */
+
+void
+grow_side_utype_arrays(void)
+{
+    int u, old;
+    Side *side;
+    long **newstats;
+
+    for_all_sides(side) {
+	old = side->numutypesalloced;
+	if (old >= numutypes)
+	  continue;
+	side->counts = grown_short_array(side->counts, old, numutypes);
+	/* Unit numbering starts at 1, not 0. */
+	for (u = old; u < numutypes; ++u)
+	  side->counts[u] = 1;
+	side->tech = grown_short_array(side->tech, old, numutypes);
+	side->inittech = grown_short_array(side->inittech, old, numutypes);
+	side->numunits = grown_short_array(side->numunits, old, numutypes);
+	side->gaincounts =
+	    grown_short_array(side->gaincounts, old * num_gain_reasons,
+			      numutypes * num_gain_reasons);
+	side->losscounts =
+	    grown_short_array(side->losscounts, old * num_loss_reasons,
+			      numutypes * num_loss_reasons);
+	newstats = (long **) xmalloc(numutypes * sizeof(long *));
+	if (side->atkstats != NULL && old > 0)
+	  memcpy(newstats, side->atkstats, old * sizeof(long *));
+	side->atkstats = newstats;
+	newstats = (long **) xmalloc(numutypes * sizeof(long *));
+	if (side->hitstats != NULL && old > 0)
+	  memcpy(newstats, side->hitstats, old * sizeof(long *));
+	side->hitstats = newstats;
+	side->canbuild = grown_short_array(side->canbuild, old, numutypes);
+	side->cancarry = grown_short_array(side->cancarry, old, numutypes);
+	side->candevelop =
+	    grown_short_array(side->candevelop, old, numutypes);
+	side->could_act_with =
+	    grown_short_array(side->could_act_with, old, numutypes);
+	if (side != indepside) {
+	    for (u = old; u < numutypes; ++u)
+	      side->could_act_with[u] = TRUE;
+	}
+	if (side->startwith != NULL)
+	  side->startwith =
+	      grown_short_array(side->startwith, old, numutypes);
+	side->numutypesalloced = numutypes;
+    }
 }
 
 /* To make the double links work, we have to have one pseudo-unit to
@@ -2030,7 +2102,7 @@ update_master_uview(Unit *unit, int lookabove)
 UnitView *
 add_unit_view(Side *side, Unit *unit)
 {
-    int changed = FALSE, rehash = FALSE, x, y;
+    int changed = FALSE, rehash = FALSE, x, y, olddate = -1;
     UnitView *tranview = NULL, *uview = NULL, *occview = NULL;
     Unit *occ;
 
@@ -2048,6 +2120,11 @@ add_unit_view(Side *side, Unit *unit)
     }
     /* Now we check if our unit has a view. */
     uview = find_unit_view(side, unit);
+    if (uview) {
+	/* Remember the view's date; if this is the pre-game init of a
+	   restored game, a rebuilt view must keep the restored date. */
+	olddate = uview->date;
+    }
     if (uview) {
     	x = uview->x;
     	y = uview->y;
@@ -2106,7 +2183,11 @@ add_unit_view(Side *side, Unit *unit)
 	uview->siden = unit->side->id;
 	changed = TRUE;
     }
-    if (uview->name != unit->name) {
+    /* (Compare names by content, not pointer; a restored view's name
+       is a different copy of the same string as the unit's name.) */
+    if (uview->name != unit->name
+	&& (uview->name == NULL || unit->name == NULL
+	    || strcmp(uview->name, unit->name) != 0)) {
 	uview->name = unit->name;
 	changed = TRUE;
     }
@@ -2114,7 +2195,9 @@ add_unit_view(Side *side, Unit *unit)
 	uview->imf = unit->imf;
 	changed = TRUE;
     }
-    if (uview->image_name != unit->image_name) {
+    if (uview->image_name != unit->image_name
+	&& (uview->image_name == NULL || unit->image_name == NULL
+	    || strcmp(uview->image_name, unit->image_name) != 0)) {
 	uview->image_name = unit->image_name;
 	changed = TRUE;
     }
@@ -2140,8 +2223,15 @@ add_unit_view(Side *side, Unit *unit)
 	  changed = TRUE;
     }    
     /* Irrespective of whether any view content changed, we now know
-       that the view of this unit is current, so date it. */
-    uview->date = g_turn();
+       that the view of this unit is current, so date it.  The one
+       exception is during pre-game init of a restored game: placing
+       the restored units triggers re-viewing (including rebuilding
+       views whose occupant structure was flattened in the save file),
+       and the rebuilt view must keep the date read from the save. */
+    if (beforestart && olddate >= 0)
+      uview->date = olddate;
+    else if (changed || !beforestart)
+      uview->date = g_turn();
     return (changed ? uview : NULL);
 }
 
@@ -3441,6 +3531,12 @@ see_cell(Side *side, int x, int y)
 
     if (!in_area(x, y))
       return FALSE;
+    /* During the pre-game init of a restored game, the views read from
+       the save file are authoritative; deriving views here (placing
+       the restored units re-sees their cells) would re-roll see
+       chances and re-date views. */
+    if (beforestart && side->unit_view_restored)
+      return FALSE;
     update = updatet = rslt = FALSE;
     if (cover(side, x, y) > 0) {
     	/* Always update our knowledge of the terrain. */
@@ -3483,10 +3579,18 @@ see_cell(Side *side, int x, int y)
 		/*! \note Improve this code to consider view flushing 
 			  granularity. */
 		unit = view_unit(uview);
+		/* (An out-of-date view is not stale during pre-game
+		   init of a restored game: views read from a save file
+		   legitimately carry old dates, and units are still
+		   being placed.) */
+		if (beforestart && unit != NULL
+		    && !inside_area(unit->x, unit->y))
+		  continue;
 		if (!unit || (uview->x != unit->x) || (uview->y != unit->y)
-		    || (uview->transport 
+		    || (uview->transport
 			&& (view_unit(uview->transport) != unit->transport))
-		    || (!u_see_always(uview->type) 
+		    || (!u_see_always(uview->type)
+			&& !beforestart
 			&& (uview->date < g_turn()))) {
 		    if (remove_unit_view(side, uview)) {
 			update = TRUE;

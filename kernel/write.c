@@ -1353,8 +1353,11 @@ write_scorekeepers(void)
 	write_lisp_prop(key(K_TRIGGER), sk->trigger, lispnil, 
 			FALSE, FALSE, TRUE);
 	write_lisp_prop(key(K_DO), sk->body, lispnil, FALSE, FALSE, TRUE);
-	write_num_prop(key(K_TRIGGERED), sk->triggered, 0, FALSE, TRUE); 
-	write_num_prop(key(K_KEEP_SCORE), sk->keepscore, 0, FALSE, TRUE); 
+	write_num_prop(key(K_TRIGGERED), sk->triggered, 0, FALSE, TRUE);
+	/* (The written default must match the creation default in
+	   create_scorekeeper, which is TRUE, or a false value comes
+	   back as true after a save/restore.) */
+	write_num_prop(key(K_KEEP_SCORE), sk->keepscore, TRUE, FALSE, TRUE);
 	write_num_prop(key(K_INITIAL_SCORE), sk->initial, -10001, FALSE, TRUE); 
 	write_lisp_prop(key(K_NOTES), sk->notes, lispnil, FALSE, FALSE, TRUE);
 	space_form();
@@ -1417,7 +1420,9 @@ write_sides(Module *module)
 	space_form();
 	end_form();
 	newline_form();
-	if (module->def_all || module->def_side_views)
+	/* (The reader discards all view layers when see-all is on, so
+	   writing them would only produce restore mismatches.) */
+	if ((module->def_all || module->def_side_views) && !g_see_all())
 	  write_side_view(side, module->compress_layers);
 	Dprintf("  Wrote side %s\n", side_desig(side));
     }
@@ -1831,14 +1836,21 @@ write_side_view(Side *side, int compress)
 		space_form();
 		start_form(shortest_escaped_name(uview->type));
 		add_num_to_form(uview->siden);
-		add_to_form(uview->name);
+		/* A null name or image name must be omitted entirely:
+		   printing it would emit the literal text "(null)",
+		   which reads back as a list and throws off the
+		   reader's positional field parsing (the reader skips
+		   absent optional fields cleanly). */
+		if (uview->name != NULL)
+		  add_to_form(escaped_string(uview->name));
 		add_num_to_form(uview->size);
 		add_num_to_form(uview->x);
 		add_num_to_form(uview->y);
 		add_num_to_form(uview->complete);
 		add_num_to_form(uview->date);
 		add_num_to_form(uview->id);
-		add_to_form(uview->image_name);
+		if (!empty_string(uview->image_name))
+		  add_to_form(escaped_symbol(uview->image_name));
 		end_form();
 		newline_form();
 	    }
@@ -1849,7 +1861,9 @@ write_side_view(Side *side, int compress)
 	end_form();
 	newline_form();
     }
-    if (!g_see_weather_always()) {
+    /* (The reader discards all view layers under see-all, so writing
+       them would only produce restore mismatches.) */
+    if (!g_see_weather_always() && !g_see_all()) {
 	if (side->tempview) {
 	    write_one_side_view_layer(K_TEMPERATURE_VIEW, fn_temp_view);
 	    write_one_side_view_layer(K_TEMPERATURE_VIEW_DATES,
@@ -2570,19 +2584,22 @@ add_num_to_form_no_space(int x)
     }
 }
 
-/* Write either a normal value or a dice spec, as appropriate. */
+/* Write either a normal value or a dice spec, as appropriate.  Like
+   the other add_*_to_form writers, this adds a leading space; without
+   it, table clauses come out as unreadable symbols like "u*0". */
 
 static void
 add_num_or_dice_to_form(int x, int valtype)
 {
     char valbuf [BUFSIZE];
 
+    valbuf[0] = ' ';
     if (TABDICE1 == valtype)
-        dice1_desc(valbuf, (DiceRep)x);
+        dice1_desc(valbuf + 1, (DiceRep)x);
     else if (TABDICE2 == valtype)
-        dice2_desc(valbuf, (DiceRep)x);
+        dice2_desc(valbuf + 1, (DiceRep)x);
     else
-        snprintf(valbuf, BUFSIZE, "%d", x);
+        snprintf(valbuf + 1, BUFSIZE - 1, "%d", x);
     if (wfp)
 	fputs(valbuf, wfp);
     else

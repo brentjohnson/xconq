@@ -9,7 +9,7 @@
 (unit-type kp (name "killer pancake") (image-name "saucerpad")
 )
 
-(terrain-type |outer space| (color "navy blue"))
+(terrain-type |outer space|)
 
 (add u* acp-per-turn 1)
 

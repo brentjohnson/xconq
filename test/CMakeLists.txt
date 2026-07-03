@@ -4,6 +4,12 @@
 # expect to find skelconq at ../kernel/skelconq relative to the working
 # directory, and write their logs into the working directory.  Running them
 # from ${CMAKE_CURRENT_BINARY_DIR} preserves those assumptions.
+#
+# The scripts exit nonzero when a game crashes, or when a playable game
+# (one listed in lib/game.dir) produces Error:/Warning: output, fails to
+# save, or fails the save/restore comparison; see test/common.sh for the
+# full policy.  They keep saves and scores out of ~/.xconq by pointing
+# XCONQHOME into the build directory.
 
 set(XCONQ_TEST_SCRIPTS
     lib:test-lib.sh
@@ -29,17 +35,14 @@ add_test(NAME check-auto
                  -L ${CMAKE_SOURCE_DIR}/lib
          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
-set_tests_properties(check-long check-run PROPERTIES LABELS "long")
+# The AI self-play sweep legitimately needs hours for the biggest games,
+# so it lives in the "long" lane with the full-game runs; the quick lane
+# is check-lib/actions/save/test/auto.
+set_tests_properties(check-ai check-long check-run PROPERTIES LABELS "long")
 
 # Nothing should run forever; the game-playing tests get generous limits.
+# The scripts also bound each individual game run (10 minutes, 100 MB of
+# output) so one hung game cannot eat a whole test's budget or the disk.
 set_tests_properties(check-lib check-actions check-save check-test check-auto
                      PROPERTIES TIMEOUT 1800)
-set_tests_properties(check-ai check-run check-long PROPERTIES TIMEOUT 3600)
-
-# Pre-existing kernel bugs (independent of the build system):
-#  - check-auto: the autotest crashes with an assertion in do_toolup_action
-#    (kernel/actions.c).
-#  - check-ai: skelconq loops forever on lib/cil-rules.g, spewing
-#    "run_game: tested for game start." until the disk fills.
-# Disabled until the kernel is fixed; run manually with: ctest -R <name>
-set_tests_properties(check-auto check-ai PROPERTIES DISABLED TRUE)
+set_tests_properties(check-ai check-run check-long PROPERTIES TIMEOUT 14400)

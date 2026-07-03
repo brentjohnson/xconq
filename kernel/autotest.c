@@ -75,12 +75,21 @@ static const int FIGHTER = 1;
 static const int BOMBER = 2;
 static const int INFANTRY = 3;
 
+static Unit *
+create_and_place (int newutype, int x, int y)
+{
+    Unit *unit = create_unit (newutype, TRUE);
+    init_supply(unit);
+    enter_cell(unit, x, y);
+    return unit;
+}
+
 static void
 test_tooling(void)
 {
-    /* Set up. */
-    Unit *fighter = create_unit (FIGHTER, FALSE);
-    Unit *town = create_unit (TOWN, FALSE);
+    /* Set up.  The actor must be complete and on the map, or the
+       action's preconditions fail. */
+    Unit *town = create_and_place (TOWN, 2, 2);
     init_unit_tooling(town);
     town->tooling[FIGHTER] = 3;
     assert_true ("init bomber", town->tooling[BOMBER] == 0);
@@ -93,15 +102,6 @@ test_tooling(void)
        6. */
     assert_true ("fighter unchanged", town->tooling[FIGHTER] == 4);
     assert_true ("bomber adjusted", town->tooling[BOMBER] == 6);
-}
-
-static Unit *
-create_and_place (int newutype, int x, int y)
-{
-    Unit *unit = create_unit (newutype, TRUE);
-    init_supply(unit);
-    enter_cell(unit, x, y);
-    return unit;
 }
 
 static void

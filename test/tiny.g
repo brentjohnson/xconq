@@ -13,10 +13,12 @@
 
 (world (circumference 5))
 
+;; The two middle rows are the interior cells; the standard game's
+;; country placement needs at least 4 plains and 1 sea among them.
 (area 5 4 (terrain
   "abcde"
-  "abcde"
-  "abcde"
+  "aeeed"
+  "aeecd"
   "abcde"
 ))
   

@@ -17,7 +17,7 @@
 (material-type fuel)
 (material-type ammo)
 
-(terrain-type plains (color "green") (image-name "plains") (char "+"))
+(terrain-type plains (image-name "plains") (char "+"))
 (add plains alt-percentile-min   0)
 (add plains alt-percentile-max 100)
 (add plains wet-percentile-min   0)

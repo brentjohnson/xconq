@@ -1387,12 +1387,15 @@ Once upon a time, men with guns and tanks and APCs and jet fighters and battlesh
 
 
 (table favored-terrain
-  (u* t* 0)	  
+  (u* t* 0)
   (land-unit-types (land desert forest steppe) 50)
   (ship-types sea 50)
   (sub sea 50)
 
   (bunker desert 100)
+  ;; The listening post starts with each side (start-with 1), so it
+  ;; must have someplace it can be put down.
+  (post (land desert forest steppe) 50)
   ((fixed-gun fixed-sam) t* 0)
 )
 
