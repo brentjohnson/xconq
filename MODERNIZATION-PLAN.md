@@ -1195,10 +1195,14 @@ Method:
 Verify: cmake --build build --target docs succeeds locally; CI job green.
 Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md.
 ```
-- **[S] Repo hygiene:** archive or delete `cvs_hist/`, `changelogs/`, the
+- ~~**[S] Repo hygiene:** archive or delete `cvs_hist/`, `changelogs/`, the
   monolithic `ChangeLog`, and the stale packaging in `pkg/` (`xconq.spec.in`,
   NSIS script reference the deleted autoconf build). Add `CONTRIBUTING.md`
-  documenting the CMake workflow and the `.def` X-macro system.
+  documenting the CMake workflow and the `.def` X-macro system.~~ *(done
+  7/2026)*: deleted `cvs_hist/`, `changelogs/`, `ChangeLog`, and all of
+  `pkg/` (the spec/NSIS files were autoconf templates, `install` was the
+  X11R5 script CMake's own `install()` replaces — nothing else referenced
+  any of it); added `CONTRIBUTING.md` at the repo root.
 
 **⚙ PROMPT 7.4 — recommended model: Sonnet.** *(Deletions are pre-decided
 below; CONTRIBUTING.md content can be assembled from CLAUDE.md and the
