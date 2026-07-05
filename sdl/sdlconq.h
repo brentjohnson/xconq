@@ -358,6 +358,7 @@ extern int grok_string(Screen *screen, char **strp);
 extern void ask_side(Screen *screen, const char *prompt, Side *dfltside,
 		     void (*handler)(Screen *screen, int cancelled));
 extern int grok_side(Screen *screen, Side **side2p);
+extern void do_quit_from_window_close(Side *side);
 
 extern void set_tool_cursor(Screen *screen);
 

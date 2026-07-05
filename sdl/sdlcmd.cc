@@ -1235,6 +1235,74 @@ do_quit(Side *side)
     }
 }
 
+/* Ask a yes/no question with a real, mouse-clickable native dialog rather
+   than ask_bool's mouseover-panel text prompt (which only resolves on a
+   keypress). */
+
+static int
+native_confirm(const char *question)
+{
+    SDL_MessageBoxButtonData buttons[] = {
+	{ SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 0, "No" },
+	{ SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "Yes" },
+    };
+    SDL_MessageBoxData mbdata = {
+	SDL_MESSAGEBOX_INFORMATION, window,
+	"Xconq", question,
+	SDL_arraysize(buttons), buttons, NULL
+    };
+    int buttonid = 0;
+
+    SDL_ShowMessageBox(&mbdata, &buttonid);
+    return buttonid;
+}
+
+/* Same decision tree as do_quit(), but driven by native_confirm() instead
+   of ask_bool(): for use when quitting was requested via the window
+   manager's close button, where there is no keyboard focus to answer a
+   mouseover-panel prompt with. */
+
+void
+do_quit_from_window_close(Side *side)
+{
+    Screen *screen = ui->curscreen;
+
+    if (screen == NULL || endofgame || beforestart) {
+	exit_xconq();
+    } else if (dside->ingame) {
+	if (gamestatesafe
+	    || all_others_willing_to_quit(dside)
+	    || is_designer(dside)) {
+	    if (native_confirm("Do you really want to quit?"))
+	      exit_xconq();
+	} else if (keeping_score()) {
+	    if (native_confirm("Do you want to save the game before quitting?")) {
+		do_save(dside);
+		if (gamestatesafe)
+		  exit_xconq();
+	    } else if (native_confirm("You cannot quit without resigning; "
+				       "give up now?")) {
+		if (numsides > 2) {
+		    ask_side(screen, "To whom do you wish to surrender?", NULL,
+			     aux_quit_resign_to);
+		} else {
+		    net_resign_game(dside, NULL);
+		    exit_xconq();
+		}
+	    }
+	} else {
+	    /* Everybody is just participating. */
+	    if (native_confirm("Do you want to leave this game?")) {
+		remove_side_from_game(dside);
+		exit_xconq();
+	    }
+	}
+    } else {
+	if (all_others_willing_to_quit(dside) || num_active_displays() == 1)
+	  exit_xconq();
+    }
+}
+
 /* (Have an extra confirm for designers not to lose unsaved work?) */
 
 static void

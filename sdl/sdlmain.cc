@@ -425,6 +425,23 @@ handle_event(SDL_Event *evt)
     float x, y;
     int ix, iy;
 
+    /* Handle this even before sscreen exists (e.g. while a game is still
+       loading, between window creation in initial_ui_init and open_screen):
+       otherwise a window-manager close request arriving during that window
+       is silently dropped below and the close button appears to do
+       nothing. do_quit()'s own confirmation chain (save game? resign?) is
+       a text prompt in the mouseover panel that only resolves on a
+       keypress (see ask_bool), which is invisible/unusable from a
+       window-close click, so route through the native-dialog equivalent
+       instead. */
+    if (evt->type == SDL_EVENT_QUIT) {
+	if (dside)
+	  do_quit_from_window_close(dside);
+	else
+	  exit_xconq();
+	return;
+    }
+
     if (sscreen == NULL)
       return;
 
@@ -510,13 +527,6 @@ handle_event(SDL_Event *evt)
 	break;
 
       case SDL_EVENT_MOUSE_BUTTON_UP:
-	break;
-
-      case SDL_EVENT_QUIT:
-	if (dside)
-	  do_quit(dside);
-	else
-	  exit_xconq();
 	break;
 
       default:
