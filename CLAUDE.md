@@ -42,7 +42,15 @@ the same quick ctest lane; `sdlconq` needs X11 (it links Xlib/Xmu/Xext
 directly, not just SDL3 — see `sdl/CMakeLists.txt`), which isn't present
 on the runner, so the top-level `X11_FOUND` gate just skips it there.
 The macOS job is `continue-on-error: true` pending a longer green track
-record. All legs build with `-j` and skip the `long` label.
+record. A separate `sanitizers` job builds the kernel + `skelconq` with GCC
+on RelWithDebInfo and `-DXCONQ_SANITIZE=address,undefined` (the toggle wires
+`-fsanitize` into compile and link via `xconq_common`) and runs the quick
+ctest lane under `ASAN_OPTIONS=detect_leaks=0` (leak checking is deferred —
+the kernel frees almost nothing by design) and
+`UBSAN_OPTIONS=halt_on_error=1`; it configures `-DXCONQ_TEST_TIMEOUT_SCALE=3`
+to widen the test timeouts (CTest `TIMEOUT` and `test/common.sh`'s per-game
+bound) for the 2–5× sanitizer slowdown. All legs build with `-j` and skip the
+`long` label.
 
 ### Running tests
 

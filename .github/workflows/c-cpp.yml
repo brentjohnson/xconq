@@ -47,6 +47,51 @@ jobs:
     - name: test
       run: ctest --test-dir build --output-on-failure --label-exclude long -j$(nproc)
 
+  sanitizers:
+    # ASan + UBSan leg: build the kernel and skelconq with
+    # -fsanitize=address,undefined on RelWithDebInfo and run the quick ctest
+    # lane (the same headless skelconq runs the other legs use) under the
+    # sanitizers.  GCC is used because it is what reproduces locally; Clang
+    # would work identically.  The UIs are left off: the test lane only drives
+    # skelconq, so building cconq/sdlconq under the sanitizers would add build
+    # time (incl. SDL3-from-source) without adding sanitizer coverage.
+    runs-on: ubuntu-latest
+    env:
+      CC: gcc
+      CXX: g++
+      # detect_leaks=0: the kernel allocates via xmalloc and frees almost
+      # nothing by design, so LSan would drown the real signal.  Leak checking
+      # is deferred until the planned de-globalization gives the kernel a
+      # teardown path (MODERNIZATION-PLAN.md §9).  abort_on_error makes any
+      # sanitizer finding raise SIGABRT so test/common.sh's crash check catches
+      # it for every module, playable or not.
+      ASAN_OPTIONS: detect_leaks=0:abort_on_error=1
+      # halt_on_error=1: UB findings fail the run rather than being logged and
+      # skipped past.
+      UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1:abort_on_error=1
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y libasan8 libubsan1
+    - name: configure
+      # RelWithDebInfo: optimized enough that the 2-5x sanitizer slowdown stays
+      # tolerable, still -g for readable reports.  TIMEOUT_SCALE widens the test
+      # timeouts (CTest properties and test/common.sh's per-game bound) for the
+      # slower sanitized runs, this build only.
+      run: >
+        cmake -B build
+        -DCMAKE_BUILD_TYPE=RelWithDebInfo
+        -DXCONQ_SANITIZE=address,undefined
+        -DXCONQ_TEST_TIMEOUT_SCALE=3
+        -DXCONQ_UI_CURSES=OFF -DXCONQ_UI_SDL=OFF
+    - name: build
+      run: cmake --build build -j$(nproc)
+    - name: test
+      run: ctest --test-dir build --output-on-failure --label-exclude long -j$(nproc)
+
   macos:
     runs-on: macos-latest
     # sdlconq also links directly against Xlib/Xmu/Xext (see sdl/CMakeLists.txt),

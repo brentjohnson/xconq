@@ -312,56 +312,83 @@ and the BWidget vendor-audit are resolved by this removal (see §4 below).
   `continue-on-error: true`; a future session with either an authenticated
   `gh`/API token or a real Mac should pull the actual configure error and
   finish this leg.
-- **[M] Add ASan/UBSan CI jobs** running the quick test suite. A codebase this
-  old will surface real bugs immediately; fix as they appear.
+- ~~**[M] Add ASan/UBSan CI jobs** running the quick test suite.~~ *(done
+  7/2026)*: added a `-DXCONQ_SANITIZE=address,undefined` CMake toggle (wires
+  `-fsanitize=…` + `-fno-omit-frame-pointer -g` into compile *and* link of
+  every kernel/UI target via `xconq_common`) and a GCC RelWithDebInfo CI leg
+  that builds the kernel + skelconq and runs `ctest --label-exclude long` under
+  `ASAN_OPTIONS=detect_leaks=0:abort_on_error=1` and
+  `UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1`. Leak checking is
+  deferred (`detect_leaks=0`): the kernel allocates via `xmalloc` and frees
+  almost nothing by design, so LSan would drown the signal until §9
+  de-globalization gives it a teardown path. Sanitized runs are ~2–5× slower,
+  so a `XCONQ_TEST_TIMEOUT_SCALE` CMake knob (×3 on this leg) widens the CTest
+  `TIMEOUT` properties and — passed through as `XCONQ_TIMEOUT_SCALE` in the
+  test environment — `test/common.sh`'s per-game bound, for this leg only. **No
+  suppressions were needed**; every finding was a real bug, all fixed (the
+  quick lane, including `check-save`, is green in both the sanitized and normal
+  builds, so no save/restore changed):
 
-**⚙ PROMPT 3.3 — recommended model: Opus.** *(The wiring is easy; the job
-will immediately report real memory bugs in 30-year-old code, and fixing
-those correctly — not just quieting the sanitizer — is the actual task.)*
+  ASan (memory safety):
+  - `write.cc` `find_name`: `spare_file_name[PATH_SIZE] = '\0'` wrote one byte
+    past a `PATH_SIZE` buffer — an off-by-one heap overflow on the save path,
+    so it fired for essentially every module. The BIGBUF-class relative step 1
+    predicted. Copy at most `PATH_SIZE-1` and terminate at the last valid index.
+  - `side.cc` `create_side`: the per-side `trusts`/`trades` arrays were sized
+    `g_sides_max()+1` at creation, but a later module can raise `sides-max`
+    (clamped to `MAXSIDES`) after early sides exist, leaving a side-id index
+    past the array — heap overflow, the same undersized-side-array class as
+    step 1. Sized to `MAXSIDES+1`, the convention `config.h` documents.
+  - `help.cc`: the cached `u_histogram` scratch buffer is shared by ~8
+    table-description helpers that each walk a different type dimension, but
+    every site sized it by `numutypes`; a game with more terrain (or advance)
+    types overran it. Sized by the largest dimension via a `u_histogram_size()`
+    helper.
+  - `supply.cc` `init_supply_system`: a `realloc` meant to trim the `mstats`
+    block discarded its return value and could move the block, dangling
+    `first_mstat` and every `next`/`next_class` link into it — use-after-free
+    in `process_supply_class`. Dropped the one-time trim (the kernel never frees
+    it anyway).
+  - `unit.cc`/`read.cc` `init_unit_opinions`: the opinions array is indexed by
+    `side_number` (0..numsides), but two of the three callers sized it
+    `numsides` (the third already passed `numsides+1`) — off-by-one when a unit
+    with opinions is saved/restored. Fixed both callers.
+  - `generic.cc`: a module defining types *after* the tables were allocated
+    (tolerated with a warning) left every table indexed by that kind
+    undersized — the accessor uses the new, larger stride/row-count on an
+    old-sized block (hit via `tt_coat_max` in `spec`). Added
+    `regrow_tables_for_index`, called from all four `disallow_more_*_types`, to
+    reallocate and re-lay-out affected tables when a type kind grows late.
 
-```text
-Task: add ASan+UBSan builds of Xconq to CI running the quick test suite,
-and fix (or explicitly suppress, with justification) everything they
-report until the job is green.
+  UBSan (undefined behavior):
+  - `util.cc` `isqrt`: `k <<= 1` with `k` a negative bit mask (-1, -2, -4, …) —
+    left shift of a negative value, UB before C++20. Shift as unsigned and
+    convert back; bit-identical result.
+  - `economy.cc`: `border_at(…,dir,…)` does `1 << dir`, but `approx_dir` returns
+    -1 when the from/to cells coincide → `1 << -1`. Skip the border
+    contributions when `dir < 0` (there is no border to a cell from itself).
+  - `misc.h` `normalize_on_pmscale` + `ai.cc` `basic_worth`: signed int overflow
+    in the AI worth math — `n * 10000` in the pm-scale normalize, and the
+    geometric `worth += worth*capture/150` term that explodes past `INT_MAX`
+    (past 64 bits even, in `battles.g`) and used to wrap negative (the code
+    already warned on the resulting "negative basic worth"). Widened the
+    normalize intermediate to 64-bit; accumulate worth in 64-bit and saturate at
+    `INT_MAX`. Behavior-relevant in principle (worth drives AI valuation) but
+    only for the degenerate games that previously wrapped — normal games are
+    unchanged and `check-save` is clean.
+  - `unit.h`: `ParamBoxUnitSideSeers`/`ParamBoxUnitUnitSeers` carried a virtual
+    destructor (making them polymorphic) yet are built with `xmalloc`, which
+    never sets the vptr — every later member access/downcast tripped UBSan's
+    vptr check. The destructors were no-ops; removed them so the boxes are
+    non-polymorphic like their siblings.
+  - `util.cc`: the `DEBUGGING` allocation-accounting counters (`overflow`,
+    `totmalloc`, `grandtotmalloc`, `copymalloc`) are cumulative byte totals that
+    overflow `int` on a long run; widened to `size_t` (unsigned, correct for a
+    byte count, no UB).
 
-Method:
-1. Build config: a CMake toggle (-DXCONQ_SANITIZE=address,undefined style
-   or an env-driven flags block) adding -fsanitize=address,undefined
-   -fno-omit-frame-pointer -g to compile and link flags, on
-   RelWithDebInfo. Wire one Ubuntu CI job using it (GCC or Clang,
-   whichever leg exists in CI by now), running
-   ctest --label-exclude long.
-2. Runtime environment, decided up front and documented in the workflow:
-   - ASAN_OPTIONS=detect_leaks=0 to start. The kernel allocates via
-     xmalloc and frees almost nothing by design; LSan would drown the
-     signal. Note on the plan item that leak checking is deferred until
-     §9 de-globalization gives the kernel a teardown path.
-   - UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1 — UB findings fail
-     the run.
-3. Expect and triage real findings. Rules:
-   - ASan errors (overflow, use-after-free): always real; fix the bug,
-     never suppress. The step-1 history (BIGBUF off-by-one, undersized
-     per-type side arrays) says more of this class exists.
-   - UBSan: fix real ones (shifts, signed overflow in coordinate/pm-scale
-     math can change behavior between builds); for a genuinely benign
-     high-noise class (e.g. misaligned reads in an image loader that is
-     otherwise correct), use a UBSan suppressions file checked into
-     test/ with one comment per entry saying why — keep it short; every
-     entry is debt.
-   - Every behavior-relevant fix gets called out in its commit message;
-     the save/restore tests are the regression net — a sanitizer fix that
-     changes a save is wrong (or was hiding a bug worth explaining).
-4. Bounds: sanitized runs are 2-5x slower. If per-game or per-test
-   timeouts trip, scale them via an environment knob consumed by
-   test/common.sh and the CTest TIMEOUT properties for this job only —
-   do not raise limits globally.
-5. Do this in slices if the backlog is big (one commit per finding class),
-   keeping the job allowed-to-fail until clean, then flip it blocking.
-Verify: sanitizer CI job green and blocking; normal jobs unaffected;
-quick ctest green locally in both sanitized and normal builds.
-Commit(s); mark this item done (strikethrough + date) in
-MODERNIZATION-PLAN.md, listing the bugs fixed and any suppressions.
-```
+  Also fixed two RelWithDebInfo-only `-Wmaybe-uninitialized` errors (that build
+  type is new to CI): `economy.cc` `newtype` and `move.cc` `acpcost`, both
+  false positives value-inited with a comment.
 - **[M] Fuzz the GDL reader** (`kernel/read.c`, `kernel/lisp.c`) with
   libFuzzer/AFL. It parses untrusted input: downloaded game modules, network
   messages, and save files all go through it.
