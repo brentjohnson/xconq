@@ -35,10 +35,8 @@ games library/images/UI scripts) and `XCONQ_SCORES_DIR` (runtime score file
 location). Generated config headers (`acdefs.h`, `version.h`) land in
 `build/include/`, produced from templates in `kernel/*.h.in`.
 
-Despite the `.c` extensions on most kernel files, **everything is compiled as
-C++** (sources are marked `LANGUAGE CXX` in CMake, built with `-fpermissive
--Wno-write-strings`, pinned to **gnu++98**) — newer C++ standards make
-libstdc++ headers clash with the kernel's `min`/`max` macros. Don't be
+Everything is compiled as C++: the kernel and curses sources use `.cc`
+extensions (renamed from `.c` 7/2026), pinned to **gnu++17**. Don't be
 surprised to see C-style code; treat it as C++ for compiler-flag purposes.
 
 ## Testing
