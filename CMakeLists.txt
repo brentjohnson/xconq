@@ -20,7 +20,7 @@ include(CheckTypeSize)
 # ---------------------------------------------------------------------------
 
 option(XCONQ_UI_CURSES "Build the curses interface (cconq)" ON)
-option(XCONQ_UI_SDL    "Build the SDL 2 interface (sdlconq)" ON)
+option(XCONQ_UI_SDL    "Build the SDL 3 interface (sdlconq)" ON)
 
 set(XCONQ_DATA_DIR "${CMAKE_INSTALL_FULL_DATADIR}/xconq" CACHE PATH
     "Installed location of the games library, images, and UI scripts")
@@ -40,9 +40,9 @@ if(XCONQ_UI_CURSES)
 endif()
 
 if(XCONQ_UI_SDL)
-    find_package(SDL2)
-    if(NOT SDL2_FOUND)
-        message(WARNING "SDL2 not found (try libsdl2-dev); skipping the SDL interface")
+    find_package(SDL3)
+    if(NOT SDL3_FOUND)
+        message(WARNING "SDL3 not found (try libsdl3-dev); skipping the SDL interface")
     endif()
     find_package(X11)
 endif()
@@ -129,7 +129,7 @@ add_subdirectory(kernel)
 if(XCONQ_UI_CURSES AND CURSES_FOUND)
     add_subdirectory(curses)
 endif()
-if(XCONQ_UI_SDL AND SDL2_FOUND AND X11_FOUND)
+if(XCONQ_UI_SDL AND SDL3_FOUND AND X11_FOUND)
     add_subdirectory(sdl)
 endif()
 

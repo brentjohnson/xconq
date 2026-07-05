@@ -31,7 +31,7 @@ int mainh = 600;
 
 SDL_Surface *mscreen;
 
-/* The SDL2 window backing mscreen.  SDL 1.2 had no separate window
+/* The SDL2/3 window backing mscreen.  SDL 1.2 had no separate window
    handle -- the screen surface returned by SDL_SetVideoMode served both
    roles -- so SDL2 needs this extra global to retarget window-level
    calls (title, resize, window events). */
@@ -157,13 +157,13 @@ static void side_research_fn(Screen *screen, int cancelled);
 void
 initial_ui_init(void)
 {
-    int rslt;
+    bool rslt;
     LibraryPath *path;
 	 /* Hack to signal main in xconq.c that we dont want a new game dialog. */
 	 using_sdl = TRUE;
 
     rslt = SDL_Init(SDL_INIT_VIDEO);
-    if (rslt < 0)
+    if (!rslt)
       init_error("could not open SDL display");
 
     if (!empty_string(getenv("SDL_VIDEODRIVER"))
@@ -179,24 +179,24 @@ initial_ui_init(void)
 
     /* Get the available fullscreen modes if asked to. */
     if (fullscreen) {
-	SDL_DisplayMode mode;
+	const SDL_DisplayMode *mode;
 
 	/* Use the current desktop resolution. */
-	if (SDL_GetDesktopDisplayMode(0, &mode) == 0) {
-	    mainw = mode.w;  mainh = mode.h;
+	mode = SDL_GetDesktopDisplayMode(SDL_GetPrimaryDisplay());
+	if (mode != NULL) {
+	    mainw = mode->w;  mainh = mode->h;
 	}
     }
 
-    /* Create the window and fetch its backing surface.  SDL2 folds
+    /* Create the window and fetch its backing surface.  SDL2/3 fold
        hardware-acceleration and buffering decisions into the window
        manager/driver, so (unlike SDL 1.2) there is no flag combination
-       to reason about here. */
+       to reason about here.  SDL3 drops the initial-position arguments
+       from SDL_CreateWindow (the window manager places new windows). */
 
-    window = SDL_CreateWindow("Xconq",
-			      SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-			      mainw, mainh,
+    window = SDL_CreateWindow("Xconq", mainw, mainh,
 			      SDL_WINDOW_RESIZABLE
-			      | (fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
+			      | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0));
     if (window == NULL)
       init_error("could not open SDL window");
 
@@ -212,7 +212,7 @@ initial_ui_init(void)
     default_cursor_name = g_generic_cursor();
     generic_cursor = get_cursor(default_cursor_name, 0, 0);
     if (generic_cursor != NULL) {
-	SDL_ShowCursor(0);
+	SDL_HideCursor();
 	use_cursors = TRUE;
     }
 
@@ -225,15 +225,17 @@ initial_ui_init(void)
     if (small_font == NULL)
       init_error("could not open SDL small_font");
 
-    /* SDL2 key repeat is automatic (SDL_KEYDOWN events carry a .repeat
-       flag), so there is no equivalent of SDL_EnableKeyRepeat to call. */
+    /* SDL2/3 key repeat is automatic (SDL_EVENT_KEY_DOWN events carry a
+       .repeat flag), so there is no equivalent of SDL_EnableKeyRepeat to
+       call. */
 
-    SDL_SetColorKey(small_font, SDL_TRUE,
-		    SDL_MapRGB(small_font->format, 255, 0, 255));
+    SDL_SetSurfaceColorKey(small_font, true,
+		    SDL_MapSurfaceRGB(small_font, 255, 0, 255));
 
-    /* SDL2 delivers typed text via SDL_TEXTINPUT events instead of a
-       per-key unicode field; start that event source (see handle_event). */
-    SDL_StartTextInput();
+    /* SDL2/3 deliver typed text via SDL_EVENT_TEXT_INPUT events instead of
+       a per-key unicode field; start that event source (see
+       handle_event).  SDL3 scopes text input to a window. */
+    SDL_StartTextInput(window);
 
     update_variant_callback = update_variant_setting;
     update_assignment_callback = update_assignment;
@@ -365,7 +367,7 @@ void
 ui_mainloop(void)
 {
     SDL_Event evt;
-    Uint32 now, next, last_idle = SDL_GetTicks();
+    Uint64 now, next, last_idle = SDL_GetTicks();
     int eventcount = 0;
 
     while (1) {
@@ -419,60 +421,61 @@ run_ui_idler(void)
 static void
 handle_event(SDL_Event *evt)
 {
-    int key, x, y;
+    int key;
+    float x, y;
+    int ix, iy;
 
     if (sscreen == NULL)
       return;
 
     switch (evt->type) {
 
-      case SDL_WINDOWEVENT:
-	if (evt->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-	    /* The window manager already clamped the size (see the
-	       SDL_SetWindowMinimumSize call in initial_ui_init); just
-	       pick up the new dimensions. */
-	    mainw = evt->window.data1;
-	    mainh = evt->window.data2;
-	    /* The old window surface is invalidated by the resize; fetch
-	       the new one instead of freeing/recreating it (SDL2 owns
-	       this surface, unlike SDL 1.2's SDL_SetVideoMode surface). */
-	    mscreen = SDL_GetWindowSurface(window);
-	    /* Reallocate the composition surface. */
-	    SDL_FreeSurface(sscreen->surf);
-	    sscreen->surf =
-	      SDL_CreateRGBSurface(0, mainw, mainh, 32,
-				   0x00ff0000, 0x0000ff00, 0x000000ff, 0);
-	    /* Redraw the resized sscreen. */
-	    set_panel_sizes(sscreen);
-	    redraw_screen(sscreen);
-	} else if (evt->window.event == SDL_WINDOWEVENT_ENTER
-		  || evt->window.event == SDL_WINDOWEVENT_LEAVE) {
-	    sscreen->active = (evt->window.event == SDL_WINDOWEVENT_ENTER);
-	    use_cursors = sscreen->active;
-	    if (use_cursors) {
-		SDL_ShowCursor(0);
-		/* Update the cursor position. */
-		SDL_GetMouseState(&x, &y);
-		sscreen->cursorx = x;  sscreen->cursory = y;
-		/* Restore the default cursor mode. */
-		sscreen->tmp_mode = no_tmp_mode;
-		sscreen->scroll_mode[0] = no_scroll_mode;
-		sscreen->scroll_mode[1] = no_scroll_mode;
-		set_tool_cursor(sscreen);
-	    } else {
-		SDL_ShowCursor(1);
-	    }
-	    update_cursor(sscreen);
+      case SDL_EVENT_WINDOW_RESIZED:
+	/* The window manager already clamped the size (see the
+	   SDL_SetWindowMinimumSize call in initial_ui_init); just
+	   pick up the new dimensions. */
+	mainw = evt->window.data1;
+	mainh = evt->window.data2;
+	/* The old window surface is invalidated by the resize; fetch
+	   the new one instead of freeing/recreating it (SDL2/3 own
+	   this surface, unlike SDL 1.2's SDL_SetVideoMode surface). */
+	mscreen = SDL_GetWindowSurface(window);
+	/* Reallocate the composition surface. */
+	SDL_DestroySurface(sscreen->surf);
+	sscreen->surf =
+	  SDL_CreateSurface(mainw, mainh, SDL_PIXELFORMAT_XRGB8888);
+	/* Redraw the resized sscreen. */
+	set_panel_sizes(sscreen);
+	redraw_screen(sscreen);
+	break;
+
+      case SDL_EVENT_WINDOW_MOUSE_ENTER:
+      case SDL_EVENT_WINDOW_MOUSE_LEAVE:
+	sscreen->active = (evt->type == SDL_EVENT_WINDOW_MOUSE_ENTER);
+	use_cursors = sscreen->active;
+	if (use_cursors) {
+	    SDL_HideCursor();
+	    /* Update the cursor position. */
+	    SDL_GetMouseState(&x, &y);
+	    sscreen->cursorx = (int) x;  sscreen->cursory = (int) y;
+	    /* Restore the default cursor mode. */
+	    sscreen->tmp_mode = no_tmp_mode;
+	    sscreen->scroll_mode[0] = no_scroll_mode;
+	    sscreen->scroll_mode[1] = no_scroll_mode;
+	    set_tool_cursor(sscreen);
+	} else {
+	    SDL_ShowCursor();
 	}
+	update_cursor(sscreen);
 	break;
 
-      case SDL_KEYDOWN:
+      case SDL_EVENT_KEY_DOWN:
         /* First check for special keys using SDL virtual keysymbols. */
-        interp_sym(evt->key.keysym.sym);
+        interp_sym(evt->key.key);
 	break;
 
-      case SDL_TEXTINPUT:
-	/* SDL2 delivers typed characters via a separate UTF-8 text-input
+      case SDL_EVENT_TEXT_INPUT:
+	/* SDL2/3 deliver typed characters via a separate UTF-8 text-input
 	   event instead of a per-key unicode field (SDL 1.2). Take the
 	   first byte to match the previous "& 0x7f" ASCII-only behavior. */
 	key = ((unsigned char) evt->text.text[0]) & 0x7f;
@@ -481,12 +484,13 @@ handle_event(SDL_Event *evt)
 	interp_key(key);
 	break;
 
-      case SDL_KEYUP:
+      case SDL_EVENT_KEY_UP:
 	break;
 
-      case SDL_MOUSEMOTION:
-	if (evt->motion.x != sscreen->cursorx
-	    || evt->motion.y != sscreen->cursory) {
+      case SDL_EVENT_MOUSE_MOTION:
+	ix = (int) evt->motion.x;  iy = (int) evt->motion.y;
+	if (ix != sscreen->cursorx
+	    || iy != sscreen->cursory) {
 	    /* Redraw at the old cursor location. */
 	    add_update(sscreen,
 		       sscreen->cursorx - sscreen->cursor->hotx,
@@ -495,20 +499,20 @@ handle_event(SDL_Event *evt)
 	    /* Mouseover panels may change. */
 	    update_mouseover(sscreen);
 	}
-	sscreen->cursorx = evt->motion.x;  sscreen->cursory = evt->motion.y;
+	sscreen->cursorx = ix;  sscreen->cursory = iy;
 	update_mouseover_x(sscreen, sscreen->cursorx, sscreen->cursory);
 	update_screen(sscreen, FALSE);
 	break;
 
-      case SDL_MOUSEBUTTONDOWN:
-	handle_mouse_down(sscreen, evt->button.x, evt->button.y,
+      case SDL_EVENT_MOUSE_BUTTON_DOWN:
+	handle_mouse_down(sscreen, (int) evt->button.x, (int) evt->button.y,
 			  evt->button.button);
 	break;
 
-      case SDL_MOUSEBUTTONUP:
+      case SDL_EVENT_MOUSE_BUTTON_UP:
 	break;
 
-      case SDL_QUIT:
+      case SDL_EVENT_QUIT:
 	if (dside)
 	  do_quit(dside);
 	else
@@ -582,7 +586,8 @@ interp_sym(SDL_Keycode sym)
 void
 auto_scroll_map(Screen *screen, int dx, int dy)
 {
-    while (SDL_PeepEvents(NULL, 1, SDL_PEEKEVENT, SDL_KEYUP, SDL_KEYUP) == 0) {
+    while (SDL_PeepEvents(NULL, 1, SDL_PEEKEVENT,
+			  SDL_EVENT_KEY_UP, SDL_EVENT_KEY_UP) == 0) {
 	set_view_position(screen->map->main_vp,
 			  screen->map->main_vp->sx + dx, 
 			  screen->map->main_vp->sy + dy);
@@ -1347,7 +1352,7 @@ add_side_research_buttons(Panel *panel, Side *side)
 	if ((i == 0) && (G_srsch_button_offset > 0)) {
 	    button->visible = TRUE;
 	    button->draw_bg = TRUE;
-	    color = SDL_MapRGB(screen->surf->format, 120, 150, 150);
+	    color = SDL_MapSurfaceRGB(screen->surf, 120, 150, 150);
 	    button->bg = color;
 	    button->label = "Prev";
 	    button->picture = NULL;
@@ -1359,7 +1364,7 @@ add_side_research_buttons(Panel *panel, Side *side)
 		      numbuttons)) {
 	    button->visible = TRUE;
 	    button->draw_bg = TRUE;
-	    color = SDL_MapRGB(screen->surf->format, 120, 150, 150);
+	    color = SDL_MapSurfaceRGB(screen->surf, 120, 150, 150);
 	    button->bg = color;
 	    button->label = "Next";
 	    button->picture = NULL;
@@ -1371,7 +1376,7 @@ add_side_research_buttons(Panel *panel, Side *side)
 	    button->visible = TRUE;
 	    button->data = protobutton->data;
 	    button->draw_bg = TRUE;
-	    color = SDL_MapRGB(screen->surf->format, 120, 150, 200);
+	    color = SDL_MapSurfaceRGB(screen->surf, 120, 150, 200);
 	    button->bg = color;
 	    button->label = protobutton->label;
 	    button->picture = protobutton->picture;
@@ -1391,7 +1396,7 @@ add_side_research_buttons(Panel *panel, Side *side)
 	  button = panel->buttons[numbuttons];
 	button->visible = TRUE;
 	button->draw_bg = TRUE;
-	color = SDL_MapRGB(screen->surf->format, 120, 150, 150);
+	color = SDL_MapSurfaceRGB(screen->surf, 120, 150, 150);
 	button->bg = color;
 	button->picture = NULL;
 	button->pic_surface = NULL;
@@ -2701,7 +2706,7 @@ exit_xconq(void)
     }
     close_displays();
     /* Toggle on the OS cursor. */
-    SDL_ShowCursor(1);
+    SDL_ShowCursor();
     SDL_Quit();
     exit(0);
 }

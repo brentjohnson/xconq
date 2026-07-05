@@ -281,8 +281,8 @@ draw_map_overhead(Map *map)
 #endif
 		rect.x = tmpsx1;  rect.y = tmpsy1;
 		rect.w = tmpsx2 - tmpsx1;  rect.h = 2;
-		SDL_FillRect(map->screen->surf, &rect,
-			     SDL_MapRGB(map->screen->surf->format, 255, 0, 0));
+		SDL_FillSurfaceRect(map->screen->surf, &rect,
+			     SDL_MapSurfaceRGB(map->screen->surf, 255, 0, 0));
 	    }
 #endif
 	    draw_terrain_row(map, x1, y, len);
@@ -642,8 +642,8 @@ draw_terrain_row(Map *map, int x0, int y0, int len)
 		if (timg) {
 		  rect.x = sx;  rect.y = sy;
 		  rect.w = i * w;  rect.h = h;
-		  SDL_FillRect(map->screen->surf, &rect,
-			       SDL_MapRGB(map->screen->surf->format,
+		  SDL_FillSurfaceRect(map->screen->surf, &rect,
+			       SDL_MapSurfaceRGB(map->screen->surf, 
 					  (timg->r >> 8),
 					  (timg->g >> 8),
 					  (timg->b >> 8)));
@@ -681,8 +681,8 @@ draw_terrain_row(Map *map, int x0, int y0, int len)
 		      if (timg) {
 			rect.x = sx;  rect.y = sy;
 			rect.w = w;  rect.h = h;
-			SDL_FillRect(map->screen->surf, &rect,
-				     SDL_MapRGB(map->screen->surf->format,
+			SDL_FillSurfaceRect(map->screen->surf, &rect,
+				     SDL_MapSurfaceRGB(map->screen->surf, 
 						(timg->r >> 8),
 						(timg->g >> 8),
 						(timg->b >> 8)));
@@ -1175,23 +1175,21 @@ get_grid_surface(int pow)
 	ui->no_grid_available[pow] = TRUE;
 	return;
     }
-    tmpsurf = SDL_CreateRGBSurface(0, himg->w, himg->h, 32,
-			       0x00ff0000, 0x0000ff00, 0x000000ff, 0);
-    SDL_FillRect(tmpsurf, NULL, SDL_MapRGB(tmpsurf->format, 255, 0, 255));
+    tmpsurf = SDL_CreateSurface(himg->w, himg->h, SDL_PIXELFORMAT_XRGB8888);
+    SDL_FillSurfaceRect(tmpsurf, NULL, SDL_MapSurfaceRGB(tmpsurf, 255, 0, 255));
     rect.x = rect.y = 0;
     rect.w = himg->w;  rect.h = himg->h;
     SDL_BlitSurface(sdlimg, NULL, tmpsurf, &rect);
-    SDL_SetColorKey(tmpsurf, SDL_TRUE,
-		    SDL_MapRGB(sdlimg->format, 255, 255, 255));
+    SDL_SetSurfaceColorKey(tmpsurf, true,
+		    SDL_MapSurfaceRGB(sdlimg, 255, 255, 255));
     ui->grids[pow] =
-      SDL_CreateRGBSurface(0, himg->w, himg->h, 32,
-		       0x00ff0000, 0x0000ff00, 0x000000ff, 0);
-    SDL_FillRect(ui->grids[pow], NULL,
-		 SDL_MapRGB(ui->grids[pow]->format, 0, 0, 0));
+      SDL_CreateSurface(himg->w, himg->h, SDL_PIXELFORMAT_XRGB8888);
+    SDL_FillSurfaceRect(ui->grids[pow], NULL,
+		 SDL_MapSurfaceRGB(ui->grids[pow], 0, 0, 0));
     SDL_BlitSurface(tmpsurf, NULL, ui->grids[pow], &rect);
-    SDL_SetColorKey(ui->grids[pow], SDL_TRUE,
-		    SDL_MapRGB(ui->grids[pow]->format, 255, 0, 255));
-    SDL_FreeSurface(tmpsurf);
+    SDL_SetSurfaceColorKey(ui->grids[pow], true,
+		    SDL_MapSurfaceRGB(ui->grids[pow], 255, 0, 255));
+    SDL_DestroySurface(tmpsurf);
 }
 
 static void
@@ -1366,7 +1364,7 @@ draw_unit_completeness(Map *map, UnitView *uview,
 				  stdcolors, &r, &g, &b))
       run_warning("Could find the color: %s", u_construction_border_color(u));
     draw_rect(map->screen->surf, sx, sy, sw, sh,
-	      SDL_MapRGB(map->screen->surf->format, r, g, b));
+	      SDL_MapSurfaceRGB(map->screen->surf, r, g, b));
     /* Fill interior only if we know much about the unit. */
     if (uview->siden == dside->id) {
 	unit = view_unit(uview);
@@ -1438,8 +1436,8 @@ draw_uimg_gbox(Map *map, UnitView *uview, int sx, int sy, int sw, int sh)
 				  &r, &g, &b))
       run_warning("Could not find the requested color: %s", 
 		  g_unit_gbox_border_color());
-    SDL_FillRect(map->screen->surf, &rect,
-		 SDL_MapRGB(map->screen->surf->format, r, g, b));
+    SDL_FillSurfaceRect(map->screen->surf, &rect,
+		 SDL_MapSurfaceRGB(map->screen->surf, r, g, b));
     /* Then draw fill rect. */
     ++rect.x;  ++rect.y;
     rect.w -= 2;  rect.h -= 2;
@@ -1447,8 +1445,8 @@ draw_uimg_gbox(Map *map, UnitView *uview, int sx, int sy, int sw, int sh)
 				  &r, &g, &b))
       run_warning("Could not find the requested color: %s",
 		  g_unit_gbox_fill_color());
-    SDL_FillRect(map->screen->surf, &rect,
-		 SDL_MapRGB(map->screen->surf->format, r, g, b));
+    SDL_FillSurfaceRect(map->screen->surf, &rect,
+		 SDL_MapSurfaceRGB(map->screen->surf, r, g, b));
     return TRUE;
 }
 
@@ -1807,8 +1805,8 @@ draw_uimg_as_side_color(Image *img, Map *map, int sx, int sy, int sidenum)
     rect.y = sy;
     rect.w = sw;  
     rect.h = sh;
-    SDL_FillRect(map->screen->surf, &rect,
-		 SDL_MapRGB(map->screen->surf->format, r, g, b));
+    SDL_FillSurfaceRect(map->screen->surf, &rect,
+		 SDL_MapSurfaceRGB(map->screen->surf, r, g, b));
     return TRUE;
 }
 
@@ -1895,13 +1893,13 @@ draw_unit_image(ImageFamily *imf, Map *map, int sx, int sy, int sw, int sh,
 	if (sw >= 16) {
 	    rect.x = sx - 1;  rect.y = sy - 1;
 	    rect.w = sw + 2;  rect.h = sh + 2;
-	    SDL_FillRect(map->screen->surf, &rect,
-			 SDL_MapRGB(map->screen->surf->format, 255, 255, 255));
+	    SDL_FillSurfaceRect(map->screen->surf, &rect,
+			 SDL_MapSurfaceRGB(map->screen->surf, 255, 255, 255));
 	}
 	rect.x = sx;  rect.y = sy;
 	rect.w = sw;  rect.h = sh;
-	SDL_FillRect(map->screen->surf, &rect,
-		     SDL_MapRGB(map->screen->surf->format, 0, 0, 0));
+	SDL_FillSurfaceRect(map->screen->surf, &rect,
+		     SDL_MapSurfaceRGB(map->screen->surf, 0, 0, 0));
     }
     /* Take care of effects and decorations. */
     if (!desperate) {
@@ -1951,13 +1949,13 @@ draw_side_emblem(Map *map, int ex, int ey, int ew, int eh, int s2)
     /* If the emblem is a solid color, fill the entire emblem area
        with that color, plus a black border. */
     if (eimg->w == 1 && eimg->h == 1) {
-	col = SDL_MapRGB(map->screen->surf->format, 0, 0, 0);
-	SDL_FillRect(map->screen->surf, &rect, col);
-	col = SDL_MapRGB(map->screen->surf->format,
+	col = SDL_MapSurfaceRGB(map->screen->surf, 0, 0, 0);
+	SDL_FillSurfaceRect(map->screen->surf, &rect, col);
+	col = SDL_MapSurfaceRGB(map->screen->surf, 
 			 eimg->r >> 8, eimg->g >> 8, eimg->b >> 8);
 	rect.x = ex + 1;  rect.y = ey + 1;
 	rect.w = ew - 2;  rect.h = eh - 2;
-	SDL_FillRect(map->screen->surf, &rect, col);
+	SDL_FillSurfaceRect(map->screen->surf, &rect, col);
     } else {
 	esurf = sdl_image(eimg);
 	if (esurf) {
@@ -2038,23 +2036,21 @@ get_country_boundary_surface(int pow)
 	ui->no_country_boundary_available[pow] = TRUE;
 	return;
     }
-    tmpsurf = SDL_CreateRGBSurface(0, himg->w, himg->h, 32,
-			       0x00ff0000, 0x0000ff00, 0x000000ff, 0);
-    SDL_FillRect(tmpsurf, NULL, SDL_MapRGB(tmpsurf->format, 255, 0, 255));
+    tmpsurf = SDL_CreateSurface(himg->w, himg->h, SDL_PIXELFORMAT_XRGB8888);
+    SDL_FillSurfaceRect(tmpsurf, NULL, SDL_MapSurfaceRGB(tmpsurf, 255, 0, 255));
     rect.x = rect.y = 0;
     rect.w = himg->w;  rect.h = himg->h;
     SDL_BlitSurface(sdlimg, NULL, tmpsurf, &rect);
-    SDL_SetColorKey(tmpsurf, SDL_TRUE,
-		    SDL_MapRGB(sdlimg->format, 255, 255, 255));
+    SDL_SetSurfaceColorKey(tmpsurf, true,
+		    SDL_MapSurfaceRGB(sdlimg, 255, 255, 255));
     ui->country_boundaries[pow] =
-      SDL_CreateRGBSurface(0, himg->w, himg->h, 32,
-		       0x00ff0000, 0x0000ff00, 0x000000ff, 0);
-    SDL_FillRect(ui->country_boundaries[pow], NULL,
-		 SDL_MapRGB(ui->country_boundaries[pow]->format, 255, 0, 0));
+      SDL_CreateSurface(himg->w, himg->h, SDL_PIXELFORMAT_XRGB8888);
+    SDL_FillSurfaceRect(ui->country_boundaries[pow], NULL,
+		 SDL_MapSurfaceRGB(ui->country_boundaries[pow], 255, 0, 0));
     SDL_BlitSurface(tmpsurf, NULL, ui->country_boundaries[pow], &rect);
-    SDL_SetColorKey(ui->country_boundaries[pow], SDL_TRUE,
-		    SDL_MapRGB(ui->country_boundaries[pow]->format, 255, 0, 255));
-    SDL_FreeSurface(tmpsurf);
+    SDL_SetSurfaceColorKey(ui->country_boundaries[pow], true,
+		    SDL_MapSurfaceRGB(ui->country_boundaries[pow], 255, 0, 255));
+    SDL_DestroySurface(tmpsurf);
 }
 
 /* Given a direction and magnification, return a rectangle enclosing
@@ -2191,7 +2187,7 @@ draw_uview_selection_rectangle(Map *map, UnitView *uview,
 #endif
     /* Draw the selection indicator proper. */
     if (sw >= 4 && sh >= 4) {
-	color = SDL_MapRGB(map->screen->surf->format, 0, 0, 0);
+	color = SDL_MapSurfaceRGB(map->screen->surf, 0, 0, 0);
 	draw_rect(map->screen->surf, sx + 1, sy + 1, sw - 3, sh - 2, color);
     }
     /*! \todo Draw curunit indicator. */
@@ -2231,19 +2227,19 @@ draw_uview_health_bar(Map *map, UnitView *uview,
     hsw = (unit->hp * (tsw - 2)) / u_hp(unit->type);
     if (hsw == 0)
       hsw = 1;
-    color = SDL_MapRGB(map->screen->surf->format, 0, 0, 0);
+    color = SDL_MapSurfaceRGB(map->screen->surf, 0, 0, 0);
     rect.x = sx + 2;  rect.y = sy - (2 + barwid) - 1;
     rect.w = tsw;  rect.h = 2 + barwid;
-    SDL_FillRect(map->screen->surf, &rect, color);
+    SDL_FillSurfaceRect(map->screen->surf, &rect, color);
     /* (should be able to control color changes) */
-    color = SDL_MapRGB(map->screen->surf->format, 0, 255, 0);
+    color = SDL_MapSurfaceRGB(map->screen->surf, 0, 255, 0);
     if (unit->hp * 4 <= u_hp(unit->type))
-      color = SDL_MapRGB(map->screen->surf->format, 255, 0, 0);
+      color = SDL_MapSurfaceRGB(map->screen->surf, 255, 0, 0);
     else if (unit->hp * 2 <= u_hp(unit->type))
-      color = SDL_MapRGB(map->screen->surf->format, 255, 255, 0);
+      color = SDL_MapSurfaceRGB(map->screen->surf, 255, 255, 0);
     rect.x = sx + 3;  rect.y = sy - (2 + barwid);
     rect.w = hsw;  rect.h = barwid;
-    SDL_FillRect(map->screen->surf, &rect, color);
+    SDL_FillSurfaceRect(map->screen->surf, &rect, color);
     return TRUE;
 }
 
@@ -2375,7 +2371,7 @@ draw_map_outline(Map *worldmap, Map *map)
 	wsx[i] += worldmap->sx;  wsy[i] += worldmap->sy;
     }
     /* Use black for the outline. */
-    color = SDL_MapRGB(worldmap->screen->surf->format, 0, 0, 0);
+    color = SDL_MapSurfaceRGB(worldmap->screen->surf, 0, 0, 0);
     for (i = 0; i < 4; ++i) {
 	j = (i + 1) % 4;
 	draw_line(worldmap->screen->surf, wsx[i], wsy[i], wsx[j], wsy[j],

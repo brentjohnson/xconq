@@ -160,42 +160,31 @@ alpha_blend_fill_rect(SDL_Surface *surf, SDL_Rect *rect,
 		      Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
     SDL_Surface *asurf = NULL;
-    Uint32 rmask = 0, gmask = 0, bmask = 0, amask = 0;
     SDL_Rect rect2;
 
-    /* Setup the masks for the temp surface. */
-#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-    rmask = 0xff000000;
-    gmask = 0x00ff0000;
-    bmask = 0x0000ff00;
-    amask = 0x000000ff;
-#else
-    rmask = 0x000000ff;
-    gmask = 0x0000ff00;
-    bmask = 0x00ff0000;
-    amask = 0xff000000;
-#endif
-    /* Create the temp surface. */
-    asurf = SDL_CreateRGBSurface(0, rect->w, rect->h, 32,
-				 rmask, gmask, bmask, amask);
+    /* Create the temp surface.  SDL_PIXELFORMAT_RGBA32 resolves to the
+       right byte-order masks for the host's endianness on its own, so
+       (unlike the old explicit rmask/gmask/bmask/amask setup) there is
+       nothing to condition on SDL_BYTEORDER here. */
+    asurf = SDL_CreateSurface(rect->w, rect->h, SDL_PIXELFORMAT_RGBA32);
     if (!asurf) {
 	run_warning("Failed to allocate an alpha blending surface");
 	return FALSE;
     }
-    /* Turn on alpha blending on the temp surface.  SDL2's default blend
+    /* Turn on alpha blending on the temp surface.  SDL2/3's default blend
        mode ignores the alpha channel (SDL_BLENDMODE_NONE); the surface's
        own alpha modulation defaults to opaque, matching the SDL 1.2
        SDL_SetAlpha(..., SDL_ALPHA_OPAQUE) call this replaces, so only the
        blend mode needs setting to get the same per-pixel alpha blit. */
     SDL_SetSurfaceBlendMode(asurf, SDL_BLENDMODE_BLEND);
     /* Dump the fill rect (including alpha data) into the temp surface.
-       (Note that alpha belnding is not performed with 'SDL_FillRect'.) */
+       (Note that alpha belnding is not performed with 'SDL_FillSurfaceRect'.) */
     rect2.x = 0;  rect2.y = 0;  rect2.w = rect->w;  rect2.h = rect->h;
-    SDL_FillRect(asurf, &rect2, SDL_MapRGBA(asurf->format, r, g, b, a));
+    SDL_FillSurfaceRect(asurf, &rect2, SDL_MapSurfaceRGBA(asurf, r, g, b, a));
     /* Blit the temp surface into the main surface. */
     SDL_BlitSurface(asurf, NULL, surf, rect);
     /* Free up the temp surface. */
-    SDL_FreeSurface(asurf);
+    SDL_DestroySurface(asurf);
     return TRUE;
 }
 
@@ -216,8 +205,8 @@ open_screen(void)
     /* Also assign it to a global. */
     sscreen = screen;
     /* Allocate our composition buffer. */
-    screen->surf = SDL_CreateRGBSurface(0, mscreen->w, mscreen->h, 32,
-				    0x00ff0000, 0x0000ff00, 0x000000ff, 0);
+    screen->surf = SDL_CreateSurface(mscreen->w, mscreen->h,
+				     SDL_PIXELFORMAT_XRGB8888);
     /* Set up a particular panel layout, at least for now. */
     screen->panels = create_panel(screen, bottom_panel,
 				  screen->surf->w, 130, NULL);
@@ -405,7 +394,7 @@ set_panel_position(Panel *panel, int x, int y)
     reset_panel_buttons(panel);
 }
 
-int last_redraw;
+Uint64 last_redraw;
 
 void
 redraw_screen(Screen *screen)
@@ -452,7 +441,8 @@ add_update(Screen *screen, int sx, int sy, int sw, int sh)
 void
 update_screen(Screen *screen, int rightnow)
 {
-    int i, now;
+    int i;
+    Uint64 now;
     Panel *panel;
     Uint32 color;
     SDL_Rect rect, rect2, dummyrect;
@@ -463,8 +453,8 @@ update_screen(Screen *screen, int rightnow)
       return;
     for (i = 0; i < screen->num_updates; ++i) {
 	rect = screen->updates[i];
-	color = SDL_MapRGB(screen->surf->format, 0, 0, 0);
-	SDL_FillRect(screen->surf, &rect, color);
+	color = SDL_MapSurfaceRGB(screen->surf, 0, 0, 0);
+	SDL_FillSurfaceRect(screen->surf, &rect, color);
 	memcpy(screen->map->vp, screen->map->main_vp, sizeof(VP));
 	/* Shrink the viewport down to the update region only. */
 	set_view_size(screen->map->vp, 
@@ -504,7 +494,7 @@ update_screen(Screen *screen, int rightnow)
 	SDL_BlitSurface(screen->cursor->surf, NULL, mscreen, &rect);
     }
     /* NOTE: Do we need to add cursor to list of update rects? */
-    /* Present only the dirty rects; SDL2 has no separate double-buffer
+    /* Present only the dirty rects; SDL2/3 have no separate double-buffer
        flip path (SDL_Flip) to choose between, unlike SDL 1.2. */
     SDL_UpdateWindowSurfaceRects(window, (SDL_Rect *) screen->updates,
 				 screen->num_updates);
@@ -522,12 +512,12 @@ draw_panel(Screen *screen, Panel *panel)
 
     if (panel->h > 10) {
 	if (!panel->overlay) {
-	    color = SDL_MapRGB(screen->surf->format, 0, 40, 100);
+	    color = SDL_MapSurfaceRGB(screen->surf, 0, 40, 100);
 	    rect.x = panel->x;  rect.y = panel->y;
 	    rect.w = panel->w;  rect.h = panel->h;
-	    SDL_FillRect(screen->surf, &rect, color);
+	    SDL_FillSurfaceRect(screen->surf, &rect, color);
 	}
-	color = SDL_MapRGB(screen->surf->format, 100, 140, 200);
+	color = SDL_MapSurfaceRGB(screen->surf, 100, 140, 200);
 #if (0) /* to see redraws */
 	color = random_color(screen->surf);
 #endif
@@ -545,10 +535,10 @@ draw_panel(Screen *screen, Panel *panel)
 	}
     }
     /* Always draw the expand/contract button. */
-    color = SDL_MapRGB(screen->surf->format, 200, 100, 100);
+    color = SDL_MapSurfaceRGB(screen->surf, 200, 100, 100);
     rect.x = panel->x + panel->w - 10;  rect.y = panel->y + panel->h - 10;
     rect.w = 9;  rect.h = 9;
-    SDL_FillRect(screen->surf, &rect, color);
+    SDL_FillSurfaceRect(screen->surf, &rect, color);
 }
 
 static void
@@ -822,7 +812,7 @@ update_unit_info(Screen *screen)
 		if ((i == 0) && (G_uact_button_offset > 0)) {
 		    button->visible = TRUE;
 		    button->draw_bg = TRUE;
-		    color = SDL_MapRGB(screen->surf->format, 120, 150, 150);
+		    color = SDL_MapSurfaceRGB(screen->surf, 120, 150, 150);
 		    button->bg = color;
 		    button->label = "Prev";
 		    button->picture = NULL;
@@ -833,7 +823,7 @@ update_unit_info(Screen *screen)
 				numbuttons)) {
 		    button->visible = TRUE;
 		    button->draw_bg = TRUE;
-		    color = SDL_MapRGB(screen->surf->format, 120, 150, 150);
+		    color = SDL_MapSurfaceRGB(screen->surf, 120, 150, 150);
 		    button->bg = color;
 		    button->label = "Next";
 		    button->picture = NULL;
@@ -844,7 +834,7 @@ update_unit_info(Screen *screen)
 		    button->visible = TRUE;
 		    button->data = protobutton->data;
 		    button->draw_bg = TRUE;
-		    color = SDL_MapRGB(screen->surf->format, 120, 150, 200);
+		    color = SDL_MapSurfaceRGB(screen->surf, 120, 150, 200);
 		    button->bg = color;
 		    button->label = protobutton->label;
 		    button->picture = protobutton->picture;
@@ -864,7 +854,7 @@ update_unit_info(Screen *screen)
 		  button = panel->buttons[numbuttons];
 		button->visible = TRUE;
 		button->draw_bg = TRUE;
-		color = SDL_MapRGB(screen->surf->format, 120, 150, 150);
+		color = SDL_MapSurfaceRGB(screen->surf, 120, 150, 150);
 		button->bg = color;
 		button->picture = NULL;
 		button->pic_surface = NULL;
@@ -885,13 +875,13 @@ draw_world_map(Screen *screen, Panel *panel)
     Uint32 color;
     SDL_Rect rect;
 
-    color = SDL_MapRGB(screen->surf->format, 0, 0, 0);
+    color = SDL_MapSurfaceRGB(screen->surf, 0, 0, 0);
 #if (0)  /* Use this to see more of map outline */
     color = random_color(screen->surf);
 #endif
     rect.x = panel->x + panel->w - 16 - 200;  rect.y = panel->y + 10;
     rect.w = 200;  rect.h = 130 - 20;
-    SDL_FillRect(screen->surf, &rect, color);
+    SDL_FillSurfaceRect(screen->surf, &rect, color);
 #if (0)  /* Use this to see how often redraws are happening */
     color = random_color(screen->surf);
     draw_rect(screen->surf, rect.x, rect.y, rect.w, rect.h, color);
@@ -1009,8 +999,8 @@ draw_button(Screen *screen, Panel *panel, SDLButton *button)
     rect.x = panel->x + button->x;  rect.y = panel->y + button->y;
     rect.w = button->w;  rect.h = button->h;
     if (button->draw_bg)
-      SDL_FillRect(screen->surf, &rect, button->bg);
-    color = SDL_MapRGB(screen->surf->format, 100, 140, 200);
+      SDL_FillSurfaceRect(screen->surf, &rect, button->bg);
+    color = SDL_MapSurfaceRGB(screen->surf, 100, 140, 200);
 #if (0) /* to see redraws */
     color = random_color(screen->surf);
 #endif
@@ -1049,7 +1039,7 @@ draw_button(Screen *screen, Panel *panel, SDLButton *button)
 Uint32
 random_color(SDL_Surface *surf)
 {
-    return SDL_MapRGB(surf->format, xrandom(255), xrandom(255), xrandom(255));
+    return SDL_MapSurfaceRGB(surf, xrandom(255), xrandom(255), xrandom(255));
 }
 
 /* Draw a rectangle inside the bounds defined by the arguments. */
@@ -1061,16 +1051,16 @@ draw_rect(SDL_Surface *surf, int sx, int sy, int sw, int sh, Uint32 col)
 
     rect.x = sx;  rect.y = sy;
     rect.w = sw;  rect.h = 1;
-    SDL_FillRect(surf, &rect, col);
+    SDL_FillSurfaceRect(surf, &rect, col);
     rect.x = sx;  rect.y = sy;
     rect.w = 1;  rect.h = sh;
-    SDL_FillRect(surf, &rect, col);
+    SDL_FillSurfaceRect(surf, &rect, col);
     rect.x = sx;  rect.y = sy + sh - 1;
     rect.w = sw;  rect.h = 1;
-    SDL_FillRect(surf, &rect, col);
+    SDL_FillSurfaceRect(surf, &rect, col);
     rect.x = sx + sw - 1;  rect.y = sy;
     rect.w = 1;  rect.h = sh;
-    SDL_FillRect(surf, &rect, col);
+    SDL_FillSurfaceRect(surf, &rect, col);
 }
 
 void
@@ -1081,11 +1071,11 @@ draw_line(SDL_Surface *surf, int sx1, int sy1, int sx2, int sy2, Uint32 col)
     if (sy1 == sy2) {
 	rect.x = min(sx1, sx2);  rect.y = sy1;
 	rect.w = max(sx1, sx2) - rect.x;  rect.h = 1;
-	SDL_FillRect(surf, &rect, col);
+	SDL_FillSurfaceRect(surf, &rect, col);
     } else if (sx1 == sx2) {
 	rect.x = sx1;  rect.y = min(sy1, sy2);
 	rect.w = 1;  rect.h = max(sy1, sy2) - rect.y;
-	SDL_FillRect(surf, &rect, col);
+	SDL_FillSurfaceRect(surf, &rect, col);
     } else {
 	/* general case not implemented */
     }

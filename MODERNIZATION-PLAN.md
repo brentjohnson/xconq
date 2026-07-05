@@ -414,10 +414,11 @@ Method:
    over: a test that fails only in Release is a real finding; file it as
    a note on this plan item if you cannot fix it quickly.
 2. macOS job (macos-latest): install deps via brew. `sdlconq` now builds
-   against native SDL2 (7/2026 port — see §4), so `brew install sdl2` is
-   the dependency to fetch; the sdl12-compat shim is no longer relevant
-   here. curses ships with the OS. (The Tcl/Tk and Xt/Xaw UIs this note
-   used to caveat around no longer exist — see Step 2.)
+   against native SDL3 (7/2026 SDL2 port, then 7/2026 SDL3 port — see
+   §4), so `brew install sdl3` is the dependency to fetch; the
+   sdl12-compat shim is no longer relevant here. curses ships with the
+   OS. (The Tcl/Tk and Xt/Xaw UIs this note used to caveat around no
+   longer exist — see Step 2.)
    Minimum bar for the job to be worth merging: kernel + skelconq +
    cconq build and the quick ctest lane passes. Fix small portability
    issues this exposes (BSD vs GNU userland in test scripts, missing
@@ -644,14 +645,20 @@ Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md.
   `Tk_Offset`/`Tk_ConfigureWidget` call sites was judged not worth it with
   the SDL UI available as the graphical successor.
 - ~~**[M] Port the SDL UI from SDL 1.2 to SDL2 or SDL3.**~~ *(done, 7/2026)*:
-  ported to native SDL2 (window-surface API: `SDL_CreateWindow` +
+  ported to native SDL2 first (window-surface API: `SDL_CreateWindow` +
   `SDL_GetWindowSurface`/`SDL_UpdateWindowSurfaceRects`, replacing
   `SDL_SetVideoMode`/`SDL_Flip`; `SDL_WINDOWEVENT`/`SDL_TEXTINPUT` replace
-  `SDL_VIDEORESIZE`/`SDL_ACTIVEEVENT` and the removed per-key unicode field).
-  `sdlconq` now links `libSDL2` directly instead of building through the
-  sdl12-compat shim; CI installs `libsdl2-dev`. A future SDL3 port remains
-  possible but is no longer blocking — SDL2 is a mature, well-supported
-  target in its own right.
+  `SDL_VIDEORESIZE`/`SDL_ACTIVEEVENT` and the removed per-key unicode field),
+  then straight on to SDL3 the same month: the window-surface model carried
+  over unchanged, with the API churn confined to renames
+  (`SDL_FillRect`→`SDL_FillSurfaceRect`, `SDL_FreeSurface`→`SDL_DestroySurface`,
+  `SDL_MapRGB(surf->format,…)`→`SDL_MapSurfaceRGB(surf,…)`,
+  `SDL_CreateRGBSurface`→`SDL_CreateSurface` with an `SDL_PixelFormat` enum),
+  the `SDL_WINDOWEVENT` compound event splitting into individual
+  `SDL_EVENT_WINDOW_*` types, and `evt->key.keysym.sym`→`evt->key.key`.
+  `sdlconq` now links `libSDL3` directly; CI builds SDL3 from source (no
+  `libsdl3-dev` package on `ubuntu-latest` yet — see the workflow file) since
+  no shim exists at that vintage to fall back through.
 - ~~**[S] Decide the fate of the Xt/Xaw UI (`xtconq`).**~~ *(resolved by
   removal, 7/2026)*: deleted outright rather than kept deprecated — see
   Step 2. This also removed its `x2imf`/`imf2x`/`xshowimf` image tools and
@@ -1227,9 +1234,9 @@ forward old text unchecked.
 Method:
 1. README: rewrite as the front door. What Xconq is (game system + GDL +
    games library — keep/adapt the existing good prose), current status
-   (CMake build, two UIs: curses (cconq) and native SDL2 (sdlconq, the
-   primary graphical client, ported from SDL 1.2/sdl12-compat 7/2026 —
-   see §4) — the Tcl/Tk and Xt/Xaw UIs were removed in Step 2, 7/2026; a
+   (CMake build, two UIs: curses (cconq) and native SDL3 (sdlconq, the
+   primary graphical client, ported from SDL 1.2 through SDL2 to SDL3,
+   7/2026 — see §4) — the Tcl/Tk and Xt/Xaw UIs were removed in Step 2, 7/2026; a
    minimal UI-section update already landed with that removal, but
    re-verify against the current tree rather than trusting it), quick
    build instructions (cmake -B build &&
@@ -1263,7 +1270,7 @@ Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md.
 ```
 - **[S] Start tagging releases.** The version has been 7.5.0pre for 20 years.
   Both original gates are now clear: the Tcl/Tk UI was removed rather than
-  ported (Step 2), and the SDL UI's SDL2 port landed 7/2026 (see §4). Cut a
+  ported (Step 2), and the SDL UI's SDL3 port landed 7/2026 (see §4). Cut a
   7.5.0 with release notes and a source tarball from CI (replaces the old
   `make distcheck`) — the actual tagging call is the maintainer's.
 
@@ -1274,7 +1281,7 @@ the decision to actually cut 7.5.0 stays with the maintainer.)*
 Task: build Xconq's release machinery so that pushing a git tag produces a
 GitHub release with a source tarball and notes. Do NOT tag or cut the
 release itself — both of the plan's original 7.5.0 gates are now clear
-(the Tcl/Tk UI was removed in Step 2 rather than ported; the SDL UI's SDL2
+(the Tcl/Tk UI was removed in Step 2 rather than ported; the SDL UI's SDL3
 port landed 7/2026, see §4), but the actual tagging call is the
 maintainer's.
 
@@ -1388,9 +1395,8 @@ Task: produce the design assessment for Xconq's successor UI. This is an
 ANALYSIS deliverable (doc/ui-successor-design.md) — implement nothing
 beyond throwaway measurements. The maintainer decides afterward.
 
-PREREQUISITES: ideally the §4 SDL2/3 port has landed (read its state
-either way); the §6.2 networking review, if done, is direct input for the
-web-frontend option.
+PREREQUISITES: the §4 SDL3 port has landed (7/2026); the §6.2 networking
+review, if done, is direct input for the web-frontend option.
 Method:
 1. Ground truth first — measure the UI contract. Every UI implements the
    callback surface the kernel expects (the interface functions declared
@@ -1495,7 +1501,7 @@ lives.
    porting Tcl/Tk to 9.x, deleted it and the legacy Xt/Xaw UI outright;
    `sdlconq` is now the primary graphical client.
 3. §1 language cleanup through the C++17 bump — unblocks tooling and Clang.
-4. ~~§4 SDL2/3 port~~ (done 7/2026, SDL2) — `sdlconq` now builds against
-   native SDL2 instead of through the sdl12-compat shim.
+4. ~~§4 SDL2/3 port~~ (done 7/2026, SDL2 then SDL3) — `sdlconq` now builds
+   against native SDL3 instead of through the sdl12-compat shim.
 5. §5–§8 as continuous background work.
 6. §9 only if the project attracts sustained interest.

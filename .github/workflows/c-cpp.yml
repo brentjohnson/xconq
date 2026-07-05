@@ -16,7 +16,20 @@ jobs:
     - name: install dependencies
       run: |
         sudo apt update
-        sudo apt install -y libncurses-dev libsdl2-dev libxmu-dev
+        sudo apt install -y libncurses-dev libxmu-dev libx11-dev libxext-dev \
+          libxrandr-dev libxcursor-dev libxi-dev libxss-dev
+    - name: build and install SDL3
+      # ubuntu-latest (24.04 as of writing) has no libsdl3-dev package; SDL3
+      # only landed in Ubuntu starting with 25.04. Build the pinned stable
+      # release from source instead of depending on a distro package.
+      run: |
+        curl -fsSL -o /tmp/SDL3.tar.gz \
+          https://github.com/libsdl-org/SDL/releases/download/release-3.4.12/SDL3-3.4.12.tar.gz
+        tar -xzf /tmp/SDL3.tar.gz -C /tmp
+        cmake -B /tmp/SDL3-build -S /tmp/SDL3-3.4.12 -DCMAKE_BUILD_TYPE=Release
+        cmake --build /tmp/SDL3-build -j$(nproc)
+        sudo cmake --install /tmp/SDL3-build
+        sudo ldconfig
     - name: configure
       run: cmake -B build
     - name: build

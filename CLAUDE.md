@@ -26,14 +26,15 @@ cmake --install build
 ```
 
 UI options (`-DXCONQ_UI_CURSES/SDL=ON|OFF`) gate the two interfaces.
-Executables: `cconq` (curses), `sdlconq` (SDL2). The Tcl/Tk
+Executables: `cconq` (curses), `sdlconq` (SDL3). The Tcl/Tk
 (`xconq`) and legacy Xt/Xaw (`xtconq`) UIs were removed 7/2026 — see
 MODERNIZATION-PLAN.md's Step 2 note. Other knobs: `XCONQ_DATA_DIR`,
 `XCONQ_SCORES_DIR`. Generated config headers (`acdefs.h`, `version.h`) land in
 `build/include/`, from templates in `kernel/*.h.in`.
 
 CI (`.github/workflows/c-cpp.yml`, Ubuntu) installs `libncurses-dev
-libsdl1.2-compat-dev libxmu-dev`, builds both UIs, and runs
+libxmu-dev` plus SDL3's X11 build deps, builds SDL3 from source (no
+`libsdl3-dev` package on `ubuntu-latest` yet), builds both UIs, and runs
 ctest without the `long` label.
 
 ### Running tests
