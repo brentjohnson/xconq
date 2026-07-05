@@ -177,7 +177,7 @@ add_default_player(void)
 void
 make_default_player_spec(void)
 {
-    default_player_spec = "stdio";
+    default_player_spec = copy_string("stdio");
 }
 
 /* This routine handles all the displays that might need to be opened. */

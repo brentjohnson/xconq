@@ -112,8 +112,6 @@ target_include_directories(xconq_common INTERFACE
     ${CMAKE_BINARY_DIR}/include
     ${CMAKE_SOURCE_DIR}/kernel)
 target_compile_definitions(xconq_common INTERFACE HAVE_ACDEFS_H)
-target_compile_options(xconq_common INTERFACE
-    $<$<COMPILE_LANG_AND_ID:CXX,GNU,Clang,AppleClang>:-Wno-write-strings>)
 
 # Mark a target's C sources for compilation as C++ (see note above).
 function(xconq_cxx_sources)

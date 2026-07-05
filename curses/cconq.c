@@ -327,7 +327,7 @@ add_default_player(void)
 void
 make_default_player_spec(void)
 {
-    default_player_spec = "term";
+    default_player_spec = copy_string("term");
 }
 
 /* Set up the basic user interface for a side. */

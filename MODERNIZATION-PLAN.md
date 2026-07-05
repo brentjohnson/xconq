@@ -141,9 +141,18 @@ Method:
    task done (strikethrough + date) in MODERNIZATION-PLAN.md, like the ones
    in §2.
 ```
-- **[M] Fix string-literal constness and drop `-Wno-write-strings`.** The
-  CMake migration already fixed ~20 `const char *` signature mismatches; a
-  systematic pass (mostly in the UIs and the `.def` tables) finishes the job.
+- ~~**[M] Fix string-literal constness and drop `-Wno-write-strings`.**~~
+  *(done 7/2026)*: The CMake migration already fixed ~20 `const char *`
+  signature mismatches; this pass finished the job. In the event, forcing the
+  tree through `-Werror=write-strings` surfaced only one remaining offender:
+  the `char *default_player_spec` global, which each UI's
+  `make_default_player_spec()` set to a string literal. That global cannot be
+  `const` — `sdl/sdlunix.cc` builds it in place with `strcpy`/`strcat`, and
+  `parse_player_spec()` chops it destructively — so the literal assignments in
+  `cconq`, `skelconq`, `xcscribe`, and `sdlwin32` were changed to
+  `copy_string(...)` instead. With that, `-Wno-write-strings` was removed and
+  the whole tree (kernel, curses, SDL, skelconq) builds clean with the test
+  suite green.
 
 **⚙ PROMPT 2.2 — recommended model: Opus.** *(The hard part is proving a
 string is never mutated before const-ing it; the kernel tokenizes and edits

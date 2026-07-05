@@ -120,7 +120,7 @@ add_default_player(void)
 void
 make_default_player_spec(void)
 {
-  default_player_spec = "WinSDL";
+  default_player_spec = copy_string("WinSDL");
 }
 
 /* Wait for all the players to join, set up each one as it comes in. */

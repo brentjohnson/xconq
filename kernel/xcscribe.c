@@ -525,7 +525,7 @@ add_default_player(void)
 void
 make_default_player_spec(void)
 {
-    default_player_spec = "stdio";
+    default_player_spec = copy_string("stdio");
 }
 
 /* Create a user interface, but leave it turned off. */
