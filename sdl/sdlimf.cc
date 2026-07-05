@@ -98,7 +98,7 @@ sdl_interp_image_1(ImageFamily *imf, Image *img, Image *subimg, int subi,
     }
     /* At this point our data is known to be in "raw" form, ready to
        turn into an SDL surface. */
-    surf = SDL_AllocSurface(SDL_SWSURFACE, img->w, img->h, 32,
+    surf = SDL_CreateRGBSurface(0, img->w, img->h, 32,
 			    0x00ff0000, 0x0000ff00, 0x000000ff, 0);
     subimg->hook = (char *) surf;
     if (img->rawpalette == NULL)
@@ -150,7 +150,7 @@ sdl_copy_color_image(ImageFamily *imf, Image *img, SDL_Surface *surface)
 	if ((img->pixelsize * img->w) % 8)
 	  ++rp;
     }
-    SDL_SetColorKey(surface, SDL_SRCCOLORKEY|SDL_RLEACCEL,
+    SDL_SetColorKey(surface, SDL_TRUE,
 		    SDL_MapRGB(surface->format, 255, 0, 255));
 }
 
@@ -204,7 +204,7 @@ sdl_copy_mono_image(Image *img, SDL_Surface *surface)
 	      ++rmp;
 	}
     }
-    SDL_SetColorKey(surface, SDL_SRCCOLORKEY|SDL_RLEACCEL,
+    SDL_SetColorKey(surface, SDL_TRUE,
 		    SDL_MapRGB(surface->format, 255, 0, 255));
 }
 

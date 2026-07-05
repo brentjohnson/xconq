@@ -26,7 +26,7 @@ cmake --install build
 ```
 
 UI options (`-DXCONQ_UI_CURSES/SDL=ON|OFF`) gate the two interfaces.
-Executables: `cconq` (curses), `sdlconq` (SDL 1.2 via sdl12-compat). The Tcl/Tk
+Executables: `cconq` (curses), `sdlconq` (SDL2). The Tcl/Tk
 (`xconq`) and legacy Xt/Xaw (`xtconq`) UIs were removed 7/2026 — see
 MODERNIZATION-PLAN.md's Step 2 note. Other knobs: `XCONQ_DATA_DIR`,
 `XCONQ_SCORES_DIR`. Generated config headers (`acdefs.h`, `version.h`) land in

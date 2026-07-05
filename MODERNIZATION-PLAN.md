@@ -310,50 +310,6 @@ Method:
     current CMake). Same dead weight, different location; a future pass
     should just delete the directory.
 
-**⚙ PROMPT 2.7 — recommended model: Sonnet.** *(Deletion of dead compat code
-with clear verification; the only judgment call — obstack — is scoped to an
-assessment, not a mandate.)*
-
-```text
-Task: remove Xconq's bundled compatibility shims that modern platforms make
-dead code. Prerequisites: earlier §1 tasks are committed (at least the
-C++17 bump; this task is independent of the warnings task).
-
-Context: kernel/CMakeLists.txt unconditionally compiles snprintf.c,
-timestuff.c, and obstack.c into the kernel libraries (they appear in the
-source lists around lines 47 and 61-62; extensions may now be .cc after the
-rename task — adapt). Note the files themselves guard their contents with
-config #ifdefs, so check what actually gets compiled before assuming.
-
-Method:
-1. kernel/snprintf.c (or .cc): a pre-C99 snprintf/vsnprintf fallback. Check
-   how it is gated (grep for HAVE_SNPRINTF / HAVE_VSNPRINTF in the file,
-   kernel headers, CMakeLists.txt, and kernel/acdefs.h.in). Delete the file,
-   its source-list entry, any configure-time checks and acdefs.h.in
-   defines for it, and any prototype declarations in kernel headers. Callers
-   just use libc snprintf.
-2. kernel/timestuff.c (or .cc): gettimeofday/time compat. Same treatment:
-   find what symbols it provides (grep the tree for each), confirm every
-   user is satisfied by POSIX libc, delete file + build entry + related
-   configure checks/prototypes. If it provides something genuinely still
-   needed (check before deleting!), keep just that piece and say so.
-3. kernel/obstack.c/.h (bundled GNU obstack): its only kernel user is
-   kernel/help.c (~8 obstack_ calls). ASSESS rather than blindly replace:
-   read how help.c uses it (likely accumulating variable-length help text).
-   If the usage maps cleanly onto a simple grow-able buffer or the existing
-   xmalloc idioms, replace it and delete obstack.[ch]; if the replacement
-   would be invasive or subtle, leave obstack alone and record the finding
-   as a note on this plan item instead. Do not half-convert.
-4. Sweep for leftovers: grep for snprintf.c/timestuff.c/obstack in doc/,
-   test/ scripts, pkg/, and CLAUDE.md; clean up references.
-5. Verify: fresh configure + build of both UIs,
-   ctest --test-dir build --label-exclude long passes. The help system is
-   the risk area if obstack was replaced — also run the skelconq help
-   smoke check (test/check-test or the help .inp scripts under test/).
-6. Commit, then mark this task done (strikethrough + date) in
-   MODERNIZATION-PLAN.md, including the obstack decision.
-```
-
 ## 2. Known bugs (pre-existing, found while migrating)
 
 - ~~**[M] `check-auto` assertion crash**~~ *(fixed 7/2026)*: the autotest
@@ -457,10 +413,11 @@ Method:
    to surface new warnings/UB-dependent behavior — report, don't paper
    over: a test that fails only in Release is a real finding; file it as
    a note on this plan item if you cannot fix it quickly.
-2. macOS job (macos-latest): install deps via brew. Expect: sdl12-compat may
-   or may not be available (sdl2 + sdl12-compat exist in brew — try; skip
-   the SDL UI if not); curses ships with the OS. (The Tcl/Tk and Xt/Xaw UIs
-   this note used to caveat around no longer exist — see Step 2.)
+2. macOS job (macos-latest): install deps via brew. `sdlconq` now builds
+   against native SDL2 (7/2026 port — see §4), so `brew install sdl2` is
+   the dependency to fetch; the sdl12-compat shim is no longer relevant
+   here. curses ships with the OS. (The Tcl/Tk and Xt/Xaw UIs this note
+   used to caveat around no longer exist — see Step 2.)
    Minimum bar for the job to be worth merging: kernel + skelconq +
    cconq build and the quick ctest lane passes. Fix small portability
    issues this exposes (BSD vs GNU userland in test scripts, missing
@@ -686,11 +643,15 @@ Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md.
   8.x and was already skipped on Tcl-9-only distros (Fedora); porting ~57
   `Tk_Offset`/`Tk_ConfigureWidget` call sites was judged not worth it with
   the SDL UI available as the graphical successor.
-- **[M] Port the SDL UI from SDL 1.2 to SDL2 or SDL3.** It currently builds
-  only via sdl12-compat. It was explicitly intended as the successor UI
-  ("sleeker, faster replacement"), and now that the Tcl/Tk UI is gone
-  (Step 2, 7/2026) it is the sole graphical client and the top UI priority;
-  an SDL3 port is the most plausible long-term cross-platform frontend.
+- ~~**[M] Port the SDL UI from SDL 1.2 to SDL2 or SDL3.**~~ *(done, 7/2026)*:
+  ported to native SDL2 (window-surface API: `SDL_CreateWindow` +
+  `SDL_GetWindowSurface`/`SDL_UpdateWindowSurfaceRects`, replacing
+  `SDL_SetVideoMode`/`SDL_Flip`; `SDL_WINDOWEVENT`/`SDL_TEXTINPUT` replace
+  `SDL_VIDEORESIZE`/`SDL_ACTIVEEVENT` and the removed per-key unicode field).
+  `sdlconq` now links `libSDL2` directly instead of building through the
+  sdl12-compat shim; CI installs `libsdl2-dev`. A future SDL3 port remains
+  possible but is no longer blocking — SDL2 is a mature, well-supported
+  target in its own right.
 - ~~**[S] Decide the fate of the Xt/Xaw UI (`xtconq`).**~~ *(resolved by
   removal, 7/2026)*: deleted outright rather than kept deprecated — see
   Step 2. This also removed its `x2imf`/`imf2x`/`xshowimf` image tools and
@@ -1266,11 +1227,12 @@ forward old text unchecked.
 Method:
 1. README: rewrite as the front door. What Xconq is (game system + GDL +
    games library — keep/adapt the existing good prose), current status
-   (CMake build, two UIs: curses (cconq) and SDL via sdl12-compat
-   (sdlconq, the primary graphical client) — the Tcl/Tk and Xt/Xaw UIs
-   were removed in Step 2, 7/2026; a minimal UI-section update already
-   landed with that removal, but re-verify against the current tree
-   rather than trusting it), quick build instructions (cmake -B build &&
+   (CMake build, two UIs: curses (cconq) and native SDL2 (sdlconq, the
+   primary graphical client, ported from SDL 1.2/sdl12-compat 7/2026 —
+   see §4) — the Tcl/Tk and Xt/Xaw UIs were removed in Step 2, 7/2026; a
+   minimal UI-section update already landed with that removal, but
+   re-verify against the current tree rather than trusting it), quick
+   build instructions (cmake -B build &&
    cmake --build build -j, dependency list matching the CI workflow's
    apt packages), how to run tests, pointer to MODERNIZATION-PLAN.md and
    CONTRIBUTING.md (if it exists), license note. Delete dead URLs
@@ -1300,9 +1262,10 @@ if any file consumed by the build was touched — man-page templates are).
 Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md.
 ```
 - **[S] Start tagging releases.** The version has been 7.5.0pre for 20 years.
-  Cut a 7.5.0 once the SDL2/3 port lands (the Tcl/Tk UI, the plan's other
-  original gate, was removed rather than ported — see Step 2), with release
-  notes and a source tarball from CI (replaces the old `make distcheck`).
+  Both original gates are now clear: the Tcl/Tk UI was removed rather than
+  ported (Step 2), and the SDL UI's SDL2 port landed 7/2026 (see §4). Cut a
+  7.5.0 with release notes and a source tarball from CI (replaces the old
+  `make distcheck`) — the actual tagging call is the maintainer's.
 
 **⚙ PROMPT 8.3 — recommended model: Sonnet.** *(Release machinery only —
 the decision to actually cut 7.5.0 stays with the maintainer.)*
@@ -1310,9 +1273,10 @@ the decision to actually cut 7.5.0 stays with the maintainer.)*
 ```text
 Task: build Xconq's release machinery so that pushing a git tag produces a
 GitHub release with a source tarball and notes. Do NOT tag or cut the
-release itself — the plan gates 7.5.0 on the SDL2/3 port landing (the
-Tcl/Tk UI, the plan's other original gate, was removed in Step 2 rather
-than ported), and that call is the maintainer's.
+release itself — both of the plan's original 7.5.0 gates are now clear
+(the Tcl/Tk UI was removed in Step 2 rather than ported; the SDL UI's SDL2
+port landed 7/2026, see §4), but the actual tagging call is the
+maintainer's.
 
 Method:
 1. Version plumbing: find where the version is set (top-level
@@ -1531,7 +1495,7 @@ lives.
    porting Tcl/Tk to 9.x, deleted it and the legacy Xt/Xaw UI outright;
    `sdlconq` is now the primary graphical client.
 3. §1 language cleanup through the C++17 bump — unblocks tooling and Clang.
-4. §4 SDL2/3 port — the project's future graphical face, now that Tcl/Tk
-   is gone.
+4. ~~§4 SDL2/3 port~~ (done 7/2026, SDL2) — `sdlconq` now builds against
+   native SDL2 instead of through the sdl12-compat shim.
 5. §5–§8 as continuous background work.
 6. §9 only if the project attracts sustained interest.

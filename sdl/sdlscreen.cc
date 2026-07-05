@@ -176,14 +176,18 @@ alpha_blend_fill_rect(SDL_Surface *surf, SDL_Rect *rect,
     amask = 0xff000000;
 #endif
     /* Create the temp surface. */
-    asurf = SDL_CreateRGBSurface(SDL_SWSURFACE, rect->w, rect->h, 32,
+    asurf = SDL_CreateRGBSurface(0, rect->w, rect->h, 32,
 				 rmask, gmask, bmask, amask);
     if (!asurf) {
 	run_warning("Failed to allocate an alpha blending surface");
 	return FALSE;
     }
-    /* Turn on alpha blending on the temp surface. */
-    SDL_SetAlpha(asurf, SDL_SRCALPHA | SDL_RLEACCEL, SDL_ALPHA_OPAQUE);
+    /* Turn on alpha blending on the temp surface.  SDL2's default blend
+       mode ignores the alpha channel (SDL_BLENDMODE_NONE); the surface's
+       own alpha modulation defaults to opaque, matching the SDL 1.2
+       SDL_SetAlpha(..., SDL_ALPHA_OPAQUE) call this replaces, so only the
+       blend mode needs setting to get the same per-pixel alpha blit. */
+    SDL_SetSurfaceBlendMode(asurf, SDL_BLENDMODE_BLEND);
     /* Dump the fill rect (including alpha data) into the temp surface.
        (Note that alpha belnding is not performed with 'SDL_FillRect'.) */
     rect2.x = 0;  rect2.y = 0;  rect2.w = rect->w;  rect2.h = rect->h;
@@ -212,7 +216,7 @@ open_screen(void)
     /* Also assign it to a global. */
     sscreen = screen;
     /* Allocate our composition buffer. */
-    screen->surf = SDL_AllocSurface(SDL_HWSURFACE, mscreen->w, mscreen->h, 32,
+    screen->surf = SDL_CreateRGBSurface(0, mscreen->w, mscreen->h, 32,
 				    0x00ff0000, 0x0000ff00, 0x000000ff, 0);
     /* Set up a particular panel layout, at least for now. */
     screen->panels = create_panel(screen, bottom_panel,
@@ -500,16 +504,10 @@ update_screen(Screen *screen, int rightnow)
 	SDL_BlitSurface(screen->cursor->surf, NULL, mscreen, &rect);
     }
     /* NOTE: Do we need to add cursor to list of update rects? */
-    /* SDL_Flip only works if SDL_DOUBLEBUF is set. If not, it is
-       better to call SDL_UpdateRects for the update rects instead,
-       since SDL_Flip will force a very slow update of the entire
-       screen. */
-    if (mscreen->flags & SDL_DOUBLEBUF) {
-	SDL_Flip(mscreen);
-    } else {
-	SDL_UpdateRects(mscreen, screen->num_updates, 
-		        (SDL_Rect *) screen->updates); 
-    }
+    /* Present only the dirty rects; SDL2 has no separate double-buffer
+       flip path (SDL_Flip) to choose between, unlike SDL 1.2. */
+    SDL_UpdateWindowSurfaceRects(window, (SDL_Rect *) screen->updates,
+				 screen->num_updates);
     last_redraw = SDL_GetTicks();
     /* All updates are done, so clear the count. */
     screen->num_updates = 0;

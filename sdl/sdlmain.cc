@@ -31,6 +31,13 @@ int mainh = 600;
 
 SDL_Surface *mscreen;
 
+/* The SDL2 window backing mscreen.  SDL 1.2 had no separate window
+   handle -- the screen surface returned by SDL_SetVideoMode served both
+   roles -- so SDL2 needs this extra global to retarget window-level
+   calls (title, resize, window events). */
+
+SDL_Window *window;
+
 struct a_real_ui *ui;
 
 extern int ok_to_exit;
@@ -106,7 +113,7 @@ extern int using_sdl;
 
 /* Declarations of local functions. */
 
-static int interp_sym(SDLKey sym);
+static int interp_sym(SDL_Keycode sym);
 static void auto_scroll_map(Screen *screen, int dx, int dy);
 
 static void update_side_progress_display(Side *side, Side *side2);
@@ -152,7 +159,6 @@ initial_ui_init(void)
 {
     int rslt;
     LibraryPath *path;
-    SDL_Rect **modes;
 	 /* Hack to signal main in xconq.c that we dont want a new game dialog. */
 	 using_sdl = TRUE;
 
@@ -160,11 +166,11 @@ initial_ui_init(void)
     if (rslt < 0)
       init_error("could not open SDL display");
 
-    SDL_WM_SetCaption("Xconq", "Xconq");
-
     if (!empty_string(getenv("SDL_VIDEODRIVER"))
 #ifdef UNIX
-	/* The XFree86 fbcon and dga drivers run in fullscreen mode. */
+	/* The XFree86 fbcon and dga drivers ran in fullscreen mode under
+	   SDL 1.2; SDL2 has no drivers of those names, but honor an
+	   explicit request for either the same way for compatibility. */
 	&& (strcmp(getenv("SDL_VIDEODRIVER"), "fbcon") == 0
 	    || strcmp(getenv("SDL_VIDEODRIVER"), "dga") == 0)
 #endif
@@ -173,50 +179,32 @@ initial_ui_init(void)
 
     /* Get the available fullscreen modes if asked to. */
     if (fullscreen) {
-	modes = SDL_ListModes(NULL,
-			      SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
-	/* Use the largest screen available. */
-	if (modes > (SDL_Rect **)0) {
-	    mainw = modes[0]->w;  mainh = modes[0]->h;
+	SDL_DisplayMode mode;
+
+	/* Use the current desktop resolution. */
+	if (SDL_GetDesktopDisplayMode(0, &mode) == 0) {
+	    mainw = mode.w;  mainh = mode.h;
 	}
     }
 
-    /* Use fullscreen mode if asked to, and hardware acceleration if
-       available.
-    
-       Note 1: Under MacOS, hardware acceleration is only available in
-       fullscreen mode, and double buffering only with the Dsp
-       driver. Both the SDL_DOUBLEBUF and SDL_HWSURFACE flags are
-       therefore always 0 in non-fullscreen mode, even if we try to
-       set them. In fullscreen mode, the SDL_HWSURFACE flag (and it
-       only) is set to 1 if we try to set either SDL_DOUBLEBUF or
-       SDL_HWSURFACE for the Toolbox driver. However, surfaces that
-       are created with SDL_AllocSurface will not have the
-       SDL_HWSURFACE flag set, even if we ask for it and it is set for
-       the screen.
-    
-       With the DSp driver (which only works in fullscreen mode) it is
-       possible to set both SDL_HWSURFACE and SDL_DOUBLEBUF. Sometimes
-       (depending on available VRAM?) only the SDL_DOUBLEBUF flag is
-       set. This is important since surfaces that are created with
-       SDL_AllocSurface can be allocated in VRAM (by setting the
-       SDL_HWSURFACE flag) only if BOTH SDL_DOUBLEBUF and
-       SDL_HWSURFACE are set for the screen.
-    
-       Note 2: Under Linux, the x11 video driver does not allow us to
-       set either the SDL_HWSURFACE or the SDL_DOUBLEBUF flag to 1. It
-       is, however, possible to use fullscreen mode without
-       acceleration by setting SDL_FULLSCREEN to 1.  The dga driver
-       always runs in fullscreen mode, so SDL_FULLSCREEN is set to 1
-       irrespective of what we specify below. Hardware acceleration
-       can then be turned on by setting SDL_DOUBLEBUF and
-       SDL_HWSURFACE to 1. This does not help the poor performance
-       under Linux much, though. Should figure out why. */
-  
-    mscreen = SDL_SetVideoMode(mainw, mainh, 32,
-			       SDL_HWSURFACE
-			       | SDL_DOUBLEBUF
-			       | (fullscreen ? SDL_FULLSCREEN : SDL_RESIZABLE));
+    /* Create the window and fetch its backing surface.  SDL2 folds
+       hardware-acceleration and buffering decisions into the window
+       manager/driver, so (unlike SDL 1.2) there is no flag combination
+       to reason about here. */
+
+    window = SDL_CreateWindow("Xconq",
+			      SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+			      mainw, mainh,
+			      SDL_WINDOW_RESIZABLE
+			      | (fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
+    if (window == NULL)
+      init_error("could not open SDL window");
+
+    /* Keep the window from shrinking below a playable size (the resize
+       handler in handle_event no longer clamps this itself). */
+    SDL_SetWindowMinimumSize(window, 232, 232);
+
+    mscreen = SDL_GetWindowSurface(window);
 
     imf_interp_hook = sdl_interp_imf;
     /* No special family loader needed, at least at present. */
@@ -237,13 +225,16 @@ initial_ui_init(void)
     if (small_font == NULL)
       init_error("could not open SDL small_font");
 
-    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+    /* SDL2 key repeat is automatic (SDL_KEYDOWN events carry a .repeat
+       flag), so there is no equivalent of SDL_EnableKeyRepeat to call. */
 
-    SDL_SetColorKey(small_font, SDL_SRCCOLORKEY|SDL_RLEACCEL,
+    SDL_SetColorKey(small_font, SDL_TRUE,
 		    SDL_MapRGB(small_font->format, 255, 0, 255));
 
-    SDL_EnableUNICODE(1);
-    
+    /* SDL2 delivers typed text via SDL_TEXTINPUT events instead of a
+       per-key unicode field; start that event source (see handle_event). */
+    SDL_StartTextInput();
+
     update_variant_callback = update_variant_setting;
     update_assignment_callback = update_assignment;
 
@@ -435,29 +426,28 @@ handle_event(SDL_Event *evt)
 
     switch (evt->type) {
 
-      case SDL_VIDEORESIZE:
-	/* Get the new window size, but only allow it to be so small. */
-	mainw = max(evt->resize.w, 232);
-	mainh = max(evt->resize.h, 232);
-	/* Change the video mode. */
-	SDL_FreeSurface(mscreen);
- 	mscreen = SDL_SetVideoMode(mainw, mainh, 32, SDL_RESIZABLE);
-	/* Reallocate the composition surface. */
-	SDL_FreeSurface(sscreen->surf);
-	sscreen->surf =
-	  SDL_AllocSurface(SDL_SWSURFACE, mainw, mainh, 32,
-			   0x00ff0000, 0x0000ff00, 0x000000ff, 0);
-	/* Redraw the resized sscreen. */
-	set_panel_sizes(sscreen);
-	redraw_screen(sscreen);
-	break;
-
-      case SDL_ACTIVEEVENT:
-#if 0
-	printf("active %d %d %d\n", evt->active.type, evt->active.gain, evt->active.state);
-#endif
-	if (evt->active.state & SDL_APPMOUSEFOCUS) {
-	    sscreen->active = evt->active.gain;
+      case SDL_WINDOWEVENT:
+	if (evt->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+	    /* The window manager already clamped the size (see the
+	       SDL_SetWindowMinimumSize call in initial_ui_init); just
+	       pick up the new dimensions. */
+	    mainw = evt->window.data1;
+	    mainh = evt->window.data2;
+	    /* The old window surface is invalidated by the resize; fetch
+	       the new one instead of freeing/recreating it (SDL2 owns
+	       this surface, unlike SDL 1.2's SDL_SetVideoMode surface). */
+	    mscreen = SDL_GetWindowSurface(window);
+	    /* Reallocate the composition surface. */
+	    SDL_FreeSurface(sscreen->surf);
+	    sscreen->surf =
+	      SDL_CreateRGBSurface(0, mainw, mainh, 32,
+				   0x00ff0000, 0x0000ff00, 0x000000ff, 0);
+	    /* Redraw the resized sscreen. */
+	    set_panel_sizes(sscreen);
+	    redraw_screen(sscreen);
+	} else if (evt->window.event == SDL_WINDOWEVENT_ENTER
+		  || evt->window.event == SDL_WINDOWEVENT_LEAVE) {
+	    sscreen->active = (evt->window.event == SDL_WINDOWEVENT_ENTER);
 	    use_cursors = sscreen->active;
 	    if (use_cursors) {
 		SDL_ShowCursor(0);
@@ -478,11 +468,14 @@ handle_event(SDL_Event *evt)
 
       case SDL_KEYDOWN:
         /* First check for special keys using SDL virtual keysymbols. */
-        if (interp_sym(evt->key.keysym.sym))
-          break; 
-	key = evt->key.keysym.unicode & 0x7f;
-	/* "Keystrokes" with a unicode of 0 are modifiers like shift
-	   and ctrl, ignore them. */
+        interp_sym(evt->key.keysym.sym);
+	break;
+
+      case SDL_TEXTINPUT:
+	/* SDL2 delivers typed characters via a separate UTF-8 text-input
+	   event instead of a per-key unicode field (SDL 1.2). Take the
+	   first byte to match the previous "& 0x7f" ASCII-only behavior. */
+	key = ((unsigned char) evt->text.text[0]) & 0x7f;
 	if (key == 0)
 	  break;
 	interp_key(key);
@@ -530,37 +523,37 @@ handle_event(SDL_Event *evt)
 /* Handle scrolling and other numeric keypad commands. */ 
 
 static int
-interp_sym(SDLKey sym)
+interp_sym(SDL_Keycode sym)
 {
-    if (sym == SDLK_KP8) {
+    if (sym == SDLK_KP_8) {
 	auto_scroll_map(sscreen, 0, -4);
 	return TRUE;
     }
-    if (sym == SDLK_KP2) {
+    if (sym == SDLK_KP_2) {
 	auto_scroll_map(sscreen, 0, 4);
 	return TRUE;
     }
-    if (sym == SDLK_KP4) {
+    if (sym == SDLK_KP_4) {
 	auto_scroll_map(sscreen, -4, 0);
 	return TRUE;
     }
-    if (sym == SDLK_KP6) {
+    if (sym == SDLK_KP_6) {
 	auto_scroll_map(sscreen, 4, 0);
 	return TRUE;
     }
-    if (sym == SDLK_KP7) {
+    if (sym == SDLK_KP_7) {
 	auto_scroll_map(sscreen, -4, -4);
 	return TRUE;
     }
-    if (sym == SDLK_KP3) {
+    if (sym == SDLK_KP_3) {
 	auto_scroll_map(sscreen, 4, 4);
 	return TRUE;
     }
-    if (sym == SDLK_KP1) {
+    if (sym == SDLK_KP_1) {
 	auto_scroll_map(sscreen, -4, 4);
 	return TRUE;
     }
-    if (sym == SDLK_KP9) {
+    if (sym == SDLK_KP_9) {
 	auto_scroll_map(sscreen, 4, -4);
 	return TRUE;
     }
@@ -576,7 +569,7 @@ interp_sym(SDLKey sym)
 	do_set_view_angle(dside);
 	return TRUE;
     }
-    if (sym == SDLK_KP5) {
+    if (sym == SDLK_KP_5) {
 	do_recenter(dside);
 	return TRUE;
     }
@@ -589,7 +582,7 @@ interp_sym(SDLKey sym)
 void
 auto_scroll_map(Screen *screen, int dx, int dy)
 {
-    while (SDL_PeepEvents(NULL, 1, SDL_PEEKEVENT, SDL_KEYUPMASK) == 0) {
+    while (SDL_PeepEvents(NULL, 1, SDL_PEEKEVENT, SDL_KEYUP, SDL_KEYUP) == 0) {
 	set_view_position(screen->map->main_vp,
 			  screen->map->main_vp->sx + dx, 
 			  screen->map->main_vp->sy + dy);
@@ -1178,7 +1171,9 @@ update_side_display(Side *side, Side *side2, int rightnow)
 	wbufleft = BUFSIZE - strlen(windowtitle);
 	snprintf(sidebuf, BUFSIZE, "Turn %d", g_turn());
 	strncat(windowtitle, sidebuf, wbufleft);
-	SDL_WM_SetCaption(windowtitle, icontitle);
+	/* SDL2 windows have a single title; there is no separate icon
+	   caption as under SDL 1.2's window manager hint. */
+	SDL_SetWindowTitle(window, windowtitle);
     }
     /* Build up and write the textual description of the side. */
     sidebuf[0] = '\0';

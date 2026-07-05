@@ -9,30 +9,6 @@ any later version.  See the file COPYING.  */
 
 #include "SDL.h"
 
-#if (0)
-#include "paragui.h"
-#include "pgapplication.h"
-#include "pgbutton.h"
-#include "pgwidgetlist.h"
-#include "pglabel.h"
-#include "pgwindow.h"
-#include "pgmaskedit.h"
-#include "pgscrollbar.h"
-#include "pgprogressbar.h"
-#include "pgradiobutton.h"
-#include "pgthemewidget.h"
-#include "pgcheckbutton.h"
-#include "pgslider.h"
-#include "pglistbox.h"
-#include "pgcolumnitem.h"
-#include "pgdropdown.h"
-#include "pgeventobject.h"
-#include "pgpopupmenu.h"
-#include "pgspinnerbox.h"
-#include "pglog.h"
-#include "pgmenubar.h"
-#endif
-
 #include "imf.h"
 #include "ui.h"
 
@@ -326,6 +302,7 @@ extern int G_num_protobuttons;
   for ((s) = ui->screens; (s) != NULL; (s) = (s)->next)
 
 extern SDL_Surface *mscreen;
+extern SDL_Window *window;
 
 extern struct a_real_ui *ui;
 

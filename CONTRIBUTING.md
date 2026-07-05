@@ -25,7 +25,7 @@ cmake --install build
 UI options, all `ON` by default:
 
 - `-DXCONQ_UI_CURSES=ON|OFF` — curses interface, `cconq`
-- `-DXCONQ_UI_SDL=ON|OFF` — SDL 1.2 interface (via sdl12-compat), `sdlconq`
+- `-DXCONQ_UI_SDL=ON|OFF` — SDL2 interface, `sdlconq`
 
 (The Tcl/Tk `xconq` and legacy Xt/Xaw `xtconq` interfaces were removed 7/2026;
 see MODERNIZATION-PLAN.md's Step 2 note.)

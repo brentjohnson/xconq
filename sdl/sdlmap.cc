@@ -1175,21 +1175,21 @@ get_grid_surface(int pow)
 	ui->no_grid_available[pow] = TRUE;
 	return;
     }
-    tmpsurf = SDL_AllocSurface(SDL_SWSURFACE, himg->w, himg->h, 32,
+    tmpsurf = SDL_CreateRGBSurface(0, himg->w, himg->h, 32,
 			       0x00ff0000, 0x0000ff00, 0x000000ff, 0);
     SDL_FillRect(tmpsurf, NULL, SDL_MapRGB(tmpsurf->format, 255, 0, 255));
     rect.x = rect.y = 0;
     rect.w = himg->w;  rect.h = himg->h;
     SDL_BlitSurface(sdlimg, NULL, tmpsurf, &rect);
-    SDL_SetColorKey(tmpsurf, SDL_SRCCOLORKEY|SDL_RLEACCEL,
+    SDL_SetColorKey(tmpsurf, SDL_TRUE,
 		    SDL_MapRGB(sdlimg->format, 255, 255, 255));
     ui->grids[pow] =
-      SDL_AllocSurface(SDL_SWSURFACE, himg->w, himg->h, 32,
+      SDL_CreateRGBSurface(0, himg->w, himg->h, 32,
 		       0x00ff0000, 0x0000ff00, 0x000000ff, 0);
     SDL_FillRect(ui->grids[pow], NULL,
 		 SDL_MapRGB(ui->grids[pow]->format, 0, 0, 0));
     SDL_BlitSurface(tmpsurf, NULL, ui->grids[pow], &rect);
-    SDL_SetColorKey(ui->grids[pow], SDL_SRCCOLORKEY|SDL_RLEACCEL,
+    SDL_SetColorKey(ui->grids[pow], SDL_TRUE,
 		    SDL_MapRGB(ui->grids[pow]->format, 255, 0, 255));
     SDL_FreeSurface(tmpsurf);
 }
@@ -2038,21 +2038,21 @@ get_country_boundary_surface(int pow)
 	ui->no_country_boundary_available[pow] = TRUE;
 	return;
     }
-    tmpsurf = SDL_AllocSurface(SDL_SWSURFACE, himg->w, himg->h, 32,
+    tmpsurf = SDL_CreateRGBSurface(0, himg->w, himg->h, 32,
 			       0x00ff0000, 0x0000ff00, 0x000000ff, 0);
     SDL_FillRect(tmpsurf, NULL, SDL_MapRGB(tmpsurf->format, 255, 0, 255));
     rect.x = rect.y = 0;
     rect.w = himg->w;  rect.h = himg->h;
     SDL_BlitSurface(sdlimg, NULL, tmpsurf, &rect);
-    SDL_SetColorKey(tmpsurf, SDL_SRCCOLORKEY|SDL_RLEACCEL,
+    SDL_SetColorKey(tmpsurf, SDL_TRUE,
 		    SDL_MapRGB(sdlimg->format, 255, 255, 255));
     ui->country_boundaries[pow] =
-      SDL_AllocSurface(SDL_SWSURFACE, himg->w, himg->h, 32,
+      SDL_CreateRGBSurface(0, himg->w, himg->h, 32,
 		       0x00ff0000, 0x0000ff00, 0x000000ff, 0);
     SDL_FillRect(ui->country_boundaries[pow], NULL,
 		 SDL_MapRGB(ui->country_boundaries[pow]->format, 255, 0, 0));
     SDL_BlitSurface(tmpsurf, NULL, ui->country_boundaries[pow], &rect);
-    SDL_SetColorKey(ui->country_boundaries[pow], SDL_SRCCOLORKEY|SDL_RLEACCEL,
+    SDL_SetColorKey(ui->country_boundaries[pow], SDL_TRUE,
 		    SDL_MapRGB(ui->country_boundaries[pow]->format, 255, 0, 255));
     SDL_FreeSurface(tmpsurf);
 }
