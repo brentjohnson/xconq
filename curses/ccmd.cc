@@ -113,7 +113,7 @@ do_attack(Side *side)
 void
 do_build(Side *side)
 {
-    int u, u2, numtypes, ufirst;
+    int u, u2, numtypes, ufirst = NONUTYPE;
 
     REQUIRE_UNIT();
     u = curunit->type;

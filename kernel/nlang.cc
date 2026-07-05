@@ -1685,6 +1685,7 @@ feature_desc(Feature *feature, char *buf)
 		      case 'T':
 			caps = TRUE;
 			/* fall through */
+			[[fallthrough]];
 		      case 't':
 			if (feature->feattype) {
 			    buf[i] = '\0';
@@ -3475,6 +3476,7 @@ usual_date_string(int date)
 	/* Convert to days, then proceed as for days. */
 	date *= 7;
 	/* Fall through. */
+	[[fallthrough]];
       case ds_day:
 	date += usual_initial->day;
 	for (i = 0; i < usual_initial->month; ++i)

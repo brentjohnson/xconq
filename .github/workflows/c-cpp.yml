@@ -27,7 +27,7 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y libncurses-dev libxmu-dev libx11-dev libxext-dev \
-          libxrandr-dev libxcursor-dev libxi-dev libxss-dev clang
+          libxrandr-dev libxcursor-dev libxi-dev libxss-dev libxtst-dev clang
     - name: build and install SDL3
       # ubuntu-latest (24.04 as of writing) has no libsdl3-dev package; SDL3
       # only landed in Ubuntu starting with 25.04. Build the pinned stable

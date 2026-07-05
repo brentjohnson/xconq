@@ -276,6 +276,7 @@ create_panel(Screen *screen, int paneltype, int w, int h, Panel *outer)
 	    screen->minimap = mini;
 	}
 	/* (TODO: Create scrolling text region.) */
+	break;
       default: break;
     } /* switch panel type */
     /* Setup any visible buttons. */

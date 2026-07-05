@@ -4745,9 +4745,10 @@ write_help_file_navbar(FILE *ccfilep, HelpPage hpage, int hpageidx)
 	  nexthpageidx = -1;
 	break;
       case HELP_PAGE_LAST:
-	prevhpageidx = ((numatypes > 0) ? numatypes - 1 
+	prevhpageidx = ((numatypes > 0) ? numatypes - 1
 					: ((nummtypes > 0) ? nummtypes - 1
 							   : numttypes - 1));
+	break;
       default: break;
     }
     /* Get the numeric indices of the prev and next help files, if relevant. */
