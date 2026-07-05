@@ -441,6 +441,50 @@ numtypes_from_index_type(int x)
 		  : numatypes)));
 }
 
+/* When a type kind gains members after its tables were already allocated
+   (a module defining types "too late" -- tolerated with a warning, see
+   read.cc), every table indexed by that kind is left undersized: the
+   accessor indexes with the new, larger stride/row-count while the block
+   was sized for the old count, which reads (and later writes) off the end.
+   Reallocate each affected, already-allocated table to the new dimensions,
+   copying existing entries into their new row layout and defaulting the
+   growth.  Call with the OLD count for the grown axis (oldn) and the new
+   count (newn); the other axis is unchanged, so its current count is its
+   allocated dimension.  A no-op on the initial freeze (oldn == 0) and when
+   nothing grew. */
+static void
+regrow_tables_for_index(int index_type, int oldn, int newn)
+{
+    int t, i, j, oldlim1, oldlim2, newlim1, newlim2;
+    short *old, *rslt, dflt;
+
+    if (oldn <= 0 || newn <= oldn)
+      return;
+    for (t = 0; tabledefns[t].name != NULL; ++t) {
+	if (tabledefns[t].index1 != index_type
+	    && tabledefns[t].index2 != index_type)
+	  continue;
+	old = *(tabledefns[t].table);
+	if (old == NULL)
+	  continue;	/* not yet allocated; it will use the new dims */
+	dflt = tabledefns[t].dflt;
+	/* The unchanged axis keeps its current count; the grown axis reads
+	   oldn (rows/cols already present) -> newn. */
+	oldlim1 = newlim1 = numtypes_from_index_type(tabledefns[t].index1);
+	oldlim2 = newlim2 = numtypes_from_index_type(tabledefns[t].index2);
+	if (tabledefns[t].index1 == index_type) { oldlim1 = oldn; newlim1 = newn; }
+	if (tabledefns[t].index2 == index_type) { oldlim2 = oldn; newlim2 = newn; }
+	rslt = (short *) xmalloc(newlim1 * newlim2 * sizeof(short));
+	for (i = 0; i < newlim1 * newlim2; ++i)
+	  rslt[i] = dflt;
+	for (i = 0; i < oldlim1; ++i)
+	  for (j = 0; j < oldlim2; ++j)
+	    rslt[newlim2 * i + j] = old[oldlim2 * i + j];
+	*(tabledefns[t].table) = rslt;
+	free(old);
+    }
+}
+
 /* Note that the disallow_more_*_types functions can run again when a
    module defines types even later (which draws a read_warning but is
    not fatal), so all the sizing they do must be redoable. */
@@ -458,6 +502,8 @@ disallow_more_unit_types(void)
        per-unit-type arrays grown to match. */
     grow_side_utype_arrays();
     if (alloced_utypes < numutypes) {
+	/* Grow tables allocated before this late-added unit type. */
+	regrow_tables_for_index(UTYP, alloced_utypes, numutypes);
 	tmp_u_array = (int *) xmalloc(numutypes * sizeof(int));
 	tmp_u2_array = (int *) xmalloc(numutypes * sizeof(int));
 	tmp_uu_array = (int **) xmalloc(numutypes * sizeof(int *));
@@ -474,6 +520,8 @@ disallow_more_terrain_types(void)
 
     canaddttype = FALSE;
     if (alloced_ttypes < numttypes) {
+	/* Grow tables allocated before this late-added terrain type. */
+	regrow_tables_for_index(TTYP, alloced_ttypes, numttypes);
 	tmp_t_array = (int *) xmalloc(numttypes * sizeof(int));
 	next_auxt_type = (short *) xmalloc(numttypes * sizeof(short));
 	next_bord_type = (short *) xmalloc(numttypes * sizeof(short));
@@ -494,6 +542,8 @@ disallow_more_material_types(void)
 
     canaddmtype = FALSE;
     if (alloced_mtypes < nummtypes) {
+	/* Grow tables allocated before this late-added material type. */
+	regrow_tables_for_index(MTYP, alloced_mtypes, nummtypes);
 	tmp_m_array = (int *) xmalloc(nummtypes * sizeof(int));
 	alloced_mtypes = nummtypes;
     }
@@ -509,6 +559,8 @@ disallow_more_advance_types(void)
 
     canaddatype = FALSE;
     if (alloced_atypes < numatypes) {
+	/* Grow tables allocated before this late-added advance type. */
+	regrow_tables_for_index(ATYP, alloced_atypes, numatypes);
 	tmp_a_array = (int *) xmalloc(numatypes * sizeof(int));
 	alloced_atypes = numatypes;
     }

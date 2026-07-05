@@ -164,9 +164,11 @@ find_name(const char *fname)
     char *name;
     char *token;
 
-    /* First remove any Unix, Mac or Windows pathnames. */
-    strncpy(spare_file_name, fname, PATH_SIZE);
-    spare_file_name[PATH_SIZE] = '\0';
+    /* First remove any Unix, Mac or Windows pathnames.  spare_file_name is
+       PATH_SIZE bytes, so copy at most PATH_SIZE-1 and terminate at the last
+       valid index (writing [PATH_SIZE] overran the buffer by one). */
+    strncpy(spare_file_name, fname, PATH_SIZE - 1);
+    spare_file_name[PATH_SIZE - 1] = '\0';
 
     name = spare_file_name;
     delims = "/:\\";

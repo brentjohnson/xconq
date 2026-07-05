@@ -47,6 +47,14 @@ add_test(NAME check-auto
 file(GLOB XCONQ_LIB_MODULES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/lib/*.g)
 file(GLOB XCONQ_TEST_MODULES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.g)
 
+# All test timeouts are scaled by XCONQ_TEST_TIMEOUT_SCALE (default 1) so the
+# slower sanitized CI leg can widen them without touching normal builds. The
+# same factor is handed to the scripts as XCONQ_TIMEOUT_SCALE so test/common.sh
+# scales its own per-game `timeout` bound to match.
+math(EXPR XCONQ_MODULE_TIMEOUT "600 * ${XCONQ_TEST_TIMEOUT_SCALE}")
+math(EXPR XCONQ_AUTO_TIMEOUT "1800 * ${XCONQ_TEST_TIMEOUT_SCALE}")
+math(EXPR XCONQ_LONG_TIMEOUT "14400 * ${XCONQ_TEST_TIMEOUT_SCALE}")
+
 function(xconq_add_module_tests prefix label script)
     foreach(module ${ARGN})
         get_filename_component(modname ${module} NAME_WE)
@@ -58,8 +66,8 @@ function(xconq_add_module_tests prefix label script)
                  WORKING_DIRECTORY ${scratch})
         set_tests_properties(${prefix}-${modname} PROPERTIES
                               LABELS ${label}
-                              TIMEOUT 600
-                              ENVIRONMENT "SKELCONQ=$<TARGET_FILE:skelconq>")
+                              TIMEOUT ${XCONQ_MODULE_TIMEOUT}
+                              ENVIRONMENT "SKELCONQ=$<TARGET_FILE:skelconq>;XCONQ_TIMEOUT_SCALE=${XCONQ_TEST_TIMEOUT_SCALE}")
     endforeach()
 endfunction()
 
@@ -78,5 +86,5 @@ set_tests_properties(check-ai check-long check-run PROPERTIES LABELS "long")
 # output) so one hung game cannot eat a whole test's budget or the disk.
 # The per-module lib/actions/save/test tests get TIMEOUT 600 above,
 # matching that same per-run bound; check-auto is a single fixed run.
-set_tests_properties(check-auto PROPERTIES TIMEOUT 1800)
-set_tests_properties(check-ai check-run check-long PROPERTIES TIMEOUT 14400)
+set_tests_properties(check-auto PROPERTIES TIMEOUT ${XCONQ_AUTO_TIMEOUT})
+set_tests_properties(check-ai check-run check-long PROPERTIES TIMEOUT ${XCONQ_LONG_TIMEOUT})

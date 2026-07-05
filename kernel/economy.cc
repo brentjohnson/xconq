@@ -593,9 +593,12 @@ can_transfer_material(int m, MaterialHandler *mh_from, MaterialHandler *mh_to)
 				    out_length += tm_tt_out_length(t, m);
 				if (aux_terrain_at(mh_to->x, mh_to->y, t))
 				    in_length += tm_tt_in_length(t, m);
-			    } else {
+			    } else if (dir >= 0) {
 			        /* we abuse the fact that border_at and
-				    connection_at are defined identically */
+				    connection_at are defined identically.
+				    dir < 0 means from and to are the same cell
+				    (approx_dir returns -1): no border direction,
+				    and shifting by dir would be UB (1 << -1). */
 			        if (border_at(mh_from->x, mh_from->y, dir, t))
 				    out_length += tm_tt_out_length(t, m);
 			        if (border_at(mh_to->x, mh_to->y,
@@ -980,7 +983,11 @@ run_people_consumption(void)
 static void
 run_cell_consumption()
 {
-    int x, y, t, m, t2, m2, consum, oldamt, newamt, willchange, newtype;
+    int x, y, t, m, t2, m2, consum, oldamt, newamt, willchange;
+    /* newtype is only read when willchange is set, and both are assigned
+       together; value-init anyway to quiet a RelWithDebInfo
+       -Wmaybe-uninitialized false positive. */
+    int newtype = NONTTYPE;
 
     /* Precompute whether any cell base consumption ever happens. */
     if (any_cell_consumption < 0) {

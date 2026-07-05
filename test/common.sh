@@ -40,9 +40,13 @@ mkdir -p "$XCONQHOME"
 # Bound each run: a hung game dies after 10 minutes instead of eating
 # the whole CTest timeout, and a runaway one (e.g. an AI planning loop
 # printing forever) hits the 100 MB output cap and dies with SIGXFSZ
-# instead of filling the disk.
+# instead of filling the disk. XCONQ_TIMEOUT_SCALE (set by the CTest
+# harness, default 1) widens the bound for slow sanitized runs, matching
+# the scaled CTest TIMEOUT property.
+XCONQ_TIMEOUT_SCALE=${XCONQ_TIMEOUT_SCALE:-1}
+RUN_TIMEOUT=`expr 600 \* "$XCONQ_TIMEOUT_SCALE"`
 if command -v timeout >/dev/null 2>&1 ; then
-	TIMEOUT="timeout 600"
+	TIMEOUT="timeout $RUN_TIMEOUT"
 else
 	TIMEOUT=
 fi

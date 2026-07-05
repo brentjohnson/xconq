@@ -378,15 +378,14 @@ init_supply_system(void)
     /* Allocate workspace if needed. */
     if (mclass_count) extend_workspace(0);
 
-    /* Finally, trim memory taken by material_stats. */
-    if (ms == mstats) {
-		/* Defends against a portability bug */
-		ms = mstats + 1;
-    } 
-    if (!realloc(mstats, (size_t)ms - (size_t)mstats)) {
-		Dprintf("realloc() failed; exiting");
-		exit(1);
-	}
+    /* Historically this realloc'd mstats down to the bytes actually used,
+       to trim the unused tail.  That was a use-after-free: first_mstat and
+       every material_stats' next/next_class link point into mstats, and a
+       shrinking realloc may return a moved block, leaving all those pointers
+       (dereferenced later in process_supply_class) dangling -- and its return
+       value was discarded, so mstats was never even updated.  init runs once
+       per game and the tail is a handful of material_stats structs the kernel
+       never frees anyway, so just keep the full allocation. */
 }
 
 static void

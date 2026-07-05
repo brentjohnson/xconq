@@ -499,7 +499,10 @@ change_unit_type(Unit *unit, int newtype, int reason, Side *newside)
     if (u_is_transport(unit->type)) {
     	update_cancarry_vector(unit->side);
     }
-    init_unit_opinions(unit, numsides);
+    /* numsides + 1: opinions are indexed by side_number (0 = indep, 1..numsides),
+       so the array needs numsides+1 entries -- matching run2.cc's caller and the
+       side-value-list reader/writer, which walk s = 0..numsides. */
+    init_unit_opinions(unit, numsides + 1);
     /* Redo the supply numbers. */
     /* init_supply(unit); */
     /* (TODO: Dump excess in the terrain or stack neighbors, or ....) */

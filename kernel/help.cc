@@ -3200,6 +3200,19 @@ histogram_compare(CONST void *h1, CONST void *h2)
 
 static struct histo *u_histogram;
 
+/* u_histogram is allocated once and then shared by every *_desc helper
+   below, but each walks a different type dimension: some histogram over
+   unit types, some over terrain types, some over advance types.  A row can
+   hold as many distinct buckets as there are entries in its dimension, so
+   the single shared buffer must be sized for the largest dimension or a
+   later, larger walk overruns it (e.g. a game with more terrain than unit
+   types overran a numutypes-sized buffer in ut_table_row_desc). */
+static int
+u_histogram_size(void)
+{
+    return max<int>(max<int>(numutypes, numttypes), numatypes) + 1;
+}
+
 static void
 u_property_desc(TextBuffer *buf, int (*fn)(int i),
 		void (*formatter)(TextBuffer *buf, int val))
@@ -3211,7 +3224,7 @@ u_property_desc(TextBuffer *buf, int (*fn)(int i),
       formatter = tb_value_desc;
     if (u_histogram == NULL)
       u_histogram =
-	(struct histo *) xmalloc(numutypes * sizeof(struct histo));
+	(struct histo *) xmalloc(u_histogram_size() * sizeof(struct histo));
     /* Compute a histogram of all the values for the given property. */
     numentries = 0;
     val = (*fn)(0);
@@ -3291,7 +3304,7 @@ t_property_desc(TextBuffer *buf, int (*fn)(int i),
       formatter = tb_value_desc;
     if (t_histogram == NULL)
       t_histogram =
-	(struct histo *) xmalloc(numttypes * sizeof(struct histo));
+	(struct histo *) xmalloc(u_histogram_size() * sizeof(struct histo));
     /* Compute a histogram of all the values for the given property. */
     numentries = 0;
     val = (*fn)(0);
@@ -3386,7 +3399,7 @@ uu_table_rowcol_desc(TextBuffer *buf, int u, int (*fn)(int i, int j),
       connect = "for";
     if (u_histogram == NULL)
       u_histogram =
-	(struct histo *) xmalloc(numutypes * sizeof(struct histo));
+	(struct histo *) xmalloc(u_histogram_size() * sizeof(struct histo));
     val = (rowcol ? (*fn)(0, u) : (*fn)(u, 0));
     /* Compute a histogram of all the values in the row of the table. */
     numentries = 0;
@@ -3466,7 +3479,7 @@ ut_table_row_desc(TextBuffer *buf, int u, int (*fn)(int i, int j),
       connect = "for";
     if (u_histogram == NULL)
       u_histogram =
-	(struct histo *) xmalloc(numutypes * sizeof(struct histo));
+	(struct histo *) xmalloc(u_histogram_size() * sizeof(struct histo));
     /* Compute a histogram of all the values in the row of the table. */
     numentries = 0;
     u_histogram[numentries].val = val;
@@ -3540,7 +3553,7 @@ um_table_row_desc(TextBuffer *buf, int u, int (*fn)(int i, int j),
       formatter = tb_value_desc;
     if (u_histogram == NULL)
       u_histogram =
-	(struct histo *) xmalloc(numutypes * sizeof(struct histo));
+	(struct histo *) xmalloc(u_histogram_size() * sizeof(struct histo));
     /* Compute a histogram of all the values in the row of the table. */
     numentries = 0;
     u_histogram[numentries].val = val;
@@ -3614,7 +3627,7 @@ ua_table_row_desc(TextBuffer *buf, int u, int (*fn)(int i, int j),
       formatter = tb_value_desc;
     if (u_histogram == NULL)
       u_histogram =
-	(struct histo *) xmalloc(numutypes * sizeof(struct histo));
+	(struct histo *) xmalloc(u_histogram_size() * sizeof(struct histo));
     /* Compute a histogram of all the values in the row of the table. */
     numentries = 0;
     u_histogram[numentries].val = val;
@@ -3687,7 +3700,7 @@ tt_table_row_desc(TextBuffer *buf, int t0, int (*fn)(int i, int j),
       formatter = tb_value_desc;
     if (t_histogram == NULL)
       t_histogram =
-	(struct histo *) xmalloc(numttypes * sizeof(struct histo));
+	(struct histo *) xmalloc(u_histogram_size() * sizeof(struct histo));
     /* Compute a histogram of all the values in the row of the table. */
     numentries = 0;
     t_histogram[numentries].val = val;
@@ -3776,7 +3789,7 @@ aa_table_rowcol_desc(TextBuffer *buf, int a1, int (*fn)(int i, int j),
       formatter = tb_value_desc;
     if (a_histogram == NULL)
       a_histogram =
-	(struct histo *) xmalloc(numatypes * sizeof(struct histo));
+	(struct histo *) xmalloc(u_histogram_size() * sizeof(struct histo));
     val = (rowcol ? (*fn)(0, a1) : (*fn)(a1, 0));
     /* Compute a histogram of all the values in the row of the table. */
     numentries = 0;

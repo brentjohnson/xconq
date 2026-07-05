@@ -385,8 +385,13 @@ create_side(void)
     /* Note that "everingame" is only set at the beginning of a turn. */
     /* Set up the relationships with other sides. */
     newside->knows_about = ALLSIDES; /* for now */
-    newside->trusts = (short *) xmalloc((g_sides_max() + 1) * sizeof(short));
-    newside->trades = (short *) xmalloc((g_sides_max() + 1) * sizeof(short));
+    /* Indexed by side id (0..g_sides_max()).  Size by MAXSIDES+1, not the
+       current g_sides_max()+1: a later module can raise sides-max after this
+       side is created (sides-max is clamped to MAXSIDES), which would leave a
+       side-id index past a g_sides_max()-sized array -- a heap overflow.  This
+       matches the "foo[MAXSIDES + 1]" convention documented in config.h. */
+    newside->trusts = (short *) xmalloc((MAXSIDES + 1) * sizeof(short));
+    newside->trades = (short *) xmalloc((MAXSIDES + 1) * sizeof(short));
     /* Set up per-unit-type slots.  Record how many types the arrays
        cover; a module can define sides before its base module defines
        the unit types, and the arrays are then grown when the type set

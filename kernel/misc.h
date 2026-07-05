@@ -126,8 +126,11 @@ template<typename T> inline T max(T x, T y) { return x > y ? x : y; }
 
 //! Normalize a number on a scale between -range and +range.
 
+/* The (n * range) product can exceed INT_MAX for large AI worth values even
+   though the normalized result (|n| <= max, so |result| <= range) fits an int;
+   do the multiply in 64 bits to avoid signed-overflow UB, then narrow back. */
 #define normalize_on_pmscale(n,max,range) \
-    ((max) ? (((n) * (range)) / (max)) : 0)
+    ((max) ? (int) (((long long) (n) * (range)) / (max)) : 0)
 
 #ifndef isspace
 /*! \brief Is space.

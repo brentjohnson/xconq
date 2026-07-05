@@ -3514,8 +3514,13 @@ average_damage(int damage, int defender)
 int
 basic_worth(int u)
 {
-    int worth = 0, u2, r, range;
-  
+    /* Accumulate in 64 bits: the geometric capture term below (worth grows by
+       a fraction of itself once per unit type) overflowed a 32-bit int for
+       games with many high-capture types -- signed-overflow UB that also
+       tripped the "negative basic worth" warning below when it wrapped. */
+    long long worth = 0;
+    int u2, r, range, result;
+
     worth += u_hp(u) * 10;
     for_all_unit_types(u2) {
 	if (could_create(u, u2))
@@ -3543,12 +3548,20 @@ basic_worth(int u)
       * u_hp(u) / max(1, 10 - type_max_speed(u));
     for_all_unit_types(u2) {
 	worth += (worth * uu_capture(u, u2)) / 150;
+	/* This term grows worth by a fraction of itself once per unit type, so
+	   for games with many high-capture types it explodes exponentially --
+	   past INT_MAX (the old int worth wrapped negative here) and even past
+	   64 bits.  It is only a crude estimate, later clamped for the int
+	   isqrt, so saturate at INT_MAX rather than overflow.  Normal games
+	   never approach the cap, so their worth is unchanged. */
+	if (worth > INT_MAX)
+	  worth = INT_MAX;
     }
-    worth = isqrt(worth);
-    DMprintf("unit type %s basic worth %d \n ", u_type_name(u), worth);
-    if (worth < 0)
+    result = isqrt((int) worth);
+    DMprintf("unit type %s basic worth %d \n ", u_type_name(u), result);
+    if (result < 0)
         init_warning("%s has negative basic worth", u_type_name(u));
-    return worth;
+    return result;
 }
 
 int

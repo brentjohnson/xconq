@@ -3646,7 +3646,9 @@ interp_unit(Obj *form)
 	    break;
 	  case K_OPINIONS:
 	    if (unit->opinions == NULL)
-	      init_unit_opinions(unit, numsides);
+	      /* numsides + 1: indexed by side_number (0..numsides); the
+		 interp_side_value_list below fills that whole range. */
+	      init_unit_opinions(unit, numsides + 1);
 	    if (unit->opinions != NULL) {
 		interp_side_value_list(unit->opinions, cdr(bdg));
 	    } else {

@@ -331,17 +331,20 @@ prob_fraction(int n)
 
 #define NUMMALLOCRECS 200
 
-int overflow;
+/* Cumulative byte totals: size_t, not int -- a long game allocates well over
+   2 GB across its run, and signed int overflow here is UB (and wrong).  These
+   are DEBUGGING-only diagnostics printed by report_malloc. */
+size_t overflow;
 
 int numoverflow;
 
-int totmalloc;
+size_t totmalloc;
 
 int nextmalloc;
 
-int copymalloc;
+size_t copymalloc;
 
-int grandtotmalloc;
+size_t grandtotmalloc;
 
 struct a_malloc {
     int size;
@@ -423,12 +426,12 @@ report_malloc()
 		mallocs[i].size,  mallocs[i].count);
     }
     if (overflow > 0)
-      Dprintf("%10d = ?????? x %6d\n", overflow, numoverflow);
-    Dprintf("Total malloced = %d bytes.\n", totmalloc);
-    Dprintf("String copies = %d bytes.\n", copymalloc);
+      Dprintf("%10lu = ?????? x %6d\n", (unsigned long) overflow, numoverflow);
+    Dprintf("Total malloced = %lu bytes.\n", (unsigned long) totmalloc);
+    Dprintf("String copies = %lu bytes.\n", (unsigned long) copymalloc);
     Dprintf("Lisp malloced = %d bytes.\n", lispmalloc);
     Dprintf("Symbols interned = %d.\n", numsymbols);
-    Dprintf("Grand total allocation = %d bytes.\n", grandtotmalloc);
+    Dprintf("Grand total allocation = %lu bytes.\n", (unsigned long) grandtotmalloc);
     /* Reset all the counters for next time. */
     nextmalloc = 0;
     overflow = numoverflow = 0;
@@ -638,7 +641,10 @@ isqrt(int i)
     int j, k;
 
     if (i > 3) {
-        for (j = i, k = -1; j >>= 2; k <<= 1)
+        /* k walks -1, -2, -4, ... as a bit mask; shift it as unsigned so the
+           left shift of a negative value is defined (it relied on two's-
+           complement wraparound, UB before C++20). The result is identical. */
+        for (j = i, k = -1; j >>= 2; k = (int) ((unsigned int) k << 1))
         	   ;
         k = (~k + i / ~k) / 2;
 	k = (k + i / k) / 2;

@@ -263,8 +263,12 @@ prep_move_action(Unit *unit, Unit *unit2, int x, int y, int z)
 int
 do_move_action(Unit *unit, Unit *unit2, int x, int y, int z)
 {
-    int u, u2, t, rslt, speed, mpcost, acpcost, ox, oy, oz, ot, dist;
+    int u, u2, t, rslt, speed, mpcost, ox, oy, oz, ot, dist;
     int nummoves, dirs[NUMDIRS], numdirs, i, ix, iy, ndist;
+    /* acpcost is assigned on every path where it is later read (each read is
+       guarded by alive(unit), as is each assignment); value-init anyway to
+       quiet a RelWithDebInfo -Wmaybe-uninitialized false positive. */
+    int acpcost = 0;
 
     u = unit->type;  
     u2 = unit2->type;

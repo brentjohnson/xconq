@@ -27,6 +27,18 @@ set(XCONQ_DATA_DIR "${CMAKE_INSTALL_FULL_DATADIR}/xconq" CACHE PATH
 set(XCONQ_SCORES_DIR "/var/lib/xconq/scores" CACHE PATH
     "Directory used for score files at run time")
 
+# Comma-separated -fsanitize list (e.g. "address,undefined"); empty disables.
+# Wired into every kernel/UI target via xconq_common below. Intended for a
+# dedicated CI leg on RelWithDebInfo; see .github/workflows/c-cpp.yml.
+set(XCONQ_SANITIZE "" CACHE STRING
+    "Comma-separated -fsanitize list (e.g. address,undefined); empty disables")
+
+# Multiplies the per-test CTest TIMEOUT and the per-game bound in
+# test/common.sh. Sanitized runs are 2-5x slower, so the sanitizer CI leg
+# configures with e.g. -DXCONQ_TEST_TIMEOUT_SCALE=3; normal builds leave it 1.
+set(XCONQ_TEST_TIMEOUT_SCALE 1 CACHE STRING
+    "Integer multiplier for test timeouts (raise for slow sanitized runs)")
+
 # ---------------------------------------------------------------------------
 # Dependency discovery.  Each UI is skipped (with a warning) when its
 # dependencies are missing, so a bare kernel build always works.
@@ -110,6 +122,17 @@ target_compile_options(xconq_common INTERFACE
     $<$<CXX_COMPILER_ID:GNU>:-Wno-error=format-overflow;-Wno-error=format-truncation>
     # -Wmaybe-uninitialized is GCC-only and fires mainly under optimization.
     $<$<CXX_COMPILER_ID:GNU>:-Werror=maybe-uninitialized>)
+
+# Sanitizers.  Applied to compile *and* link of everything that links
+# xconq_common (kernel, tools, both UIs).  -fno-omit-frame-pointer keeps
+# ASan/UBSan backtraces readable; -g gives file:line.  RelWithDebInfo is the
+# intended build type (optimized enough to be tolerable, still debuggable).
+if(XCONQ_SANITIZE)
+    target_compile_options(xconq_common INTERFACE
+        -fsanitize=${XCONQ_SANITIZE} -fno-omit-frame-pointer -g)
+    target_link_options(xconq_common INTERFACE
+        -fsanitize=${XCONQ_SANITIZE})
+endif()
 
 # Generate a man page by splicing kernel/cmdline.6in into a .6in template
 # (replaces the old "sed | move-if-change" rule).

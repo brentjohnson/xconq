@@ -201,7 +201,11 @@ struct ParamBoxUnitSideSeers : public ParamBoxUnitSide {
 	pboxtype = PBOX_TYPE_UNIT_SIDE_SEERS;
 	seers = NULL;
     }
-    virtual ~ParamBoxUnitSideSeers() { seers = NULL; }
+    /* No virtual destructor: a virtual member would make this polymorphic,
+       but instances are built with xmalloc (side.cc), which never runs a
+       constructor to set the vptr -- every later member access or downcast
+       then trips UBSan's vptr check.  The old destructor only nulled a field
+       on a dying object, so nothing is lost by dropping it. */
 };
 
 struct ParamBoxUnitUnitSeers : public ParamBoxUnitUnit {
@@ -210,7 +214,7 @@ struct ParamBoxUnitUnitSeers : public ParamBoxUnitUnit {
 	pboxtype = PBOX_TYPE_UNIT_UNIT_SEERS;
 	seers = NULL;
     }
-    virtual ~ParamBoxUnitUnitSeers() { seers = NULL; }
+    /* No virtual destructor -- see ParamBoxUnitSideSeers above. */
 };
 
 /* The global linked list of all unit views. */
