@@ -101,10 +101,10 @@ configure_file(kernel/version.h.in  ${CMAKE_BINARY_DIR}/include/version.h)
 # namespaces), so C sources in xconq targets are marked LANGUAGE CXX.
 # ---------------------------------------------------------------------------
 
-# The sources predate C++11; newer standards make libstdc++ headers clash
-# with the kernel's min/max macros (via <math.h> in C++17+).
-set(CMAKE_CXX_STANDARD 98)
-set(CMAKE_CXX_STANDARD_REQUIRED OFF)
+# The sources predate C++11. Bumping incrementally (98 -> 11 -> 17); the
+# min/max macro fix removed the only known header clash blocking C++17.
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
 add_library(xconq_common INTERFACE)
