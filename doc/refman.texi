@@ -6683,7 +6683,7 @@ occupant-affects-defense, transport-affects-attack,
 transport-affects-defense, terrain-affects-attack,
 terrain-affects-defense, neighbour-affects-attack, and
 neighbour-affects-defense.  Plus of course the source code where the
-variables are consulted (for example model_1_combat in kernel/combat.c).
+variables are consulted (for example model_1_combat in kernel/combat.cc).
 @end deffn
 
 One round of combat consists of an attack, a reaction, and a calculation

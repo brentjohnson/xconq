@@ -1,7 +1,6 @@
 # CMake build for the curses interface to Xconq (cconq).
 
-set(CCONQ_SOURCES cconq.c cdraw.c ccmd.c)
-xconq_cxx_sources(${CCONQ_SOURCES})
+set(CCONQ_SOURCES cconq.cc cdraw.cc ccmd.cc)
 
 add_executable(cconq ${CCONQ_SOURCES})
 target_include_directories(cconq PRIVATE ${CURSES_INCLUDE_DIRS})

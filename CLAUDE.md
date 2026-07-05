@@ -10,10 +10,8 @@ a Lisp-like declarative language. The games library (`lib/*.g`) contains dozens 
 scenarios (Empire-style default game, historical battles, fantasy/space, etc.). Multiple
 swappable user interfaces sit on top of the same kernel.
 
-Despite the `.c` extensions on many files, **everything is compiled as C++** (source
-files are marked `LANGUAGE CXX`, with `-fpermissive -Wno-write-strings`, pinned to
-**gnu++98** — newer standards make libstdc++ headers clash with the kernel's `min`/`max`
-macros).
+Everything is compiled as C++: the kernel and curses sources use `.cc` extensions
+(renamed from `.c` 7/2026), pinned to **gnu++17**.
 
 ## Build & test
 
@@ -92,10 +90,10 @@ stay in sync.
 ### Directory map
 
 - **`kernel/`** — the portable engine (world model, units, combat, movement, economy,
-  supply, GDL reader/writer `read.c`/`write` + `lisp.c`, save/restore, synthesis
-  `mk*.c`, scoring, history). This is the bulk of the game logic. `run.c`/`run2.c` drive
+  supply, GDL reader/writer `read.cc`/`write` + `lisp.cc`, save/restore, synthesis
+  `mk*.cc`, scoring, history). This is the bulk of the game logic. `run.cc`/`run2.cc` drive
   turns; `kernel.h` is the internal header, `conq.h`/`kpublic.h` the public API to UIs.
-- **`kernel/ai*.c` / `ai*.cc`, `plan.c`, `mplayer.c`** — the AIs. GDL games are analyzed by
+- **`kernel/ai*.cc`, `plan.cc`, `mplayer.cc`** — the AIs. GDL games are analyzed by
   a generic AI that infers how to play arbitrary rulesets.
 - **UIs** (`curses/`, `sdl/`) — each provides a `main` and implements the
   interface callbacks the kernel expects. They link the kernel as `libconq.a` / `libconqlow.a`.
@@ -111,5 +109,5 @@ stay in sync.
 GDL syntax resembles Lisp but is declarative: you `define` unit/material/terrain/advance
 types and set properties, then fill in interaction tables (e.g. hit/damage between unit
 types, movement cost by terrain). A game module can `include` others. The kernel reads GDL
-via `read.c` + `lisp.c`; the same machinery writes save files. When editing kernel code that
+via `read.cc` + `lisp.cc`; the same machinery writes save files. When editing kernel code that
 touches game state, remember that nearly every field is both GDL-readable and save/restore-able.

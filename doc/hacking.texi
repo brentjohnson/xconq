@@ -300,7 +300,7 @@ assume that any other method has been run before or after, nor that any
 particular game module has been loaded.  However, ``tricks'' are usually
 OK, such as setting a particular global variable in a particular module
 only, then having the synthesis method test whether that global is set.
-See the file @file{init.c} for further details.
+See the file @file{init.cc} for further details.
 
 Synthesis methods that take longer than a second or two to execute
 should generate percent-done info for the interface to use, via the
@@ -560,7 +560,7 @@ to support realtime.
 Error handling.
 @end itemize
 
-The file @file{skelconq.c} in the @file{kernel} directory is
+The file @file{skelconq.cc} in the @file{kernel} directory is
 a good example of a minimum working interface.
 
 Don't let interfaces ever set kernel object values directly, always
@@ -627,7 +627,7 @@ interface very often.
 Although there are many different ways to get a game started, you have
 three main categories of functionality to support: 1) selection of the
 game to play, 2) setting of variants, and 3) selection of players.  For
-command-line-using programs, the file @code{cmdline.c} need only be
+command-line-using programs, the file @code{cmdline.cc} need only be
 linked in to provide all of this functionality.  For graphical
 interfaces, you will need to design appropriate dialogs.  This can be a
 lot of work, exacerbated by the fact that these dialogs will be the
@@ -717,7 +717,7 @@ functions, so each interface must still define its own command lookup
 and calling conventions.
 
 Many commands are common to all interfaces; their implementations
-are in @file{kernel/cmd.c}.
+are in @file{kernel/cmd.cc}.
 
 If you include @file{cmd.def}, you must then provide definitions for all
 the functions that it mentions.  You should also provide some sort of
@@ -1017,7 +1017,7 @@ small images into a map or view window, along with some geometric
 shapes (lines, rectangles, etc) and text.
 
 Most of a map's layout can be handled by common code found in
-@file{kernel/ui.c} and @file{kernel/ui.h}.  The common code does the
+@file{kernel/ui.cc} and @file{kernel/ui.h}.  The common code does the
 tricky computations, and the platform-specific drawing code just needs
 to do the rendering proper.  For instance, @code{xform_cell} takes the
 location of a hex cell and returns the pixel coordinates of its upper
@@ -1054,7 +1054,7 @@ magnification; so you can save some startup type and memory consumption
 by only doing conversion when absolutely necessary.
 
 If a requested image family cannot be found, the standard image setup
-code in @file{ui.c} will create a substitute family (usually by doing a
+code in @file{ui.cc} will create a substitute family (usually by doing a
 sort of ``bar code'' of the unit or terrain type number), and mark it as
 ersatz.  The interface should still warn that the image family could not
 be found though.  In the case of terrain, where solid colors may be
@@ -1593,7 +1593,7 @@ space and wind up exhausting memory (this has often happened).  You
 should familiarize yourself with the algorithms already used in
 @i{Xconq}, since they have already been debugged and tuned, and many
 have been written as generically useful code (see the area-scanning
-functions in @file{world.c} for instance).
+functions in @file{world.cc} for instance).
 
 If your new feature is expensive, then define a global and compute its
 value only once, either at the start of the game or when it becomes

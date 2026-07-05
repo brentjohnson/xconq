@@ -171,9 +171,18 @@ Constraints: this is a compile-fix task, not a modernization sweep — do not
 refactor to auto/range-for/smart pointers, do not fix unrelated warnings.
 Finally, mark this task done (strikethrough + date) in MODERNIZATION-PLAN.md.
 ```
-- **[M] Rename `.c` files that are compiled as C++ to `.cc`** (or `.cpp`) and
-  drop the `LANGUAGE CXX` override in CMake. The current arrangement confuses
-  every editor, indexer, and new contributor.
+- ~~**[M] Rename `.c` files that are compiled as C++ to `.cc`** (or `.cpp`) and
+  drop the `LANGUAGE CXX` override in CMake.~~ *(done 7/2026)*: renamed all 53
+  live .c files (50 in kernel/, 3 in curses/) with `git mv` to preserve
+  history; `kernel/win32.c` (dead on non-Windows builds) and the already-unused
+  `kernel/path.c` were left as `.c`, per plan. Updated both CMakeLists.txt
+  source lists to the new names, deleted the `xconq_cxx_sources()` helper and
+  its call sites, fixed `test/src-uses.sh`'s `*/*.[hc]` glob (it was silently
+  missing the pre-existing `.cc` AI/SDL files, and would have missed
+  everything once the rename landed) to also match `*/*.cc`, and updated
+  stale `.c` filenames in CLAUDE.md, doc/hacking.texi, doc/refman.texi, and a
+  test/all.g comment. Fresh configure + build of both UIs, the quick ctest
+  suite, and all `test/*-diff.sh` / `*-uses.sh` scripts run clean.
 
 **⚙ PROMPT 2.5 — recommended model: Sonnet.** *(Pure mechanics: git mv +
 build-list edits + reference sweep, fully verified by the build.)*

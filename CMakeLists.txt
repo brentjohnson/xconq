@@ -97,8 +97,10 @@ configure_file(kernel/version.h.in  ${CMAKE_BINARY_DIR}/include/version.h)
 # Common build settings.
 #
 # Historical note: the old autoconf build compiled every .c file with the
-# C++ compiler.  The sources rely on that (kernel headers declare C++
-# namespaces), so C sources in xconq targets are marked LANGUAGE CXX.
+# C++ compiler (the sources rely on that; kernel headers declare C++
+# namespaces). The sources were renamed .cc so the compiler-as-C++ choice
+# is now implicit in the filename, rather than forced via a LANGUAGE CXX
+# source property.
 # ---------------------------------------------------------------------------
 
 # Pinned to 17: the newest standard the codebase gains anything from: the
@@ -114,11 +116,6 @@ target_include_directories(xconq_common INTERFACE
     ${CMAKE_BINARY_DIR}/include
     ${CMAKE_SOURCE_DIR}/kernel)
 target_compile_definitions(xconq_common INTERFACE HAVE_ACDEFS_H)
-
-# Mark a target's C sources for compilation as C++ (see note above).
-function(xconq_cxx_sources)
-    set_source_files_properties(${ARGN} PROPERTIES LANGUAGE CXX)
-endfunction()
 
 # Generate a man page by splicing kernel/cmdline.6in into a .6in template
 # (replaces the old "sed | move-if-change" rule).

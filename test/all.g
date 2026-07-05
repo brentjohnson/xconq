@@ -854,7 +854,7 @@
 
 ;;; Agreements.
 ;;; (Disabled: the kernel's agreement reading is #if 0'd out in
-;;; read.c, so an agreement form only draws a useless-form warning.)
+;;; read.cc, so an agreement form only draws a useless-form warning.)
 
 ;(agreement 1
 ;  (type-name "test")
