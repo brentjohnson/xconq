@@ -83,6 +83,17 @@ Each per-module test gets its own scratch working directory
 argument (e.g. `sh test-lib.sh <srcdir>`) still sweeps every module from `build/test/`
 directly, for manual use.
 
+`test/unit/` holds `unittests` (CTest `unittests`, label `unit`, `ctest -L unit`), a small
+C++ binary of pure-kernel unit tests (hand-rolled `CHECK` macro, no external framework)
+that links the kernel directly instead of driving a whole game through skelconq: GDL
+reader/writer round-trips and malformed-input handling (`kernel/lisp.cc`), the `.def`
+type/table/gvar machinery via `interp_form(NULL, ...)` on inline GDL fragments, and dice/
+pm-scale utility helpers (`kernel/misc.h`). It links `kernel/skelconq_stubs.cc`, which
+holds the required-interface callback stubs every UI must supply (factored out of
+`skelconq.cc`, which keeps only its interactive command loop); a `tolerate_warnings` flag
+in that shared file lets `unittests` inspect a deliberately provoked reader warning
+instead of exiting the way skelconq's warning handling otherwise always does.
+
 Consistency-check scripts also live in `test/` (`*-diff.sh`, `*-uses.sh`):
 - `check-lib` / `test-lib.sh` — load & run every library game module (per-module, or all via no module arg)
 - `check-actions`, `check-save`, `check-test` — action coverage, save/restore, special games (same split)

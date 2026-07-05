@@ -14,6 +14,12 @@
 # save, or fails the save/restore comparison; see test/common.sh for the
 # full policy. They keep saves and scores out of ~/.xconq by pointing
 # XCONQHOME into their working directory.
+#
+# All of the above drive whole games through skelconq. test/unit/ (added
+# below via add_subdirectory) is different: a small C++ binary that links
+# the kernel directly for true unit tests of pure-kernel logic (the GDL
+# reader/writer, the .def type/table/gvar machinery, dice/pm-scale utility
+# helpers), one CTest ("unittests", label "unit").
 
 set(XCONQ_TEST_SCRIPTS
     ai:test-ai.sh
@@ -122,3 +128,6 @@ endforeach()
 
 # The opt-in libFuzzer GDL-reader harness (only active under -DXCONQ_FUZZ=ON).
 add_subdirectory(fuzz)
+
+# True unit tests for pure-kernel logic (label "unit"); see test/unit/unittests.cc.
+add_subdirectory(unit)

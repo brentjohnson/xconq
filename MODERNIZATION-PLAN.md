@@ -463,61 +463,29 @@ and the BWidget vendor-audit are resolved by this removal (see §4 below).
   symbols missing from the syntax chart, too large to waive item-by-item).
   The four `*-uses.sh` scripts are usage-count reports with no pass/fail
   signal and stay manual-only.
-- **[S] Add unit tests for pure-kernel logic** (GDL read/write round-trip,
+- ~~**[S] Add unit tests for pure-kernel logic** (GDL read/write round-trip,
   save/restore equality, movement/combat table lookups) — the current tests are
-  end-to-end only.
-
-**⚙ PROMPT 3.6 — recommended model: Sonnet.** *(The test cases are
-enumerated below; the infrastructure copies skelconq's existing
-null-interface pattern.)*
-
-```text
-Task: create Xconq's first unit-test binary for pure-kernel logic,
-registered in the CTest quick lane.
-
-Context: all current tests drive whole games through skelconq. The kernel
-is global-state and has no teardown (one process = one test *session*,
-but many independent checks can run sequentially in it). skelconq
-(kernel/skelconq.c) is the proof of how to link the kernel with a null
-interface: it provides the UI callback stubs the kernel expects — mirror
-its stub set rather than inventing one (if practical, factor skelconq's
-stubs into a shared file both link, but do not restructure skelconq
-beyond that).
-Method:
-1. Infrastructure: test/unit/ with one C++ binary (unittests) linking the
-   kernel libraries, using a tiny hand-rolled harness (a CHECK macro
-   counting failures, main returning nonzero if any failed; no external
-   framework — the tree may still be gnu++98 depending on §1 progress).
-   One CTest entry, LABELS "unit", TIMEOUT 60.
-2. Test areas, in dependency order (later ones may need more init —
-   discover the minimal init sequence from skelconq.c's startup and
-   test-lib's usage; document it in a comment):
-   a. Lisp layer (kernel/lisp.c): read-from-string -> write-to-string
-      round-trips for representative GDL: integers, negative numbers,
-      strings with escapes/quotes, symbols, nested lists, dotted pairs if
-      supported (check the reader), dice notation (1d6, fractions) — and
-      the regression class from step 1: symbols adjacent to numbers must
-      not glue (the u*0 bug), quoted/empty strings.
-      Malformed-input rejection: unterminated string/list, token at the
-      old BIGBUF boundary (regression for the off-by-one).
-   b. Type/table machinery (.def system): after loading a minimal inline
-      GDL fragment defining 2-3 unit/terrain types, check table default
-      values, set values, and both orientations of a u-by-t table lookup;
-      check a gvar default and override.
-   c. Utility layer (kernel/misc.h etc.): dice roll min/mean/max
-      functions against hand-computed values; pm-scale normalize
-      helpers; anything else pure that step-1 bugs touched.
-   Save/restore equality at unit granularity is a stretch goal: only if a
-   world can be synthesized cheaply from a tiny GDL string; otherwise note
-   that check-save covers it end-to-end and skip.
-3. Keep each check independent of ordering where the global state
-   allows; where it does not (type definitions accumulate), order tests
-   explicitly and comment the dependency.
-4. Update CLAUDE.md's test section and test/CMakeLists.txt header.
-Verify: ctest -L unit green; full quick lane green; break one CHECK
-deliberately to confirm nonzero exit, revert.
-Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md.
-```
+  end-to-end only.~~ *(done 2026-07-05)*: added `test/unit/` (`unittests`
+  binary, CTest `unittests`, label `unit`, `TIMEOUT 60`), linking the kernel
+  directly rather than driving a whole game through skelconq. Factored
+  skelconq's required-interface callback stubs (the ones every UI must
+  supply per conq.h) out into `kernel/skelconq_stubs.cc`/`.h`, shared by
+  both `skelconq` and `unittests`; skelconq itself keeps only its
+  interactive command loop, unchanged in behavior (a `tolerate_warnings`
+  flag added to the shared stub lets `unittests` inspect a deliberately
+  provoked reader warning instead of dying the way skelconq always has).
+  Covers, in one process/session: the Lisp reader/writer
+  (`read_form_from_string`/`fprintlisp` round-trips for integers, escaped
+  and octal-escaped and empty strings, plain and `|quoted|` symbols, nested
+  lists, dice notation, and the lack of dotted-pair support; malformed
+  input — unterminated list, unterminated string, and a token at the
+  BIGBUF-1000 boundary — via the two real bugs the fuzzer found, without
+  crashing or hanging); the `.def` type/table/gvar machinery
+  (`interp_form(NULL, ...)` on inline `unit-type`/`terrain-type`/`table`/
+  `set` forms, checking a u-by-t table's default and both lookup
+  orientations, and a gvar default/override); and the dice1 roll min/mean/
+  max/roll-range helpers plus the `normalize_on_pmscale` macro. Save/restore
+  equality stayed out of scope (already covered end-to-end by `check-save`).
 
 ## 4. User interfaces
 

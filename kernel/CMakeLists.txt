@@ -73,8 +73,11 @@ target_compile_definitions(conqlow PRIVATE
 add_library(conq STATIC ${CONQ_SOURCES})
 target_link_libraries(conq PUBLIC conqlow)
 
-# Skeleton (headless) interface; drives the test suite.
-add_executable(skelconq skelconq.cc autotest.cc)
+# Skeleton (headless) interface; drives the test suite. skelconq_stubs.cc
+# holds the required-interface callback stubs (the ones any UI must supply;
+# see conq.h); it is also linked directly into test/unit's unittests binary,
+# which needs the same stubs but none of skelconq's interactive command loop.
+add_executable(skelconq skelconq.cc skelconq_stubs.cc autotest.cc)
 target_link_libraries(skelconq PRIVATE conq m)
 
 # IMF <-> IMF converter tool (build on demand).
