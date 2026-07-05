@@ -841,7 +841,7 @@ past_unit_handle(Side *side, PastUnit *past_unit)
 	    && strcmp(end, "s'") != 0
 	    && strcmp(end, "z'") != 0)
 	  sprintf(past_unitbuf, "the ");
-	sprintf(past_unitbuf, side_adjective(side2));
+	sprintf(past_unitbuf, "%s", side_adjective(side2));
 	strcat(past_unitbuf, " ");
     }
     /* Now add the past_unit's unique description. */
@@ -1037,7 +1037,7 @@ historical_event_desc(Side *side, HistEvent *hevt, char *buf)
 		&& find_event_type(pattern) == hevt->type) {
 		text = cadr(head);
 		if (stringp(text)) {
-		    sprintf(buf, c_string(text));
+		    sprintf(buf, "%s", c_string(text));
 		} else {
 		    sprintlisp(buf, text, 50);
 		}
@@ -1048,7 +1048,7 @@ historical_event_desc(Side *side, HistEvent *hevt, char *buf)
 		       ) {
 		text = cadr(head);
 		if (stringp(text)) {
-		    sprintf(buf, c_string(text));
+		    sprintf(buf, "%s", c_string(text));
 		} else {
 		    event_desc_from_list(side, text, hevt, buf);
 		}
@@ -1684,6 +1684,7 @@ feature_desc(Feature *feature, char *buf)
 		    switch (*(str + 1)) {
 		      case 'T':
 			caps = TRUE;
+			/* fall through */
 		      case 't':
 			if (feature->feattype) {
 			    buf[i] = '\0';

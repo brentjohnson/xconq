@@ -1186,7 +1186,7 @@ init_side_advantage(Side *side)
     if (side->maxadvantage == 0)
       side->maxadvantage = g_advantage_max();
     if (side->maxadvantage == 0) {
-	int i, methkey, found = FALSE;
+	int i = 0, methkey, found = FALSE;
 	Obj *synthlist = g_synth_methods(), *methods, *method;
 
 	for_all_list(synthlist, methods) {

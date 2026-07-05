@@ -623,7 +623,9 @@ time_t last_checksum_time;
 int
 net_run_game(int maxactions)
 {
-	int oldsernum, oldstate, sendcheck, oldcsum, newcsum, numdone = 0;
+	/* oldsernum/oldstate/oldcsum are only read under `numremotes > 0`,
+	   the same guard that sets them; init quiets a false positive. */
+	int oldsernum = 0, oldstate = 0, sendcheck, oldcsum = 0, newcsum, numdone = 0;
     	time_t now;
 
 	/* Network clients should get out of here. */
@@ -1461,7 +1463,7 @@ broadcast_action(Unit *unit, int actee, ActionType atype,
 int
 net_prep_none_action(Unit *unit, Unit *unit2)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1485,7 +1487,7 @@ net_prep_none_action(Unit *unit, Unit *unit2)
 int
 net_prep_produce_action(Unit *unit, Unit *unit2, int m, int n)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1509,7 +1511,7 @@ net_prep_produce_action(Unit *unit, Unit *unit2, int m, int n)
 int
 net_prep_extract_action(Unit *unit, Unit *unit2, int x, int y, int m, int n)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1533,7 +1535,7 @@ net_prep_extract_action(Unit *unit, Unit *unit2, int x, int y, int m, int n)
 int
 net_prep_develop_action(Unit *unit, Unit *unit2, int u3)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1557,7 +1559,7 @@ net_prep_develop_action(Unit *unit, Unit *unit2, int u3)
 int
 net_prep_toolup_action(Unit *unit, Unit *unit2, int u3)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1581,7 +1583,7 @@ net_prep_toolup_action(Unit *unit, Unit *unit2, int u3)
 int
 net_prep_create_in_action(Unit *unit, Unit *unit2, int u3, Unit *dest)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1606,7 +1608,7 @@ net_prep_create_in_action(Unit *unit, Unit *unit2, int u3, Unit *dest)
 int
 net_prep_create_at_action(Unit *unit, Unit *unit2, int u3, int x, int y, int z)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1630,7 +1632,7 @@ net_prep_create_at_action(Unit *unit, Unit *unit2, int u3, int x, int y, int z)
 int
 net_prep_build_action(Unit *unit, Unit *unit2, Unit *newunit)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1654,7 +1656,7 @@ net_prep_build_action(Unit *unit, Unit *unit2, Unit *newunit)
 int
 net_prep_repair_action(Unit *unit, Unit *unit2, Unit *unit3)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1678,7 +1680,7 @@ net_prep_repair_action(Unit *unit, Unit *unit2, Unit *unit3)
 int
 net_prep_disband_action(Unit *unit, Unit *unit2)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1702,7 +1704,7 @@ net_prep_disband_action(Unit *unit, Unit *unit2)
 int
 net_prep_change_type_action(Unit *unit, Unit *unit2, int u3)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1726,7 +1728,7 @@ net_prep_change_type_action(Unit *unit, Unit *unit2, int u3)
 int
 net_prep_change_side_action(Unit *unit, Unit *unit2, Side *side)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1751,7 +1753,7 @@ net_prep_change_side_action(Unit *unit, Unit *unit2, Side *side)
 int
 net_prep_alter_cell_action(Unit *unit, Unit *unit2, int x, int y, int t)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1776,7 +1778,7 @@ int
 net_prep_add_terrain_action(Unit *unit, Unit *unit2,
 			    int x, int y, int dir, int t)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1801,7 +1803,7 @@ int
 net_prep_remove_terrain_action(Unit *unit, Unit *unit2,
 			       int x, int y, int dir, int t)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1828,7 +1830,7 @@ net_prep_remove_terrain_action(Unit *unit, Unit *unit2,
 int
 net_prep_attack_action(Unit *unit, Unit *unit2, Unit *defender, int n)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1853,7 +1855,7 @@ net_prep_attack_action(Unit *unit, Unit *unit2, Unit *defender, int n)
 int
 net_prep_overrun_action(Unit *unit, Unit *unit2, int x, int y, int z, int n)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1877,7 +1879,7 @@ net_prep_overrun_action(Unit *unit, Unit *unit2, int x, int y, int z, int n)
 int
 net_prep_fire_at_action(Unit *unit, Unit *unit2, Unit *unit3, int m)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1901,7 +1903,7 @@ net_prep_fire_at_action(Unit *unit, Unit *unit2, Unit *unit3, int m)
 int
 net_prep_fire_into_action(Unit *unit, Unit *unit2, int x, int y, int z, int m)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1925,7 +1927,7 @@ net_prep_fire_into_action(Unit *unit, Unit *unit2, int x, int y, int z, int m)
 int
 net_prep_capture_action(Unit *unit, Unit *unit2, Unit *unit3)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1950,7 +1952,7 @@ net_prep_capture_action(Unit *unit, Unit *unit2, Unit *unit3)
 int
 net_prep_detonate_action(Unit *unit, Unit *unit2, int x, int y, int z)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -1976,7 +1978,7 @@ net_prep_detonate_action(Unit *unit, Unit *unit2, int x, int y, int z)
 int
 net_prep_move_action(Unit *unit, Unit *unit2, int x, int y, int z)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {
@@ -2000,7 +2002,7 @@ net_prep_move_action(Unit *unit, Unit *unit2, int x, int y, int z)
 int
 net_prep_enter_action(Unit *unit, Unit *unit2, Unit *unit3)
 {
-    int rslt;
+    int rslt = 0;
 
     /* Check the prep action result first and return if it would fail. */
     if (unit == NULL || unit->act == NULL || unit2 == NULL) {

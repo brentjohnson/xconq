@@ -510,7 +510,8 @@ write_types(void)
     }
     for_all_advance_types(t) {
 	start_form(key(K_ADVANCE_TYPE));
-	add_to_form(escaped_symbol(a_type_name(t)));
+	name = escaped_symbol(a_type_name(t));
+	add_to_form(name);
 	newline_form();
 	space_form();
 	for (i = 0; atypedefns[i].name != NULL; ++i) {
@@ -648,7 +649,9 @@ write_table(const char *name, int (*getter)(int, int), int dflt, int typ1, int t
 {
     int i, j, k, colvalue, constcol, next;
     int numrandoms, nextrowdiffers, writeconst;
-    int sawfirst, constrands, constval;
+    /* constval is set on the first random column (numrandoms > 0 ensures
+       there is one) and only read when constrands held; init anyway. */
+    int sawfirst, constrands, constval = 0;
     int dim1 = numtypes_from_index_type(typ1);
     int dim2 = numtypes_from_index_type(typ2);
     struct histo mostcommon[500]; /* more than max of num[utma]types */
@@ -1628,7 +1631,7 @@ write_side_properties(Side *side)
 static void 
 write_standing_orders(Side *side)
 {
-    int u, u1, numtypes, numargs;
+    int u, u1, numtypes, numargs = 0;
     const char *str = NULL;
     StandingOrder *sorder;
 

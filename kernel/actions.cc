@@ -3874,7 +3874,9 @@ prep_alter_cell_action(Unit *unit, Unit *unit2, int x, int y, int t)
 int
 do_alter_cell_action(Unit *unit, Unit *unit2, int x, int y, int t)
 {
-    int u, u2, oldt, acpr, acpa, m, amt, excess, space;
+    /* excess is carried past the material loop below; default to 0 so a
+       game with no material types has "no leftover" rather than garbage. */
+    int u, u2, oldt, acpr, acpa, m, amt, excess = 0, space;
 
     u = unit->type;  u2 = unit2->type;
     oldt = terrain_at(x, y);
@@ -3969,7 +3971,8 @@ prep_add_terrain_action(Unit *unit, Unit *unit2, int x, int y, int dir, int t)
 int
 do_add_terrain_action(Unit *unit, Unit *unit2, int x, int y, int dir, int t)
 {
-    int u = unit->type, oldval, newval, m, amt;
+    /* Default equal so a subtype that changes nothing costs the minimum acp. */
+    int u = unit->type, oldval = 0, newval = 0, m, amt;
     Side *side;
 
     switch (t_subtype(t)) {
@@ -4079,7 +4082,9 @@ prep_remove_terrain_action(Unit *unit, Unit *unit2, int x, int y, int dir, int t
 int
 do_remove_terrain_action(Unit *unit, Unit *unit2, int x, int y, int dir, int t)
 {
-    int u = unit->type, oldval, newval, m, amt, excess, space;
+    /* Default equal so a subtype that changes nothing costs the minimum acp;
+       excess is carried past the material loop, so default it to 0 too. */
+    int u = unit->type, oldval = 0, newval = 0, m, amt, excess = 0, space;
     Side *side;
 
     switch (t_subtype(t)) {

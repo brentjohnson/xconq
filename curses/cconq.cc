@@ -1499,7 +1499,9 @@ play_movies(SideMask sidemask)
 	    draw_blast(unit->x, unit->y, 0);
 	    break;
 	  case movie_nuke:
-	    draw_blast(unit->x, unit->y, 1);
+	    /* A nuke movie carries the target cell directly in args[0..1]
+	       (see schedule_movie(..., "nuke", x, y)), not a unit id. */
+	    draw_blast(movies[j].args[0], movies[j].args[1], 1);
 	    break;
 	  default:
 	    break;

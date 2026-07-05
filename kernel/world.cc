@@ -709,6 +709,9 @@ change_terrain_type(int x, int y, int t2)
     /* There might be catastrophic consequences for any units here. */
     for_all_stack(x, y, unit2) {
 	u2 = unit2->type;
+	/* Reset per unit: a unit that neither vanishes nor wrecks gets no
+	   event, and must not inherit the previous unit's event either. */
+	hevttype = H_UNDEFINED;
 	if (ut_vanishes_on(u2, t2)
 	    /* The unit may be rescued by a connection. */
 	    && !type_survives_in_cell(unit2->type, unit2->x, unit2->y)) {

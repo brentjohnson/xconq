@@ -634,6 +634,7 @@ xform_cell_flat(VP *vp, int x, int y, int *sxp, int *syp)
 	    break;
 	  default:
 	    case_panic("view direction", vp->isodir);
+	    *sxp = *syp = 0;  /* not reached; defines outputs on every path */
 	    break;
 	}
 	/* Make viewport-relative, works the same for every view direction. */
@@ -2089,8 +2090,11 @@ int
 compute_transition(Side *side, VP *vp, int x, int y, int dir,
 		   int *sxp, int *syp, int *swp, int *shp, int *offsetp)
 {
-    int t, x1, y1, t1, x2, y2, sx, sy, sw, sh, sx2, sy2;
-    int trite, tleft, overrite, overleft, offset;
+    int t, x1, y1, t1, x2, y2, sx, sy;
+    /* The switch on dir below covers every real hex direction but has no
+       default; init the pieces it fills so a stray dir can't leak garbage. */
+    int sw = 0, sh = 0, sx2 = 0, sy2 = 0;
+    int trite, tleft, overrite, overleft, offset = 0;
     int w = vp->hw, h = vp->hh, hch = vp->hch;
 
     if (!point_in_dir(x, y, dir, &x1, &y1))
@@ -3489,6 +3493,8 @@ unit_could_attack(Unit *unit, int u2, Side *side2, int x, int y)
 	/* (should use this to test blocking elev) */
         if (fire_hit_chance(u, u2))
 	  return TRUE;
+	/* Neither a direct nor a firing attack is possible. */
+	break;
       case 1:
       default:
            return TRUE;
@@ -3618,7 +3624,9 @@ int
 take_supplies(Unit *unit, short *amts, short *rslts)
 {
     int m, want, actual, neededsome;
-    Unit *unit2;
+    /* Set only on the want>0 path that also sets neededsome, and read only
+       under `if (neededsome)`; NULL-init quiets the false positive. */
+    Unit *unit2 = NULL;
 
     neededsome = FALSE;
     for_all_material_types(m) {

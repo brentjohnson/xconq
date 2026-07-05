@@ -112,10 +112,12 @@ make_roads(int calls, int runs)
 	n = max(n, 1);
 	for (i = 0; i < n; ++i) {
 	    random_edge_point(&ex1, &ey1);
-	    find_adj_inside_area(ex1, ey1, &iex1, &iey1);
 	    random_edge_point(&ex2, &ey2);
-	    find_adj_inside_area(ex2, ey2, &iex2, &iey2);
-	    lay_road_between(iex1, iey1, iex2, iey2);
+	    /* Only lay the road if both edge points have an interior
+	       neighbor; otherwise the endpoints are undefined. */
+	    if (find_adj_inside_area(ex1, ey1, &iex1, &iey1)
+		&& find_adj_inside_area(ex2, ey2, &iex2, &iey2))
+	      lay_road_between(iex1, iey1, iex2, iey2);
 	}
     }
     /* Run spurs from unroaded units to existing roads. */

@@ -103,7 +103,7 @@ int
 get_gif_from_file(FileImage *fimg, FILE *fp)
 {
     char *rawdata;
-    int rslt, i, j, numcolors, rawpal[1024];
+    int rslt, i, j, numcolors = 0, rawpal[1024];
     int blacki = -1;
 
     rslt = ReadGIF(fp, 1, &numcolors, rawpal, &rawdata);

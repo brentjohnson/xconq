@@ -532,7 +532,9 @@ do_module_variants(Module *module, Obj *lis)
 static void
 do_one_variant(Module *module, Variant *var, Obj *varsetdata)
 {
-    int val, caseval;
+    /* caseval is read only when numberp(rawcaseval) held in the same
+       iteration that set it; init quiets the cross-iteration warning. */
+    int val, caseval = 0;
     int width = 0, height = 0, circumference /*, latitude, longitude*/;
     int rtime, rtimeperturn, rtimeperside;
     const char *vartypename = c_string(var->id);

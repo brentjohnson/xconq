@@ -117,6 +117,21 @@ target_include_directories(xconq_common INTERFACE
     ${CMAKE_SOURCE_DIR}/kernel)
 target_compile_definitions(xconq_common INTERFACE HAVE_ACDEFS_H)
 
+# Warnings.  -Wall -Wextra are informational only; a curated subset is
+# promoted to hard errors below (real bugs when they fire: bad returns,
+# uninitialized reads, format-string mismatches, unintended fallthrough).
+# Everything else stays a plain warning for future burn-down passes.
+target_compile_options(xconq_common INTERFACE
+    $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall;-Wextra>
+    $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Werror=return-type;-Werror=format;-Werror=format-security;-Werror=implicit-fallthrough;-Werror=uninitialized>
+    # -Werror=format promotes the whole "format" group in GCC; the curated
+    # subset is only format-string/argument correctness and format-security,
+    # so keep the buffer-sizing sub-warnings (overflow/truncation) as plain
+    # warnings for a later pass.
+    $<$<CXX_COMPILER_ID:GNU>:-Wno-error=format-overflow;-Wno-error=format-truncation>
+    # -Wmaybe-uninitialized is GCC-only and fires mainly under optimization.
+    $<$<CXX_COMPILER_ID:GNU>:-Werror=maybe-uninitialized>)
+
 # Generate a man page by splicing kernel/cmdline.6in into a .6in template
 # (replaces the old "sed | move-if-change" rule).
 function(xconq_manpage output input)

@@ -2763,7 +2763,11 @@ cover_area_1(Side *side, Unit *unit, int x0, int y0, int nx, int ny)
 {
     int u = unit->type, range0, nrange, range, x, y, x1, y1, x2, y2;
     int y1c, y2c, cov, los, r;
-    int xmin, ymin, xmax, ymax, oldcov, newcov, anychanges;
+    /* Bounds are set from whichever of the old (x0,y0) / new (nx,ny)
+       positions is on-area; a caller always supplies at least one.  Init
+       anyway so a hypothetical both-off-area call has defined bounds (the
+       in_area() test in the update loop keeps it safe regardless). */
+    int xmin = 0, ymin = 0, xmax = 0, ymax = 0, oldcov, newcov, anychanges;
 
     if (side->coverage == NULL)
       return;

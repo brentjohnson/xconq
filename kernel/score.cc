@@ -1505,6 +1505,8 @@ score_variant_desc(ScoreRecord *sr, char *varbuf)
 			varsetname = intern_symbol(keyword_name(K_REAL_TIME));
 			break;
 		      default:
+			/* Unknown variant number matches no variant. */
+			varsetname = lispnil;
 			break;
 		    }
 		} else {

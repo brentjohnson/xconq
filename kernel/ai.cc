@@ -2332,6 +2332,9 @@ assign_explorer_to_theater(Side *side, Unit *unit, Theater *theater)
     if (theater != NULL) {
 	tries = theater->size * 2;
 	found = FALSE;
+	/* Start outside the area so a zero-iteration loop (empty theater)
+	   falls through to the full-theater scan below. */
+	x = y = -1;
 	while (tries-- > 0) {
 	    /* Select a random point within the theater. */
 	    x = theater->xmin;  y = theater->ymin;

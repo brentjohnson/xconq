@@ -1109,7 +1109,9 @@ calc_key_point_temps(int yearpart)
 static int
 interpolate_temperature(int x, int y)
 {
-    int dbest, dnextbest, tbest, tnextbest, i, besti, nextbesti, d;
+    /* dnextbest is written on the same paths that make nextbesti >= 0, the
+       condition under which it is later read; init quiets a false positive. */
+    int dbest, dnextbest = 0, tbest, tnextbest, i, besti, nextbesti, d;
 
     if (num_key_points == 1)
       return key_points[0].temp;
@@ -2736,6 +2738,7 @@ run_unit_fates(void)
 		}
 	    }
 	    if (in_play(unit)) {
+		u = unit->type;
 		origside = unit->side;
 		if (any_lost_surrender && any_lost_surrenders[u]) {
 		    lost_unit_surrender(unit);

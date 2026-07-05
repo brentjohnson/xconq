@@ -89,8 +89,8 @@ static void add_random_changes(void);
 int
 make_fractal_terrain(int calls, int runs)
 {
-    int actualcells, altnumblobs, altblobradius, altblobalt;
-    int wetnumblobs, wetblobradius, wetblobalt;
+    int actualcells, altnumblobs = 0, altblobradius = 0, altblobalt = 0;
+    int wetnumblobs = 0, wetblobradius = 0, wetblobalt = 0;
 
     /* Don't run if terrain is already present. */
     if (terrain_defined())
@@ -651,8 +651,8 @@ make_earthlike_terrain(int calls, int runs)
 static void
 make_earthlike_fractal_terrain(int calls, int runs)
 {
-    int actualcells, altnumblobs, altblobradius, altblobalt;
-    int wetnumblobs, wetblobradius, wetblobalt;
+    int actualcells, altnumblobs = 0, altblobradius = 0, altblobalt = 0;
+    int wetnumblobs = 0, wetblobradius = 0, wetblobalt = 0;
 
     /* Heuristic limit - this algorithm would get weird on small areas */
     if (area.width < 9 || area.height < 9) {
@@ -817,7 +817,12 @@ make_maze_terrain(int calls, int runs)
 {
     int t, x, y, x1, y1, i, n;
     int numcells, tries, numpassagecellsneeded;
-    int roomcells, roomradius, numrooms, *roomx, *roomy;
+    int roomcells, roomradius;
+    /* Rooms are only built under g_maze_room(), but the passage loop below
+       reads these under the separate g_maze_passage() guard; default to
+       "no rooms" so passages-without-rooms is a harmless no-op, not a
+       read of uninitialized memory. */
+    int numrooms = 0, *roomx = NULL, *roomy = NULL;
 
     if (terrain_defined())
       return FALSE;
@@ -1460,7 +1465,10 @@ name_bays(const char *name, Obj *parms)
 static int
 bay_point(int x, int y)
 {
-    int dir, nx, ny, seacount, dir1, dir2;
+    int dir, nx, ny, seacount;
+    /* dir1/dir2 are read only when seacount reaches 1/2, the same counts
+       that set them; init quiets a cross-iteration false positive. */
+    int dir1 = 0, dir2 = 0;
 
     if (!t_liquid(terrain_at(x, y)))
       return FALSE;

@@ -1304,7 +1304,9 @@ add_to_table(Obj *tablename, int tbl, Obj *clauses)
 	  case SYMBOL:
 	    clause = eval_symbol(clause);
 	    TYPECHECK(numberp, clause, "table clause does not eval to number");
-	    /* Now treat it as a number. */
+	    /* Now treat it as a number.  (Comment-style fallthrough markers
+	       aren't honored after a macro expansion, so use the attribute.) */
+	    [[fallthrough]];
 	  case NUMBER:
 	    /* A constant value for the table - blast over everything. */
 	    CHECK_VALUE(tbl, clause);
@@ -1667,7 +1669,7 @@ add_to_atypes(Obj *types, Obj *prop, Obj *values)
 static void
 interp_world(Obj *form)
 {
-    int numval;
+    int numval = 0;
     Obj *props, *bdg, *propval;
     const char *propname;
 
@@ -1716,7 +1718,7 @@ interp_world(Obj *form)
 static void
 interp_area(Obj *form)
 {
-    int newarea = FALSE, newwidth = 0, newheight = 0, numval;
+    int newarea = FALSE, newwidth = 0, newheight = 0, numval = 0;
     Obj *props, *subprop, *bdg, *propval, *rest, *val;
     const char *propname, *strval;
 
@@ -2047,11 +2049,12 @@ fill_in_users(Obj *contents)
 static void
 add_to_area(Obj *spec)
 {
-    int x0, y0, w, h, t, x, y;
+    int x0 = 0, y0 = 0, w, h, t, x, y;
     const char *propname;
     Obj *val, *typeval;
 
-    /* Collect the dimensions of the area to modify. */
+    /* Collect the dimensions of the area to modify; position defaults to
+       the origin when the spec omits leading coordinates. */
     if (numberp(car(spec))) {
 	x0 = c_number(car(spec));
 	spec = cdr(spec);
@@ -3052,7 +3055,7 @@ interp_doctrine(Obj *form)
 static void
 fill_in_doctrine(Doctrine *doctrine, Obj *props)
 {
-    int numval;
+    int numval = 0;
     const char *propname;
     Obj *bdg, *val;
 
@@ -3114,7 +3117,7 @@ interp_player(Obj *form)
 static void
 fill_in_player(Player *player, Obj *props)
 {
-    const char *propname, *strval;
+    const char *propname, *strval = NULL;
     Obj *bdg, *propval;
 
     for (; props != lispnil; props = cdr(props)) {
@@ -3429,7 +3432,7 @@ interp_unit(Obj *form)
     const char *propname, *unitname;
     Obj *head = car(form), *props = cdr(form), *bdg, *val, *bdgrest, *val2;
     Obj *save, *unitspec;
-    Unit *unit, *unit2;
+    Unit *unit = NULL, *unit2;
     Side *side2;
     extern int nextid;
 
@@ -3519,7 +3522,12 @@ interp_unit(Obj *form)
 	    }
     	}
     }
-    /* At this point we're guaranteed to have a unit to work with. */
+    /* Any recognized head form has set unit by now; a head that is neither
+       a type symbol, a name string, nor a number leaves it NULL. */
+    if (unit == NULL) {
+	read_warning("Unit form has an unrecognized head, skipping the form");
+	return NULL;
+    }
     /* Modify the unit according to current defaults. */
     if (default_unit_side_number >= 0)
       nusn = default_unit_side_number;
@@ -3546,7 +3554,7 @@ interp_unit(Obj *form)
 	    if (unit->tooling == NULL)
 	      init_unit_tooling(unit);
 	    for_all_unit_types(u2)
-	      unit->tooling[u] = default_tooling[u];
+	      unit->tooling[u2] = default_tooling[u2];
 	}
     }
     /* Peel off fixed-position properties, if they're supplied. */
@@ -3912,6 +3920,8 @@ interp_unit_plan(Unit *unit, Obj *props)
 	/* Attach to unit. */
 	unit->plan = plan;
     }
+    /* Work with the unit's plan, whether just created or pre-existing. */
+    plan = unit->plan;
     plantypesym = car(props);
     SYNTAX(props, symbolp(plantypesym), "plan type must be a symbol");
     plan->type = (PlanType)lookup_plan_type(c_string(plantypesym));

@@ -185,8 +185,10 @@ run_economy(void)
 	for_all_material_types(m) {
 	    if (cell_material_defined(m)) {
 		for_all_cells(x, y) {
+		    /* Needed by both the terrain- and people-production blocks
+		       below, so set it once per cell. */
+		    t = terrain_at(x, y);
 		    if (any_terrain_production) {
-			t = terrain_at(x, y);
 			prod = tm_production(t, m);
 			for_all_aux_terrain_types(t2) {
 			    if (aux_terrain_defined(t2)
@@ -377,7 +379,9 @@ distribute_materials_1(void)
     Unit *u;
     Side *s;
     MaterialHandler *mh_from=NULL;
-    MaterialHandler mh_tmp, mh_to;
+    /* mh_to is filled by CHECK_MAXGAP whenever maxgap rises above 0, which
+       is exactly when it is later read; zero-init quiets a false positive. */
+    MaterialHandler mh_tmp, mh_to = MaterialHandler();
     int from_count, from_allocated=0, from_ptr;
     int gap, maxgap, tiesize;
     int range, t;

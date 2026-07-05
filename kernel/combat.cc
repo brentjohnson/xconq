@@ -1997,7 +1997,9 @@ maybe_hit_unit(Unit *atker, Unit *other, int fire, int fallsoff)
 static void
 hit_unit(Unit *unit, int hit, Unit *atker)
 {
-    int u = unit->type, u2, hpmin, tpdmg, tp;
+    /* u2 is only read after the `atker != NULL` block that sets it; the
+       0 init is a harmless don't-care that quiets a false positive. */
+    int u = unit->type, u2 = 0, hpmin, tpdmg, tp;
     Side *aside;
     int gain = 0, loss = 0;
     int m = NONMTYPE;

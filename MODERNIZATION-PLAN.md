@@ -223,58 +223,48 @@ Method:
 6. Commit (the diff is huge but should be almost entirely renames), then
    mark this task done (strikethrough + date) in MODERNIZATION-PLAN.md.
 ```
-- **[M] Turn on real warnings (`-Wall -Wextra`) and burn the backlog down.**
-  Start with warnings-as-errors on a curated subset (return types, uninitialized
-  reads, format strings) and widen over time.
+- ~~**[M] Turn on real warnings (`-Wall -Wextra`) and burn the backlog down.**~~
+  *(done 7/2026)*: Added `-Wall -Wextra` to `xconq_common` (informational) plus a
+  curated hard-error subset — `-Werror=return-type,format,format-security,`
+  `implicit-fallthrough,uninitialized` and GCC's `-Werror=maybe-uninitialized`
+  (the last needs an `-O2`/Release build to fire). `-Werror=format` is scoped
+  back with `-Wno-error=format-overflow,-truncation` so only format-string /
+  security correctness is fatal, not buffer sizing. Burned the subset to zero in
+  both Debug and Release; both UIs build and `ctest --label-exclude long` is green
+  in both configs. Roughly 90 `maybe-uninitialized` sites were fixed — mostly
+  false positives quieted with a value-init + comment, but several were real
+  bugs (see below). Remaining non-subset warnings (a future pass): ~736 Debug /
+  ~773 Release, dominated by `-Wunused-parameter` (453), `-Wunused-but-set-`
+  `variable` (116), and `-Wmissing-field-initializers` (58).
+  Genuine bugs found and fixed while burning down:
+  - `curses/cconq.cc` `play_movies`: the `movie_nuke` case read `unit->x/y` off
+    an uninitialized `unit`; nukes carry the target cell in `args[0..1]` (per the
+    SDL UI), so it now uses those directly.
+  - `kernel/read.cc` `interp_unit`: the default-tooling copy loop iterated `u2`
+    but indexed with `u` (only set on the type-symbol path) — fixed to `u2`.
+  - `kernel/read.cc` `interp_unit_plan`: `plan` was only set when the unit had no
+    plan yet; a unit with an existing plan wrote through an uninitialized pointer.
+    Now always works on `unit->plan`.
+  - `kernel/task.cc` compare-fn: the `control_sides_defined()` branch computed
+    `cs0/cs1` but tested `ps0/ps1` (people sides, uninitialized here) — fixed to
+    `cs0/cs1`.
+  - `kernel/write.cc` `write_game`: the advance-type loop never captured `name`,
+    so its redundancy check compared against a stale/uninitialized value — now
+    captures `name` like the terrain loop.
+  - `kernel/imf.cc` `add_hex_mask`/`remove_hex_mask`: `numbytes` was used in
+    `xmalloc`/`interp_bytes` without ever being computed (garbage-sized alloc);
+    now `numbytes = img->h * computed_rowbytes(img->w, 1)` like every other site.
+  - `kernel/mkroads.cc`: road endpoints from `find_adj_inside_area` were used
+    even when it failed; now the road is laid only when both endpoints resolve.
+  - `kernel/ui.cc` `unit_could_attack`: combat-model-0 fell through to the
+    unconditional `return TRUE`, making its attack-possibility checks dead; added
+    the missing `break` (UI attack-cursor hint only). *Behavior change.*
+  - `kernel/world.cc` terrain-change loop: `hevttype` leaked across stacked
+    units, so a unit that neither wrecked nor vanished could inherit the prior
+    unit's event; now reset to `H_UNDEFINED` each iteration.
+  - `kernel/nlang.cc`, `kernel/history.cc`: four `sprintf(buf, runtime_string)`
+    calls (format-security) now use an explicit `"%s"`.
 
-**⚙ PROMPT 2.6 — recommended model: Opus.** *(Warning triage is judgment
-work: many of these warnings are real 20-year-old bugs, and the fix must
-address the bug, not silence the diagnostic.)*
-
-```text
-Task: enable -Wall -Wextra on the Xconq build, make a curated subset of
-warnings hard errors, and burn down that subset. Prerequisites: all earlier
-§1 tasks (through the .cc renames) are committed.
-
-Context: the build currently has no warning flags at all. Common flags live
-on the xconq_common INTERFACE target in the top-level CMakeLists.txt
-(target_compile_options with generator expressions — follow that pattern).
-
-Method:
-1. Add -Wall -Wextra for GNU/Clang to xconq_common. Build everything and
-   capture the full warning log; summarize counts by warning flag
-   (-Wno-error categories) so the commit message can record the baseline.
-2. Promote this curated subset to errors and fix every instance:
-       -Werror=return-type
-       -Werror=uninitialized -Werror=maybe-uninitialized  (GCC; build a
-        Release/-O2 config too — these only fire with optimization)
-       -Werror=format -Werror=format-security
-       -Werror=implicit-fallthrough
-   Fix rules:
-   - return-type: make the function actually return the right thing on every
-     path; check callers to see what value they expect on the missing path.
-   - uninitialized: initialize with the value the logic implies, not blindly
-     0 — read the surrounding code; if a path is truly impossible, prefer
-     restructuring over a dummy init. maybe-uninitialized false positives may
-     be silenced with an init + short comment.
-   - format: fix the format string or argument (these are real bugs when
-     wrong); never cast to shut them up.
-   - implicit-fallthrough: decide from the logic whether the fallthrough is
-     intended (annotate with /* fall through */ which GCC honors) or a
-     missing break (add it — and note any such finding in the commit
-     message, since it is a behavior change).
-3. Do NOT try to clear all of -Wall -Wextra; anything outside the curated
-   subset stays a plain warning for future passes. If sign-compare or
-   unused-parameter noise is overwhelming, you may add targeted
-   -Wno-... entries on xconq_common with a comment, to keep logs readable.
-4. Any warning that reveals a genuine behavior bug (wrong operator
-   precedence, dead condition, missing break): fix it and list it explicitly
-   in the commit message.
-5. Both UIs build; ctest --test-dir build --label-exclude long passes
-   in both Debug and -O2 configs. Commit, then mark this task done
-   (strikethrough + date) in MODERNIZATION-PLAN.md, noting the remaining
-   warning baseline count.
-```
 - **[S] Remove bundled compat shims that modern platforms make dead code:**
   `kernel/snprintf.c` (C99), `kernel/timestuff.c` (`gettimeofday` is
   everywhere), and consider replacing `kernel/obstack.c` (bundled GNU obstack)

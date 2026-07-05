@@ -864,7 +864,8 @@ add_hex_mask(Image *img)
         return;
     if (img->w > img->h)
         return;
-  
+    numbytes = img->h * computed_rowbytes(img->w, 1);
+
     /* Ensure that binary version of mask exists.  Create one even if none
        was specified. */
     if (img->rawmaskdata == NULL) {
@@ -909,7 +910,8 @@ remove_hex_mask(Image *img)
         return;
     if (img->w > img->h)
         return;
-  
+    numbytes = img->h * computed_rowbytes(img->w, 1);
+
     /* Ensure that binary version of mask exists.  Abort if no mask.  */
     if (img->rawmaskdata == NULL) {
 	img->rawmaskdata = (char *)xmalloc(numbytes);

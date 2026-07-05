@@ -2405,8 +2405,8 @@ compare_directions(CONST void *a0, CONST void *a1)
     	cs0 = control_side_at(xs[i0], ys[i0]);
     	cs1 = control_side_at(xs[i1], ys[i1]);
 	/* (should test trusted side) */
-    	surr0 = ((ps0 != NOBODY && s != ps0) ? 1 : 0);
-    	surr1 = ((ps1 != NOBODY && s != ps1) ? 1 : 0);
+    	surr0 = ((cs0 != NOBODY && s != cs0) ? 1 : 0);
+    	surr1 = ((cs1 != NOBODY && s != cs1) ? 1 : 0);
     	if (surr0 != surr1) {
 	    return surr1 - surr0;
     	}
