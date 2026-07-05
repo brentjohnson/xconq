@@ -7,9 +7,19 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  ubuntu:
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Debug, Release]
+        compiler:
+          - { name: gcc, cc: gcc, cxx: g++ }
+          - { name: clang, cc: clang, cxx: clang++ }
 
     runs-on: ubuntu-latest
+    env:
+      CC: ${{ matrix.compiler.cc }}
+      CXX: ${{ matrix.compiler.cxx }}
 
     steps:
     - uses: actions/checkout@v4
@@ -17,7 +27,7 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y libncurses-dev libxmu-dev libx11-dev libxext-dev \
-          libxrandr-dev libxcursor-dev libxi-dev libxss-dev
+          libxrandr-dev libxcursor-dev libxi-dev libxss-dev clang
     - name: build and install SDL3
       # ubuntu-latest (24.04 as of writing) has no libsdl3-dev package; SDL3
       # only landed in Ubuntu starting with 25.04. Build the pinned stable
@@ -31,8 +41,30 @@ jobs:
         sudo cmake --install /tmp/SDL3-build
         sudo ldconfig
     - name: configure
-      run: cmake -B build
+      run: cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
     - name: build
       run: cmake --build build -j$(nproc)
     - name: test
       run: ctest --test-dir build --output-on-failure --label-exclude long -j$(nproc)
+
+  macos:
+    runs-on: macos-latest
+    # sdlconq also links directly against Xlib/Xmu/Xext (see sdl/CMakeLists.txt),
+    # which needs XQuartz; that's real porting work, so it's scoped out here and
+    # the top-level CMakeLists' X11_FOUND gate just skips the SDL UI. See
+    # MODERNIZATION-PLAN.md §3.2 note. continue-on-error stays on until this job
+    # has a track record of being green.
+    continue-on-error: true
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      # curses ships with the OS; sdl3 is the only thing to fetch (SDL 3, not
+      # the old sdl12-compat shim -- see MODERNIZATION-PLAN.md §4).
+      run: brew install sdl3
+    - name: configure
+      run: cmake -B build
+    - name: build
+      run: cmake --build build -j$(getconf _NPROCESSORS_ONLN)
+    - name: test
+      run: ctest --test-dir build --output-on-failure --label-exclude long -j$(getconf _NPROCESSORS_ONLN)

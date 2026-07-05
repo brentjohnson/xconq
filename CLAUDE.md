@@ -32,10 +32,17 @@ MODERNIZATION-PLAN.md's Step 2 note. Other knobs: `XCONQ_DATA_DIR`,
 `XCONQ_SCORES_DIR`. Generated config headers (`acdefs.h`, `version.h`) land in
 `build/include/`, from templates in `kernel/*.h.in`.
 
-CI (`.github/workflows/c-cpp.yml`, Ubuntu) installs `libncurses-dev
-libxmu-dev` plus SDL3's X11 build deps, builds SDL3 from source (no
-`libsdl3-dev` package on `ubuntu-latest` yet), builds both UIs, and runs
-ctest without the `long` label.
+CI (`.github/workflows/c-cpp.yml`) is a matrix: on Ubuntu, GCC and Clang
+each build Debug and Release (4 legs), installing `libncurses-dev
+libxmu-dev` plus SDL3's X11 build deps and building SDL3 from source (no
+`libsdl3-dev` package on `ubuntu-latest` yet); both UIs build and the
+quick ctest lane (`--label-exclude long`) runs on every leg. A macOS job
+(`brew install sdl3`) builds the kernel, `skelconq`, and `cconq` and runs
+the same quick ctest lane; `sdlconq` needs X11 (it links Xlib/Xmu/Xext
+directly, not just SDL3 — see `sdl/CMakeLists.txt`), which isn't present
+on the runner, so the top-level `X11_FOUND` gate just skips it there.
+The macOS job is `continue-on-error: true` pending a longer green track
+record. All legs build with `-j` and skip the `long` label.
 
 ### Running tests
 
