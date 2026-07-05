@@ -201,9 +201,17 @@ Method:
 5. Commit, then mark this task done (strikethrough + date) in
    MODERNIZATION-PLAN.md.
 ```
-- **[S] Replace the `min`/`max` macros in `kernel/misc.h`** with inline
-  functions (or `std::min`/`std::max`). This is the sole reason the build is
-  pinned to gnu++98 — libstdc++ headers clash with the macros under C++17.
+- ~~**[S] Replace the `min`/`max` macros in `kernel/misc.h`** with inline
+  functions (or `std::min`/`std::max`).~~ *(done 7/2026)*: replaced with
+  `template<typename T> inline T min/max(T x, T y)` under the same lowercase
+  names, so no call site needed renaming. That surfaced ~65 mixed-type call
+  sites (e.g. `min(int, long)`, `min(int, short)`) that compiled under the
+  macro's implicit promotion but failed template deduction; each got an
+  explicit template argument (`min<long>(...)`, etc.) matching the type the
+  macro's usual-arithmetic-conversion would have picked, preserving value
+  ranges. A scratch `-DCMAKE_CXX_STANDARD=17` build confirmed this was the
+  sole header clash blocking C++17 — it now builds clean end to end with no
+  other errors.
 
 **⚙ PROMPT 2.3 — recommended model: Sonnet.** *(Small, mechanical, verified
 entirely by the compiler.)*
