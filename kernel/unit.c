@@ -2745,7 +2745,7 @@ sort_units(int byidonly)
 {
     int flips;
     int passes = 0;
-    register Unit *unit, *nextunit;
+    Unit *unit, *nextunit;
     Side *side;
 
     for_all_sides(side) {

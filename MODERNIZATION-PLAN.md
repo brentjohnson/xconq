@@ -119,9 +119,16 @@ and the BWidget vendor-audit are resolved by this removal (see §4 below).
   sole header clash blocking C++17 — it now builds clean end to end with no
   other errors.
 
-- **[M] Bump the C++ standard incrementally: gnu++98 → 11 → 17.** After the
-  macro fix, each bump is mostly mechanical (`register`, `auto_ptr`-era idioms,
-  narrowing conversions). Stop at C++17; the code gains little from newer.
+- ~~**[M] Bump the C++ standard incrementally: gnu++98 → 11 → 17.**~~ *(done
+  7/2026)*: both bumps were nearly free. C++11 (`CMAKE_CXX_STANDARD_REQUIRED`
+  now `ON`) built with zero source changes — no narrowing-conversion or
+  literal-concatenation fallout. C++17 also built clean; the only expected
+  breakage (`register`, deprecated since C++11 and slated for removal in
+  C++20) was still just a `-Wregister` warning under GCC 15, not an error,
+  but the keyword was stripped anyway from the 4 compiled files that used it
+  (`obstack.c`, `snprintf.c`, `unit.c`, `gif.c`) since it's dead weight ahead
+  of C++20. No `throw(...)` specs or `auto_ptr`/`binder1st`-era usage existed
+  to clean up. Both UIs build and the quick ctest suite passes at each stage.
 
 **⚙ PROMPT 2.4 — recommended model: Sonnet.** *(Compiler-error-driven with
 well-known fix patterns; escalate to Opus only if a bump surfaces a genuinely

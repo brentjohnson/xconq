@@ -106,7 +106,7 @@ struct obstack *_obstack;
 int
 _obstack_begin (struct obstack *h, int size, int alignment, POINTER (*chunkfun) (int), void (*freefun) (void *)/*chunkfun, freefun*/)
 {
-  register struct _obstack_chunk* chunk; /* points to new chunk */
+  struct _obstack_chunk* chunk; /* points to new chunk */
 
   if (alignment == 0)
     alignment = DEFAULT_ALIGNMENT;
@@ -152,7 +152,7 @@ _obstack_begin (struct obstack *h, int size, int alignment, POINTER (*chunkfun) 
 int
 _obstack_begin_1 (struct obstack *h, int size, int alignment, POINTER (*chunkfun) (int), void (*freefun) (void *), POINTER arg/*chunkfun, freefun, arg*/)
 {
-  register struct _obstack_chunk* chunk; /* points to new chunk */
+  struct _obstack_chunk* chunk; /* points to new chunk */
 
   if (alignment == 0)
     alignment = DEFAULT_ALIGNMENT;
@@ -205,11 +205,11 @@ _obstack_begin_1 (struct obstack *h, int size, int alignment, POINTER (*chunkfun
 void
 _obstack_newchunk (struct obstack *h, int length)
 {
-  register struct _obstack_chunk*	old_chunk = h->chunk;
-  register struct _obstack_chunk*	new_chunk;
-  register long	new_size;
-  register int obj_size = h->next_free - h->object_base;
-  register int i;
+  struct _obstack_chunk*	old_chunk = h->chunk;
+  struct _obstack_chunk*	new_chunk;
+  long	new_size;
+  int obj_size = h->next_free - h->object_base;
+  int i;
   int already;
 
   /* Compute size for new chunk.  */
@@ -277,8 +277,8 @@ int _obstack_allocated_p (struct obstack *h, POINTER obj);
 int
 _obstack_allocated_p (struct obstack *h, POINTER obj)
 {
-  register struct _obstack_chunk*  lp;	/* below addr of any objects in this chunk */
-  register struct _obstack_chunk*  plp;	/* point to previous chunk if any */
+  struct _obstack_chunk*  lp;	/* below addr of any objects in this chunk */
+  struct _obstack_chunk*  plp;	/* point to previous chunk if any */
 
   lp = (h)->chunk;
   /* We use >= rather than > since the object cannot be exactly at
@@ -303,8 +303,8 @@ _obstack_allocated_p (struct obstack *h, POINTER obj)
 void
 _obstack_free (struct obstack *h, POINTER obj)
 {
-  register struct _obstack_chunk*  lp;	/* below addr of any objects in this chunk */
-  register struct _obstack_chunk*  plp;	/* point to previous chunk if any */
+  struct _obstack_chunk*  lp;	/* below addr of any objects in this chunk */
+  struct _obstack_chunk*  plp;	/* point to previous chunk if any */
 
   lp = h->chunk;
   /* We use >= because there cannot be an object at the beginning of a chunk.
@@ -339,8 +339,8 @@ _obstack_free (struct obstack *h, POINTER obj)
 void
 obstack_free (struct obstack *h, POINTER obj)
 {
-  register struct _obstack_chunk*  lp;	/* below addr of any objects in this chunk */
-  register struct _obstack_chunk*  plp;	/* point to previous chunk if any */
+  struct _obstack_chunk*  lp;	/* below addr of any objects in this chunk */
+  struct _obstack_chunk*  plp;	/* point to previous chunk if any */
 
   lp = h->chunk;
   /* We use >= because there cannot be an object at the beginning of a chunk.
@@ -373,8 +373,8 @@ obstack_free (struct obstack *h, POINTER obj)
 int
 _obstack_memory_used (struct obstack *h)
 {
-  register struct _obstack_chunk* lp;
-  register int nbytes = 0;
+  struct _obstack_chunk* lp;
+  int nbytes = 0;
 
   for (lp = h->chunk; lp != 0; lp = lp->prev)
     {
