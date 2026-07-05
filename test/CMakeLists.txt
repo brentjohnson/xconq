@@ -2,20 +2,20 @@
 #
 # The test-*.sh scripts take the test source directory as their argument,
 # expect to find skelconq at ../kernel/skelconq relative to the working
-# directory, and write their logs into the working directory.  Running them
-# from ${CMAKE_CURRENT_BINARY_DIR} preserves those assumptions.
+# directory (or at $SKELCONQ, if set), and write their logs into the
+# working directory. The aggregate/manual scripts run from
+# ${CMAKE_CURRENT_BINARY_DIR}, which preserves the relative-path
+# assumption; the per-module tests below instead get their own scratch
+# directory and an absolute $SKELCONQ, since they run concurrently under
+# `ctest -j` and cannot share a working directory.
 #
 # The scripts exit nonzero when a game crashes, or when a playable game
 # (one listed in lib/game.dir) produces Error:/Warning: output, fails to
 # save, or fails the save/restore comparison; see test/common.sh for the
-# full policy.  They keep saves and scores out of ~/.xconq by pointing
-# XCONQHOME into the build directory.
+# full policy. They keep saves and scores out of ~/.xconq by pointing
+# XCONQHOME into their working directory.
 
 set(XCONQ_TEST_SCRIPTS
-    lib:test-lib.sh
-    actions:test-acts.sh
-    save:test-save.sh
-    test:test-test.sh
     ai:test-ai.sh
     run:test-run.sh
     long:test-long.sh)
@@ -35,14 +35,48 @@ add_test(NAME check-auto
                  -L ${CMAKE_SOURCE_DIR}/lib
          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
+# check-lib, check-actions, check-save, and check-test run one CTest per
+# game module instead of one aggregate sweep, so ctest -j can run the
+# modules in parallel and a failure names the exact .g file that broke.
+# Each module gets its own scratch working directory, so the XCONQHOME,
+# log, and save files the scripts write via relative/cwd-based paths
+# can't collide between tests running at the same time; skelconq's
+# absolute path is passed through the environment since these tests
+# don't run from ${CMAKE_CURRENT_BINARY_DIR}.
+
+file(GLOB XCONQ_LIB_MODULES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/lib/*.g)
+file(GLOB XCONQ_TEST_MODULES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.g)
+
+function(xconq_add_module_tests prefix label script)
+    foreach(module ${ARGN})
+        get_filename_component(modname ${module} NAME_WE)
+        set(scratch ${CMAKE_CURRENT_BINARY_DIR}/scratch/${prefix}-${modname})
+        file(MAKE_DIRECTORY ${scratch})
+        add_test(NAME ${prefix}-${modname}
+                 COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/${script}
+                         ${CMAKE_CURRENT_SOURCE_DIR} ${module}
+                 WORKING_DIRECTORY ${scratch})
+        set_tests_properties(${prefix}-${modname} PROPERTIES
+                              LABELS ${label}
+                              TIMEOUT 600
+                              ENVIRONMENT "SKELCONQ=$<TARGET_FILE:skelconq>")
+    endforeach()
+endfunction()
+
+xconq_add_module_tests(check-lib lib test-lib.sh ${XCONQ_LIB_MODULES})
+xconq_add_module_tests(check-actions actions test-acts.sh ${XCONQ_LIB_MODULES})
+xconq_add_module_tests(check-save save test-save.sh ${XCONQ_LIB_MODULES})
+xconq_add_module_tests(check-test test test-test.sh ${XCONQ_TEST_MODULES})
+
 # The AI self-play sweep legitimately needs hours for the biggest games,
 # so it lives in the "long" lane with the full-game runs; the quick lane
-# is check-lib/actions/save/test/auto.
+# is check-lib/actions/save/test (one CTest per module) plus check-auto.
 set_tests_properties(check-ai check-long check-run PROPERTIES LABELS "long")
 
 # Nothing should run forever; the game-playing tests get generous limits.
 # The scripts also bound each individual game run (10 minutes, 100 MB of
 # output) so one hung game cannot eat a whole test's budget or the disk.
-set_tests_properties(check-lib check-actions check-save check-test check-auto
-                     PROPERTIES TIMEOUT 1800)
+# The per-module lib/actions/save/test tests get TIMEOUT 600 above,
+# matching that same per-run bound; check-auto is a single fixed run.
+set_tests_properties(check-auto PROPERTIES TIMEOUT 1800)
 set_tests_properties(check-ai check-run check-long PROPERTIES TIMEOUT 14400)

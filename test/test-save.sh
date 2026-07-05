@@ -2,7 +2,8 @@
 # Iterate through library modules, attempting to start up,
 # do some simple commands, save, then restore, then save again,
 # and require the two savefiles to match (modulo timestamps etc.).
-# Extra arguments limit the run to the named modules.
+# Extra arguments limit the run to the named modules (this is how CTest
+# drives one check-save-<module> test per lib/*.g file, in parallel).
 
 srcdir=$1
 . $srcdir/common.sh

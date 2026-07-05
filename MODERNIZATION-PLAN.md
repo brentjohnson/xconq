@@ -268,8 +268,17 @@ and the BWidget vendor-audit are resolved by this removal (see §4 below).
 > as §1/§5–§9 (fenced block, recommended model), numbered 3.x. They are
 > mostly independent; prerequisites are stated per prompt.
 
-- **[S] Split `check-lib`/`check-actions` into one CTest per game module** so
-  failures name the offending `.g` file and run in parallel.
+- ~~**[S] Split `check-lib`/`check-actions` into one CTest per game module**~~
+  *(done 7/2026)*: `check-save` and `check-test` got the same split, since the
+  mechanism (a module argument on the scripts, reusing `test/common.sh`
+  unchanged) dropped out for free. `test/CMakeLists.txt` globs `lib/*.g` and
+  `test/*.g` at configure time and adds one `check-<suite>-<module>` test per
+  file, each with its own scratch working directory under `build/test/scratch/`
+  so `XCONQHOME`/saves/logs can't collide under `ctest -j`; skelconq's path is
+  passed as an absolute `$SKELCONQ` since these tests don't run from
+  `build/test/`. `ctest -R check-lib` still matches all of them. Verified:
+  `ctest --label-exclude long -j$(nproc)` green (555 tests) twice, matching a
+  serial run; a deliberately broken module failed only its own three tests.
 
 **⚙ PROMPT 3.1 — recommended model: Sonnet.** *(CMake/shell mechanics; the
 policy logic already exists in test/common.sh and must not change.)*

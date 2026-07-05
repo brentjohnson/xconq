@@ -40,27 +40,37 @@ ctest without the `long` label.
 ### Running tests
 
 Execution tests drive games headlessly through **`skelconq`** (kernel + null interface;
-built as part of the normal build). CTest names mirror the old targets:
+built as part of the normal build). `check-lib`, `check-actions`, `check-save`, and
+`check-test` are split one CTest per game module (`check-lib-<module>`, etc., generated
+by globbing `lib/*.g`/`test/*.g` at configure time in `test/CMakeLists.txt`), so a
+failure names the exact `.g` file and `ctest -j` runs modules in parallel. `ctest -R
+check-lib` still matches all of them (substring regex):
 
 ```sh
-ctest --test-dir build -R check-lib     # or check-actions, check-save, check-test, check-ai
+ctest --test-dir build -j$(nproc) --label-exclude long   # full quick lane, parallel
+ctest --test-dir build -R check-lib                       # or check-actions, check-save, check-test
+ctest --test-dir build -R check-ai                        # aggregate sweep (label "long")
 ```
 
-The scripts fail honestly (July 2026 rework; policy in `test/common.sh`): any game
-that crashes fails the test, and a *playable* game (one listed in `lib/game.dir`) also
-fails on any `Error:` output or logged warning, on failure to save, or on a
-save/restore mismatch. Runs use `-w` so a warning doesn't abort the game; warnings
-are collected from the `Xconq.Warnings` log instead, with the AI planner-recovery
-class ("trying multiple bad actions") tolerated (`AI_TOLERATED`). Other modules are
-include-fragments that legitimately warn when run standalone, so they are only
-crash-checked. Each game run is bounded (10 min, 100 MB output, fixed random seed
-`-R 1`) and runs under a hermetic `XCONQHOME` in the build dir. Ten modules with
-known save-fidelity bugs are waived by name in `test-save.sh` (`KNOWN_UNFAITHFUL`).
-Full per-game output still lands in `build/test/*.log`.
+The scripts fail honestly (July 2026 rework; policy in `test/common.sh`, shared by the
+aggregate and per-module tests alike): any game that crashes fails the test, and a
+*playable* game (one listed in `lib/game.dir`) also fails on any `Error:` output or
+logged warning, on failure to save, or on a save/restore mismatch. Runs use `-w` so a
+warning doesn't abort the game; warnings are collected from the `Xconq.Warnings` log
+instead, with the AI planner-recovery class ("trying multiple bad actions") tolerated
+(`AI_TOLERATED`). Other modules are include-fragments that legitimately warn when run
+standalone, so they are only crash-checked. Each game run is bounded (10 min, 100 MB
+output, fixed random seed `-R 1`) and runs under a hermetic `XCONQHOME`. Ten modules
+with known save-fidelity bugs are waived by name in `test-save.sh` (`KNOWN_UNFAITHFUL`).
+Each per-module test gets its own scratch working directory
+(`build/test/scratch/check-<suite>-<module>/`) so concurrent runs can't collide on
+`XCONQHOME`/saves/logs; that's where its `*.log` lands. Running a script with no module
+argument (e.g. `sh test-lib.sh <srcdir>`) still sweeps every module from `build/test/`
+directly, for manual use.
 
 Consistency-check scripts also live in `test/` (`*-diff.sh`, `*-uses.sh`), runnable by hand:
-- `check-lib` / `test-lib.sh` — load & run every library game module
-- `check-actions`, `check-save`, `check-test` — action coverage, save/restore, special games
+- `check-lib` / `test-lib.sh` — load & run every library game module (per-module, or all via no module arg)
+- `check-actions`, `check-save`, `check-test` — action coverage, save/restore, special games (same split)
 - `*-diff.sh` / `*-uses.sh` — consistency checks between docs, source `.def` symbols, and library games
 - `.g` files are GDL games, `.inp` files are scripted command input, `.imf` are image families
 

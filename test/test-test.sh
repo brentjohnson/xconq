@@ -1,6 +1,8 @@
 #!/bin/sh
 # Iterate through all test modules, attempting to start up,
-# do some simple commands, and quit.
+# do some simple commands, and quit.  Extra arguments limit the run to
+# the named modules (this is how CTest drives one check-test-<module>
+# test per test/*.g file, in parallel).
 #
 # The test modules are the suite's own inputs, so they are all held to
 # the strict no-diagnostics policy, except that the error*.g and warn.g
@@ -13,12 +15,19 @@ srcdir=$1
 
 ALL_STRICT=yes
 
+if [ $# -gt 1 ] ; then
+	shift
+	list=$@
+else
+	list=`echo $srcdir/../test/*.g`
+fi
+
 logname=test.log
 
 rm -f $logname
 touch $logname
 echo Test started on `date` >> $logname
-for i in $srcdir/../test/*.g ; do
+for i in $list ; do
 	echo $i
 	case `basename $i` in
 	error*.g|warn.g|extreme2.g)

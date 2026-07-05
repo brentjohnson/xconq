@@ -35,4 +35,4 @@ jobs:
     - name: build
       run: cmake --build build -j$(nproc)
     - name: test
-      run: ctest --test-dir build --output-on-failure --label-exclude long
+      run: ctest --test-dir build --output-on-failure --label-exclude long -j$(nproc)

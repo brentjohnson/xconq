@@ -21,7 +21,10 @@
 #    legitimately produce warnings about types their parent modules
 #    define.
 
-SKELCONQ=../kernel/skelconq
+# Default assumes cwd is the build's test/ directory (true for aggregate
+# and manual runs); the per-module CTest entries run from their own
+# scratch subdirectory and pass an absolute $SKELCONQ instead.
+SKELCONQ=${SKELCONQ:-../kernel/skelconq}
 
 if [ ! -x $SKELCONQ ] ; then
 	echo "Error: $SKELCONQ not found, exiting"
