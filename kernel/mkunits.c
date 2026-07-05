@@ -179,7 +179,7 @@ make_countries(int calls, int runs)
 	sidedeltahalf = (100 / numsides) / 2;
 	announce_progress(sideprogress);
 	if (!country_is_complete(side, runs)) {
-	    sideadvantage = max(1, side->advantage);
+	    sideadvantage = max<int>(1, side->advantage);
 	    advantage = actual_advantage(side);
 	    tmpradius = baseradius;
 	    if (advantage > 1)
@@ -330,7 +330,7 @@ country_is_complete(Side *side, int runs)
 {
     int u, totunits;
     Unit *unit;
-    int sideadvantage = max(1, side->advantage);
+    int sideadvantage = max<int>(1, side->advantage);
     int advantage = actual_advantage(side);
 
     /* Don't make any more independent units than preassigned. This prevents 
@@ -784,7 +784,7 @@ expand_countries(void)
     Side *side;
 
     announce_lengthy_process("Growing countries");
-    maxradius = min(area.width, g_radius_max());
+    maxradius = min<int>(area.width, g_radius_max());
     for_all_sides(side)
       side->finalradius = maxradius;
     for (i = baseradius; i < maxradius; ++i) {
@@ -868,7 +868,7 @@ expand_country(int x, int y)
 	ours = TRUE;
 	for_all_unit_types(u) {
 	    tmputype = u;
-	    sideadvantage = max(1, tmpside->advantage);
+	    sideadvantage = max<int>(1, tmpside->advantage);
 	    advantage = actual_advantage(tmpside);
 	    /* Note that while theoretically this multiplication won't
 	       work if the product is > 100%, in practice the growth

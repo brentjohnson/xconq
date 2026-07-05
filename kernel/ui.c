@@ -2010,7 +2010,7 @@ compute_x1_len(VP *vp, int vx, int vy, int y, int *x1p, int *lenp)
 
     /* Compute the number of cells visible in this row. */
     vw = (vp->pxw + vp->hw - 1) / vp->hw;
-    vw = min(vw, area.width);
+    vw = min<int>(vw, area.width);
     /* Adjust the right and left bounds to fill the viewport as much
        as possible, without going too far (the drawing code will clip,
        but clipped drawing is still expensive). */
@@ -2029,7 +2029,7 @@ compute_x1_len(VP *vp, int vx, int vy, int y, int *x1p, int *lenp)
     } else {
 	/* Truncate x's to stay within the area. */
 	x1 = max(0, min(x1, area.width-1));
-	x2 = max(0, min(x2, area.width));
+	x2 = max(0, min<int>(x2, area.width));
 	/* If this row is entirely in the NE corner, don't draw
 	   anything. */
 	if (x1 + y > area.width + halfheight)

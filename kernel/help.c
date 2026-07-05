@@ -4292,7 +4292,7 @@ write_help_toc_entry(const char *hfilebname, const char *sectionname, int indent
 	   leftmost column. */
 	snprintf(ptextbuf, HELP_PLAIN_TEXT_IDX_TRUNC_COL, "%s%s", 
 		 help_indent(indentlvl*2), sectionname);
-	indexpos = min(strlen(ptextbuf), HELP_PLAIN_TEXT_IDX_TRUNC_COL);
+	indexpos = min<size_t>(strlen(ptextbuf), HELP_PLAIN_TEXT_IDX_TRUNC_COL);
 	memset(ptextbuf + indexpos, '.', HELP_PLAIN_TEXT_TRUNC_COL - indexpos);
 	if (hfilebname) {
 	    lookupwidth = strlen(ccfilename) + 2;

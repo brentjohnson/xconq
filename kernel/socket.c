@@ -209,7 +209,7 @@ open_remote_connection(char *methodname, int willhost)
 	    return 1;
 	} else {
 	    /* We're trying to join an existing game. */
-	    tmp = min (port_str - methodname, (int) sizeof hostname - 1);
+	    tmp = min<int> (port_str - methodname, (int) sizeof hostname - 1);
 	    strncpy (hostname, methodname, tmp);
 	    hostname[tmp] = '\0';
 	    if (!strncmp(hostname, "localhost", 9))

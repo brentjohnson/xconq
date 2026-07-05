@@ -241,7 +241,7 @@ get_materials_availability(
 	}
 	else if (could_take_from_treasury(u2, tside, m)) {
 	    p_mavail[m] = 
-		min(agent->supply[m] + tside->treasury[m], um_storage_x(u2, m));
+		min<long>(agent->supply[m] + tside->treasury[m], um_storage_x(u2, m));
 	    p_mavailmax[m] = um_storage_x(u2, m);
 	}
 	else {
@@ -1254,7 +1254,7 @@ do_produce_action(Unit *unit, Unit *producer, int m, int amount)
     /* Try to give away the same amount to make room for the excess. */
     if (excess > 0) {
     	/* But first clip it to available supplies. */
-    	excess = min(excess, producer->supply[m]);
+    	excess = min<long>(excess, producer->supply[m]);
     	producer->supply[m] -= excess;
 	distribute_material(producer, m, excess);
     }
@@ -1438,7 +1438,7 @@ do_extract_action(Unit *unit, Unit *extractor, int x, int y, int m, int amount)
     if (space == 0
         && excess > 0) {
     	/* But first clip to availble storage space. */
-    	excess = min(excess, extractor->supply[m]);
+    	excess = min<long>(excess, extractor->supply[m]);
 	extractor->supply[m] -= excess;
 	distribute_material(extractor, m, excess);
     }
@@ -2492,9 +2492,9 @@ do_create_action_common_1(
     if (0 > cp_spcl) {
 	// Transfer the creator's stash of CPs to newunit if permitted. 
 	if (uu_builder_can_reuse_cp(creator->type, u3)) {
-	    creation->cp += min(creator->cp_stash, u_cp(u3) - creation->cp);
-	    creator->cp_stash -= 
-		min(creator->cp_stash, u_cp(u3) - creation->cp);
+	    creation->cp += min<int>(creator->cp_stash, u_cp(u3) - creation->cp);
+	    creator->cp_stash -=
+		min<int>(creator->cp_stash, u_cp(u3) - creation->cp);
 	}
     }
     else
@@ -3355,8 +3355,8 @@ make_unit_complete(Unit *unit)
     	update_cancarry_vector(side);
     /* Set all the supplies up to their unit-just-completed levels. */
     for_all_material_types(m) {
-	unit->supply[m] = max(unit->supply[m], um_completed_supply(u, m));
-	unit->supply[m] = min(unit->supply[m], um_storage_x(u, m));
+	unit->supply[m] = max<long>(unit->supply[m], um_completed_supply(u, m));
+	unit->supply[m] = min<long>(unit->supply[m], um_storage_x(u, m));
     }
     // Add any incomplete or complete occs that come as "part of the package".
     grant_occs_on_completion(unit);
@@ -3890,7 +3890,7 @@ do_alter_cell_action(Unit *unit, Unit *unit2, int x, int y, int t)
 	/* Try to give away the same amount to make room for the excess. */
 	if (excess > 0) {
 	    /* But first clip it to available supplies. */
-	    excess = min(excess, unit2->supply[m]);
+	    excess = min<long>(excess, unit2->supply[m]);
 	    unit2->supply[m] -= excess;
 	    distribute_material(unit2, m, excess);
 	}
@@ -4116,7 +4116,7 @@ do_remove_terrain_action(Unit *unit, Unit *unit2, int x, int y, int dir, int t)
 	/* Try to give away the same amount to make room for the excess. */
 	if (excess > 0) {
 	    /* But first clip it to available supplies. */
-	    excess = min(excess, unit2->supply[m]);
+	    excess = min<long>(excess, unit2->supply[m]);
 	    unit2->supply[m] -= excess;
 	    distribute_material(unit2, m, excess);
 	}

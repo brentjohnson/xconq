@@ -254,7 +254,7 @@ run_economy(void)
                                              um_productivity_max(u, m));
 			    amt += prob_fraction(prod * ptivityadj);
 			}
-			unit->supply[m] += min(amt, TABHI - unit->supply[m]);
+			unit->supply[m] += min<long>(amt, TABHI - unit->supply[m]);
 			if (Debug && unit->supply[m] > um_storage_x(u, m))
 			  utotals[m] += (unit->supply[m] - um_storage_x(u, m));
 		    }
@@ -489,7 +489,7 @@ distribute_materials_1(void)
 				mh_from[from_ptr].y, t))
 				range += max(tm_tt_out_length(t, m), 0);
 			}
-		        range = min(range, max_terrain_to_terrain_length);
+		        range = min<int>(range, max_terrain_to_terrain_length);
 		        if (range == 0)
 		            range = -1;
 		        break;
@@ -515,7 +515,7 @@ distribute_materials_1(void)
 	        if (maxgap <= 0) break;
 	       
 	        /* transfer a quarter of the gap rounding up */
-	        maxgap = min((maxgap + 3) / 4,
+	        maxgap = min<long>((maxgap + 3) / 4,
 		    *(mh_from[from_ptr].store) - mh_from[from_ptr].doclevel);
 	        *(mh_to.store) += maxgap;
 	        *(mh_from[from_ptr].store) -= maxgap;
@@ -834,7 +834,7 @@ try_transfer_aux(Unit *from, Unit *to, int m)
 		    /* If from doesn't need m itself, give it all away. */
 		    } else if (will_not_move(from)
 		        && !needs_material_to_survive(from, m)) {
-			transfer_supply(from, to, m, max(from->supply[m], nd));
+			transfer_supply(from, to, m, max<long>(from->supply[m], nd));
 		    }
 		} else {
 		    fromrate = type_max_speed(u) * 
@@ -846,7 +846,7 @@ try_transfer_aux(Unit *from, Unit *to, int m)
 		    if ((from->supply[m] / fromrate)
 			> (to->supply[m] / torate)) {
 			transfer_supply(from, to, m,
-						min(nd, 
+						min<long>(nd, 
 						(um_storage_x(u, m) - 8 > from->supply[m] ?
 						(8 + from->supply[m]) : um_storage_x(u, m)) / 9));
 		    }

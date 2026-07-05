@@ -185,7 +185,7 @@ calculate_world_globals(void)
     circumference to be less than the area width.  To force a flat world (space games etc.) the 
     circumference should be set to -1. */
     if (world.circumference == 0)
-	world.circumference = max(area.width, DEFAULTCIRCUMFERENCE);
+	world.circumference = max<int>(area.width, DEFAULTCIRCUMFERENCE);
 
     /* Set uninitialized sun position to something reasonable. */
     if (area.sunx < 0)
@@ -775,7 +775,7 @@ limited_search_around(int x0, int y0, int range,
 {
     int clockwise, dist, dd, d, dir, x1, y1, i, dir2, x, y, xw;
 
-    range = max(min(range, area.width), min(range, area.height));
+    range = max(min<int>(range, area.width), min<int>(range, area.height));
     clockwise = (flip_coin() ? 1 : -1);
     for (dist = 1; dist <= range; dist += incr) {
 	dd = random_dir();
@@ -820,7 +820,7 @@ search_around(int x0, int y0, int maxdist, int (*pred)(int, int),
 {
     int clockwise, dist, dd, d, dir, x1, y1, i, dir2, x, y, xw;
 
-    maxdist = max(min(maxdist, area.width), min(maxdist, area.height));
+    maxdist = max(min<int>(maxdist, area.width), min<int>(maxdist, area.height));
     clockwise = (flip_coin() ? 1 : -1);
     for (dist = 1; dist <= maxdist; dist += incr) {
 	dd = random_dir();
@@ -857,7 +857,7 @@ limited_search_around(int x0, int y0, int maxdist, int (*pred)(int, int, int *),
 {
     int clockwise, dist, dd, d, dir, x1, y1, i, dir2, x, y, xw, rsltcount = 0;
 
-    maxdist = max(min(maxdist, area.width), min(maxdist, area.height));
+    maxdist = max(min<int>(maxdist, area.width), min<int>(maxdist, area.height));
     clockwise = (flip_coin() ? 1 : -1);
     for (dist = 1; dist <= maxdist; dist += incr) {
 	dd = random_dir();
@@ -888,7 +888,7 @@ search_and_apply(int x0, int y0, int maxdist, int (*pred)(int, int),
 {
     int clockwise, dist, x0w, dd, d, dir, x1, y1, i, dir2, x, y, xw;
 
-    maxdist = max(min(maxdist, area.width), min(maxdist, area.height));
+    maxdist = max(min<int>(maxdist, area.width), min<int>(maxdist, area.height));
     clockwise = (flip_coin() ? 1 : -1);
     if (maxdist >= 0) {
 	x0w = wrapx(x0);
@@ -942,7 +942,7 @@ apply_to_area(int x0, int y0, int dist, void (*fn)(int, int))
 {
     int x, y, x1, y1, x2, y2;
 
-    dist = min(dist, area.maxdim);
+    dist = min<int>(dist, area.maxdim);
     y1 = y0 - dist;
     y2 = y0 + dist;
     stop_apply = FALSE;
@@ -971,7 +971,7 @@ apply_to_area_plus_edge(int x0, int y0, int dist, void (*fn)(int, int))
 {
     int x, y, x1, y1, x2, y2;
 
-    dist = min(dist, area.maxdim);
+    dist = min<int>(dist, area.maxdim);
     y1 = y0 - dist;
     y2 = y0 + dist;
     for (y = y1; y <= y2; ++y) {
@@ -994,7 +994,7 @@ apply_to_ring(int x0, int y0, int distmin, int distmax, void (*fn)(int, int))
 {
     int dist, x, y, x1, y1, x2, y2;
 
-    dist = min(distmax, area.maxdim);
+    dist = min<int>(distmax, area.maxdim);
     y1 = y0 - dist;
     y2 = y0 + dist;
     for (y = y1; y <= y2; ++y) {
@@ -1517,7 +1517,7 @@ renumber_features(void)
     if (!features_defined())
       return;
     for_all_features(feature) {
-    	maxoldfid = max(maxoldfid, feature->id);
+    	maxoldfid = max<int>(maxoldfid, feature->id);
     	feature->relabel = newfid++;
     }
     if (maxoldfid > 1000)
@@ -1580,10 +1580,10 @@ compute_feature_centroid(Feature *feature)
 	    ++(tmpfeature->size);
 	    tmpfeature->x += x;
 	    tmpfeature->y += y;
-	    tmpfeature->xmin = min(x, tmpfeature->xmin); 
-	    tmpfeature->ymin = min(y, tmpfeature->ymin);
-	    tmpfeature->xmax = max(x, tmpfeature->xmax); 
-	    tmpfeature->ymax = max(y, tmpfeature->ymax);
+	    tmpfeature->xmin = min<int>(x, tmpfeature->xmin); 
+	    tmpfeature->ymin = min<int>(y, tmpfeature->ymin);
+	    tmpfeature->xmax = max<int>(x, tmpfeature->xmax); 
+	    tmpfeature->ymax = max<int>(y, tmpfeature->ymax);
 	}
     }
     for_all_features(tmpfeature) {
@@ -2054,10 +2054,10 @@ divide_into_regions(char *tlayer, TRegion **rlayer, int landsea)
 		/* Add the point to the region. */
 		aset(rlayer, x, y, region);
 		++(region->size);
-		region->xmin = min(x, region->xmin);
-		region->ymin = min(y, region->ymin);
-		region->xmax = max(x, region->xmax);
-		region->ymax = max(y, region->ymax);
+		region->xmin = min<int>(x, region->xmin);
+		region->ymin = min<int>(y, region->ymin);
+		region->xmax = max<int>(x, region->xmax);
+		region->ymax = max<int>(y, region->ymax);
 	    }
 	}
     }
@@ -2089,8 +2089,8 @@ divide_into_regions(char *tlayer, TRegion **rlayer, int landsea)
 		if (reg2 != NULL) {
 		    aset(rlayer, x, y, reg2);
 		    ++(reg2->size);
-		    reg2->xmin = min(x, reg2->xmin);  reg2->ymin = min(y, reg2->ymin);
-		    reg2->xmax = max(x, reg2->xmax);  reg2->ymax = max(y, reg2->ymax);
+		    reg2->xmin = min<int>(x, reg2->xmin);  reg2->ymin = min<int>(y, reg2->ymin);
+		    reg2->xmax = max<int>(x, reg2->xmax);  reg2->ymax = max<int>(y, reg2->ymax);
 		    --(reg1->size);
 		}
 	    }

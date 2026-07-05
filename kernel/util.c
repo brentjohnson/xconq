@@ -248,21 +248,21 @@ multiply_dice1(DiceRep dice, int mult)
 	if (0x4000 & offset)
 	    run_warning("Scaled fixed dice value, %d, is out-of-range",
 			offset);
-	offset = max(-16384, offset);
-	offset = min(16383, offset);
+	offset = max<int>(-16384, offset);
+	offset = min<int>(16383, offset);
 	return offset;
     }
     die = (die * mult) / 100;
     if (!between(2, die, 17))
 	run_warning("Scaled die has %d spots. Must be between 2 and 17", die);
-    die = max(2, die);
-    die = min(17, die);
+    die = max<int>(2, die);
+    die = min<int>(17, die);
     offset = (offset * mult) / 100;
     if (!between(-128, offset, 127))
 	run_warning("Scaled dice offset is %d. Must be between -128 and 127",
 		    offset);
-    offset = max(-128, offset);
-    offset = min(127, offset);
+    offset = max<int>(-128, offset);
+    offset = min<int>(127, offset);
     return 
 	(DiceRep)(
 	    (((0 < offset) ? 0 : 1) << 15) | (1 << 14)
@@ -282,29 +282,29 @@ multiply_dice2(DiceRep dice, int mult)
 	if (0x4000 & offset)
 	    run_warning("Scaled fixed dice value, %d, is out-of-range",
 			offset);
-	offset = max(-16384, offset);
-	offset = min(16383, offset);
+	offset = max<int>(-16384, offset);
+	offset = min<int>(16383, offset);
 	return offset;
     }
     die = (die * mult) / 100;
     if (!between(2, die, 17))
 	run_warning("Scaled die has %d spots. Must be between 2 and 17", die);
-    die = max(2, die);
-    die = min(17, die);
+    die = max<int>(2, die);
+    die = min<int>(17, die);
     offset = (offset * mult) / 100;
     if (0 < numdice) {
 	if (!between(0, offset, 127))
 	    run_warning("Scaled dice offset is %d. Must be between 0 and 127",
 			offset);
-	offset = max(0, offset);
-	offset = min(127, offset);
+	offset = max<int>(0, offset);
+	offset = min<int>(127, offset);
     }
     else {
 	if (!between(-127, offset, 0))
 	    run_warning("Scaled dice offset is %d. Must be between -127 and 0",
 			offset);
-	offset = max(-127, offset);
-	offset = min(0, offset);
+	offset = max<int>(-127, offset);
+	offset = min<int>(0, offset);
     }
     return 
 	(DiceRep)(

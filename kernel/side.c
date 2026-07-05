@@ -901,7 +901,7 @@ side_controls_unit(Side *side, Unit *unit)
 		max_control_ranges[u2] = -1;
 		for_all_unit_types(u1) {
 		    max_control_ranges[u2] =
-		      max(max_control_ranges[u2], uu_control_range(u1, u2));
+		      max<int>(max_control_ranges[u2], uu_control_range(u1, u2));
 		}
 	    }
 	}
@@ -4067,7 +4067,7 @@ player_desig(Player *player)
 int
 actual_advantage(Side *side)
 {
-    int advantage = max(1, side->advantage);
+    int advantage = max<int>(1, side->advantage);
 
     if (side->player)
       advantage = side->player->advantage;

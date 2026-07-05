@@ -504,7 +504,7 @@ change_unit_type(Unit *unit, int newtype, int reason, Side *newside)
     /* init_supply(unit); */
     /* (TODO: Dump excess in the terrain or stack neighbors, or ....) */
     for_all_material_types(m) {
-	unit->supply[m] = min(unit->supply[m], um_storage_x(newtype, m));
+	unit->supply[m] = min<long>(unit->supply[m], um_storage_x(newtype, m));
     }
     init_unit_plan(unit);
     unit->aihook = NULL;
@@ -524,9 +524,9 @@ change_unit_type(Unit *unit, int newtype, int reason, Side *newside)
 	/* Else we were already and advanced unit. */
 	else {
 	    /* Extend reach if old reach is too little. */
-	    unit->reach = max(unit->reach, u_reach(newtype));
+	    unit->reach = max<int>(unit->reach, u_reach(newtype));
 	    /* Contract reach if old reach is too large. */
-	    unit->reach = min(unit->reach, u_reach(newtype));
+	    unit->reach = min<int>(unit->reach, u_reach(newtype));
 	}
     }
     /* If the unit needs to change side but could not earlier, start trying 

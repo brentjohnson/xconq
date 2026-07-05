@@ -695,7 +695,7 @@ calculate_globals(void)
 		if (uu_auto_repair(u2, u1) > 0) {
 		    cv__could_be_auto_repaired[u1] = TRUE;
 		    cv__auto_repaired_range_max[u1] =
-			max(cv__auto_repaired_range_max[u1],
+			max<int>(cv__auto_repaired_range_max[u1],
 			    uu_auto_repair_range(u2, u1));
 		}
 	    }
@@ -907,7 +907,7 @@ patch_object_references(void)
 	    if (unit->side != NULL) {
 		if (unit->number > 0) {
 		    (unit->side->counts)[unit->type] =
-		      max((unit->side->counts)[unit->type], 1 + unit->number);
+		      max<int>((unit->side->counts)[unit->type], 1 + unit->number);
 		}
 	    } else {
 		/* Trash the numbers on indep units. */

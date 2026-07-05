@@ -1242,12 +1242,12 @@ tp_per_turn_est(Unit *unit, int u2)
 	//  assuming this is the only constructor using the treasury for 
 	//  the material in question.
 	if (could_take_from_treasury(u, side, m))
-	    toolups = min(toolups, side->treasury[m] / copert);
+	    toolups = min<long>(toolups, side->treasury[m] / copert);
 	// Else, the builder has only its own stock to use.
 	// We assume that the builder always has about the amount of 
 	//  supply that it currently has on hand.
 	else
-	    toolups = min(toolups, unit->supply[m] / copert);
+	    toolups = min<long>(toolups, unit->supply[m] / copert);
     } // for all mtypes
     // If not ACP-indep and if build action actually costs ACP, 
     //	then ACP may affect number of builds.
@@ -1294,12 +1294,12 @@ cp_per_turn_est(Unit *unit, int u2)
 	//  assuming this is the only builder using the treasury for 
 	//  the material in question.
 	if (could_take_from_treasury(u, side, m))
-	    builds = min(builds, side->treasury[m] / coperb);
+	    builds = min<long>(builds, side->treasury[m] / coperb);
 	// Else, the builder has only its own stock to use.
 	// We assume that the builder always has about the amount of 
 	//  supply that it currently has on hand.
 	else
-	    builds = min(builds, unit->supply[m] / coperb);
+	    builds = min<long>(builds, unit->supply[m] / coperb);
     } // for all mtypes
     // If not ACP-indep and if build action actually costs ACP, 
     //	then ACP may affect number of builds.
@@ -1384,12 +1384,12 @@ hp_per_turn_est(Unit *unit, int u2)
 	//  assuming this is the only repairer using the treasury for 
 	//  the material in question.
 	if (could_take_from_treasury(u, side, m))
-	    repairs = min(repairs, side->treasury[m] / coperr);
+	    repairs = min<long>(repairs, side->treasury[m] / coperr);
 	// Else, the repairer has only its own stock to use.
 	// We assume that the repairer always has about the amount of 
 	//  supply that it currently has on hand.
 	else
-	    repairs = min(repairs, unit->supply[m] / coperr);
+	    repairs = min<long>(repairs, unit->supply[m] / coperr);
     } // for all mtypes
     // If not ACP-indep, explicit repair allowed, and action costs ACP,
     //	then ACP may affect number of repairs.

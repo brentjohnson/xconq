@@ -1881,7 +1881,7 @@ run_surrenders(void)
 			  surrender_ranges[u3] = -1;
 		    }
 		    range = uu_surrender_range(u1, u2);
-		    surrender_ranges[u1] = max(range, surrender_ranges[u1]);
+		    surrender_ranges[u1] = max<int>(range, surrender_ranges[u1]);
 		}
     	    }
     	}

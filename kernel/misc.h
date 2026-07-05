@@ -40,29 +40,23 @@ any later version.  See the file COPYING.  */
 #define ABS(x) (((x) < 0) ? (0 - (x)) : (x))
 #endif
 
-#ifndef min
 /*! \brief Minimum value.
  *
- * If the system doesn't define a minimum value macro or
- * function, use this one.  Find the smaller of two numbers.
+ * Find the smaller of two numbers.
  * \param x is a number.
  * \param y is a number.
  * \return the smaller of the two numbers.
  */
-#define min(x,y) (((x) < (y)) ? (x) : (y))
-#endif
+template<typename T> inline T min(T x, T y) { return x < y ? x : y; }
 
-#ifndef max
 /*! \brief Maximum value.
  *
- * If the system doesn't define a maximum value macro or
- * function, use this one.  Find the larger of two numbers.
+ * Find the larger of two numbers.
  * \param x is a number.
  * \param y is a number.
  * \return the larger of the two numbers.
  */
-#define max(x,y) (((x) > (y)) ? (x) : (y))
-#endif
+template<typename T> inline T max(T x, T y) { return x > y ? x : y; }
 
 /*! \brief Is between.
  *

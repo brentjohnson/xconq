@@ -170,15 +170,15 @@ init_run(void)
     lowest_unit_priority = -1;
     for_all_unit_types(u) {
         highest_unit_priority =
-	  min(highest_unit_priority, u_action_priority(u));
+	  min<int>(highest_unit_priority, u_action_priority(u));
         lowest_unit_priority =
-	  max(lowest_unit_priority, u_action_priority(u));
+	  max<int>(lowest_unit_priority, u_action_priority(u));
         for_all_sides(side) {
 	    if (side->action_priorities) {
 		highest_unit_priority =
-		  min(highest_unit_priority, side->action_priorities[u]);
+		  min<int>(highest_unit_priority, side->action_priorities[u]);
 		lowest_unit_priority =
-		  max(lowest_unit_priority, side->action_priorities[u]);
+		  max<int>(lowest_unit_priority, side->action_priorities[u]);
 	    }
         }
     }
@@ -1327,7 +1327,7 @@ run_side_research(void)
 	    run_error("research is not limited by materials");
 	}
 	/* Don't spend more than needed to complete the advance! */
-	maxrp = min(maxrp, a_rp(a) - side->advance[a]);
+	maxrp = min<long>(maxrp, a_rp(a) - side->advance[a]);
 	/* Only proceed if we are still doing some research. */
 	if (maxrp > 0) {
 	    side->advance[a] += maxrp;
@@ -1717,7 +1717,7 @@ run_advanced_units()
 	    	amount = unit->production[m] - space;
 		if (side_has_treasury(unit->side, m)
 		    && um_gives_to_treasury(unit->type, m)) {
-			amount = min(amount, g_treasury_size() - unit->side->treasury[m]);
+			amount = min<long>(amount, g_treasury_size() - unit->side->treasury[m]);
 			unit->side->treasury[m] += amount;
 		}
 	    }

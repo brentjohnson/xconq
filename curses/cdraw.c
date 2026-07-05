@@ -145,8 +145,8 @@ void
 set_map_viewport(void)
 {
     /* Compute the size of the viewport. */
-    vw = min(area.width, mw / 2 + 1);
-    vh = min(area.height, mh);
+    vw = min<int>(area.width, mw / 2 + 1);
+    vh = min<int>(area.height, mh);
     /* Compute the bottom visible row. */
     vy = (mvp->totsh - mvp->sy) - vh;
     /* Adjust to keep its value from being outside the area. */
@@ -179,7 +179,7 @@ show_map(void)
 	   drawing before we reach the edge of the viewport. */
 	if (!area.xwrap) {
 	    x1 = max(0, min(x1, area.width - 1));
-	    x2 = max(0, min(x2, area.width));
+	    x2 = max(0, min<int>(x2, area.width));
 	    if (x1 + y > area.width + halfheight)
 	      continue;
 	    if (x2 + y < halfheight)

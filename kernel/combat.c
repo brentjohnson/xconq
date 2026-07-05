@@ -2065,16 +2065,16 @@ hit_unit(Unit *unit, int hit, Unit *atker)
 		atker->side->treasury[m] += gain;
 		/* Clip treasury to bounds, if necessary. */
 		atker->side->treasury[m] = 
-		    min(atker->side->treasury[m], g_treasury_size());
-		atker->side->treasury[m] = max(atker->side->treasury[m], 0);
+		    min<long>(atker->side->treasury[m], g_treasury_size());
+		atker->side->treasury[m] = max<long>(atker->side->treasury[m], 0);
 	    }
             if (side_has_treasury(unit->side, m)) {
 		loss = um_treasury_loss_per_destroyed(unit->type, m);
 		unit->side->treasury[m] -= loss;
 		/* Clip treasury to bounds, if necessary. */
 		unit->side->treasury[m] = 
-		    min(unit->side->treasury[m], g_treasury_size());
-		unit->side->treasury[m] = max(unit->side->treasury[m], 0);
+		    min<long>(unit->side->treasury[m], g_treasury_size());
+		unit->side->treasury[m] = max<long>(unit->side->treasury[m], 0);
 	    }
         }  
     }
@@ -2342,7 +2342,7 @@ damage_unit(Unit *unit, enum damage_reasons dmgreason, Unit *agent)
 	       to do some sort of proportional adjustment, which would be
 	       hard to get right. */
 	    /* (should account for occupant effects on acp) */
-	    unit->act->acp = min(unit->act->acp, newacp);
+	    unit->act->acp = min<int>(unit->act->acp, newacp);
 	}
     }
     /* Clear any detonation flag that might have been set. */
@@ -2748,16 +2748,16 @@ capture_unit(Unit *unit, Unit *pris, int captype)
 		unit->side->treasury[m] += gain;
 		/* Clip treasury to bounds, if necessary. */
 		unit->side->treasury[m] = 
-		    min(unit->side->treasury[m], g_treasury_size());
-		unit->side->treasury[m] = max(unit->side->treasury[m], 0);
+		    min<long>(unit->side->treasury[m], g_treasury_size());
+		unit->side->treasury[m] = max<long>(unit->side->treasury[m], 0);
 	    }
 	    if (side_has_treasury(pris->side, m)) {
 		loss = um_treasury_loss_per_captured(pris->type, m);
 		pris->side->treasury[m] -= loss;
 		/* Clip treasury to bounds, if necessary. */
 		pris->side->treasury[m] = 
-		    min(pris->side->treasury[m], g_treasury_size());
-		pris->side->treasury[m] = max(pris->side->treasury[m], 0);
+		    min<long>(pris->side->treasury[m], g_treasury_size());
+		pris->side->treasury[m] = max<long>(pris->side->treasury[m], 0);
 	    }
 	}      
 	/* The change of side itself.  This happens recursively to any
@@ -2858,7 +2858,7 @@ capture_unit_2(Unit *unit, Unit *pris, Side *prevside)
     /* Our new unit's experience might be higher or lower, depending on what
        capture really means (change of crew perhaps). */
     pris->cxp = (pris->cxp * u_cxp_on_capture(pris->type)) / 100;
-    pris->cxp = min(unit->cxp, u_cxp_max(pris->type));
+    pris->cxp = min<int>(unit->cxp, u_cxp_max(pris->type));
     /* Getting captured is always bad for morale, but getting
        liberated is good. */
     if (pris->side == pris->origside)

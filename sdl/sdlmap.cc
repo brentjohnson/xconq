@@ -2286,7 +2286,7 @@ draw_current(Map *map)
     /* While uview width less than 16 or the unit width for the current zoom,
        and while uview is in a transport, try to find a transport view that is
        wide enough. */
-    while ((sw < min(16, vp->uw)) && uview->transport) {
+    while ((sw < min<int>(16, vp->uw)) && uview->transport) {
         /* Get transport view instead. */
         uview = uview->transport;
         /* Get screen coords from uview coords. */
@@ -2371,7 +2371,7 @@ draw_map_outline(Map *worldmap, Map *map)
     /* Translate to the location of the world map. */
     for (i = 0; i < 4; ++i) {
 	wsx[i] = max(0, wsx[i]);  wsy[i] = max(0, wsy[i]);
-	wsx[i] = min(wsx[i], wvp->pxw);  wsy[i] = min(wsy[i], wvp->pxh);
+	wsx[i] = min<int>(wsx[i], wvp->pxw);  wsy[i] = min<int>(wsy[i], wvp->pxh);
 	wsx[i] += worldmap->sx;  wsy[i] += worldmap->sy;
     }
     /* Use black for the outline. */
