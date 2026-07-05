@@ -252,10 +252,8 @@ set_help_output_mode(HelpOutputMode houtmode)
 void
 set_help_output_dir(char *dir)
 {
-#if (!defined MAC)
-    if (access(dir, F_OK)) 
+    if (access(dir, F_OK))
       run_error("Attempted to access a missing directory.");
-#endif
     help_output_dir = dir;
 }
 

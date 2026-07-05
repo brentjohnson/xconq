@@ -45,12 +45,6 @@ any later version.  See the file COPYING.  */
 #define UNIT_ACTION_PANEL_BORDER_SIZE	    8
 #define SIDE_RESEARCH_PANEL_BORDER_SIZE	    8
 
-#ifdef MAC
-
-#define exit mac_exit
-
-#endif /* MAC */
-
 /* All the types of possible panels. */
 
 enum paneltype {
@@ -348,18 +342,6 @@ extern SDLCursor *generic_cursor;
 extern int fullscreen;
 extern int mainw;
 extern int mainh;
-
-#ifdef MAC
-
-/* Mac-specific stuff. */
-
-extern WindowPtr sdl_console;
-extern WindowPtr sdl_window;
-
-extern void mac_exit(int status);
-extern int handle_macos_cursor(void);
-
-#endif
 
 /* Declarations of globally visible functions. */
 

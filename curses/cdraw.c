@@ -1003,11 +1003,7 @@ draw_text(struct ccwin *win, int x, int y, const char *str)
 void
 xbeep(void)
 {
-#ifdef MAC /* the libcurses library already includes a beep function */
-    beep();
-#else
     putchar('\007');
-#endif
 }
 
 /* (should break helpstring into lines before displaying, so scrolling

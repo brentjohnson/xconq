@@ -79,13 +79,9 @@ get_gif(FileImage *fimg)
     LibraryPath *p;
     FILE *fp;
 
-    /* First try a sibling images dir in case we opened a game 
+    /* First try a sibling images dir in case we opened a game
     file from a non-standard location. */
-#ifdef MAC
-    sprintf(fallback, "::images:%s", fimg->name);
-#else
     sprintf(fallback, "../images/%s", fimg->name);
-#endif    
     if ((fp = open_file(fallback, "rb")) != NULL) {
 	rslt = get_gif_from_file(fimg, fp);
 	fclose(fp);

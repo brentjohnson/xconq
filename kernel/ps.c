@@ -633,10 +633,7 @@ ps_initialize(FILE *fp)
 	}
     }
 #endif /* UNIX */
-#ifdef MAC
-    /* ??? */
-#endif /* MAC */
-    
+
     fprintf(fp, "%%%%DocumentFonts:\
  Helvetica Helvetica-Narrow Helvetica-Bold Times-Bold\n");
     fprintf(fp, "%%%%Pages: (atend)\n");

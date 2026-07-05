@@ -24,12 +24,5 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
         tv->tv_usec = (clocks % CLOCKS_PER_SEC) * (1000000 / CLOCKS_PER_SEC);
         return 0;
 #endif
-#ifdef MAC
-    int ticks = TickCount();
-
-    tv->tv_sec = ticks / 60;
-    tv->tv_usec = (ticks % 60) * (1000000 / 60);
-    return 0;
-#endif
 }
 #endif

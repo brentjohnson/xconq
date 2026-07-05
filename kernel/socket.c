@@ -20,16 +20,16 @@ any later version.  See the file COPYING.  */
 #include <fcntl.h>
 #include <signal.h>
 
-#if (defined (UNIX) || defined (MAC) || defined (__CYGWIN32__) || defined (__MINGW32__))
+#if (defined (UNIX) || defined (__CYGWIN32__) || defined (__MINGW32__))
 #include <unistd.h>
 #endif
 
-#if (defined (UNIX) || defined (__CYGWIN32__) || defined (__MINGW32__)) 
+#if (defined (UNIX) || defined (__CYGWIN32__) || defined (__MINGW32__))
 #include <sys/file.h>
 #include <sys/stat.h>
 #endif
 
-#if (defined (UNIX) || defined (__CYGWIN32__) || defined (MAC))
+#if (defined (UNIX) || defined (__CYGWIN32__))
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -40,7 +40,7 @@ any later version.  See the file COPYING.  */
 #include <pwd.h>
 #endif
 
-#if (defined (UNIX) || defined (MAC))
+#if (defined (UNIX))
 # include <netinet/tcp.h>
 #endif
 
@@ -314,14 +314,9 @@ accept_remote_connection(void)
     remote_fd[rid] = new_fd;
     fd_valid[rid] = TRUE;
 
-    /* This takes more than one minute on the mac and always
-     * fails, so we skip it to speed up things. */
-
-#ifndef MAC
     hostent = gethostbyaddr((char*)&sockaddr.sin_addr,
-			    sizeof(sizeof(sockaddr.sin_addr)), 
+			    sizeof(sizeof(sockaddr.sin_addr)),
 			    AF_INET);
-#endif
 
     if (hostent) {
 	memcpy(hostname, hostent->h_name, hostent->h_length);

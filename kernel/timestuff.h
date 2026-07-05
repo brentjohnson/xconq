@@ -27,11 +27,9 @@ extern "C" {
 }
 #endif
 
-#if (defined (__MWERKS__) || defined (_MSC_VER) || defined (MAC))
-#if (defined (_MSC_VER) || (defined (MAC) && !defined (GUSI)))
+#if (defined (_MSC_VER))
 #ifndef NEED_STRUCT_TIMEVAL
 #define NEED_STRUCT_TIMEVAL
-#endif
 #endif
 #ifndef NEED_GETTIMEOFDAY
 #define NEED_GETTIMEOFDAY

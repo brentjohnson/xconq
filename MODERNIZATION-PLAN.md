@@ -824,11 +824,12 @@ WITHOUT XCONQHOME set (HOME pointed at a scratch dir) confirming files land
 under .local/share/xconq and that a pre-seeded .xconq is still read.
 Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md.
 ```
-- **[M] Decide on Windows/macOS support.** The tree carries Classic Mac OS
+- ~~**[M] Decide on Windows/macOS support.**~~ *(Classic Mac half done
+  7/2026, Windows half left open)* The tree carried Classic Mac OS
   (`kernel/mac.c`, `sdl/sdlmac.cc`) and Win32 (`kernel/win32.c`, RC files)
-  code that hasn't compiled in 20 years. Either wire Windows into CMake + CI
-  (feasible: SDL + winsock) or delete the dead files — Classic Mac support
-  should be deleted regardless. (The Tcl/Tk-side Classic Mac/Win32 files this
+  code that hadn't compiled in 20 years. Classic Mac support is now deleted
+  outright (see the dated note below); the Windows question is deliberately
+  left to the maintainer. (The Tcl/Tk-side Classic Mac/Win32 files this
   item used to name, `tcltk/tkmac.c`/`tkxmac.c`/`iappmac.c`/`tkwin32.c`/
   `iappwin32.c`, were already removed with the rest of `tcltk/` in Step 2.)
 
@@ -872,7 +873,46 @@ Verify: fresh configure + build of both UIs, quick ctest green.
 Commit part 1; mark the Classic-Mac half done in the plan item and leave
 the Windows decision open with your assessment note.
 ```
-- **[S] Large-file/64-bit sweep:** the kernel still consults `SIZEOF_INT`/
+
+**Windows assessment (7/2026).** Classic Mac support (`kernel/mac.c`,
+`sdl/sdlmac.cc`, and all `#ifdef MAC`/`MACOSX`/`__MWERKS__`-as-Mac blocks
+across `kernel/`, `curses/`, `sdl/`) is deleted. The Win32 files were left
+in place and inventoried:
+
+- `kernel/win32.c` (447 lines): a Win32/Cygwin counterpart to `unix.c` —
+  `game_homedir`/`game_filename`/path handling, `open_file`/library-path
+  search, signal handlers, `gettimeofday`-based timers. Targets Cygwin
+  (`__CYGWIN32__`), MSVC (`_MSC_VER`), and CodeWarrior-for-Windows
+  (`__MWERKS__`, for `CreateDirectory`) — i.e. 1999-2003-era Win32, no
+  modern MinGW-only path. It **is** already wired into
+  `kernel/CMakeLists.txt:63-67` (`if(WIN32) ... win32.c ... else() ...
+  unix.c`), but untested for at least 20 years — no CI leg, no MinGW/MSVC
+  box has built it since the CMake migration or before.
+- `sdl/Xconq.RC`, `curses/Xconq.RC`: trivial 2-line `.rc` scripts, each
+  just associating `Xconq.ico`/`Xcdoc.ico` (present in both directories)
+  as the executable's icon. Not referenced by any CMakeLists.txt — dead
+  weight, but harmless and tiny.
+- Not previously inventoried, but decision-relevant: `sdl/CMakeLists.txt`
+  unconditionally links `X11::Xext`/`X11::Xmu`/`X11::X11` and always
+  builds `sdlunix.cc`, whose `main()` (sdlconq's actual entry point) calls
+  `setuid`/`geteuid`/X11 geometry parsing directly — i.e. the SDL UI's
+  platform glue is Unix/X11-coupled, not just "missing a WIN32 branch."
+  There is no `sdlwin32.cc` or equivalent. `curses/` has no such coupling
+  (no X11, no setuid) and would be the easier UI to port via PDCurses.
+
+Recommendation: reviving Windows support is more than flipping the
+existing `if(WIN32)` switch on. The plausible modern path is an SDL2/3
+port of the SDL UI (already the top §4 UI priority) with a real
+`sdlwin32.cc`-equivalent main/platform file, `winsock2`/`ws2_32` linkage
+for networking (`socket.c` already has partial `WIN32`/`winsock2.h`
+handling, untested), a MinGW or MSVC CI leg, and a decision on whether
+`curses` gets a parallel PDCurses build (cheaper, since it has no
+Unix-specific coupling today). `kernel/win32.c` contributes a plausible
+starting point for the kernel-level path/signal glue (it's small and
+already CMake-wired) but is unverified and pre-dates modern Win32/UTF-8
+path conventions; everything UI-side would be new work. This is a
+maintainer call, not made here — the Win32 files are left in place either
+way pending that decision.
   `SIZEOF_LONG` for its `Z16`/`Z32` typedefs — replace with `<cstdint>` fixed
   width types and delete the checks from `acdefs.h`.
 

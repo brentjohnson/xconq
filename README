@@ -2,8 +2,8 @@ Welcome to Xconq version 7.5 Prerelease!
 
 Xconq is a general strategy game system.  It is a complete system that
 includes all the components: a portable engine, graphical interfaces
-for Unix/Linux/X11, Macintosh, and Windows, multiple AIs, networking
-for multi-player games, and an extensive games library.
+for Unix/Linux/X11, multiple AIs, networking for multi-player games,
+and an extensive games library.
 
 In addition to Xconq's "default" game, which is similar to the
 classic Empire/Empire Deluxe games of years ago, the games library
@@ -52,10 +52,10 @@ To help keep the both new and experienced designers from being lost in
 the complexity, Xconq includes a game designer's manual that describes
 all of this machinery in detail.
 
-If you are compiling your own of Xconq from sources, you may wish to 
-look at the INSTALL files in the doc directory.  Xconq has been tested 
-in a wide variety of systems and environments, including most versions of 
-Unix, Linux, Macintosh (PowerPC only), and Windows.
+If you are compiling your own of Xconq from sources, you may wish to
+look at the INSTALL files in the doc directory.  Xconq has been tested
+in a wide variety of systems and environments, including most versions
+of Unix and Linux.
 
 Once Xconq is installed, depending on your system you should be able
 to either type "cconq" or "sdlconq" at a shell or click on the program's

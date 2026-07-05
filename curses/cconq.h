@@ -6,11 +6,7 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2, or (at your option)
 any later version.  See the file COPYING.  */
 
-#ifdef MAC
-#include "curses.h"
-#else
 #include <curses.h>
-#endif
 
 #include "imf.h"
 #include "ui.h"

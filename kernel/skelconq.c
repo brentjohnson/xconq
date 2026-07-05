@@ -21,10 +21,6 @@ any later version.  See the file COPYING.  */
 
 extern Side* dside;
 
-#ifdef MAC
-int use_mac_charcodes = TRUE;
-#endif
-
 extern int autotest(void);
 
 static void init_displays(void);
@@ -1177,14 +1173,6 @@ make_generic_image_data(ImageFamily *imf)
 {}
 #endif
 
-
-#ifdef MAC
-
-int current_cursor;
-int receivecursor;
-int sendcursor;
-
-#endif /* MAC */
 
 void
 unit_research_dialog(Unit *unit)

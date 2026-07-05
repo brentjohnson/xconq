@@ -17,10 +17,6 @@ any later version.  See the file COPYING.  */
 
 using namespace Xconq;
 
-#ifdef MAC
-extern int convert_mac_charcodes(int ch);
-#endif
-
 /* Declarations of local functions. */
 
 static Obj *newobj(void);
@@ -163,9 +159,6 @@ strmgetc(Strm *strm)
 	  ch = *((strm->ptr.sp)++);
     } else {
 	ch = getc(strm->ptr.fp);
-#ifdef MAC
-	ch = convert_mac_charcodes(ch);
-#endif
     }
     if (ch != EOF) {
 	++(strm->numread);

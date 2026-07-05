@@ -209,18 +209,6 @@ try_join_game(char *hostport)
     /* Compose a player spec if necessary. */
     if (default_player_spec == NULL)
       make_default_player_spec();
-      
-#ifdef MACOSX
-    /* For mysterious reasons, Mac OSX requires a brief pause here, or
-    send_join will fail. Mac OS9 (Classic or Carbon) works fine without
-    this hack. */
-    {
-    	extern int last_ticks;
-    	
-    	last_ticks = TickCount();
-    	while(!n_seconds_elapsed(1));
-    }
-#endif
 
     /* Send a join packet and then wait until we're officially added
        to the game. */
@@ -520,11 +508,7 @@ download_game_module(int rid)
     tmprid = 0;
 }
 
-#ifndef MAC
 #define DOWNLOADPACKETSIZE 200
-#else
-#define DOWNLOADPACKETSIZE 40
-#endif
 
 static char *notherbuf;
 

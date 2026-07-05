@@ -891,14 +891,6 @@ make_generic_image_data(ImageFamily *imf)
 {
 }
 
-#ifdef MAC
-
-int current_cursor;
-int receivecursor;
-int sendcursor;
-
-#endif /* MAC */
-
 void
 unit_research_dialog(Unit *unit)
 {

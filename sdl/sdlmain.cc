@@ -17,26 +17,10 @@ extern void set_panel_sizes(Screen *screen);
 extern void interpret_variants(void);
 extern int launch_game(void);
 
-/* Fullscreen mode interferes with debugging under X11 
-   (but not under MacOS), so leave it off by default. */
+/* Fullscreen mode interferes with debugging under X11, so leave it off
+   by default. */
 
-/* We now set it to FALSE also for the Mac since fullscreen 
-mode is always forced when using the Dsp driver. */
-
-#ifdef UNIX
 int fullscreen = FALSE;
-#else
-int fullscreen = FALSE;
-#endif
-
-/* The mac does not use SDL_APPMOUSEFOCUS. Test for SDL_APPACTIVE
-   instead, which on the mac tells us if the SDL window is in the
-   front or in the background. */
-
-#ifdef MAC
-#undef SDL_APPMOUSEFOCUS
-#define SDL_APPMOUSEFOCUS SDL_APPINPUTFOCUS
-#endif
 
 /* Default size of window in non-fullscreen mode. */
 
@@ -168,9 +152,7 @@ initial_ui_init(void)
 {
     int rslt;
     LibraryPath *path;
-#ifndef MAC
     SDL_Rect **modes;
-#endif
 	 /* Hack to signal main in xconq.c that we dont want a new game dialog. */
 	 using_sdl = TRUE;
 
@@ -186,33 +168,19 @@ initial_ui_init(void)
 	&& (strcmp(getenv("SDL_VIDEODRIVER"), "fbcon") == 0
 	    || strcmp(getenv("SDL_VIDEODRIVER"), "dga") == 0)
 #endif
-#ifdef MAC
-	/* The Mac DrawSprocket driver also runs in fullscreen mode. */
-	&& strcmp(getenv("SDL_VIDEODRIVER"), "DSp") == 0
-#endif
 	)
-      fullscreen = TRUE; 
+      fullscreen = TRUE;
 
     /* Get the available fullscreen modes if asked to. */
     if (fullscreen) {
-
-#ifndef MAC
-	/* Does not work on the mac. Should figure out why. */
 	modes = SDL_ListModes(NULL,
 			      SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 	/* Use the largest screen available. */
 	if (modes > (SDL_Rect **)0) {
 	    mainw = modes[0]->w;  mainh = modes[0]->h;
 	}
-#else
-	/* On the mac, we use qd.thePort instead. */
-	/* (which won't work on OS X tho.) */
-	mainw = qd.thePort->portRect.right;
-	mainh = qd.thePort->portRect.bottom;
-#endif
-
     }
-    
+
     /* Use fullscreen mode if asked to, and hardware acceleration if
        available.
     
@@ -256,9 +224,7 @@ initial_ui_init(void)
     default_cursor_name = g_generic_cursor();
     generic_cursor = get_cursor(default_cursor_name, 0, 0);
     if (generic_cursor != NULL) {
-#ifndef MAC      
 	SDL_ShowCursor(0);
-#endif
 	use_cursors = TRUE;
     }
 
@@ -459,44 +425,6 @@ run_ui_idler(void)
     }
 }
 
-/* The purpose of this function is to test for SDL mouse focus on the
-   mac and turn the system cursor on or off. This has to be done
-   explicitly since no SDL_ACTIVEEVENT is generated on the mac when we
-   move the cursor in or out of the SDL window (unlike unix where the
-   SDL_APPMOUSEFOCUS flag is set). */
-
-#ifdef MAC
-
-int
-handle_macos_cursor(void)
-{
-	WindowPtr win;
-	Point mouse;
-	Rect rect;
-
-	if (SDL_GetAppState() & SDL_APPMOUSEFOCUS) {
-		win = FrontWindow();
-		if (win && win == sdl_window) {
-			GetMouse(&mouse);
-			LocalToGlobal(&mouse);
-			rect = (*((WindowPeek) win)->contRgn)->rgnBBox;
-			/* The mouse is in the map. */
-			if (PtInRect(mouse, &rect)) {
-				SDL_ShowCursor(0);
-				use_cursors = TRUE;
-				return FALSE;
-			}		
-		}
-	}
-	SDL_ShowCursor(1);
-	use_cursors = FALSE;
-	if (!fullscreen)
-	    update_cursor(sscreen);
-	return TRUE;
-}
-
-#endif
-
 static void
 handle_event(SDL_Event *evt)
 {
@@ -508,13 +436,6 @@ handle_event(SDL_Event *evt)
     switch (evt->type) {
 
       case SDL_VIDEORESIZE:
-#ifdef MAC
-	/* We resized the SIOUX console, not the main window. */
-	if (FrontWindow() && FrontWindow() != sdl_window) {
-	    redraw_screen(sscreen);
-	    break;
-	}
-#endif
 	/* Get the new window size, but only allow it to be so small. */
 	mainw = max(evt->resize.w, 232);
 	mainh = max(evt->resize.h, 232);
@@ -571,10 +492,6 @@ handle_event(SDL_Event *evt)
 	break;
 
       case SDL_MOUSEMOTION:
-#ifdef MAC
-	if (handle_macos_cursor())
-	  break;
-#endif
 	if (evt->motion.x != sscreen->cursorx
 	    || evt->motion.y != sscreen->cursory) {
 	    /* Redraw at the old cursor location. */
@@ -663,26 +580,6 @@ interp_sym(SDLKey sym)
 	do_recenter(dside);
 	return TRUE;
     }
-
-#ifdef MAC
-    /* Use the escape key to toggle between the screen and the SIOUX
-       console on the mac. */
-    if (sym == SDLK_ESCAPE) {
-         if (FrontWindow() == sdl_window) {
-	     sscreen->active = FALSE;
-	     use_cursors = FALSE;
-	     SelectWindow(sdl_console);
-	     SDL_ShowCursor(1);
-	} else if (FrontWindow() == sdl_console) {
-	    SDL_ShowCursor(0);
-	    sscreen->active = TRUE;
-	    use_cursors = TRUE;
-	    SelectWindow(sdl_window);
-	    redraw_screen(sscreen);
-	}	
-	return FALSE;
-    }
-#endif
 
     return FALSE;
 }
@@ -830,25 +727,6 @@ handle_mouse_down(Screen *screen, int sx, int sy, int button)
     void (*fn)(Screen *screenx, int cancelledx);
     Panel *panel;
 
-#ifdef MAC
-    WindowPtr win;
-    Point mouse;
-	
-    if (SDL_GetAppState() & SDL_APPMOUSEFOCUS) {
-	GetMouse(&mouse);
-	LocalToGlobal(&mouse);
-	FindWindow(mouse, &win);
-	if (win && win == sdl_window) {
-	    SDL_ShowCursor(0);
-	    sscreen->active = TRUE;
-	    use_cursors = TRUE;
-	} else {
-	    SDL_ShowCursor(1);
-	    sscreen->active = FALSE;
-	    use_cursors = FALSE;
-	}
-    }
-#endif
     if (screen == NULL) {
 	beep();
 	return;

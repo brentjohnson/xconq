@@ -11,17 +11,7 @@ any later version.  See the file COPYING.  */
 #include "cmdline.h"
 #include "cconq.h"
 
-#ifdef __MWERKS__
-
-#include <sioux.h>
-
-_MSL_BEGIN_EXTERN_C
-_MSL_IMP_EXP_C extern int ccommand(char ***);
-_MSL_END_EXTERN_C
-
-#endif /* __MWERKS__ */
-
-    /* If we are using the pdcurses library we have to declare this stuff 
+    /* If we are using the pdcurses library we have to declare this stuff
        here, which is otherwise declared in curses.c of libcurses. */
 #if (defined (WIN32) && !defined (__CYGWIN32__))
 
@@ -44,13 +34,6 @@ extern int autofinish_start;
 extern int autofinish_count;
 
 static void describe_help(int arg, const char *key, TextBuffer *buf);
-
-#ifdef MAC /* temporary */
-int use_mac_charcodes = TRUE;
-char **current_cursor;
-char **sendcursor;
-char **receivecursor;
-#endif
 
 int announced = FALSE;
 
@@ -229,27 +212,6 @@ struct a_movie *movies;
 int
 main(int argc, char *argv[])
 {
-
-#ifdef MAC
-
-#ifdef __MWERKS__
-
-    /* This is how Metrowerks C picks up a command line. */
-    argc = ccommand(&argv);
-    /* Configure the SIOUX window. */
-    SIOUXSettings.initializeTB = TRUE;
-    SIOUXSettings.standalone = FALSE;
-    SIOUXSettings.setupmenus = FALSE;
-    SIOUXSettings.autocloseonquit = FALSE;
-    SIOUXSettings.asktosaveonclose = TRUE;
-    SIOUXSettings.showstatusline = TRUE; 
-
-#endif /* __MWERKS__ */
-
-    _maccur_pgm_name = "Cconq";
-
-#endif /* MAC */
-
     printf("\n              Welcome to Curses Xconq version %s\n\n",
 	   version_string());
     init_library_path(NULL);
@@ -425,9 +387,6 @@ init_display(void)
     nonl();
     noecho();
     cbreak();
-#if 0 /* def MAC */ /* can't do this yet */
-    nodelay(stdscr, 1);
-#endif
     clear();
     /* Set up random globals. */
     nw = min(BUFSIZE, 60);

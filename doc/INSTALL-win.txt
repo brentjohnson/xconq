@@ -440,8 +440,8 @@ or Project->Set Active Project -> libconq and
 Project -> Add to Project -> Files.  This will be a file broser window.
 Use the control key to select the .c files in the OBJ list. ( Or 
 select the C++ Source files on the type list, select all the .c files
-and use the Ctrl Key to unselect autotest.c, imf.c, imf2imf.c, lisp.c, 
-mac.c skelcomp.c, socket.c, unix.c, util.c, and win32.c).  If you want,
+and use the Ctrl Key to unselect autotest.c, imf.c, imf2imf.c, lisp.c,
+skelcomp.c, socket.c, unix.c, util.c, and win32.c).  If you want,
 you can test at this point by right clicking on libconq, and select
 "Build (selection only)" to build the library.
 

@@ -96,11 +96,6 @@ namespace Xconq {
 #define INT_MIN (-INT_MAX -1)
 #endif
 
-/* Some platform-specific flags. */
-#if (defined (MAC) && !defined (AVOID_OBSTACK))
-#define AVOID_OBSTACK
-#endif
-
 /* Default names for special files. */
 
 #ifndef NEWSFILE
