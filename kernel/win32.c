@@ -212,6 +212,27 @@ game_filename(const char *namevar, const char *defaultname)
     return str;
 }
 
+/* No XDG or legacy-directory concept on Windows; everything lives under
+   game_homedir(), as before. */
+
+char *
+game_confdir(void)
+{
+    return game_homedir();
+}
+
+char *
+game_conf_filename(const char *namevar, const char *defaultname)
+{
+    return game_filename(namevar, defaultname);
+}
+
+const char *
+legacy_homedir(void)
+{
+    return NULL;
+}
+
 /* This wrapper replaces fopen everywhere in the kernel. On the mac
    side it does unix-to-mac linefeed conversion if necessary. Here it
    does absolutely nothing. */

@@ -49,10 +49,8 @@ any later version.  See the file COPYING.  */
 #endif
 
 #ifndef XCONQSCORES
-#define XCONQSCORES "scores"
+#define XCONQSCORES ""
 #endif
-
-uid_t games_uid;
 
 #if 1 /* POSIX */
 static void stop_handler(int sig);
@@ -182,52 +180,172 @@ save_game(const char *fname)
 }
 
 static char *homedir;
+static char *confdir;
+static char *olddir;
+static int olddir_checked;
+static int olddir_note_given;
+
+/* $HOME, falling back to the password-file entry, and finally ".". */
+static const char *
+user_home(void)
+{
+    char *str;
+    struct passwd *pwd;
+
+    if ((str = getenv("HOME")) != NULL)
+      return str;
+    if ((pwd = getpwuid(getuid())) != NULL)
+      return pwd->pw_dir;
+    return ".";
+}
+
+/* The pre-XDG per-user directory (~/.xconq), if it still exists. Returns
+   NULL once XCONQHOME is set (which overrides everything, legacy included)
+   or if no such directory was ever created.
+
+   Callers must only consult this from within a fallback branch, i.e.
+   after the new XDG-based lookup has already failed -- the first non-NULL
+   return prints a one-time note, so calling it unconditionally would be
+   misleading. */
+const char *
+legacy_homedir(void)
+{
+    char *cand;
+
+    if (olddir_checked)
+      return olddir;
+    olddir_checked = TRUE;
+    if (getenv("XCONQHOME") != NULL)
+      return NULL;
+    cand = (char *)xmalloc(strlen(user_home()) + 20);
+    sprintf(cand, "%s/.xconq", user_home());
+    if (is_directory(cand)) {
+	olddir = cand;
+	if (!olddir_note_given) {
+	    fprintf(stderr,
+		    "xconq: falling back to legacy directory \"%s\" "
+		    "(move your files to the new XDG locations to silence "
+		    "this message)\n",
+		    olddir);
+	    olddir_note_given = TRUE;
+	}
+    } else {
+	free(cand);
+    }
+    return olddir;
+}
+
+/* Create PATH and any missing parent directories, all mode 0700 (like
+   "mkdir -p"). PATH is modified in place and restored before returning. */
+static void
+mkdir_p(char *path)
+{
+    char *slash;
+
+    for (slash = path + 1; *slash; ++slash) {
+	if (*slash == '/') {
+	    *slash = '\0';
+	    if (access(path, F_OK) != 0)
+	      mkdir(path, 0700);
+	    *slash = '/';
+	}
+    }
+    if (access(path, F_OK) != 0)
+      mkdir(path, 0700);
+}
+
+/* Build "<base>/xconq", creating it and any missing parents (mode 0700)
+   if it does not exist, where <base> is $ENVVAR or else
+   $HOME/FALLBACK_REL. */
+static char *
+xdg_xconq_dir(const char *envvar, const char *fallback_rel)
+{
+    const char *envval = getenv(envvar);
+    char *base, *dir;
+
+    if (envval != NULL && *envval) {
+	base = copy_string(envval);
+    } else {
+	base = (char *)xmalloc(strlen(user_home()) + strlen(fallback_rel) + 2);
+	sprintf(base, "%s/%s", user_home(), fallback_rel);
+    }
+    dir = (char *)xmalloc(strlen(base) + 8);
+    sprintf(dir, "%s/xconq", base);
+    free(base);
+    if (access(dir, F_OK) != 0) {
+	mkdir_p(dir);
+	/* (should warn of problems) */
+    }
+    return dir;
+}
+
+/* Directory for per-user data: saved games, checkpoints, scores. */
 
 char *
 game_homedir(void)
 {
     char *str;
-    struct passwd *pwd;
 
     if (homedir != NULL)
       return homedir;
     if ((str = getenv("XCONQHOME")) != NULL) {
 	homedir = copy_string(str);
-    } else if ((str = getenv("HOME")) != NULL) {
-	homedir = (char *)xmalloc(strlen(str) + 20);
-	strcpy(homedir, str);
-	strcat(homedir, "/.xconq");
-    } else if ((pwd = getpwuid(getuid())) != NULL) {
-	homedir = (char *)xmalloc(strlen(pwd->pw_dir) + 20);
-	strcpy(homedir, pwd->pw_dir);
-	strcat(homedir, "/.xconq");
+	/* Try to ensure that the directory exists. */
+	if (access(homedir, F_OK) != 0) {
+	    mkdir(homedir, 0755);
+	    /* (should warn of problems) */
+	}
     } else {
-	homedir = (char *)xmalloc(strlen(".") + 20);
-	strcpy(homedir, ".");
-	// homedir = ".";
-    }
-    /* Try to ensure that the directory exists. */
-    if (access(homedir, F_OK) != 0) {
-	mkdir(homedir, 0755);
-	/* (should warn of problems) */
+	homedir = xdg_xconq_dir("XDG_DATA_HOME", ".local/share");
     }
     return homedir;
+}
+
+/* Directory for per-user config: preferences. */
+
+char *
+game_confdir(void)
+{
+    char *str;
+
+    if (confdir != NULL)
+      return confdir;
+    if ((str = getenv("XCONQHOME")) != NULL) {
+	confdir = copy_string(str);
+	if (access(confdir, F_OK) != 0) {
+	    mkdir(confdir, 0755);
+	}
+    } else {
+	confdir = xdg_xconq_dir("XDG_CONFIG_HOME", ".config");
+    }
+    return confdir;
+}
+
+static char *
+game_filename_in(const char *namevar, const char *defaultname, const char *dir)
+{
+    char *str;
+
+    if (namevar && (str = getenv(namevar)) != NULL && *str) {
+	return copy_string(str);
+    }
+    str = (char *)xmalloc(strlen(dir) + 1 + strlen(defaultname) + 1);
+    strcpy(str, dir);
+    strcat(str, "/");
+    strcat(str, defaultname);
+    return str;
 }
 
 char *
 game_filename(const char *namevar, const char* defaultname)
 {
-    char *str, *home;
+    return game_filename_in(namevar, defaultname, game_homedir());
+}
 
-    if (namevar && (str = getenv(namevar)) != NULL && *str) {
-	return copy_string(str);
-    }
-    home = game_homedir();
-    str = (char *)xmalloc(strlen(home) + 1 + strlen(defaultname) + 1);
-    strcpy(str, home);
-    strcat(str, "/");
-    strcat(str, defaultname);
-    return str;
+char *
+game_conf_filename(const char *namevar, const char* defaultname)
+{
+    return game_filename_in(namevar, defaultname, game_confdir());
 }
 
 /* This wrapper replaces fopen everywhere in the kernel. On the mac
@@ -265,114 +383,56 @@ open_library_file(const char *filename)
 FILE *
 open_scorefile_for_reading(const char *name)
 {
-    FILE *fp;
-
-    fp = open_file(score_file_pathname(name), "r");
-    return fp;
+    return open_file(score_file_pathname(name), "r");
 }
 
 FILE *
 open_scorefile_for_writing(const char *name)
 {
-    FILE *fp;
-
-    /* The scorefile is only writable by the owner of the Xconq
-       executable, but we normally run as the user, so switch over
-       before writing. */
-    setuid(games_uid);
-    fp = open_file(score_file_pathname(name), "a");
-    return fp;
+    return open_file(score_file_pathname(name), "a");
 }
 
 void
 close_scorefile_for_writing(FILE *fp)
 {
     fclose(fp);
-    /* Reset the uid back to the user who started the game. */
-    setuid(getuid());
 }
 
 /* Given the name of a scorefile, return a complete path to it,
-   accounting for env vars etc. */
+   accounting for env vars etc. Scores are per-user by default (a
+   "scores" subdirectory of the data dir); XCONQ_SCORES (runtime) or the
+   compiled-in XCONQSCORES (set via -DXCONQ_SCORES_DIR, for shared
+   installs) can override that. */
 
 static char *
 score_file_pathname(const char *name)
 {
     static char *scorenamebuf;
-    char *scorepath = NULL, *gamehomepath = NULL, *dirpathbuf = NULL;
-    int i = 0;
-    int found = FALSE, da_scorepath = FALSE;
-    const char *abspaths [] = {
-	"/var/lib/games/xconq", "/var/lib/xconq", 
-	"/var/lib/games/xconq/scores", "/var/lib/xconq/scores", 
-	"/usr/share/xconq/scores", NULL
-    };
-    const char *ghrelpaths [] = {
-	"scores", "../xconq", "../xconq/scores", "../Xconq", 
-	"../Xconq/scores", ".", NULL
-    };
+    char *scoredir;
 
     /* (Note that this wires in the name on the first call, so cannot
        be called with different names.  We could make this smarter, but
        no point to it right now.) */
     if (scorenamebuf == NULL) {
-	/* See if the environment provides a scores directory. */
-	scorepath = getenv("XCONQ_SCORES");
-	/* If the environment does not provide a scores directory, then 
-	   try using the compiled in one. */
-	if (empty_string(scorepath)) {
-	  scorepath = copy_string(XCONQSCORES);
-	  da_scorepath = TRUE;
-	}
-	if (is_directory(scorepath))
-	  found = TRUE;
-	/* If the compiled in scores directory is not present, then start 
-	   looking elsewhere. */
-	/* Absolute paths. */
-	for (i = 0; abspaths[i] && !found; ++i) {
-	    if (is_directory(abspaths[i])) {
-	        scorepath = copy_string(abspaths[i]);
-		da_scorepath = TRUE;
-		found = TRUE;
+	const char *envval = getenv("XCONQ_SCORES");
+
+	if (!empty_string(envval)) {
+	    scoredir = copy_string(envval);
+	} else if (!empty_string(XCONQSCORES) && is_directory(XCONQSCORES)) {
+	    scoredir = copy_string(XCONQSCORES);
+	} else {
+	    char *home = game_homedir();
+
+	    scoredir = (char *)xmalloc(strlen(home) + 8);
+	    sprintf(scoredir, "%s/scores", home);
+	    if (access(scoredir, F_OK) != 0) {
+		mkdir(scoredir, 0700);
+		/* (should warn of problems) */
 	    }
 	}
-	/* Paths relative to the game home dir. */
-	gamehomepath = game_homedir();
-	for (i = 0; ghrelpaths[i] && !found; ++i) {
-	    dirpathbuf = (char *)xmalloc(strlen(gamehomepath) + 1 + 
-					 strlen(ghrelpaths[i]) + 10);
-	    make_pathname(gamehomepath, ghrelpaths[i], NULL, dirpathbuf);
-	    if (is_directory(dirpathbuf)) {
-		scorepath = copy_string(dirpathbuf);
-		da_scorepath = TRUE;
-		found = TRUE;
-	    }
-	    free(dirpathbuf);
-	}
-	/* If we can find nowhere suitable, then try to create a new 
-	   scores directory. If that fails, then just give the caller 
-	   something, and return. */
-	if (!found) {
-	    dirpathbuf = (char *)xmalloc(strlen(gamehomepath) + 1 + 16);
-	    make_pathname(gamehomepath, "scores", NULL, dirpathbuf);
-	    if (!is_directory(dirpathbuf) && (ENOENT == errno)) {
-		if (access(homedir, X_OK|W_OK))
-		  mkdir(dirpathbuf, 0755);
-		scorepath = copy_string(dirpathbuf);
-		da_scorepath = TRUE;
-	    }
-	    else {
-	        scorepath = copy_string("scores");
-		da_scorepath = TRUE;
-	    }
-	    free(dirpathbuf);
-	}
-	/* Make the full path. */
-	scorenamebuf = (char *)xmalloc(strlen(scorepath) + 1 + strlen(name) + 
-				       10);
-	make_pathname(scorepath, name, NULL, scorenamebuf);
-	if (da_scorepath)
-	  free(scorepath);
+	scorenamebuf = (char *)xmalloc(strlen(scoredir) + 1 + strlen(name) + 1);
+	sprintf(scorenamebuf, "%s/%s", scoredir, name);
+	free(scoredir);
     }
     return scorenamebuf;
 }

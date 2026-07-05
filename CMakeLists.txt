@@ -24,8 +24,9 @@ option(XCONQ_UI_SDL    "Build the SDL 3 interface (sdlconq)" ON)
 
 set(XCONQ_DATA_DIR "${CMAKE_INSTALL_FULL_DATADIR}/xconq" CACHE PATH
     "Installed location of the games library, images, and UI scripts")
-set(XCONQ_SCORES_DIR "/var/lib/xconq/scores" CACHE PATH
-    "Directory used for score files at run time")
+set(XCONQ_SCORES_DIR "" CACHE PATH
+    "Directory used for score files at run time, for shared installs. \
+Empty (the default) means per-user scores under the XDG data dir instead")
 
 # Comma-separated -fsanitize list (e.g. "address,undefined"); empty disables.
 # Wired into every kernel/UI target via xconq_common below. Intended for a

@@ -333,6 +333,14 @@ open_module_saved_game(Module *module)
 	if (fp) {
 		return fp;
 	}
+	/* Fall back to the pre-XDG ~/.xconq directory, if it exists. */
+	if (legacy_homedir() != NULL) {
+		make_pathname(legacy_homedir(), module->filename, NULL, fullnamebuf);
+		fp = open_file(fullnamebuf, "r");
+		if (fp) {
+			return fp;
+		}
+	}
 	/* Then search the library paths for filename. */
 	for_all_library_paths(p) {
 		make_pathname(p->path, module->filename, NULL, fullnamebuf);
@@ -866,14 +874,34 @@ statistics_filename(void)
 const char *
 preferences_filename(void)
 {
-    return game_filename("XCONQPREFERENCES", PREFERENCESFILE);
+    return game_conf_filename("XCONQPREFERENCES", PREFERENCESFILE);
 }
 
-/* Legacy filename support. */
+/* Legacy filename support: look in the pre-XDG ~/.xconq directory, trying
+   both the current and the (older still) pre-rename preferences name. */
 const char *
 old_preferences_filename(void)
 {
-    return game_filename("XCONQPREFERENCES", OLD_PREFERENCESFILE);
+    static char *buf;
+    const char *legacy = legacy_homedir();
+    FILE *fp;
+
+    if (legacy == NULL) {
+	return game_conf_filename("XCONQPREFERENCES", OLD_PREFERENCESFILE);
+    }
+    if (buf != NULL) {
+	free(buf);
+    }
+    buf = (char *)xmalloc(strlen(legacy) + 1 + strlen(PREFERENCESFILE) + 1);
+    sprintf(buf, "%s/%s", legacy, PREFERENCESFILE);
+    if ((fp = open_file(buf, "r")) != NULL) {
+	fclose(fp);
+	return buf;
+    }
+    free(buf);
+    buf = (char *)xmalloc(strlen(legacy) + 1 + strlen(OLD_PREFERENCESFILE) + 1);
+    sprintf(buf, "%s/%s", legacy, OLD_PREFERENCESFILE);
+    return buf;
 }
 
 /* (random code below, should be sent to better places) */

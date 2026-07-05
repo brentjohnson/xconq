@@ -29,15 +29,10 @@ static void accept_all_remotes(void);
 int
 main(int argc, char *argv[])
 {
-	extern uid_t games_uid;
-
 	use_stdio = TRUE;
 	/* Dummy reference to get libraries pulled in */
 	if (argc == -1)
 	    cmd_error(NULL, NULL);
-	/* Shift to being the user that started the game. */
-	games_uid = geteuid();
-	setuid(getuid());
 	init_library_path(NULL);
 	/* Fiddle with game module structures. */
 	clear_game_modules();

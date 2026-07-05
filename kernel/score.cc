@@ -1252,6 +1252,14 @@ read_scorefile(void)
     fp = open_scorefile_for_reading(filename);
     if ((NULL == fp) && !strcmp(filename, SCOREFILE))
       fp = open_scorefile_for_reading(OLD_SCOREFILE);
+    /* Fall back to a "scores" subdir of the pre-XDG ~/.xconq, if present. */
+    if ((NULL == fp) && legacy_homedir() != NULL) {
+	char legacydirbuf[PATH_SIZE], legacybuf[PATH_SIZE];
+
+	make_pathname(legacy_homedir(), "scores", NULL, legacydirbuf);
+	make_pathname(legacydirbuf, filename, NULL, legacybuf);
+	fp = open_file(legacybuf, "r");
+    }
     if (fp != NULL) {
         /* Note that we clear all existing score records.  This is because
 	   the score file may be shared and thus getting multiple updates. */

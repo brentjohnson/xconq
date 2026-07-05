@@ -36,8 +36,9 @@ Useful configuration options (pass as -D<option>=<value> to cmake):
     XCONQ_UI_CURSES=ON/OFF   Build the curses interface, cconq (default ON)
     XCONQ_UI_SDL=ON/OFF      Build the SDL interface, sdlconq (default ON)
     CMAKE_INSTALL_PREFIX     Installation prefix (default /usr/local)
-    XCONQ_SCORES_DIR         Directory for score files at run time
-                             (default /var/lib/xconq/scores)
+    XCONQ_SCORES_DIR         Directory for score files at run time, for
+                             shared installs (default: empty, meaning
+                             per-user scores under $XDG_DATA_HOME/xconq)
     CMAKE_BUILD_TYPE         e.g. Release, Debug, RelWithDebInfo
 
 3. If you want to test things out before installing, run a UI binary

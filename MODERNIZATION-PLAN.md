@@ -529,48 +529,21 @@ and the BWidget vendor-audit are resolved by this removal (see §4 below).
 > each other — prerequisites are stated per prompt. File extensions are
 > given as `.c`; after §1's rename task they may be `.cc` — adapt.
 
-- **[M] Use XDG base directories.** Scores currently want a shared, setgid-era
-  `/var/lib/xconq/scores`; per-user data belongs in `$XDG_DATA_HOME/xconq`,
-  config in `$XDG_CONFIG_HOME`. Drop the remaining games-group install
-  assumptions.
-
-**⚙ PROMPT 5.1 — recommended model: Sonnet.** *(Well-specified path-logic
-change; the one hard constraint — test hermeticity — is spelled out below.)*
-
-```text
-Task: make Xconq use XDG base directories for per-user data instead of
-~/.xconq and the setgid-era shared scores directory.
-
-Context/anchors:
-- kernel/unix.c: game_homedir() (~line 187) returns $XCONQHOME if set, else
-  $HOME/.xconq (created on demand). Everything per-user (saves, preferences,
-  scores) hangs off it; grep for game_homedir and ".xconq" across kernel/
-  and the UIs (curses/sdl — the Tcl/Tk UI, which may have built preference
-  paths itself, was removed in Step 2, so there is nothing to check there).
-- CMakeLists.txt:31: XCONQ_SCORES_DIR defaults to /var/lib/xconq/scores;
-  kernel/score.c consults it. The games-group/setgid install model is dead.
-Design:
-1. HARD CONSTRAINT: $XCONQHOME, when set, must keep overriding everything
-   exactly as today — the whole test suite's hermeticity depends on it
-   (test/common.sh sets it). Do not change its meaning.
-2. Otherwise: data (saves, scores) in $XDG_DATA_HOME/xconq (default
-   ~/.local/share/xconq); config/preferences in $XDG_CONFIG_HOME/xconq
-   (default ~/.config/xconq). Create with 0700 like the current code.
-3. Legacy fallback: if the new dirs are absent but ~/.xconq exists, keep
-   reading from ~/.xconq (print a one-time note suggesting a move); never
-   write new files there.
-4. Scores become per-user under the data dir by default. Keep
-   XCONQ_SCORES_DIR as an optional override for shared installs, but stop
-   defaulting to /var/lib and remove any games-group/chmod logic from
-   CMake install rules and kernel/score.c.
-Method: implement in kernel/unix.c (a small xdg_dir helper is fine), sweep
-UIs for hardcoded ~/.xconq, update doc/ and man-page mentions.
-Verify: build all UIs; ctest --test-dir build --label-exclude long (must
-stay green — it exercises XCONQHOME); then a manual smoke run of skelconq
-WITHOUT XCONQHOME set (HOME pointed at a scratch dir) confirming files land
-under .local/share/xconq and that a pre-seeded .xconq is still read.
-Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md.
-```
+- ~~**[M] Use XDG base directories.**~~ *(done 7/2026)* Per-user data (saves,
+  checkpoints, scores) now lives under `$XDG_DATA_HOME/xconq` (default
+  `~/.local/share/xconq`); preferences under `$XDG_CONFIG_HOME/xconq`
+  (default `~/.config/xconq`), both created 0700 on demand via a shared
+  `xdg_xconq_dir`/`mkdir_p` helper in `kernel/unix.cc`. `$XCONQHOME`, when
+  set, still overrides both exactly as before (test/common.sh's hermeticity
+  is unaffected). If the new dirs are absent but `~/.xconq` still exists, its
+  contents are read as a fallback (saved-game lookup, preferences, scores),
+  with a one-time stderr note; nothing is ever written back there. Scores
+  default to a per-user `scores` subdir of the data dir; `XCONQ_SCORES`
+  (env, unchanged) and the compiled-in `XCONQ_SCORES_DIR` (now empty by
+  default instead of `/var/lib/xconq/scores`) remain as overrides for shared
+  installs. The setgid-era `games_uid`/`setuid` dance around scorefile
+  writes (never wired up by the CMake install rules anyway) was removed from
+  `kernel/unix.cc` and `sdl/sdlunix.cc`.
 - ~~**[M] Decide on Windows/macOS support.**~~ *(Classic Mac half done
   7/2026, Windows half left open)* The tree carried Classic Mac OS
   (`kernel/mac.c`, `sdl/sdlmac.cc`) and Win32 (`kernel/win32.c`, RC files)
