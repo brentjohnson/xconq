@@ -63,7 +63,9 @@ jobs:
       # the old sdl12-compat shim -- see MODERNIZATION-PLAN.md §4).
       run: brew install sdl3
     - name: configure
-      run: cmake -B build
+      # Homebrew's prefix (/opt/homebrew on Apple Silicon runners) isn't on
+      # CMake's built-in search path, so find_package(SDL3) needs a hint.
+      run: cmake -B build -DCMAKE_PREFIX_PATH=$(brew --prefix)
     - name: build
       run: cmake --build build -j$(getconf _NPROCESSORS_ONLN)
     - name: test
