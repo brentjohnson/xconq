@@ -280,47 +280,6 @@ and the BWidget vendor-audit are resolved by this removal (see §4 below).
   `ctest --label-exclude long -j$(nproc)` green (555 tests) twice, matching a
   serial run; a deliberately broken module failed only its own three tests.
 
-**⚙ PROMPT 3.1 — recommended model: Sonnet.** *(CMake/shell mechanics; the
-policy logic already exists in test/common.sh and must not change.)*
-
-```text
-Task: split Xconq's aggregate check-lib and check-actions CTest entries
-into one test per game module, runnable in parallel.
-
-Context: test/CMakeLists.txt registers each test-*.sh script as a single
-CTest (see the XCONQ_TEST_SCRIPTS loop); test-lib.sh and test-acts.sh
-iterate over the modules internally, applying the shared policy in
-test/common.sh (crashes fail everywhere; lib/game.dir games are also held
-to no-diagnostics/save standards). Scripts run from the binary dir with
-XCONQHOME pointed into it.
-Method:
-1. Add a single-module mode to test-lib.sh and test-acts.sh (e.g.
-   `test-lib.sh <srcdir> <module.g>`), reusing common.sh unchanged so the
-   per-run policy/bounds stay identical. Keep the no-argument sweep mode
-   working for manual use.
-2. In test/CMakeLists.txt, glob lib/*.g at configure time (file(GLOB ...
-   CONFIGURE_DEPENDS)) and add_test one check-lib-<module> and
-   check-actions-<module> per file, replacing the aggregate check-lib /
-   check-actions entries. Keep total quick-lane behavior: same set of
-   modules, per-test TIMEOUT scaled down (the old 1800s covered the whole
-   sweep; ~600s per module matches the script's internal 10-min bound).
-   Give them LABELS "lib"/"actions" so ctest -L works.
-3. PARALLEL SAFETY is the real work: with ctest -j, tests share the binary
-   dir. Give each test its own scratch subdirectory (working directory or
-   an env/argument the script uses) so XCONQHOME, saves, and *.log files
-   cannot collide. Verify by running ctest -j$(nproc) twice and comparing
-   failures to a serial run.
-4. Check whether test-save.sh and test-test.sh want the same split; do
-   them too if the mechanism drops out for free (test-save.sh has the
-   KNOWN_UNFAITHFUL waiver list — keep it working), otherwise leave and
-   note.
-5. Update the comment header in test/CMakeLists.txt, CLAUDE.md's "Running
-   tests" section, and .github/workflows/c-cpp.yml if it names tests.
-Verify: ctest --test-dir build --label-exclude long -j$(nproc) green;
-deliberately break one lib module locally to confirm the failure names
-exactly that module's test, then revert.
-Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md.
-```
 - **[M] Add a CI matrix:** GCC + Clang, Debug + Release, and a macOS job
   (the kernel and SDL/curses UIs should be close to working there).
 
