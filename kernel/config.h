@@ -40,16 +40,11 @@ extern "C" {
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 #ifdef __cplusplus
 }
 #endif
 #endif
-
-/* Prototypes for snprintf(3) and vsnprintf(3). */
-#include "snprintf.h"
-
-/* Declarations of missing time structs and functions. */
-#include "timestuff.h"
 
 // Some common typedefs.
 namespace Xconq {

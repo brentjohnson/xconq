@@ -265,10 +265,50 @@ Method:
   - `kernel/nlang.cc`, `kernel/history.cc`: four `sprintf(buf, runtime_string)`
     calls (format-security) now use an explicit `"%s"`.
 
-- **[S] Remove bundled compat shims that modern platforms make dead code:**
-  `kernel/snprintf.c` (C99), `kernel/timestuff.c` (`gettimeofday` is
-  everywhere), and consider replacing `kernel/obstack.c` (bundled GNU obstack)
-  with plain allocation.
+- ~~**[S] Remove bundled compat shims that modern platforms make dead code:**~~
+  *(done 7/2026)* All three were unconditionally compiled but effectively dead
+  on any platform this project actually builds for:
+  - `kernel/snprintf.c/.h` deleted. Its header unconditionally forced
+    `HAVE_SNPRINTF`/`PREFER_PORTABLE_SNPRINTF` regardless of platform (a
+    long-standing "XCONQ HACK" per its own comment), so the portable fallback
+    was always compiled and always shadowed libc's `snprintf`/`vsnprintf` via
+    macro — never actually conditional. `asprintf`/`vasprintf`/`asnprintf`/
+    `vasnprintf` were declared but `NEED_*` was never defined anywhere, so
+    those bodies never even compiled; removing the header drops the unused
+    declarations too. Callers now get libc's `snprintf`/`vsnprintf` directly
+    via `<stdio.h>`.
+  - `kernel/timestuff.c/.h` deleted along with the `NEED_STRUCT_TIMEVAL/`
+    `TIMEZONE/GETTIMEOFDAY` CMake checks and `acdefs.h.in` defines that fed
+    it. `NEED_GETTIMEOFDAY` only ever fired for `_MSC_VER`, and the checked-in
+    fallback body was a `clock()`-based approximation (CPU time, not wall
+    time — already wrong semantics for `gettimeofday`). The only in-tree
+    consumer of that fallback is `kernel/win32.c`, which per the Windows
+    assessment above is already dead/unbuilt/untested — reviving Windows
+    support is an explicit future maintainer decision and would need a
+    correct `gettimeofday` shim of its own regardless. `kernel/config.h` now
+    includes `<sys/time.h>` directly in its `UNIX` block (glibc/BSD libc
+    always provide `gettimeofday`/`struct timeval`).
+  - `kernel/obstack.c/.h` (bundled GNU obstack) deleted. Its only consumer,
+    `kernel/help.cc`'s `TextBuffer`, used it as a plain growable append
+    buffer (`obstack_begin` → repeated `obstack_grow` via `tbcat`/`tbcat_si`
+    → `obstack_finish`/`obstack_free`) — a clean fit for `std::string` now
+    that the file is compiled as C++. Replaced the `struct obstack ostack`
+    field with `std::string content`; `tbcat`/`tbcat_si` now call
+    `.append()`, and `get_help_text` reads `.c_str()` instead of
+    `obstack_finish`. Verified by running the full in-game help system
+    (`?a` at the skelconq prompt, which walks every help node including the
+    long copyright/warranty text) end-to-end with clean output.
+  - Also removed `doc/INSTALL-snprintf`, a leftover install guide for the
+    vendored snprintf package from the original CVS import. Left
+    `doc/INSTALL-win.txt` alone — its two mentions of `timestuff.c`/
+    `snprintf.c` are inside an already wholesale-obsolete 2004 Tcl/Tk-on-Windows
+    build guide (references the removed `tcltk/`/`missing/` trees and
+    `Makefile.in`), not worth partially patching.
+  - Not addressed here, out of scope: `lib/snprintf/` is a second, entirely
+    unreferenced copy of the same vendored snprintf package (present since
+    the initial CVS import, never wired into any build — old autoconf or
+    current CMake). Same dead weight, different location; a future pass
+    should just delete the directory.
 
 **⚙ PROMPT 2.7 — recommended model: Sonnet.** *(Deletion of dead compat code
 with clear verification; the only judgment call — obstack — is scoped to an

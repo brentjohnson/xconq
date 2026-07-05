@@ -13,8 +13,6 @@ set(XCONQ_VERSION_RELEASE "0pre")
 
 include(GNUInstallDirs)
 include(CheckIncludeFileCXX)
-include(CheckCXXSymbolExists)
-include(CheckCXXSourceCompiles)
 include(CheckTypeSize)
 
 # ---------------------------------------------------------------------------
@@ -54,25 +52,6 @@ endif()
 # ---------------------------------------------------------------------------
 
 check_include_file_cxx(dirent.h HAVE_DIRENT_H)
-
-check_cxx_source_compiles("
-#include <sys/time.h>
-int main() { struct timeval tv; (void)tv; return 0; }" HAVE_STRUCT_TIMEVAL)
-if(NOT HAVE_STRUCT_TIMEVAL)
-    set(NEED_STRUCT_TIMEVAL 1)
-endif()
-
-check_cxx_source_compiles("
-#include <sys/time.h>
-int main() { struct timezone tz; (void)tz; return 0; }" HAVE_STRUCT_TIMEZONE)
-if(NOT HAVE_STRUCT_TIMEZONE)
-    set(NEED_STRUCT_TIMEZONE 1)
-endif()
-
-check_cxx_symbol_exists(gettimeofday "sys/time.h" HAVE_GETTIMEOFDAY)
-if(NOT HAVE_GETTIMEOFDAY)
-    set(NEED_GETTIMEOFDAY 1)
-endif()
 
 set(CMAKE_EXTRA_INCLUDE_FILES)
 check_type_size(int SIZEOF_INT LANGUAGE CXX)

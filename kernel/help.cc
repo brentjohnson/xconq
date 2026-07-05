@@ -88,11 +88,6 @@ static HelpPageDefn hpagedefns [] = {
 };
 #define HELP_PAGE_LAST	HELP_PAGE_CONCEPTS
 
-/* Obstack allocation and deallocation routines.  */
-
-#define obstack_chunk_alloc xmalloc
-#define obstack_chunk_free free
-
 /* Help system internal functions. */
 
 static void describe_help_system(int arg, const char *key, TextBuffer *buf);
@@ -451,14 +446,10 @@ get_help_text(HelpNode *node)
 	/* Maybe calculate the text to display. */
 	if (node->text == NULL) {
 	    if (node->fn != NULL) {
-		/* (should allow for variable-size allocation) */
-	    	obstack_begin(&(tbuf.ostack), 200);
 		if (1) {
 		    node->textend = 0;
 		    (*(node->fn))(node->arg, node->key, &tbuf);
-		    obstack_1grow(&(tbuf.ostack), '\0');
-		    node->text = copy_string((char *)obstack_finish(&(tbuf.ostack)));
-		    obstack_free(&(tbuf.ostack), 0);
+		    node->text = copy_string(tbuf.content.c_str());
 		    node->textend = strlen(node->text);
 		} else {
 		    /* Ran out of memory... (would never get here though!) */
@@ -4071,20 +4062,17 @@ tbprintf(TextBuffer *buf, const char *str, ...)
     va_end(ap);
 }
 
-#undef bcopy
-#define bcopy(a,b,c) memcpy(b,a,c)
-
 void
 tbcat(TextBuffer *buf, const char *str)
 {
-    obstack_grow(&(buf->ostack), str, strlen(str));
+    buf->content.append(str);
 }
 
 void
 tbcat_si(TextBuffer *buf, const char *str)
 {
     tbprintf(buf, "%s", help_indent(2));
-    obstack_grow(&(buf->ostack), str, strlen(str));
+    buf->content.append(str);
 }
 
 void

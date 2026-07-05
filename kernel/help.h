@@ -67,13 +67,13 @@ typedef struct help_page_defn {
     HelpPage nextpage;
 } HelpPageDefn;
 
-#include "obstack.h"
+#include <string>
 
 /*! \brief TextBuffer. */
 typedef struct a_textbuffer {
     char *text;             	/*!< text string. */
     int bufmax;             	/*!< Maximum buffer size. */
-    struct obstack ostack;  	/*!< Object stack control data */
+    std::string content;    	/*!< Accumulated text */
 } TextBuffer;
 
 /*! \brief Help Node. */

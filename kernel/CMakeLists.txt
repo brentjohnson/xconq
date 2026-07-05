@@ -44,7 +44,6 @@ set(CONQ_SOURCES
     cmd.cc
     ps.cc
     tp.cc
-    obstack.cc
     help.cc
     copying.cc
     generic.cc
@@ -57,9 +56,7 @@ set(CONQLOW_SOURCES
     imf.cc
     gif.cc
     lisp.cc
-    util.cc
-    snprintf.cc
-    timestuff.cc)
+    util.cc)
 if(WIN32)
     list(APPEND CONQLOW_SOURCES win32.c socket.cc)
 else()

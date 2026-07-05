@@ -13,11 +13,6 @@ any later version.  See the file COPYING.  */
 /* Is 'dirent.h' available? */
 #cmakedefine HAVE_DIRENT_H 1
 
-/* Missing time-related structs and functions. */
-#cmakedefine NEED_STRUCT_TIMEVAL 1
-#cmakedefine NEED_STRUCT_TIMEZONE 1
-#cmakedefine NEED_GETTIMEOFDAY 1
-
 /* Which curses library is being used? */
 #cmakedefine HAVE_CURSES_LIB 1
 #cmakedefine HAVE_NCURSES_LIB 1
