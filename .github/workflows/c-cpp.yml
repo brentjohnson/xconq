@@ -2,7 +2,7 @@ name: C/C++ CI
 
 on:
   push:
-    branches: [ "master", "ci-matrix" ]  # TEMP: verifying the matrix; remove before merge
+    branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 

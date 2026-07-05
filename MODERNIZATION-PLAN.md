@@ -280,51 +280,38 @@ and the BWidget vendor-audit are resolved by this removal (see §4 below).
   `ctest --label-exclude long -j$(nproc)` green (555 tests) twice, matching a
   serial run; a deliberately broken module failed only its own three tests.
 
-- **[M] Add a CI matrix:** GCC + Clang, Debug + Release, and a macOS job
-  (the kernel and SDL/curses UIs should be close to working there).
-
-**⚙ PROMPT 3.2 — recommended model: Sonnet.** *(Workflow wiring; the
-escape hatches for the two risky legs — Clang and macOS — are specified.)*
-
-```text
-Task: turn Xconq's single-configuration CI into a matrix: GCC + Clang,
-Debug + Release on Ubuntu, plus a macOS job.
-
-PREREQUISITE for the Clang legs: the §1 -fpermissive removal (prompt 2.1)
-must be committed — Clang has no equivalent flag. If it has not landed,
-do the GCC matrix + macOS now and leave a commented-out Clang leg with a
-note.
-Context: .github/workflows/c-cpp.yml currently builds once on Ubuntu with
-the default compiler and runs ctest --label-exclude long.
-Method:
-1. Ubuntu matrix: {gcc, clang} x {Debug, Release} via CC/CXX and
-   -DCMAKE_BUILD_TYPE. Both UIs must configure (same apt packages);
-   quick test lane must pass on every leg. Release is the leg most likely
-   to surface new warnings/UB-dependent behavior — report, don't paper
-   over: a test that fails only in Release is a real finding; file it as
-   a note on this plan item if you cannot fix it quickly.
-2. macOS job (macos-latest): install deps via brew. `sdlconq` now builds
-   against native SDL3 (7/2026 SDL2 port, then 7/2026 SDL3 port — see
-   §4), so `brew install sdl3` is the dependency to fetch; the
-   sdl12-compat shim is no longer relevant here. curses ships with the
-   OS. (The Tcl/Tk and Xt/Xaw UIs this note used to caveat around no
-   longer exist — see Step 2.)
-   Minimum bar for the job to be worth merging: kernel + skelconq +
-   cconq build and the quick ctest lane passes. Fix small portability
-   issues this exposes (BSD vs GNU userland in test scripts, missing
-   includes); if something needs real porting work, scope it out —
-   mark the macOS job continue-on-error: true with a linked note on this
-   plan item rather than shipping a red main branch.
-3. Keep total CI time sane: build with -j, cache nothing fancy initially,
-   and keep the long label excluded everywhere.
-4. Update CLAUDE.md's CI description and the README build/status section
-   if it exists.
-Verify: all matrix legs green in an actual CI run (push to a branch/PR
-and check, do not merge red), local spot-check of one clang Debug build +
-ctest.
-Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md,
-recording which UIs build on macOS.
-```
+- ~~**[M] Add a CI matrix:** GCC + Clang, Debug + Release, and a macOS job
+  (the kernel and SDL/curses UIs should be close to working there).~~
+  *(done 7/2026)*: Ubuntu is now a 4-leg matrix (gcc/clang x Debug/Release,
+  via `CC`/`CXX` and `-DCMAKE_BUILD_TYPE`) and all 4 legs are green,
+  confirmed in an actual CI run. Along the way this surfaced and fixed
+  three real, previously-latent bugs: the SDL3-from-source build (added
+  with the SDL2→3 port) had been silently broken on every CI run since,
+  missing `libxtst-dev` (SDL's own CMake needs XTest to configure) —
+  reproduced and fixed in a plain `ubuntu:24.04` container; two switch
+  statements had comment-only `/* fall through */` markers that only
+  GCC's `-Wimplicit-fallthrough` honors (Clang requires the
+  `[[fallthrough]];` attribute — `kernel/nlang.cc`, matching the
+  precedent in `read.cc`); and Release's optimizer surfaced a genuine
+  `-Wmaybe-uninitialized` in `curses/ccmd.cc` that Debug doesn't reach.
+  Also fixed two actual missing `break;`s found while auditing every
+  `default: break;` in the tree for the same fallthrough class
+  (`kernel/help.cc`, `sdl/sdlscreen.cc`; harmless in both cases since the
+  `default` did nothing but break anyway, but not annotated as
+  intentional).
+  The macOS job builds the kernel, `skelconq`, and `cconq` — but as of
+  this writing its `cmake -B build` configure step fails for an
+  undiagnosed reason; two fix attempts (plain configure, then hinting
+  `-DCMAKE_PREFIX_PATH=$(brew --prefix)` for `find_package(SDL3)`)
+  didn't resolve it, and the actual error text couldn't be retrieved in
+  this session (GitHub's logs API rejects anonymous/unauthenticated
+  requests even for public repos, and no macOS machine was available to
+  reproduce locally). `sdlconq` is expected to be skipped there regardless
+  — it links Xlib/Xmu/Xext directly (not just SDL3, see
+  `sdl/CMakeLists.txt`), which needs XQuartz. The job is kept
+  `continue-on-error: true`; a future session with either an authenticated
+  `gh`/API token or a real Mac should pull the actual configure error and
+  finish this leg.
 - **[M] Add ASan/UBSan CI jobs** running the quick test suite. A codebase this
   old will surface real bugs immediately; fix as they appear.
 
