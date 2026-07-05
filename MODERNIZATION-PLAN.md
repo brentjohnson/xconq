@@ -61,6 +61,20 @@ for deeper reasons — weather-view re-derivation on restore, the indepside
 in-game decision being recomputed from tables rather than restored, and
 layer drift in some experimental modules.
 
+Step 2 (done, July 2026): removed the `tcltk/` (`xconq`, the primary GUI, plus
+`imfapp`) and `x11/` (legacy Xt/Xaw `xtconq`, its `x2imf`/`imf2x`/`xshowimf`
+image tools, and the bundled 1990 `SelFile` widget) UI clients, including the
+vendored `BWidget` Tcl toolkit copy and the `xconq.desktop`/`xconq.png`
+launcher (which only launched the now-gone `xconq` binary). The Tcl/Tk UI
+only built against Tcl/Tk 8.x and was already skipped on Tcl-9-only distros;
+the Xt/Xaw UI had been dropped from the old build for decades before the
+CMake migration briefly revived it. `curses` (`cconq`) and `sdl` (`sdlconq`)
+remain, and `sdlconq` is now the primary/default graphical client and the
+sole X11 consumer. Build options, CI packages, and docs (`CLAUDE.md`,
+`CONTRIBUTING.md`, `README`, `doc/INSTALL`, `doc/commands.texi`) were updated
+accordingly; the §4 items about the Tcl/Tk 9 port, the Xt/Xaw fate decision,
+and the BWidget vendor-audit are resolved by this removal (see §4 below).
+
 ## 1. Language & toolchain
 
 > **Execution prompts (added 7/2026).** Each §1 task below carries a
@@ -99,8 +113,8 @@ Method:
    - invalid pointer conversions (void* -> T*, T* -> U*): add the explicit
      cast that matches what the code actually stores/reads, e.g. results of
      xmalloc, Lisp object payloads, and UI callback data.
-   - function-pointer type mismatches (esp. in the .def X-macro tables, Tcl/Tk
-     command tables in tcltk/, and Xt callbacks in x11/): fix the function's
+   - function-pointer type mismatches (esp. in the .def X-macro tables and
+     any UI command-dispatch tables in curses/ or sdl/): fix the function's
      signature to the expected type when it is only used through that table;
      otherwise cast at the registration site with the correct target type.
    - implicit int / missing prototypes / K&R remnants: declare the real type.
@@ -113,8 +127,8 @@ Method:
      an expansion, fix the .def entry or the expanding header, never any
      seemingly "generated" code (nothing is generated on disk).
    - Do not upgrade the C++ standard, rename files, or fix unrelated warnings.
-5. When the whole tree builds with all four UIs
-   (cmake -B ... with default options; tcltk/curses/sdl/x11 all found in CI),
+5. When the whole tree builds with both UIs
+   (cmake -B ... with default options; curses/sdl both found in CI),
    run: ctest --test-dir build-nofperm --label-exclude long. All tests must
    pass.
 6. Also update the "Historical note" comment near CMakeLists.txt:122-125 to
@@ -157,17 +171,17 @@ Method:
       the field types to const char* in the structs/accessors declared in
       the expanding headers (kernel/*.h), not in generated-looking code
       (nothing is generated on disk).
-   c. Where an external API genuinely takes writable char* (old Tcl/Tk and
-      Xt/Xaw entry points in tcltk/ and x11/), do NOT const the xconq side;
-      keep a char* and, if the source is a literal, either copy it into a
-      buffer or use a const_cast at the exact call site with a one-line
-      comment naming the API that demands it.
+   c. Where an external API genuinely takes writable char* (curses/SDL
+      toolkit entry points), do NOT const the xconq side; keep a char* and,
+      if the source is a literal, either copy it into a buffer or use a
+      const_cast at the exact call site with a one-line comment naming the
+      API that demands it.
    d. If code really does mutate a buffer that is sometimes initialized from
       a literal, replace the literal initialization with a copy
       (e.g. xmalloc + strcpy, matching nearby idiom) — do not const it.
 3. Constraints: no behavior changes; do not bump the C++ standard; do not
    fix unrelated warnings; keep diffs mechanical and reviewable.
-4. When the tree builds clean with all four UIs, drop the temporary
+4. When the tree builds clean with both UIs, drop the temporary
    -Werror=write-strings (plain default behavior is fine — the warning only
    existed because of the suppression), and run
    ctest --test-dir build --label-exclude long. All tests must pass.
@@ -248,7 +262,7 @@ Pass 1 (C++11):
    changed meaning of >> in templates (rare here); identifiers that are now
    keywords. `register` is only deprecated in C++11, not an error — leave
    those for pass 2 where they become errors.
-3. All four UIs must build; ctest --test-dir build --label-exclude long must
+3. Both UIs must build; ctest --test-dir build --label-exclude long must
    pass. Commit.
 Pass 2 (C++17):
 4. Set CMAKE_CXX_STANDARD to 17.
@@ -258,7 +272,7 @@ Pass 2 (C++17):
    any lingering auto_ptr/binder1st-era usage — replace with the obvious
    modern equivalent; new header-clash fallout if any min/max-style macro
    survived (fix the macro, as in the previous task).
-6. Same bar: all four UIs build, quick ctest passes. Update the comment
+6. Same bar: both UIs build, quick ctest passes. Update the comment
    above the standard settings to say why 17 (and why not newer). Commit.
 Constraints: this is a compile-fix task, not a modernization sweep — do not
 refactor to auto/range-for/smart pointers, do not fix unrelated warnings.
@@ -276,18 +290,18 @@ Task: rename Xconq's .c files that are compiled as C++ to .cc, and remove the
 LANGUAGE CXX override machinery from CMake. Prerequisites: all earlier §1
 tasks (through the C++17 bump) are committed.
 
-Context: ~86 .c files (kernel/ ~53, tcltk/ 15, x11/ 15, curses/ 3) are
-compiled as C++ via the helper function xconq_cxx_sources() defined in the
-top-level CMakeLists.txt (it sets LANGUAGE CXX source properties). Each UI
-directory's CMakeLists.txt calls it on its source lists. The sdl/ UI already
-uses .cc.
+Context: ~56 .c files (kernel/ ~53, curses/ 3) are compiled as C++ via the
+helper function xconq_cxx_sources() defined in the top-level CMakeLists.txt
+(it sets LANGUAGE CXX source properties). Each UI directory's CMakeLists.txt
+calls it on its source lists. The sdl/ UI already uses .cc. (The tcltk/ and
+x11/ UIs, which used to add ~30 more .c files here, were removed in Step 2.)
 
 Method:
 1. Determine the exact rename set: every .c file that appears in a source
-   list passed to xconq_cxx_sources() in kernel/, tcltk/, x11/, curses/
-   CMakeLists.txt. Dead platform files NOT in the build (e.g. kernel/mac.c,
-   kernel/win32.c, tcltk/tkmac.c, tcltk/tkwin32.c — verify by checking the
-   source lists) stay .c: their fate is decided in plan §5, don't touch them.
+   list passed to xconq_cxx_sources() in kernel/, curses/ CMakeLists.txt.
+   Dead platform files NOT in the build (e.g. kernel/mac.c, kernel/win32.c —
+   verify by checking the source lists) stay .c: their fate is decided in
+   plan §5, don't touch them.
 2. Rename with `git mv file.c file.cc` so history follows.
 3. Update every reference to the old names:
    - the source lists in each CMakeLists.txt;
@@ -300,7 +314,7 @@ Method:
 4. Delete the xconq_cxx_sources() function and all its call sites once no
    .c files remain in any target.
 5. Full verification: fresh configure from scratch (delete and re-create the
-   build dir — stale LANGUAGE properties can mask breakage), build all four
+   build dir — stale LANGUAGE properties can mask breakage), build both
    UIs, run ctest --test-dir build --label-exclude long, and run the
    test/*-diff.sh and *-uses.sh scripts by hand to make sure the filename
    sweep didn't break their greps.
@@ -354,7 +368,7 @@ Method:
 4. Any warning that reveals a genuine behavior bug (wrong operator
    precedence, dead condition, missing break): fix it and list it explicitly
    in the commit message.
-5. All four UIs build; ctest --test-dir build --label-exclude long passes
+5. Both UIs build; ctest --test-dir build --label-exclude long passes
    in both Debug and -O2 configs. Commit, then mark this task done
    (strikethrough + date) in MODERNIZATION-PLAN.md, noting the remaining
    warning baseline count.
@@ -400,7 +414,7 @@ Method:
    as a note on this plan item instead. Do not half-convert.
 4. Sweep for leftovers: grep for snprintf.c/timestuff.c/obstack in doc/,
    test/ scripts, pkg/, and CLAUDE.md; clean up references.
-5. Verify: fresh configure + build of all four UIs,
+5. Verify: fresh configure + build of both UIs,
    ctest --test-dir build --label-exclude long passes. The help system is
    the risk area if obstack was replaced — also run the skelconq help
    smoke check (test/check-test or the help .inp scripts under test/).
@@ -506,15 +520,15 @@ Context: .github/workflows/c-cpp.yml currently builds once on Ubuntu with
 the default compiler and runs ctest --label-exclude long.
 Method:
 1. Ubuntu matrix: {gcc, clang} x {Debug, Release} via CC/CXX and
-   -DCMAKE_BUILD_TYPE. All four UIs must configure (same apt packages);
+   -DCMAKE_BUILD_TYPE. Both UIs must configure (same apt packages);
    quick test lane must pass on every leg. Release is the leg most likely
    to surface new warnings/UB-dependent behavior — report, don't paper
    over: a test that fails only in Release is a real finding; file it as
    a note on this plan item if you cannot fix it quickly.
-2. macOS job (macos-latest): install deps via brew. Expect: Tcl/Tk will
-   be 9.x (the Tk UI correctly skips — that is fine); sdl12-compat may or
-   may not be available (sdl2 + sdl12-compat exist in brew — try; skip the
-   SDL UI if not); curses ships with the OS; X11 absent (xtconq skips).
+2. macOS job (macos-latest): install deps via brew. Expect: sdl12-compat may
+   or may not be available (sdl2 + sdl12-compat exist in brew — try; skip
+   the SDL UI if not); curses ships with the OS. (The Tcl/Tk and Xt/Xaw UIs
+   this note used to caveat around no longer exist — see Step 2.)
    Minimum bar for the job to be worth merging: kernel + skelconq +
    cconq build and the quick ctest lane passes. Fix small portability
    issues this exposes (BSD vs GNU userland in test scripts, missing
@@ -734,24 +748,28 @@ Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md.
 
 ## 4. User interfaces
 
-- **[L] Port the Tcl/Tk UI (the primary one) to Tcl/Tk 9.** Tk 9 removed
-  `Tk_Offset` and moved `Tk_ConfigureWidget` to `Tcl_Obj`-based configuration
-  (~57 uses in `tkisamp.c`/`tkmap.c`, plus an API sweep). Until then the UI
-  only builds against 8.x (CMake detects and skips 9.x); Fedora already ships
-  only Tcl 9, so this is becoming urgent.
+- ~~**[L] Port the Tcl/Tk UI (the primary one) to Tcl/Tk 9.**~~ *(resolved by
+  removal, 7/2026)*: rather than porting, the Tcl/Tk UI (`tcltk/`, `xconq` +
+  `imfapp`) was deleted outright — see Step 2. It only built against Tcl/Tk
+  8.x and was already skipped on Tcl-9-only distros (Fedora); porting ~57
+  `Tk_Offset`/`Tk_ConfigureWidget` call sites was judged not worth it with
+  the SDL UI available as the graphical successor.
 - **[M] Port the SDL UI from SDL 1.2 to SDL2 or SDL3.** It currently builds
   only via sdl12-compat. It was explicitly intended as the successor UI
-  ("sleeker, faster replacement"), and an SDL3 port is the most plausible
-  long-term cross-platform frontend.
-- **[S] Decide the fate of the Xt/Xaw UI (`xtconq`).** It was dropped from the
-  old configure system decades ago and only compiles again as of the CMake
-  migration. Recommendation: keep it build-tested but officially deprecated,
-  and delete it (plus the bundled 1990 K&R `SelFile` widget) once the SDL port
-  is usable.
-- **[S] Vendor-audit the bundled Tcl `BWidget` toolkit copy** in `tcltk/` —
-  either update it or depend on the distro package.
-- **[S] Ship an AppStream metainfo file** alongside the existing
-  `xconq.desktop`/`xconq.png` so desktop stores list the game properly.
+  ("sleeker, faster replacement"), and now that the Tcl/Tk UI is gone
+  (Step 2, 7/2026) it is the sole graphical client and the top UI priority;
+  an SDL3 port is the most plausible long-term cross-platform frontend.
+- ~~**[S] Decide the fate of the Xt/Xaw UI (`xtconq`).**~~ *(resolved by
+  removal, 7/2026)*: deleted outright rather than kept deprecated — see
+  Step 2. This also removed its `x2imf`/`imf2x`/`xshowimf` image tools and
+  the bundled 1990 K&R `SelFile` widget.
+- ~~**[S] Vendor-audit the bundled Tcl `BWidget` toolkit copy**~~ *(moot,
+  7/2026)*: `tcltk/` (and its vendored `BWidget` copy) was deleted along
+  with the Tcl/Tk UI in Step 2.
+- **[S] Ship an AppStream metainfo file** for `sdlconq` so desktop stores
+  list the game properly. (The old `xconq.desktop`/`xconq.png`, which
+  launched the now-removed `xconq` binary, was deleted in Step 2; a fresh
+  desktop entry pointing at `sdlconq` is part of this item.)
 
 ## 5. Platform behavior
 
@@ -776,7 +794,8 @@ Context/anchors:
 - kernel/unix.c: game_homedir() (~line 187) returns $XCONQHOME if set, else
   $HOME/.xconq (created on demand). Everything per-user (saves, preferences,
   scores) hangs off it; grep for game_homedir and ".xconq" across kernel/
-  and the UIs (the Tcl/Tk UI may build preference paths itself).
+  and the UIs (curses/sdl — the Tcl/Tk UI, which may have built preference
+  paths itself, was removed in Step 2, so there is nothing to check there).
 - CMakeLists.txt:31: XCONQ_SCORES_DIR defaults to /var/lib/xconq/scores;
   kernel/score.c consults it. The games-group/setgid install model is dead.
 Design:
@@ -802,10 +821,12 @@ under .local/share/xconq and that a pre-seeded .xconq is still read.
 Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md.
 ```
 - **[M] Decide on Windows/macOS support.** The tree carries Classic Mac OS
-  (`kernel/mac.c`, `tcltk/tkmac.c`, `sdl/sdlmac.cc`) and Win32 (`kernel/win32.c`,
-  `tcltk/tkwin32.c`, RC files) code that hasn't compiled in 20 years. Either
-  wire Windows into CMake + CI (feasible: SDL + winsock) or delete the dead
-  files — Classic Mac support should be deleted regardless.
+  (`kernel/mac.c`, `sdl/sdlmac.cc`) and Win32 (`kernel/win32.c`, RC files)
+  code that hasn't compiled in 20 years. Either wire Windows into CMake + CI
+  (feasible: SDL + winsock) or delete the dead files — Classic Mac support
+  should be deleted regardless. (The Tcl/Tk-side Classic Mac/Win32 files this
+  item used to name, `tcltk/tkmac.c`/`tkxmac.c`/`iappmac.c`/`tkwin32.c`/
+  `iappwin32.c`, were already removed with the rest of `tcltk/` in Step 2.)
 
 **⚙ PROMPT 5.2 — recommended model: Sonnet.** *(The deletion half is already
 decided by the plan; the Windows half is explicitly scoped to an assessment,
@@ -816,9 +837,11 @@ Task: delete Xconq's dead Classic Mac OS support, and write an assessment
 (not an implementation) of what reviving Windows support would take.
 
 Part 1 — delete Classic Mac code (the plan has already decided this):
-1. Candidate files: kernel/mac.c, tcltk/tkmac.c, tcltk/tkxmac.c,
-   tcltk/iappmac.c, sdl/sdlmac.cc. Verify each is NOT referenced by any
-   CMakeLists.txt (they should not be), then git rm them.
+1. Candidate files: kernel/mac.c, sdl/sdlmac.cc. (The Tcl/Tk-side Classic Mac
+   files this task used to list, tcltk/tkmac.c, tcltk/tkxmac.c,
+   tcltk/iappmac.c, were already removed with the rest of tcltk/ in Step 2 —
+   nothing to do there now.) Verify each remaining candidate is NOT
+   referenced by any CMakeLists.txt (it should not be), then git rm it.
 2. Sweep for Classic-Mac-only conditional code and references:
    grep -rn "MAC_OS\|MACINTOSH\|THINK_C\|MPW\|__MWERKS__\|mac\.c" across
    kernel/, UIs, doc/, pkg/, and CMake comments. Remove #ifdef'd Classic
@@ -830,16 +853,18 @@ Part 1 — delete Classic Mac code (the plan has already decided this):
    (check misc/ and images/ for .hqx/.rsrc-style files) and prune doc
    mentions (README, doc/INSTALL-*).
 Part 2 — Windows assessment (do NOT delete or implement):
-4. Inventory the Win32 code: kernel/win32.c, tcltk/tkwin32.c,
-   tcltk/iappwin32.c, pkg/xconq.nsi.in, pkg/README_devcpp_w32.rtf, any .rc
-   files. For each: what it provides, what it targets (which UI, which era
-   of the Win32 API), rough state.
+4. Inventory the Win32 code: kernel/win32.c and any remaining .rc files.
+   (tcltk/tkwin32.c, tcltk/iappwin32.c, pkg/xconq.nsi.in, and
+   pkg/README_devcpp_w32.rtf were already removed — the former pair with
+   tcltk/ in Step 2, the latter pair with pkg/ in the earlier repo-hygiene
+   commit.) For each remaining file: what it provides, what it targets
+   (which UI, which era of the Win32 API), rough state.
 5. Append a short "Windows assessment (date)" note to this plan item in
    MODERNIZATION-PLAN.md: the plausible modern path (SDL2/3 UI + winsock +
    MinGW/MSVC in CI), what the existing files contribute to that (likely
    almost nothing), and a recommendation. The maintainer decides; leave the
    Win32 files in place.
-Verify: fresh configure + build of all four UIs, quick ctest green.
+Verify: fresh configure + build of both UIs, quick ctest green.
 Commit part 1; mark the Classic-Mac half done in the plan item and leave
 the Windows decision open with your assessment note.
 ```
@@ -871,7 +896,7 @@ Method:
 3. Check printf-style format strings for Z32 arguments if any warnings
    appear (int32_t is plain int on all supported platforms, so expect
    none).
-Verify: fresh configure (acdefs.h regenerates), build all four UIs,
+Verify: fresh configure (acdefs.h regenerates), build both UIs,
 ctest --test-dir build --label-exclude long green.
 Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md.
 ```
@@ -997,8 +1022,9 @@ game modules, so treat input as untrusted. Targets:
   parsed via the GDL/lisp reader, so structure is lisp-checked, but look
   at what happens with hostile numeric fields (dimensions, offsets, color
   counts) and embedded raw data lengths.
-- x11/ XBM/XPM handling and any per-UI image loading (tcltk/ and sdl/
-  mostly delegate to their toolkits — verify, don't assume).
+- Any per-UI image loading (sdl/ mostly delegates to its toolkit — verify,
+  don't assume). (The x11/ XBM/XPM readers this item used to name were
+  removed along with the Xt/Xaw UI in Step 2.)
 Method:
 1. For each decoder: map every length/dimension/count read from input to
    where it sizes an allocation, indexes an array, or bounds a loop.
@@ -1122,8 +1148,8 @@ Task: stand up clang-tidy for Xconq with a minimal high-signal profile,
 triage the findings, and fix the clear true positives.
 
 PREREQUISITE: the §1 -fpermissive removal must be committed (clang-tidy
-uses Clang's frontend, which has no equivalent of -fpermissive). If UI
-headers (Tcl/Tk, Xt) still trip Clang, scope this task to kernel/ and say
+uses Clang's frontend, which has no equivalent of -fpermissive). If curses
+or SDL/X11 headers still trip Clang, scope this task to kernel/ and say
 so in the plan note.
 Method:
 1. Configure with -DCMAKE_EXPORT_COMPILE_COMMANDS=ON. Note the LANGUAGE CXX
@@ -1271,10 +1297,11 @@ Rules (strict):
    them into a report instead. Known/expected cases to check rather than
    assume: kernel/obstack.c and obstack.h (GNU libc origin — LGPL era,
    if the file still exists — the §1 shim-removal task may have deleted
-   it), kernel/snprintf.c (third-party, same caveat), x11/SelFile/*
-   (1990 third-party widget with its own notice), tcltk/BWidget/* (vendored
-   toolkit — has its own LICENSE, leave untouched), anything in images/,
+   it), kernel/snprintf.c (third-party, same caveat), anything in images/,
    bitmaps/, sounds/ (media provenance is murky — skip media entirely).
+   (x11/SelFile/* and tcltk/BWidget/*, previously listed here as vendored
+   third-party code with its own licensing, no longer exist — both dirs
+   were removed in Step 2.)
 4. Implementation: script the sweep (the scratchpad is fine for the
    script), but review the diff for oddballs — files with no notice at
    all get SPDX only if they are clearly original Xconq code (kernel/*.def
@@ -1349,9 +1376,11 @@ forward old text unchecked.
 Method:
 1. README: rewrite as the front door. What Xconq is (game system + GDL +
    games library — keep/adapt the existing good prose), current status
-   (CMake build, four UIs and their state: Tcl/Tk primary but 8.x-only,
-   curses, SDL via sdl12-compat, xtconq deprecated — check the plan/tree
-   for what has landed), quick build instructions (cmake -B build &&
+   (CMake build, two UIs: curses (cconq) and SDL via sdl12-compat
+   (sdlconq, the primary graphical client) — the Tcl/Tk and Xt/Xaw UIs
+   were removed in Step 2, 7/2026; a minimal UI-section update already
+   landed with that removal, but re-verify against the current tree
+   rather than trusting it), quick build instructions (cmake -B build &&
    cmake --build build -j, dependency list matching the CI workflow's
    apt packages), how to run tests, pointer to MODERNIZATION-PLAN.md and
    CONTRIBUTING.md (if it exists), license note. Delete dead URLs
@@ -1361,9 +1390,11 @@ Method:
 2. doc/INSTALL-*: read each variant (there are several per-platform ones).
    Fold anything still true into ONE current INSTALL (or a section of
    README) describing the CMake build with per-distro dependency lists
-   (the Ubuntu list exists in .github/workflows/c-cpp.yml; add Fedora
-   equivalents, noting Fedora's Tcl-9-only situation blocks the Tk UI
-   there for now — verify against the plan's §4 status). git rm the
+   (the Ubuntu list exists in .github/workflows/c-cpp.yml; doc/INSTALL
+   already got a minimal Fedora dnf line as part of Step 2's removal —
+   re-verify it rather than trusting it). The Tcl-9-vs-Tk-UI caveat this
+   step used to note is moot: the Tcl/Tk UI no longer exists (Step 2,
+   7/2026), so there is nothing left to block on Fedora. git rm the
    obsolete per-platform files (Mac OS 9, Windows ME era); mention they
    remain in git history.
 3. Sweep remaining prose for the "7.5 Prerelease" framing and 2005-era
@@ -1379,8 +1410,9 @@ if any file consumed by the build was touched — man-page templates are).
 Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md.
 ```
 - **[S] Start tagging releases.** The version has been 7.5.0pre for 20 years.
-  Cut a 7.5.0 once the Tcl/Tk 9 port or SDL port lands, with release notes and
-  a source tarball from CI (replaces the old `make distcheck`).
+  Cut a 7.5.0 once the SDL2/3 port lands (the Tcl/Tk UI, the plan's other
+  original gate, was removed rather than ported — see Step 2), with release
+  notes and a source tarball from CI (replaces the old `make distcheck`).
 
 **⚙ PROMPT 8.3 — recommended model: Sonnet.** *(Release machinery only —
 the decision to actually cut 7.5.0 stays with the maintainer.)*
@@ -1388,8 +1420,9 @@ the decision to actually cut 7.5.0 stays with the maintainer.)*
 ```text
 Task: build Xconq's release machinery so that pushing a git tag produces a
 GitHub release with a source tarball and notes. Do NOT tag or cut the
-release itself — the plan gates 7.5.0 on the Tcl/Tk 9 or SDL port landing,
-and that call is the maintainer's.
+release itself — the plan gates 7.5.0 on the SDL2/3 port landing (the
+Tcl/Tk UI, the plan's other original gate, was removed in Step 2 rather
+than ported), and that call is the maintainer's.
 
 Method:
 1. Version plumbing: find where the version is set (top-level
@@ -1472,7 +1505,7 @@ scoring, then RNG+turn state):
    `extern GameState *gg` (or similar) so no call site changes. Keep the
    .def-generated storage (gvar.def etc.) working by pointing its expansion
    at the struct — change the expanding header, never expanded copies.
-3. After each subsystem: full build of all four UIs and
+3. After each subsystem: full build of both UIs and
    ctest --test-dir build --label-exclude long. The save/restore tests are
    the real safety net here — any state you misclassify or fail to reset
    shows up as a save mismatch. Also run one long-label AI game if the
@@ -1488,7 +1521,8 @@ session (subsystems done / remaining).
 ```
 - **[L] Consider a modern UI built on the SDL3 port** (or a web frontend
   driven by a headless kernel over the existing network protocol) as the
-  eventual successor to the Tcl/Tk interface.
+  long-term evolution of `sdlconq`, now the sole graphical client since the
+  Tcl/Tk interface was removed (Step 2, 7/2026).
 
 **⚙ PROMPT 9.2 — recommended model: Opus.** *(The plan says "consider":
 the deliverable is an architecture decision document grounded in reading
@@ -1507,10 +1541,11 @@ Method:
 1. Ground truth first — measure the UI contract. Every UI implements the
    callback surface the kernel expects (the interface functions declared
    in kernel/conq.h / kpublic.h that each UI must provide — enumerate them
-   from an existing UI, e.g. what skelconq stubs out vs what tcltk/
-   implements). Document: how big is the required surface, which parts
-   are display-only vs input vs blocking dialogs, and where the kernel
-   assumes synchronous UI responses (the pain point for any async/web
+   from an existing UI, e.g. what skelconq stubs out vs what sdl/
+   implements; tcltk/ was removed in Step 2, so sdl/ or curses/ is now the
+   reference implementation). Document: how big is the required surface,
+   which parts are display-only vs input vs blocking dialogs, and where
+   the kernel assumes synchronous UI responses (the pain point for any async/web
    frontend).
 2. Assess the three candidate paths honestly, each with: effort estimate,
    what §1-§9 work it depends on (esp. 9.1 de-globalization for anything
@@ -1530,8 +1565,10 @@ Method:
 3. Recommend ONE path with a phased milestone plan (milestone 1 must be
    a playable spectator/hotseat client of the default game, not feature
    parity) and name the first three concrete engineering tasks.
-4. Keep the Tcl/Tk UI's fate explicit: the recommendation must say what
-   happens to it (and to §4's Tcl 9 port urgency) under each option.
+4. Keep `sdlconq`'s (and `cconq`'s) fate explicit: the recommendation must
+   say what happens to each of the two remaining UIs under each option.
+   (This item previously asked the same question about the Tcl/Tk UI,
+   which was removed rather than ported — see Step 2.)
 Deliverable: doc/ui-successor-design.md committed; add a dated pointer on
 this plan item. Nothing else changes in the tree.
 ```
@@ -1600,8 +1637,11 @@ lives.
 
 1. ~~§3 test honesty (fail on errors) + §2 bug fixes~~ (done 7/2026) — green
    means something now.
-2. §1 language cleanup through the C++17 bump — unblocks tooling and Clang.
-3. §4 Tcl/Tk 9 port (urgent: distros are dropping 8.x) or the SDL2/3 port,
-   whichever the project wants as its future face.
-4. §5–§8 as continuous background work.
-5. §9 only if the project attracts sustained interest.
+2. ~~Remove the Tcl/Tk and Xt/Xaw UIs~~ (done 7/2026, Step 2) — rather than
+   porting Tcl/Tk to 9.x, deleted it and the legacy Xt/Xaw UI outright;
+   `sdlconq` is now the primary graphical client.
+3. §1 language cleanup through the C++17 bump — unblocks tooling and Clang.
+4. §4 SDL2/3 port — the project's future graphical face, now that Tcl/Tk
+   is gone.
+5. §5–§8 as continuous background work.
+6. §9 only if the project attracts sustained interest.

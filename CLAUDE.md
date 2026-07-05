@@ -27,14 +27,15 @@ ctest --test-dir build --label-exclude long   # 'long' tests play full games
 cmake --install build
 ```
 
-UI options (`-DXCONQ_UI_TCLTK/CURSES/SDL/X11=ON|OFF`) gate the four interfaces.
-Executables: `xconq` (Tcl/Tk, the primary UI), `cconq` (curses), `sdlconq` (SDL 1.2 via
-sdl12-compat), `xtconq` (legacy Xt/Xaw). Other knobs: `XCONQ_DATA_DIR`,
+UI options (`-DXCONQ_UI_CURSES/SDL=ON|OFF`) gate the two interfaces.
+Executables: `cconq` (curses), `sdlconq` (SDL 1.2 via sdl12-compat). The Tcl/Tk
+(`xconq`) and legacy Xt/Xaw (`xtconq`) UIs were removed 7/2026 — see
+MODERNIZATION-PLAN.md's Step 2 note. Other knobs: `XCONQ_DATA_DIR`,
 `XCONQ_SCORES_DIR`. Generated config headers (`acdefs.h`, `version.h`) land in
 `build/include/`, from templates in `kernel/*.h.in`.
 
-CI (`.github/workflows/c-cpp.yml`, Ubuntu) installs `tcl-dev tk-dev libncurses-dev
-libsdl1.2-compat-dev libxaw7-dev libxmu-dev libxpm-dev`, builds all UIs, and runs
+CI (`.github/workflows/c-cpp.yml`, Ubuntu) installs `libncurses-dev
+libsdl1.2-compat-dev libxmu-dev`, builds both UIs, and runs
 ctest without the `long` label.
 
 ### Running tests
@@ -96,7 +97,7 @@ stay in sync.
   turns; `kernel.h` is the internal header, `conq.h`/`kpublic.h` the public API to UIs.
 - **`kernel/ai*.c` / `ai*.cc`, `plan.c`, `mplayer.c`** — the AIs. GDL games are analyzed by
   a generic AI that infers how to play arbitrary rulesets.
-- **UIs** (`tcltk/`, `curses/`, `sdl/`, `x11/`) — each provides a `main` and implements the
+- **UIs** (`curses/`, `sdl/`) — each provides a `main` and implements the
   interface callbacks the kernel expects. They link the kernel as `libconq.a` / `libconqlow.a`.
 - **`lib/`** — the GDL games library (`*.g`). This is data, but it is where most "content"
   changes happen and is exercised by the test suite.

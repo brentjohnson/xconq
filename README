@@ -58,17 +58,15 @@ in a wide variety of systems and environments, including most versions of
 Unix, Linux, Macintosh (PowerPC only), and Windows.
 
 Once Xconq is installed, depending on your system you should be able
-to either type "xconq" at a shell or click on the program's icon.  The
-program will guide you the rest of the way.  If this is your first
-time playing Xconq, choose the "Introductory" game; this is a simple
+to either type "cconq" or "sdlconq" at a shell or click on the program's
+icon.  The program will guide you the rest of the way.  If this is your
+first time playing Xconq, choose the "Introductory" game; this is a simple
 preset scenario that uses the standard rules.
 
-There are also alternative user interfaces for Xconq.  The Curses interface 
-can be used in terminals and text consoles; it is generally invoked as 
-"cconq".  The SDL interface is being developed as a sleeker, faster, easier-
-to-use replacement to the Tcl/Tk interface; it can be invoked as "sdlconq", 
-or, on Windows, by locating it in "Start Menu | Programs" as 
-"Xconq (Experimental)".
+There are two user interfaces for Xconq.  The Curses interface
+can be used in terminals and text consoles; it is generally invoked as
+"cconq".  The SDL interface is being developed as a sleeker, faster,
+easier-to-use graphical interface; it can be invoked as "sdlconq".
 
 Xconq calls several different sites home.  For a number of years now, Xconq 
 has been found at

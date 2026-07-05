@@ -21,10 +21,8 @@ include(CheckTypeSize)
 # User-facing options.
 # ---------------------------------------------------------------------------
 
-option(XCONQ_UI_TCLTK  "Build the Tcl/Tk interface (installed as 'xconq')" ON)
 option(XCONQ_UI_CURSES "Build the curses interface (cconq)" ON)
 option(XCONQ_UI_SDL    "Build the SDL 1.2 interface (sdlconq)" ON)
-option(XCONQ_UI_X11    "Build the legacy Xt/Xaw interface (xtconq) and X11 image tools" ON)
 
 set(XCONQ_DATA_DIR "${CMAKE_INSTALL_FULL_DATADIR}/xconq" CACHE PATH
     "Installed location of the games library, images, and UI scripts")
@@ -43,32 +41,11 @@ if(XCONQ_UI_CURSES)
     endif()
 endif()
 
-if(XCONQ_UI_TCLTK)
-    find_package(TCL)
-    if(NOT TCLTK_FOUND)
-        message(WARNING "Tcl/Tk not found; skipping the Tcl/Tk interface")
-    elseif(TCL_INCLUDE_PATH)
-        # The UI code uses the Tcl/Tk 8.x C API (Tk_Offset, string-based
-        # Tk_ConfigureWidget, ...), which Tcl/Tk 9 removed.
-        file(STRINGS ${TCL_INCLUDE_PATH}/tcl.h _tcl_major
-             REGEX "define[ \t]+TCL_MAJOR_VERSION")
-        if(_tcl_major MATCHES "TCL_MAJOR_VERSION[ \t]+([0-9]+)"
-           AND CMAKE_MATCH_1 GREATER 8)
-            message(WARNING "Tcl/Tk ${CMAKE_MATCH_1}.x found, but the Tcl/Tk "
-                    "interface requires 8.x; skipping it")
-            set(TCLTK_FOUND FALSE)
-        endif()
-    endif()
-endif()
-
 if(XCONQ_UI_SDL)
     find_package(SDL)
     if(NOT SDL_FOUND)
         message(WARNING "SDL 1.2 not found (try sdl12-compat); skipping the SDL interface")
     endif()
-endif()
-
-if(XCONQ_UI_TCLTK OR XCONQ_UI_SDL OR XCONQ_UI_X11)
     find_package(X11)
 endif()
 
@@ -163,16 +140,8 @@ add_subdirectory(kernel)
 if(XCONQ_UI_CURSES AND CURSES_FOUND)
     add_subdirectory(curses)
 endif()
-if(XCONQ_UI_TCLTK AND TCLTK_FOUND AND X11_FOUND)
-    add_subdirectory(tcltk)
-endif()
 if(XCONQ_UI_SDL AND SDL_FOUND AND X11_FOUND)
     add_subdirectory(sdl)
-endif()
-if(XCONQ_UI_X11 AND X11_FOUND AND X11_Xaw_FOUND)
-    add_subdirectory(x11)
-elseif(XCONQ_UI_X11)
-    message(WARNING "X11/Xaw not found; skipping the xtconq interface")
 endif()
 
 add_subdirectory(doc)
@@ -191,8 +160,3 @@ install(DIRECTORY lib/
 install(DIRECTORY images/
         DESTINATION ${XCONQ_DATA_DIR}/images
         FILES_MATCHING PATTERN "*.gif" PATTERN "*.bmp")
-
-if(UNIX AND NOT APPLE)
-    install(FILES xconq.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
-    install(FILES xconq.png DESTINATION ${CMAKE_INSTALL_DATADIR}/pixmaps)
-endif()

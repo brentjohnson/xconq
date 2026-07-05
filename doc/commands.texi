@@ -520,7 +520,8 @@ to move by; otherwise, the unit will move as far as possible.
 @end ifset
 
 @item v
-(@code{flash}) Flash the current unit. (Xt/Xaw interface only)
+(@code{flash}) Flash the current unit. (Only implemented by the Xt/Xaw
+interface, removed 7/2026; not currently available in any UI.)
 @cindex Flash command
 @cindex Commands, flash
 
@@ -805,7 +806,8 @@ forth.  (This is quite risky if the other side does not also trust you!)
 @end ifset
 
 @item unit
-Open a closeup window for the current unit. (Xt/Xaw interface only)
+Open a closeup window for the current unit. (Only implemented by the
+Xt/Xaw interface, removed 7/2026; not currently available in any UI.)
 @cindex Unit command
 @cindex Commands, unit
 

@@ -4,28 +4,23 @@ Xconq builds with CMake (3.20 or newer) and a C++ compiler such as GCC.
 
 1. Provide the required supporting software.
 
-The primary graphical interface is based on Tcl/Tk 8.x, so if you are
-planning on building it, both the tcl and tk development libraries
-must be installed (packages are typically named tcl-dev/tk-dev or
-tcl-devel/tk-devel).
-
-Interfaces based on curses, SDL 1.2, and Xt/Xaw are also available:
+Two interfaces are available:
 
   - curses (cconq): needs a curses library (ncurses on most systems).
   - SDL (sdlconq): needs the SDL 1.2 API; on modern systems this is
     provided by sdl12-compat (e.g. libsdl1.2-compat-dev on Debian/Ubuntu,
     sdl12-compat-devel on Fedora).
-  - Xt/Xaw (xtconq): needs the X Athena Widget set (libXaw) plus libXmu.
+
+(The Tcl/Tk graphical interface and the legacy Xt/Xaw interface were
+removed in 7/2026 -- see MODERNIZATION-PLAN.md's Step 2 note.)
 
 On Debian/Ubuntu, everything at once:
 
-    sudo apt install cmake g++ tcl-dev tk-dev libncurses-dev \
-        libsdl1.2-compat-dev libxaw7-dev libxmu-dev libxpm-dev
+    sudo apt install cmake g++ libncurses-dev libsdl1.2-compat-dev libxmu-dev
 
 On Fedora:
 
-    sudo dnf install cmake gcc-c++ tcl-devel tk-devel ncurses-devel \
-        sdl12-compat-devel libXaw-devel libXmu-devel libXpm-devel
+    sudo dnf install cmake gcc-c++ ncurses-devel sdl12-compat-devel libXmu-devel
 
 Each interface is built only if its dependencies are found; a missing
 dependency produces a warning and that interface is skipped.  The
@@ -38,12 +33,8 @@ kernel and the headless test driver (skelconq) always build.
 
 Useful configuration options (pass as -D<option>=<value> to cmake):
 
-    XCONQ_UI_TCLTK=ON/OFF    Build the Tcl/Tk interface (installed as
-                             "xconq"; default ON)
     XCONQ_UI_CURSES=ON/OFF   Build the curses interface, cconq (default ON)
     XCONQ_UI_SDL=ON/OFF      Build the SDL interface, sdlconq (default ON)
-    XCONQ_UI_X11=ON/OFF      Build the legacy Xt/Xaw interface, xtconq,
-                             and the X11 image tools (default ON)
     CMAKE_INSTALL_PREFIX     Installation prefix (default /usr/local)
     XCONQ_SCORES_DIR         Directory for score files at run time
                              (default /var/lib/xconq/scores)
@@ -52,7 +43,7 @@ Useful configuration options (pass as -D<option>=<value> to cmake):
 3. If you want to test things out before installing, run a UI binary
 from the build tree with the games library from this distribution:
 
-    ./build/tcltk/xconq -L lib
+    ./build/sdl/sdlconq -L lib
 
 4. Run the test suite (uses the headless skelconq driver):
 

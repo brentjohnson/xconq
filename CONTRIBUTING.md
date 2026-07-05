@@ -24,10 +24,11 @@ cmake --install build
 
 UI options, all `ON` by default:
 
-- `-DXCONQ_UI_TCLTK=ON|OFF` — Tcl/Tk interface, installed as `xconq`
 - `-DXCONQ_UI_CURSES=ON|OFF` — curses interface, `cconq`
 - `-DXCONQ_UI_SDL=ON|OFF` — SDL 1.2 interface (via sdl12-compat), `sdlconq`
-- `-DXCONQ_UI_X11=ON|OFF` — legacy Xt/Xaw interface, `xtconq`
+
+(The Tcl/Tk `xconq` and legacy Xt/Xaw `xtconq` interfaces were removed 7/2026;
+see MODERNIZATION-PLAN.md's Step 2 note.)
 
 Other useful cache variables: `XCONQ_DATA_DIR` (installed location of the
 games library/images/UI scripts) and `XCONQ_SCORES_DIR` (runtime score file

@@ -16,8 +16,7 @@ jobs:
     - name: install dependencies
       run: |
         sudo apt update
-        sudo apt install -y tcl-dev tk-dev libncurses-dev \
-          libsdl1.2-compat-dev libxaw7-dev libxmu-dev libxpm-dev
+        sudo apt install -y libncurses-dev libsdl1.2-compat-dev libxmu-dev
     - name: configure
       run: cmake -B build
     - name: build
