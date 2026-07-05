@@ -592,38 +592,9 @@ already CMake-wired) but is unverified and pre-dates modern Win32/UTF-8
 path conventions; everything UI-side would be new work. This is a
 maintainer call, not made here — the Win32 files are left in place either
 way pending that decision.
-- **[S] Replace kernel/config.h's homegrown size detection**, which checks
+- ~~**[S] Replace kernel/config.h's homegrown size detection**, which checks
   `SIZEOF_INT`/`SIZEOF_LONG` for its `Z16`/`Z32` typedefs — replace with
-  `<cstdint>` fixed width types and delete the checks from `acdefs.h`.
-
-**⚙ PROMPT 5.3 — recommended model: Sonnet.** *(Small, mechanical,
-compiler-verified.)*
-
-```text
-Task: replace Xconq's homegrown fixed-width typedefs with <cstdint> and
-delete the configure-time size checks.
-
-Context/anchors:
-- kernel/config.h lines ~58-78: Z16/Z16u/Z32/Z32u typedefs selected via
-  #if on SIZEOF_INT / SIZEOF_LONG.
-- Top-level CMakeLists.txt lines ~101-103: check_type_size(int/long/
-  "long long" ...) feeding SIZEOF_* into the generated acdefs.h (template
-  kernel/acdefs.h.in).
-Method:
-1. In kernel/config.h, define the Z types from <cstdint>: Z16 = int16_t,
-   Z16u = uint16_t, Z32 = int32_t, Z32u = uint32_t. Keep the type NAMES —
-   do not rename call sites.
-2. grep -rn "SIZEOF_INT\|SIZEOF_LONG\|SIZEOF_LONG_LONG" across the whole
-   tree. Remove every remaining consumer (fix it to <cstdint>/<climits>
-   facts), then delete the check_type_size calls from CMakeLists.txt and
-   the corresponding #cmakedefine/#define lines from kernel/acdefs.h.in.
-3. Check printf-style format strings for Z32 arguments if any warnings
-   appear (int32_t is plain int on all supported platforms, so expect
-   none).
-Verify: fresh configure (acdefs.h regenerates), build both UIs,
-ctest --test-dir build --label-exclude long green.
-Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md.
-```
+  `<cstdint>` fixed width types and delete the checks from `acdefs.h`.~~ (done 7/2026)
 
 ## 6. Security & robustness
 

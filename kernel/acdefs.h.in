@@ -17,8 +17,3 @@ any later version.  See the file COPYING.  */
 #cmakedefine HAVE_CURSES_LIB 1
 #cmakedefine HAVE_NCURSES_LIB 1
 #cmakedefine HAVE_PDCURSES_LIB 1
-
-/* Sizes of the various data types. */
-#define SIZEOF_INT @SIZEOF_INT@
-#define SIZEOF_LONG @SIZEOF_LONG@
-#define SIZEOF_LONG_LONG @SIZEOF_LONG_LONG@

@@ -13,7 +13,6 @@ set(XCONQ_VERSION_RELEASE "0pre")
 
 include(GNUInstallDirs)
 include(CheckIncludeFileCXX)
-include(CheckTypeSize)
 
 # ---------------------------------------------------------------------------
 # User-facing options.
@@ -71,11 +70,6 @@ endif()
 # ---------------------------------------------------------------------------
 
 check_include_file_cxx(dirent.h HAVE_DIRENT_H)
-
-set(CMAKE_EXTRA_INCLUDE_FILES)
-check_type_size(int SIZEOF_INT LANGUAGE CXX)
-check_type_size(long SIZEOF_LONG LANGUAGE CXX)
-check_type_size("long long" SIZEOF_LONG_LONG LANGUAGE CXX)
 
 # Which curses flavor did we find?
 if(CURSES_FOUND)
