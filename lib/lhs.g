@@ -42,7 +42,6 @@
      (true
        ;; For testing.
 	   (set unseen-image-name "question")
-       (include "libimf")
        ))
     ("Noisy" noisy
  (true

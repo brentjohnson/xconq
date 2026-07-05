@@ -83,10 +83,21 @@ Each per-module test gets its own scratch working directory
 argument (e.g. `sh test-lib.sh <srcdir>`) still sweeps every module from `build/test/`
 directly, for manual use.
 
-Consistency-check scripts also live in `test/` (`*-diff.sh`, `*-uses.sh`), runnable by hand:
+Consistency-check scripts also live in `test/` (`*-diff.sh`, `*-uses.sh`):
 - `check-lib` / `test-lib.sh` — load & run every library game module (per-module, or all via no module arg)
 - `check-actions`, `check-save`, `check-test` — action coverage, save/restore, special games (same split)
-- `*-diff.sh` / `*-uses.sh` — consistency checks between docs, source `.def` symbols, and library games
+- `*-diff.sh` — cross-check docs, source `.def` symbol tables, and library games; three are wired into
+  CTest as `check-consistency-<name>` (label `consistency`, `ctest -L consistency`): `cmd-diff.sh`
+  (manual commands vs `cmd.def`), `game-diff.sh` (defined vs. used library games), `sym-diff.sh` (manual
+  keywords vs. `.def` symbols). Each exits nonzero only on *unwaived* differences — known-legitimate
+  gaps (dead references from the original 20-year-old import, tables/properties the manual documents as
+  removed, etc.) are listed by name in a `KNOWN_GAPS` block at the top of the script, same house style as
+  `test-save.sh`'s `KNOWN_UNFAITHFUL`. `imf-diff.sh` and `syntax-diff.sh` are excluded from CTest — a
+  dated comment in each explains why (the real drift they find, ~1750 and ~530 symbols respectively, is
+  too large to waive item-by-item and would just be a disguised blanket ignore); they're still runnable
+  by hand.
+- `*-uses.sh` (`game-uses.sh`, `imf-uses.sh`, `lib-uses.sh`, `src-uses.sh`) — usage-count reports for
+  manual triage, not pass/fail checks; not wired into CTest.
 - `.g` files are GDL games, `.inp` files are scripted command input, `.imf` are image families
 
 ### Old build system

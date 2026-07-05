@@ -1946,10 +1946,6 @@ where all the participating side are predefined, for instance.
 This is true if an AI should be created for the independent side.
 @end deffn
 
-@deffn GlobalVariable @code{indepside-can-build} t/f
-This is true if independent units may construct new units.
-@end deffn
-
 @deffn GlobalVariable @code{indepside-can-develop} t/f
 This is true if independent units may develop their technology.
 @end deffn
@@ -2233,16 +2229,6 @@ Occupants will be ejected if possible; otherwise they will disappear
 also.  Defaults to @code{-1}.
 @end deffn
 
-@deffn UnitProperty @code{autoplan} n
-This property is true when the unit should choose its own research
-topics.
-@end deffn
-
-@deffn UnitProperty @code{autobuild} n
-This property is true when the unit should choose its own construction
-task.
-@end deffn
-
 @deffn UnitProperty @code{autoresearch} n
 This property is true when the unit should choose its own research
 topics.
@@ -2307,41 +2293,32 @@ This property is the next action that the unit will perform.
 This property describes the unit's current plan.
 @end deffn
 
-@deffn PlanType @code{none}
+@deffn PlanType @code{None}
 A unit with this type of plan does nothing.  It is used when a side has
 no player.
 @end deffn
 
-@deffn PlanType @code{passive}
+@deffn PlanType @code{Passive}
 This plan type is for units on a side that is being run directly by the
 side.  This is the normal plan type for units when a human player is
 playing.
 @end deffn
 
-@deffn PlanType @code{defensive}
+@deffn PlanType @code{Defensive}
 This plan type is for units that defend areas or other units.
 @end deffn
 
-@deffn PlanType @code{offensive}
+@deffn PlanType @code{Offensive}
 This plan type is for units that are to be aggressive.
 @end deffn
 
-@deffn PlanType @code{exploratory}
+@deffn PlanType @code{Exploratory}
 This plan type is for units that explore the world.
 @end deffn
 
-@deffn PlanType @code{colonizing}
-This plan type is for units to build more units (like cities) that can
-themselves build more units.
-@end deffn
-
-@deffn PlanType @code{improving}
+@deffn PlanType @code{Improving}
 This plan type is for units to improve themselves, such as by adding
 special types of occupants.
-@end deffn
-
-@deffn PlanType @code{random}
-A unit with this plan type will act randomly.
 @end deffn
 
 @deffn PlanProperty @code{goal} goal
@@ -2416,15 +2393,6 @@ The possible types of goals are these:
 @deffn GoalType @code{no-goal}
 @end deffn
 
-@deffn GoalType @code{won-game}
-@end deffn
-
-@deffn GoalType @code{lost-game}
-@end deffn
-
-@deffn GoalType @code{world-is-known}
-@end deffn
-
 @deffn GoalType @code{vicinity-is-known}
 @end deffn
 
@@ -2481,7 +2449,7 @@ accept the material.
 This type of task directs the unit to disband itself.
 @end deffn
 
-@deffn TaskType @code{hit-position} ex re x y z
+@deffn TaskType @code{hit-pos} ex re x y z
 This type of task directs the unit to attack or fire on any unfriendly
 units at the given location.
 @end deffn
@@ -6209,10 +6177,10 @@ This may be negative, in which case, @var{m} will be gained by the builder.
 This table is the amount of each material type @var{m} consumed by
 the builder performing a single build action on a unit of type @var{u2}.  
 This may be negative, in which case, @var{m} will be gained by the builder.
-This is compatible with the @code{unit-consumption-per-cp} table.
+This is compatible with the @code{consumption-per-cp} table.
 @end deffn
 
-@deffn TableUM @code{unit-consumption-per-cp} u2 m -> n
+@deffn TableUM @code{consumption-per-cp} u2 m -> n
 This table is the amount of each material type @var{m} consumed by
 the builder adding 1 CP to a unit of type @var{u2}.  
 This may be negative, in which case, @var{m} will be gained by the builder.
@@ -7320,7 +7288,7 @@ This property is the chance that if this type is about to die from a
 combat hit, it will detonate first.
 @end deffn
 
-@deffn UnitTypeProperty @code{detonate-on-attack} n%
+@deffn UnitTypeProperty @code{detonate-with-attack} n%
 This property is the chance that if this type scores a hit (and damages)
 an enemy unit, it will detonate first.
 @end deffn
@@ -8029,14 +7997,6 @@ but they can also follow hints provided by the game design.
 This variable is true if the AI can evaluate whether to resign and then
 resign if it likes.  Otherwise, it will play until it wins or loses.
 Defaults to @code{true}.
-@end deffn
-
-@deffn GlobalVariable @code{units-may-go-into-reserve} t/f
-This variable is true if AI or plan execution can put a unit into
-reserve for the remainder of a turn.  This can prevent unit confusion,
-but can also put the side at a disadvantage if too many of its units
-spend turns in reserve rather than doing something useful.  Defaults to
-@code{true}.
 @end deffn
 
 @deffn UnitTypeProperty @code{ai-tactical-range} n

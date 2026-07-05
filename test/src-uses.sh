@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# Manual/informational only -- not wired into CTest (2026-07-05): this
+# is a usage-count report for human triage (finding dead keywords worth
+# deprecating), not a pass/fail check.
+
 # This script counts the references to GDL-related symbols in all
 # Xconq sources.
 

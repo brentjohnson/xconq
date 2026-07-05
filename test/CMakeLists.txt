@@ -89,5 +89,36 @@ set_tests_properties(check-ai check-long check-run PROPERTIES LABELS "long")
 set_tests_properties(check-auto PROPERTIES TIMEOUT ${XCONQ_AUTO_TIMEOUT})
 set_tests_properties(check-ai check-run check-long PROPERTIES TIMEOUT ${XCONQ_LONG_TIMEOUT})
 
+# Consistency checks cross-reference docs, kernel/*.def symbol tables, and
+# library games (see doc/*-diff.sh's own comments for what each compares and
+# the (2026-07-05)-dated notes on any waiver lists). Each gets its own
+# scratch directory for the same reason the per-module tests above do: they
+# write fixed-name scratch files (doc.cmds, game.defs, doc.syms, etc.) into
+# the working directory, and `ctest -j` can run them concurrently.
+#
+# Not every *-diff.sh/*-uses.sh script is here: imf-diff.sh and
+# syntax-diff.sh are excluded (dated comments in each explain why -- the
+# real drift they find is too large to waive item-by-item right now), and
+# the *-uses.sh scripts are usage-count reports with no pass/fail signal,
+# not consistency checks.
+set(XCONQ_CONSISTENCY_SCRIPTS
+    cmd:cmd-diff.sh
+    game:game-diff.sh
+    sym:sym-diff.sh)
+
+foreach(entry IN LISTS XCONQ_CONSISTENCY_SCRIPTS)
+    string(REPLACE ":" ";" entry ${entry})
+    list(GET entry 0 name)
+    list(GET entry 1 script)
+    set(scratch ${CMAKE_CURRENT_BINARY_DIR}/scratch/check-consistency-${name})
+    file(MAKE_DIRECTORY ${scratch})
+    add_test(NAME check-consistency-${name}
+             COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/${script} ${CMAKE_CURRENT_SOURCE_DIR}
+             WORKING_DIRECTORY ${scratch})
+    set_tests_properties(check-consistency-${name} PROPERTIES
+                          LABELS consistency
+                          TIMEOUT 60)
+endforeach()
+
 # The opt-in libFuzzer GDL-reader harness (only active under -DXCONQ_FUZZ=ON).
 add_subdirectory(fuzz)

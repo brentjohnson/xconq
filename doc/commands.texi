@@ -189,16 +189,6 @@ others have moved in this turn.
 Make the selected unit(s) do one disband action.
 @end ifset
 
-@item ^D
-(@code{detach})
-Detach a unit from the selected multi-part unit.
-@cindex Detach command
-@cindex Commands, detach
-@ifset FULL
-The prefix argument gives the number of parts of detach;
-by default, the unit will be divided in half.
-@end ifset
-
 @item e
 (@code{embark}) Embark on transport.
 @cindex Embark command

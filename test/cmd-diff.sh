@@ -59,6 +59,26 @@ cat doc.cmds[1-5] | grep -v '0 D' | sort | uniq >doc.cmds
 echo "Differences between commands in reference manual and in source code:"
 echo "('<' - in documentation,  '>' - in sources)"
 
-diff -w doc.cmds src.cmds
+# The manual documents the Return key generically as '@item 'return''
+# (see commands.texi), a form this script's texinfo parser can't turn
+# into a key-code token. cmd.def binds the same end-turn command to two
+# raw key codes (Ctrl-M and literal newline) that a terminal's Return
+# key can produce depending on input mode, so both show up as
+# source-only here even though the command is documented. Waived by
+# name rather than taught to the parser, since it's a one-off notation
+# mismatch, not missing documentation (2026-07-05).
+KNOWN_GAPS="C-M end-turn
+' ' '\n' end-turn"
+
+diffs=`diff -w doc.cmds src.cmds`
+unwaived=`echo "$diffs" | grep '^[<>]' | sed -e 's/^[<>] //' | grep -vFx "$KNOWN_GAPS"`
+
+echo "$diffs"
+
+if [ -n "$unwaived" ]; then
+    echo "Unwaived differences:"
+    echo "$unwaived"
+    exit 1
+fi
 
 exit 0

@@ -434,48 +434,35 @@ and the BWidget vendor-audit are resolved by this removal (see §4 below).
   All fixes are behavior-preserving for valid input: the full quick ctest lane
   (555 tests, including `check-save`'s save/restore fidelity comparison) stays
   green in the normal build.
-- **[S] Port the `test/*-diff.sh` / `*-uses.sh` consistency checks into CTest**
-  (docs ↔ `.def` symbols ↔ library usage) so they can't silently rot.
-
-**⚙ PROMPT 3.5 — recommended model: Sonnet.** *(Script conversion with a
-defined pass/fail policy; the one judgment point — real drift found on
-first run — has explicit handling below.)*
-
-```text
-Task: wire Xconq's consistency-check scripts into CTest so doc/.def/
-library drift fails visibly.
-
-Context: the scripts are test/cmd-diff.sh, game-diff.sh, game-uses.sh,
-imf-diff.sh, imf-uses.sh, lib-uses.sh (glob for others). They
-cross-check .def symbol lists, the Texinfo docs, and library usage.
-Currently manual-only; unknown exit-code discipline.
-Method:
-1. Read each script: what it compares, whether it is sh or still csh
-   (step 1 converted the game-running scripts; these may not be), and
-   whether it exits nonzero on differences or just prints them. Convert
-   csh -> sh matching the style of the converted scripts, and make each
-   exit nonzero exactly when a real inconsistency is found.
-2. Run them all. Expect drift after 20 years. Handle it in this order:
-   (a) fix trivial drift at the source (a doc missing a recently added
-   symbol, a stale entry — these are the point of the checks);
-   (b) if a script's whole premise has rotted (compares against something
-   that no longer exists), fix its inputs if cheap, else leave it OUT of
-   CTest with a dated comment in the script saying why;
-   (c) for known-legitimate exceptions, give scripts an explicit waiver
-   list at the top (the KNOWN_UNFAITHFUL pattern in test-save.sh is the
-   house style) — never a blanket ignore.
-3. Register each surviving script in test/CMakeLists.txt as
-   check-consistency-<name>, LABELS "consistency", small TIMEOUT (60s),
-   runnable from the binary dir (they read sources — pass the source dir
-   as the scripts' argument like the existing entries do).
-4. Update CLAUDE.md's test section (it lists these as manual-only) and
-   the test/CMakeLists.txt header comment.
-Verify: ctest -L consistency green; full quick lane green; deliberately
-add a bogus symbol to a .def file locally and confirm the relevant check
-fails, then revert.
-Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md,
-noting any scripts left unwired and why.
-```
+- ~~**[S] Port the `test/*-diff.sh` / `*-uses.sh` consistency checks into
+  CTest** (docs ↔ `.def` symbols ↔ library usage) so they can't silently
+  rot.~~ *(done 2026-07-05)*: converted `game-uses.sh`/`imf-uses.sh` from
+  csh-flavored `#!/bin/bash` to `#!/bin/sh` and gave `cmd-diff.sh`,
+  `game-diff.sh`, and `sym-diff.sh` real exit-code discipline (nonzero only
+  on *unwaived* differences), registered as `check-consistency-{cmd,game,sym}`
+  (label `consistency`, `TIMEOUT 60`, own scratch dir per test). Along the
+  way fixed the actual drift each surfaced: a stale `^D detach` doc entry
+  for a command that no longer exists, a dangling `(include "libimf")`
+  debug leftover and a dead `"battle-test"` `game.dir` entry, six `PlanType`
+  doc entries with the wrong case (`defensive` vs. source's `Defensive`,
+  etc.) plus three genuine keyword renames (`hit-position`→`hit-pos`,
+  `detonate-on-attack`→`detonate-with-attack`,
+  `unit-consumption-per-cp`→`consumption-per-cp`), and half a dozen doc
+  entries describing features removed from the kernel entirely
+  (`autobuild`/`autoplan`, the `colonizing`/`random` plan types, three empty
+  `GoalType` stubs, `indepside-can-build`, `units-may-go-into-reserve`).
+  Remaining known-legitimate gaps (two unfinished-content module
+  references in `game-diff.sh`, ~50 undocumented recent keywords plus two
+  intentionally-retained "no longer available" table entries in
+  `sym-diff.sh`) are waived by name, `KNOWN_UNFAITHFUL`-style. Two scripts
+  are left unwired, each with a dated comment explaining why: `imf-diff.sh`
+  (~1750/4500 symbols differ — mostly bulk-imported sprite packs and an
+  X11 color palette that are legitimately unused by most games, not drift)
+  and `syntax-diff.sh` (its `@example`→`@smallexample` Texinfo-migration
+  sed bug was fixed, but the now-working comparison finds ~530/1700
+  symbols missing from the syntax chart, too large to waive item-by-item).
+  The four `*-uses.sh` scripts are usage-count reports with no pass/fail
+  signal and stay manual-only.
 - **[S] Add unit tests for pure-kernel logic** (GDL read/write round-trip,
   save/restore equality, movement/combat table lookups) — the current tests are
   end-to-end only.
