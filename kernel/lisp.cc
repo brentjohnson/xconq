@@ -173,6 +173,15 @@ strmgetc(Strm *strm)
 static void
 strmungetc(int ch, Strm *strm)
 {
+    /* Pushing EOF back is a no-op, as in stdio's ungetc(EOF, ...).  strmgetc
+       returns EOF at a string's terminating NUL (or a file's end) WITHOUT
+       consuming anything, so moving the position back here would re-expose
+       the previous character.  Several callers ungetc unconditionally after a
+       read that may have hit EOF (e.g. the symbol/number readers), so an
+       unclosed list ending in a symbol like "(foo" would otherwise loop
+       forever re-reading that character and allocating without bound. */
+    if (ch == EOF)
+      return;
     if (strm->type == stringstrm) {
 	--strm->ptr.sp;
     } else {
@@ -373,7 +382,12 @@ read_form_aux(Strm *strm)
 	    while ((ch = strmgetc(strm)) != EOF) {
 	    	if (isdigit(ch)) {
 	    	    /* should ignore decimal digits past second one */
-		    num = num * 10 + ch - '0';
+		    /* Saturate instead of overflowing int (UB) on an absurdly
+		       long digit run from hostile input. */
+		    if (num > (INT_MAX - 9) / 10)
+		      num = INT_MAX;
+		    else
+		      num = num * 10 + (ch - '0');
 		    if (factor > 1)
 		      factor /= 10;
 		} else if (ch == 'd') {
@@ -430,16 +444,27 @@ read_form_aux(Strm *strm)
 				 numdice, dice, num, num);
 		if (!minus && minus2)
 		    num = num - 1;
-		num = 
+		/* Pack the fields as unsigned: out-of-range dice/addon values
+		   (already warned about just above) can make (dice - 2) etc.
+		   negative, and left-shifting a negative int is UB. */
+		num =
 		    (short)(
-			((minus | minus2) << 15) 
-			| (((minus | minus2) ? 0 : 1) << 14) 
-			| ((numdice - 1) << 11) | ((dice - 2) << 7) 
-			| (num & 0x7f));
+			(((unsigned) (minus | minus2)) << 15)
+			| (((minus | minus2) ? 0u : 1u) << 14)
+			| (((unsigned) (numdice - 1)) << 11)
+			| (((unsigned) (dice - 2)) << 7)
+			| ((unsigned) num & 0x7f));
 	    }
 	    // "Integerize" decimal spec, if neccesary.
 	    else {
-	    	num = factor * num;
+		/* Saturate instead of overflowing int (UB): a huge accumulated
+		   value times factor (up to 100 for a decimal) can exceed int. */
+		if (factor > 1 && num > INT_MAX / factor)
+		    num = INT_MAX;
+		else if (factor > 1 && num < INT_MIN / factor)
+		    num = INT_MIN;
+		else
+		    num = factor * num;
 	    }
 	    if (!actually_read_lisp)
 	      return lispnil;
@@ -534,7 +559,10 @@ read_delimited_text(Strm *strm, const char *delim, int spacedelimits,
 		/* Soak up numeric digits (don't complain about 8 or 9,
 		   sloppy but traditional). */
 		while ((ch = strmgetc(strm)) != EOF && isdigit(ch)) {
-		    octch = 8 * octch + ch - '0';
+		    /* Unsigned accumulation: only the low byte is kept
+		       (ch = octch below), but a long digit run from hostile
+		       input overflows a signed int (UB). */
+		    octch = (int) (8u * (unsigned) octch + (ch - '0'));
 		}
 		/* The non-digit char is actually next one in the string. */
 		strmungetc(ch, strm);

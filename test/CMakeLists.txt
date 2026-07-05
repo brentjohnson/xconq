@@ -88,3 +88,6 @@ set_tests_properties(check-ai check-long check-run PROPERTIES LABELS "long")
 # matching that same per-run bound; check-auto is a single fixed run.
 set_tests_properties(check-auto PROPERTIES TIMEOUT ${XCONQ_AUTO_TIMEOUT})
 set_tests_properties(check-ai check-run check-long PROPERTIES TIMEOUT ${XCONQ_LONG_TIMEOUT})
+
+# The opt-in libFuzzer GDL-reader harness (only active under -DXCONQ_FUZZ=ON).
+add_subdirectory(fuzz)

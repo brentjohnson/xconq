@@ -39,6 +39,12 @@ set(XCONQ_SANITIZE "" CACHE STRING
 set(XCONQ_TEST_TIMEOUT_SCALE 1 CACHE STRING
     "Integer multiplier for test timeouts (raise for slow sanitized runs)")
 
+# Opt-in libFuzzer harness for the GDL reader (Clang only). When ON, builds a
+# dedicated fuzz_gdl target under test/fuzz/ with -fsanitize=fuzzer,address,
+# undefined on the reader objects it links. Kept out of default builds; see
+# test/fuzz/README.md. A short CI smoke-fuzz leg turns this on.
+option(XCONQ_FUZZ "Build the libFuzzer GDL-reader harness (Clang only)" OFF)
+
 # ---------------------------------------------------------------------------
 # Dependency discovery.  Each UI is skipped (with a warning) when its
 # dependencies are missing, so a bare kernel build always works.

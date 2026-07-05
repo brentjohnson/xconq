@@ -389,59 +389,51 @@ and the BWidget vendor-audit are resolved by this removal (see §4 below).
   Also fixed two RelWithDebInfo-only `-Wmaybe-uninitialized` errors (that build
   type is new to CI): `economy.cc` `newtype` and `move.cc` `acpcost`, both
   false positives value-inited with a comment.
-- **[M] Fuzz the GDL reader** (`kernel/read.c`, `kernel/lisp.c`) with
-  libFuzzer/AFL. It parses untrusted input: downloaded game modules, network
-  messages, and save files all go through it.
-
-**⚙ PROMPT 3.4 — recommended model: Opus.** *(Harness design against a
-global-state kernel plus crash triage; a naive harness either won't reach
-the interesting code or will "find" init-order artifacts that aren't real.)*
-
-```text
-Task: build a libFuzzer harness for Xconq's GDL reader, run it locally
-until quiet, fix what it finds, and wire a short CI smoke-fuzz job.
-This hardens a defensive surface: the reader parses downloaded modules,
-save files, and network-fed data.
-
-PREREQUISITE: builds with Clang (§1 prompt 2.1 done). The §3 sanitizer
-task (3.3) is complementary but not required.
-Method:
-1. Harness (new test/fuzz/fuzz_gdl.cc): LLVMFuzzerTestOneInput feeds one
-   input buffer through the lisp-object reader. Study kernel/lisp.c and
-   read.c for the entry point that parses a stream/string into objects
-   (the same machinery module loading uses); prefer the lowest entry that
-   still exercises real parsing (strings, escapes, numbers/dice notation,
-   symbols, nested lists) WITHOUT needing a full game world. Mind global
-   state: the lisp package/obstack allocators persist across iterations —
-   do one-time init in LLVMFuzzerInitialize, and confirm iteration N's
-   parse cannot be corrupted by N-1's leftovers (interned symbols
-   accumulate — that is acceptable memory growth, not corruption; use
-   -rss_limit_mb generously). If interpretation of *forms* (interp_form
-   and friends) is reachable without a full game, add a second harness
-   for it; do not force it in one.
-2. Build wiring: an opt-in CMake target (XCONQ_FUZZ=ON, Clang-only,
-   -fsanitize=fuzzer,address,undefined on the kernel objects it links).
-   Keep it out of default builds.
-3. Corpus: seed from test/*.g and a selection of lib/*.g (small ones),
-   plus a dictionary generated from kernel/keyword.def's GDL symbols
-   (a small script can extract them — keywords steer the fuzzer into
-   real syntax fast).
-4. Run locally >= a few CPU-hours (parallel jobs fine). Triage every
-   crash/OOM: minimize (llvm's -minimize_crash), identify root cause in
-   the reader, fix with bounds/validation matching surrounding idiom
-   (history: the reader already had a BIGBUF off-by-one — expect
-   relatives). Every fixed crash's minimized input goes into
-   test/fuzz/corpus/ as a regression seed.
-5. CI: a short job (Clang, ~5 minutes of fuzzing with the checked-in
-   corpus + -runs bound) as a smoke test, non-optional once green.
-   Document longer local runs in test/fuzz/README.md. Note OSS-Fuzz as a
-   future option on the plan item, don't apply.
-Verify: harness builds and runs clean over the full checked-in corpus;
-normal build + quick ctest unaffected and green (reader fixes are on the
-hot path for every game load — the lib sweep is the regression test).
-Commit(s); mark this item done (strikethrough + date) in
-MODERNIZATION-PLAN.md, recording bugs found/fixed.
-```
+- ~~**[M] Fuzz the GDL reader** (`kernel/read.cc`, `kernel/lisp.cc`) with
+  libFuzzer/AFL.~~ *(done 7/2026)*: added a libFuzzer harness
+  (`test/fuzz/fuzz_gdl.cc`) driving `read_form_from_string()` — the lowest
+  reader entry, the same tokenizer/parser that module loads, save restore, and
+  the network transfer protocol all feed untrusted bytes through — over the
+  whole input buffer one form at a time. It links a dedicated copy of the
+  low-level reader objects with `-fsanitize=fuzzer,address,undefined` plus a
+  stub file mirroring `imf2imf.cc`'s standalone-reader link closure; the target
+  is opt-in (`-DXCONQ_FUZZ=ON`, Clang only, `test/fuzz/CMakeLists.txt`) and out
+  of default builds. Interpreting parsed forms (`interp_form` in `read.cc`) is
+  deliberately *not* fuzzed — it needs full world state and does file I/O
+  (include/image/default-game loading), so a harness over it would surface
+  init-order artifacts, not parser bugs; the untrusted-bytes-to-parser surface
+  is `lisp.cc`. Corpus (`test/fuzz/corpus/`) seeds from the reader's own
+  regression cases plus representative GDL; `gdl.dict` is ~1000 GDL tokens
+  extracted from `kernel/*.def` by `gen_dict.sh`. A `fuzz` CI leg (Clang) builds
+  the harness, replays the corpus (the `fuzz`-labelled CTest), and runs ~5 min
+  of live fuzzing under ASan+UBSan; longer runs and OSS-Fuzz are noted as future
+  options in `test/fuzz/README.md`. Two rounds of fuzzing (a shallow-bug burst,
+  then a ~5 CPU-hour post-fix campaign that found nothing new; coverage
+  saturated at ~325 edges) surfaced **five memory-safety / UB bugs, all fixed in
+  `kernel/lisp.cc`**, every one reachable from a truncated or hostile module /
+  save / network message and every one a real BIGBUF-relative the prompt
+  predicted:
+  - **Infinite allocation loop (DoS)** on an unclosed list ending in a symbol
+    (`(foo`): `strmgetc` returns EOF at a string's terminating NUL *without*
+    consuming, but `strmungetc` decremented the position unconditionally, so
+    pushing that EOF back re-exposed the previous char and `read_list` re-read
+    it forever, consing without bound. Fixed by making `strmungetc(EOF, …)` a
+    no-op, as in stdio's `ungetc`.
+  - **Signed overflow accumulating a long digit run** (`num*10 + digit`) — UB on
+    `999999999999`; saturates at `INT_MAX` now, with `(ch - '0')` parenthesized
+    so operator precedence can't overflow the intermediate near `INT_MAX`.
+  - **Signed overflow in the decimal `factor * num` step** — large value times
+    the ×100 decimal factor; saturates now.
+  - **Left shift of a negative value in dice bit-packing** (`(dice - 2) << 7`,
+    `(numdice - 1) << 11`) — UB for out-of-range dice like `1d`/`1d1` (already
+    warned about, then computed anyway); packs the fields as unsigned now,
+    bit-identical for valid dice.
+  - **Signed overflow accumulating a long octal escape** (`8*octch + digit`) —
+    UB on `"\04444444444"`; only the low byte is kept, so it accumulates as
+    unsigned (defined wrap, same result) now.
+  All fixes are behavior-preserving for valid input: the full quick ctest lane
+  (555 tests, including `check-save`'s save/restore fidelity comparison) stays
+  green in the normal build.
 - **[S] Port the `test/*-diff.sh` / `*-uses.sh` consistency checks into CTest**
   (docs ↔ `.def` symbols ↔ library usage) so they can't silently rot.
 

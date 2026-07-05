@@ -92,6 +92,52 @@ jobs:
     - name: test
       run: ctest --test-dir build --output-on-failure --label-exclude long -j$(nproc)
 
+  fuzz:
+    # Smoke-fuzz the GDL reader: build the opt-in libFuzzer harness
+    # (test/fuzz/, -DXCONQ_FUZZ=ON, Clang only) and run it for a few minutes
+    # over the checked-in corpus under ASan+UBSan.  This is a regression guard
+    # for the reader bugs the fuzzer found (see test/fuzz/README.md) -- the
+    # corpus-replay CTest re-parses every seed, and a short live run keeps
+    # mutating from them.  Longer campaigns are a local/OSS-Fuzz job, not CI.
+    runs-on: ubuntu-latest
+    env:
+      CC: clang
+      CXX: clang++
+      # Same rationale as the sanitizers leg: the reader never frees, so leak
+      # detection is deferred; any ASan/UBSan finding must abort so libFuzzer
+      # reports it as a crash.
+      ASAN_OPTIONS: detect_leaks=0:abort_on_error=1
+      UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y clang
+    - name: configure
+      run: >
+        cmake -B build
+        -DCMAKE_BUILD_TYPE=RelWithDebInfo
+        -DXCONQ_FUZZ=ON
+        -DXCONQ_UI_CURSES=OFF -DXCONQ_UI_SDL=OFF
+    - name: build
+      run: cmake --build build -j$(nproc) --target fuzz_gdl
+    - name: corpus regression replay
+      # -runs=0 executes every checked-in seed once and exits nonzero on any
+      # crash; this is the fuzz-labelled CTest.
+      run: ctest --test-dir build --output-on-failure -L fuzz
+    - name: smoke fuzz
+      # A short live run (~5 min) mutating from the checked-in corpus with the
+      # GDL keyword dictionary; -runs caps it so a fast machine still stops.
+      run: >
+        ./build/test/fuzz/fuzz_gdl
+        -dict=test/fuzz/gdl.dict
+        -rss_limit_mb=4096
+        -max_total_time=300
+        -runs=20000000
+        test/fuzz/corpus
+
   macos:
     runs-on: macos-latest
     # sdlconq also links directly against Xlib/Xmu/Xext (see sdl/CMakeLists.txt),
