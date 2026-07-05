@@ -98,8 +98,7 @@ configure_file(kernel/version.h.in  ${CMAKE_BINARY_DIR}/include/version.h)
 #
 # Historical note: the old autoconf build compiled every .c file with the
 # C++ compiler.  The sources rely on that (kernel headers declare C++
-# namespaces), so C sources in xconq targets are marked LANGUAGE CXX, and
-# -fpermissive papers over pre-standard idioms.
+# namespaces), so C sources in xconq targets are marked LANGUAGE CXX.
 # ---------------------------------------------------------------------------
 
 # The sources predate C++11; newer standards make libstdc++ headers clash
@@ -114,7 +113,6 @@ target_include_directories(xconq_common INTERFACE
     ${CMAKE_SOURCE_DIR}/kernel)
 target_compile_definitions(xconq_common INTERFACE HAVE_ACDEFS_H)
 target_compile_options(xconq_common INTERFACE
-    $<$<COMPILE_LANG_AND_ID:CXX,GNU>:-fpermissive>
     $<$<COMPILE_LANG_AND_ID:CXX,GNU,Clang,AppleClang>:-Wno-write-strings>)
 
 # Mark a target's C sources for compilation as C++ (see note above).

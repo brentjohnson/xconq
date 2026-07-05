@@ -85,10 +85,14 @@ and the BWidget vendor-audit are resolved by this removal (see §4 below).
 > the recommended model: **Opus** for tasks needing judgment about intent
 > or real-bug triage, **Sonnet** for mechanical error-driven sweeps.
 
-- **[M] Make the code valid without `-fpermissive`.** Fix what the flag papers
-  over (implicit conversions, old-style casts of function pointers, etc.) and
-  drop it. This is a prerequisite for everything below and for building with
-  Clang, which lacks an equivalent.
+- ~~**[M] Make the code valid without `-fpermissive`.**~~ *(done 7/2026)*: Fix
+  what the flag papers over (implicit conversions, old-style casts of function
+  pointers, etc.) and drop it. This is a prerequisite for everything below and
+  for building with Clang, which lacks an equivalent. In the event, the prior
+  modernization steps had already cleaned up the offending idioms: dropping the
+  `-fpermissive` generator expression from `xconq_common` left the whole tree
+  (kernel, curses, SDL) building clean under GCC 15.2.1 with the full test
+  suite green, so no source changes were needed.
 
 **⚙ PROMPT 2.1 — recommended model: Opus.** *(Error-driven but the fixes need
 judgment: each diagnostic has a "add a cast" fix and a "fix the actual type"
