@@ -77,13 +77,14 @@ and the BWidget vendor-audit are resolved by this removal (see §4 below).
 
 ## 1. Language & toolchain
 
-> **Execution prompts (added 7/2026).** Each §1 task below carries a
-> ready-to-run prompt in a fenced block, written so a fresh session of a
-> smaller model can execute it without extra context (CLAUDE.md loads
-> automatically and covers build/test basics). Run them **in order** —
-> each assumes the previous ones are committed. Each block is labeled with
-> the recommended model: **Opus** for tasks needing judgment about intent
-> or real-bug triage, **Sonnet** for mechanical error-driven sweeps.
+> **All of §1 is complete (7/2026)** — every task below is done, so the
+> per-task execution prompts have been removed. The prompt convention they
+> established is still used by the open items in §3 and §5–§9: each carries a
+> ready-to-run fenced prompt written so a fresh session of a smaller model can
+> execute it without extra context (CLAUDE.md loads automatically and covers
+> build/test basics), labeled with a recommended model — **Opus** for tasks
+> needing judgment about intent or real-bug triage, **Sonnet** for mechanical
+> error-driven sweeps.
 
 - ~~**[M] Make the code valid without `-fpermissive`.**~~ *(done 7/2026)*: Fix
   what the flag papers over (implicit conversions, old-style casts of function
@@ -130,47 +131,6 @@ and the BWidget vendor-audit are resolved by this removal (see §4 below).
   of C++20. No `throw(...)` specs or `auto_ptr`/`binder1st`-era usage existed
   to clean up. Both UIs build and the quick ctest suite passes at each stage.
 
-**⚙ PROMPT 2.4 — recommended model: Sonnet.** *(Compiler-error-driven with
-well-known fix patterns; escalate to Opus only if a bump surfaces a genuinely
-ambiguous semantic change.)*
-
-```text
-Task: bump Xconq's C++ standard from gnu++98 to C++11, then to C++17, fixing
-what each bump breaks. Prerequisites: the -fpermissive, write-strings, and
-min/max-macro tasks are all committed (the min/max task removed the only
-known header clash blocking C++17).
-
-Context: the pin is in the top-level CMakeLists.txt:
-    set(CMAKE_CXX_STANDARD 98)          # bump this
-    set(CMAKE_CXX_STANDARD_REQUIRED OFF) # change to ON
-    set(CMAKE_CXX_EXTENSIONS ON)         # keep ON (gnu++NN) to minimize churn
-with an explanatory comment just above it that must be updated/removed.
-
-Method — two separate passes, each ending in its own commit:
-Pass 1 (C++11):
-1. Set CMAKE_CXX_STANDARD to 11 and CMAKE_CXX_STANDARD_REQUIRED to ON.
-2. Build everything; fix errors. Expected classes: narrowing conversions in
-   brace initializers (fix the element type or add a cast); string-literal
-   concatenation now needing a space (e.g. "foo"MACRO -> "foo" MACRO);
-   changed meaning of >> in templates (rare here); identifiers that are now
-   keywords. `register` is only deprecated in C++11, not an error — leave
-   those for pass 2 where they become errors.
-3. Both UIs must build; ctest --test-dir build --label-exclude long must
-   pass. Commit.
-Pass 2 (C++17):
-4. Set CMAKE_CXX_STANDARD to 17.
-5. Expected classes: `register` storage class is now an error — delete the
-   keyword (plain sed-style sweep is fine, it appears in old loops);
-   dynamic-exception specifications `throw(...)` are errors — delete them;
-   any lingering auto_ptr/binder1st-era usage — replace with the obvious
-   modern equivalent; new header-clash fallout if any min/max-style macro
-   survived (fix the macro, as in the previous task).
-6. Same bar: both UIs build, quick ctest passes. Update the comment
-   above the standard settings to say why 17 (and why not newer). Commit.
-Constraints: this is a compile-fix task, not a modernization sweep — do not
-refactor to auto/range-for/smart pointers, do not fix unrelated warnings.
-Finally, mark this task done (strikethrough + date) in MODERNIZATION-PLAN.md.
-```
 - ~~**[M] Rename `.c` files that are compiled as C++ to `.cc`** (or `.cpp`) and
   drop the `LANGUAGE CXX` override in CMake.~~ *(done 7/2026)*: renamed all 53
   live .c files (50 in kernel/, 3 in curses/) with `git mv` to preserve
@@ -184,45 +144,6 @@ Finally, mark this task done (strikethrough + date) in MODERNIZATION-PLAN.md.
   test/all.g comment. Fresh configure + build of both UIs, the quick ctest
   suite, and all `test/*-diff.sh` / `*-uses.sh` scripts run clean.
 
-**⚙ PROMPT 2.5 — recommended model: Sonnet.** *(Pure mechanics: git mv +
-build-list edits + reference sweep, fully verified by the build.)*
-
-```text
-Task: rename Xconq's .c files that are compiled as C++ to .cc, and remove the
-LANGUAGE CXX override machinery from CMake. Prerequisites: all earlier §1
-tasks (through the C++17 bump) are committed.
-
-Context: ~56 .c files (kernel/ ~53, curses/ 3) are compiled as C++ via the
-helper function xconq_cxx_sources() defined in the top-level CMakeLists.txt
-(it sets LANGUAGE CXX source properties). Each UI directory's CMakeLists.txt
-calls it on its source lists. The sdl/ UI already uses .cc. (The tcltk/ and
-x11/ UIs, which used to add ~30 more .c files here, were removed in Step 2.)
-
-Method:
-1. Determine the exact rename set: every .c file that appears in a source
-   list passed to xconq_cxx_sources() in kernel/, curses/ CMakeLists.txt.
-   Dead platform files NOT in the build (e.g. kernel/mac.c, kernel/win32.c —
-   verify by checking the source lists) stay .c: their fate is decided in
-   plan §5, don't touch them.
-2. Rename with `git mv file.c file.cc` so history follows.
-3. Update every reference to the old names:
-   - the source lists in each CMakeLists.txt;
-   - any #include of a .c file (grep -rn '#include.*\.c"' — rare but check);
-   - test/ scripts and test/*-diff.sh / *-uses.sh consistency checks that
-     grep kernel sources by filename;
-   - doc/ and CLAUDE.md prose that mentions the .c-compiled-as-C++
-     arrangement (CLAUDE.md's "What this is" section must be rewritten to
-     say sources are now .cc; also update the CMake historical-note comment).
-4. Delete the xconq_cxx_sources() function and all its call sites once no
-   .c files remain in any target.
-5. Full verification: fresh configure from scratch (delete and re-create the
-   build dir — stale LANGUAGE properties can mask breakage), build both
-   UIs, run ctest --test-dir build --label-exclude long, and run the
-   test/*-diff.sh and *-uses.sh scripts by hand to make sure the filename
-   sweep didn't break their greps.
-6. Commit (the diff is huge but should be almost entirely renames), then
-   mark this task done (strikethrough + date) in MODERNIZATION-PLAN.md.
-```
 - ~~**[M] Turn on real warnings (`-Wall -Wextra`) and burn the backlog down.**~~
   *(done 7/2026)*: Added `-Wall -Wextra` to `xconq_common` (informational) plus a
   curated hard-error subset — `-Werror=return-type,format,format-security,`
@@ -304,11 +225,12 @@ Method:
     `snprintf.c` are inside an already wholesale-obsolete 2004 Tcl/Tk-on-Windows
     build guide (references the removed `tcltk/`/`missing/` trees and
     `Makefile.in`), not worth partially patching.
-  - Not addressed here, out of scope: `lib/snprintf/` is a second, entirely
-    unreferenced copy of the same vendored snprintf package (present since
-    the initial CVS import, never wired into any build — old autoconf or
-    current CMake). Same dead weight, different location; a future pass
-    should just delete the directory.
+  - Also deleted (7/2026): `lib/snprintf/`, a second, entirely unreferenced
+    copy of the same vendored snprintf package (present since the initial CVS
+    import, never wired into any build — old autoconf or current CMake). It
+    was a self-contained autoconf project of its own (23 tracked files: its
+    own `configure`/`Makefile.in`/`aclocal.m4`, `snprintf.c`, `test.c`), dead
+    weight in a different location; `git rm -r`'d wholesale.
 
 ## 2. Known bugs (pre-existing, found while migrating)
 
@@ -1500,7 +1422,10 @@ lives.
 2. ~~Remove the Tcl/Tk and Xt/Xaw UIs~~ (done 7/2026, Step 2) — rather than
    porting Tcl/Tk to 9.x, deleted it and the legacy Xt/Xaw UI outright;
    `sdlconq` is now the primary graphical client.
-3. §1 language cleanup through the C++17 bump — unblocks tooling and Clang.
+3. ~~§1 language cleanup through the C++17 bump~~ (done 7/2026) — the whole
+   section is complete (gnu++17, `.c`→`.cc`, `-fpermissive`/`-Wno-write-strings`
+   dropped, `-Wall -Wextra` + curated `-Werror`, compat shims removed);
+   tooling and Clang are now unblocked.
 4. ~~§4 SDL2/3 port~~ (done 7/2026, SDL2 then SDL3) — `sdlconq` now builds
    against native SDL3 instead of through the sdl12-compat shim.
 5. §5–§8 as continuous background work.
