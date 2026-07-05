@@ -65,10 +65,16 @@ endif()
 
 add_library(conqlow STATIC ${CONQLOW_SOURCES})
 target_link_libraries(conqlow PUBLIC xconq_common)
-# Compiled-in default search paths.
+# Compiled-in default search paths. XCONQ_SRCDIR is a fallback for running a
+# freshly built binary straight out of the build tree, without having run
+# `cmake --install`: it lets default_library_pathname() find lib/ and
+# images/ in the checkout when the install location (XCONQDATA) doesn't
+# exist yet. It's harmless for real installs, since XCONQDATA is checked
+# first and normally exists there.
 target_compile_definitions(conqlow PRIVATE
     XCONQDATA="${XCONQ_DATA_DIR}"
-    XCONQSCORES="${XCONQ_SCORES_DIR}")
+    XCONQSCORES="${XCONQ_SCORES_DIR}"
+    XCONQ_SRCDIR="${CMAKE_SOURCE_DIR}")
 
 add_library(conq STATIC ${CONQ_SOURCES})
 target_link_libraries(conq PUBLIC conqlow)

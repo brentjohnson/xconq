@@ -52,6 +52,10 @@ any later version.  See the file COPYING.  */
 #define XCONQSCORES ""
 #endif
 
+#ifndef XCONQ_SRCDIR
+#define XCONQ_SRCDIR ""
+#endif
+
 #if 1 /* POSIX */
 static void stop_handler(int sig);
 static void crash_handler(int sig);
@@ -102,6 +106,17 @@ default_library_pathname(void)
       found = TRUE;
     else
       free(name);
+    /* Not installed (yet): fall back to the source checkout this binary
+       was built from, so a freshly built, uninstalled binary still finds
+       its data. */
+    if (!found && !empty_string(XCONQ_SRCDIR)) {
+	name = (char *)xmalloc(strlen(XCONQ_SRCDIR) + 1 + strlen(XCONQLIB) + 1);
+	make_pathname(XCONQ_SRCDIR, XCONQLIB, NULL, name);
+	if (is_directory(name))
+	  found = TRUE;
+	else
+	  free(name);
+    }
     for (i = 0; abspaths[i] && !found; ++i) {
 	if (is_directory(abspaths[i])) {
 	    name = copy_string(abspaths[i]);

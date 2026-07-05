@@ -26,7 +26,12 @@ cmake --install build
 ```
 
 UI options (`-DXCONQ_UI_CURSES/SDL=ON|OFF`) gate the two interfaces.
-Executables: `cconq` (curses), `sdlconq` (SDL3). The Tcl/Tk
+Executables: `cconq` (curses), `sdlconq` (SDL3), and `skelconq` (headless) all
+find `lib/`/`images/` from the source checkout (`kernel/unix.cc`'s
+`default_library_pathname()`, compiled-in `XCONQ_SRCDIR` fallback) even before
+`cmake --install`, so e.g. `build/sdl/sdlconq` run from the repo root works
+uninstalled. `-L <path>` or `XCONQLIB`/`XCONQIMAGES` env vars still override
+this for a non-default checkout layout. The Tcl/Tk
 (`xconq`) and legacy Xt/Xaw (`xtconq`) UIs were removed 7/2026 — see
 MODERNIZATION-PLAN.md's Step 2 note. Other knobs: `XCONQ_DATA_DIR`,
 `XCONQ_SCORES_DIR`. Generated config headers (`acdefs.h`, `version.h`) land in
