@@ -598,57 +598,44 @@ way pending that decision.
 
 ## 6. Security & robustness
 
-- **[M] Unsafe string call audit:** the kernel has ~300 `sprintf` and ~70
-  `strcpy` calls into fixed buffers (the bundled `snprintf.c` exists because
-  the code predates C99). Convert hot paths to bounded calls; the fuzzers from
-  §3 will prioritize targets.
+- **[M] Unsafe string call audit:** the kernel had ~300 `sprintf` and ~70
+  `strcpy` calls into fixed buffers (the bundled `snprintf.c` existed because
+  the code predates C99). *(Kernel PRIORITY 1 done 2026-07-05; UIs remain.)*
+  All kernel sites whose format/source carries attacker-influenced data (GDL
+  type/unit/side names — capped at 999 chars by the reader but far larger than
+  the BUFSIZE=255 display buffers — plus save/network data and player names)
+  were converted to bounded equivalents across four committed slices:
+  - **GDL reader/writer** (`lisp.cc`, `read.cc`, `module.cc`): the acknowledged
+    `escaped_string`/`escaped_symbol` overflow (untrusted names into a fixed
+    `escapedthingbuf`) now grows on demand; `sprintf_context` (raw reader input)
+    and `read_warning`/`module_and_line` bounded (added `vtnprintf`).
+  - **Network** (`tp.cc`, `socket.cc`): all ~45 outgoing-packet formats bounded;
+    fixed a real 1-byte receive-path overflow (packet-reassembly guard used `>`
+    against a buffer of exactly PACKETBUFSIZE); clamped the reverse-DNS hostname
+    copy.
+  - **Name formatting** (`nlang.cc`): ~485 sites (sprintf/strcpy/strcat and the
+    `tprintf` append wrapper) bounded via BUFSIZE-contract wrappers + `sizeof`
+    for local scratch; `name_or_number` given a size parameter.
+  - **Remaining kernel** (`ui.cc`, `unit.cc`, `side.cc`, `history.cc`,
+    `plan.cc`, `task.cc`, `ai.cc`, `cmd.cc`, `actions.cc`, `mknames.cc`,
+    `score.cc`, `ps.cc`, `write.cc`, `help.cc`, `gif.cc`, `skelconq.cc`,
+    `cmdline.cc`): bounded via shared `bounded_strcpy`/`bounded_strcat`
+    (`util.cc`). Also fixed a real overflow in `help.cc`'s submodule-tree
+    printer (per-nesting-level `strcat`/`strncat` with an unchecked, sometimes
+    negative bound).
 
-**⚙ PROMPT 6.1 — recommended model: Opus.** *(Security triage: deciding
-which of ~400 call sites take attacker-influenced input, and what correct
-truncation behavior is at each, is judgment work where a wrong call hides
-an overflow.)*
+  Provably-safe sites were left with a why-class documented in the commit
+  messages (exact-`xmalloc`'d path builders in `unix.cc`, self-bounded
+  `make_pathname`, purely-numeric formats into ample buffers, string-literal
+  copies, `sprintlisp`'s internal maxlen guards). Each slice left the tree
+  green (`ctest --label-exclude long`, 559/559, including `check-save`
+  fidelity — no truncation regressed a save).
 
-```text
-Task: audit and convert Xconq's unbounded string calls (sprintf/strcpy/
-strcat/gets-family) to bounded equivalents, prioritizing paths reachable
-from untrusted input. This can span multiple sessions — commit in coherent
-slices (per subsystem), each leaving the tree green.
-
-Context: ~320 sprintf and ~70 strcpy calls in kernel/ alone, plus more in
-the UIs. Untrusted input reaches string formatting through: the GDL reader
-(kernel/read.c, lisp.c — downloaded game modules and save files), network
-messages (kernel/tp.c feeds the same reader), and player-supplied strings
-(side/unit names, chat). Many kernel sites format into shared fixed
-buffers (grep for spbuf/tmpbuf and their sizes).
-Method:
-1. Inventory first: for kernel/, list every sprintf/strcpy/strcat call
-   whose format/source includes a %s or variable whose value can originate
-   from GDL, saves, network, or player input (follow the data: type/unit/
-   side names, module titles, doc strings, file paths). That subset is
-   PRIORITY 1; convert all of it.
-2. Conversion rules:
-   - sprintf(buf, ...) -> snprintf(buf, sizeof(buf), ...) when buf is a
-     true array in scope; when buf is a pointer, find the real capacity
-     (allocation site or buffer contract) and pass that — never guess.
-   - strcpy/strcat -> snprintf or explicit length-checked copies matching
-     nearby idiom. Preserve existing semantics for sizes that are provably
-     safe; the goal is that overflow becomes truncation, never corruption.
-   - Where truncation could change behavior (constructed filenames, GDL
-     symbols), decide deliberately: truncate-and-warn (run_warning exists)
-     or reject; note the choice in a comment when non-obvious.
-3. PRIORITY 2 (best effort, time permitting): remaining kernel sites with
-   any %s or variable-length source. Leave purely-numeric formats into
-   ample buffers alone or convert mechanically if touching the file anyway.
-4. Keep a short tally in the commit message(s): sites converted, sites
-   judged safe and left (with why-class), any real overflow found (call
-   those out explicitly).
-Verify after each slice: build all UIs; ctest --test-dir build
---label-exclude long. Watch for truncation-induced test diffs (save files
-are compared for fidelity) — a save/restore mismatch after this change
-means a buffer was actually too small; enlarge, don't mask.
-When kernel PRIORITY 1 is fully converted, mark this item appropriately
-in MODERNIZATION-PLAN.md (done, or a dated progress note if UIs remain).
-```
+  **Still open:** the two UIs (`curses/`, `sdl/`) still have ~130 unbounded
+  calls (`curses/cdraw.cc` is the bulk). Most format the same
+  already-bounded kernel handle strings into local buffers, but they should
+  get the same pass; the fuzzers from §3 cover the kernel reader, not UI
+  formatting.
 - **[M] Review the homegrown networking layer** (`kernel/tp.c`,
   `kernel/socket.c`): it's a custom peer-to-peer protocol whose messages feed
   the GDL reader. At minimum, fuzz the message decoder; longer term consider
