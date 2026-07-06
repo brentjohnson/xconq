@@ -25,6 +25,41 @@ any later version.  See the file COPYING.  */
 #include "aitact.h"
 #include "aioprt.h"
 
+/* Bounded string building.
+
+   The builders in this file assemble player-facing text out of GDL-defined
+   and player-supplied names (unit/side/type names, unit names).  A hostile
+   game module can make any such name up to BIGBUF-1 characters, so appending
+   them raw into the fixed display buffers used here would overflow.  The
+   helpers below turn overflow into harmless truncation -- this text is shown
+   to the player, never written to a save, so save fidelity is unaffected.
+
+   Every `char *buf' parameter in this file is, by contract, a buffer of at
+   least BUFSIZE bytes (all kernel and UI callers pass a BUFSIZE-or-larger
+   buffer); the BCAT/BCPY/TB wrappers and the sprintf->snprintf conversions
+   bound to BUFSIZE.  The handful of smaller local scratch buffers are bounded
+   with their own sizeof instead. */
+
+static void
+strbcat(char *dst, const char *src, size_t size)
+{
+    size_t dl = strlen(dst);
+
+    if (dl < size)
+      snprintf(dst + dl, size - dl, "%s", src);
+}
+
+static void
+strbcpy(char *dst, const char *src, size_t size)
+{
+    snprintf(dst, size, "%s", src);
+}
+
+/* BUFSIZE-contract wrappers for the dominant `char *buf' builders. */
+#define BCAT(dst, src)  strbcat((dst), (src), BUFSIZE)
+#define BCPY(dst, src)  strbcpy((dst), (src), BUFSIZE)
+#define TB(dst, ...)    tnprintf((dst), BUFSIZE, __VA_ARGS__)
+
 static void notify_combat(Unit *unit, Unit *atker, const char *str);
 static int pattern_matches_combat(Obj *pattern, Unit *unit, Unit *unit2);
 static void combat_desc_from_list(Side *side, Obj *lis, Unit *unit,
@@ -206,7 +241,7 @@ maybe_mention_date(Side *side)
     /* Note that last_notice_date defaults to 0, so this means that
        any turn 0 notices will not have a date prepended (which is good). */
     if (g_turn() != side->last_notice_date) {
-	sprintf(tmpdbuf, "%s:", absolute_date_string(g_turn()));
+	snprintf(tmpdbuf, BUFSIZE, "%s:", absolute_date_string(g_turn()));
 	low_notify(side, tmpdbuf);
 	side->last_notice_date = g_turn();
     }
@@ -260,11 +295,11 @@ short_side_title(Side *side)
     if (side->name) {
 	return side->name;
     } else if (side->pluralnoun) {
-	sprintf(side_short_title, "the %s", side->pluralnoun);
+	snprintf(side_short_title, BUFSIZE, "the %s", side->pluralnoun);
     } else if (side->noun) {
-	sprintf(side_short_title, "the %s", plural_form(side->noun));
+	snprintf(side_short_title, BUFSIZE, "the %s", plural_form(side->noun));
     } else if (side->adjective) {
-	sprintf(side_short_title, "the %s side", side->adjective);
+	snprintf(side_short_title, BUFSIZE, "the %s side", side->adjective);
     } else {
 	return " - ";
     }
@@ -281,32 +316,32 @@ short_side_title_with_adjective(Side *side, char *adjective)
 	if (empty_string(adjective))
 	  return side->name;
 	else {
-	    strcat(side_short_title, adjective);
-	    strcat(side_short_title, " ");
-	    strcat(side_short_title, side->name);
+	    BCAT(side_short_title, adjective);
+	    BCAT(side_short_title, " ");
+	    BCAT(side_short_title, side->name);
 	}
     } else if (side->pluralnoun) {
-	strcat(side_short_title, "the ");
+	BCAT(side_short_title, "the ");
 	if (!empty_string(adjective)) {
-	    strcat(side_short_title, adjective);
-	    strcat(side_short_title, " ");
+	    BCAT(side_short_title, adjective);
+	    BCAT(side_short_title, " ");
 	}
-	strcat(side_short_title, side->pluralnoun);
+	BCAT(side_short_title, side->pluralnoun);
     } else if (side->noun) {
-	strcat(side_short_title, "the ");
+	BCAT(side_short_title, "the ");
 	if (!empty_string(adjective)) {
-	    strcat(side_short_title, adjective);
-	    strcat(side_short_title, " ");
+	    BCAT(side_short_title, adjective);
+	    BCAT(side_short_title, " ");
 	}
-	strcat(side_short_title, side->noun);
+	BCAT(side_short_title, side->noun);
     } else if (side->adjective) {
-	strcat(side_short_title, "the ");
+	BCAT(side_short_title, "the ");
 	if (!empty_string(adjective)) {
-	    strcat(side_short_title, adjective);
-	    strcat(side_short_title, " ");
+	    BCAT(side_short_title, adjective);
+	    BCAT(side_short_title, " ");
 	}
-	strcat(side_short_title, side->adjective);
-	strcat(side_short_title, " side");
+	BCAT(side_short_title, side->adjective);
+	BCAT(side_short_title, " side");
     } else {
 	return " - ";
     }
@@ -326,7 +361,7 @@ short_side_title_plural_p(Side *side)
     } else if (side->noun) {
 	return TRUE;
     } else if (side->adjective) {
-	sprintf(side_short_title, "the %s side", side->adjective);
+	snprintf(side_short_title, BUFSIZE, "the %s side", side->adjective);
 	return FALSE;
     } else {
 	return FALSE;
@@ -345,7 +380,7 @@ shortest_side_title(Side *side2, char *buf)
     } else if (side2->pluralnoun) {
 	return side2->pluralnoun;
     } else {
-	sprintf(buf, "(#%d)", side_number(side2));
+	snprintf(buf, BUFSIZE, "(#%d)", side_number(side2));
     }
     return buf;
 }
@@ -364,8 +399,8 @@ sidemask_desc(char *buf, SideMask sidemask)
 	    if (first)
 	      first = FALSE;
 	    else
-	      strcat(buf, ", ");
-	    strcat(buf, short_side_title(side2));
+	      BCAT(buf, ", ");
+	    BCAT(buf, short_side_title(side2));
 	}
     }
     return buf;
@@ -379,29 +414,29 @@ side_score_desc(char *buf, Side *side, Scorekeeper *sk)
 	return buf;
     }
     if (!empty_string(sk->title)) {
-    	strcpy(buf, sk->title);
+    	BCPY(buf, sk->title);
     } else {
-    	sprintf(buf, "Score");
+    	snprintf(buf, BUFSIZE, "Score");
     	if (numscorekeepers > 1) {
-    		tprintf(buf, " %d", sk->id);
+    		TB(buf, " %d", sk->id);
     	}
     }
-    tprintf(buf, ": ");
+    TB(buf, ": ");
     if (symbolp(sk->body)
         && match_keyword(sk->body, K_LAST_SIDE_WINS)) {
-	tprintf(buf, "%d", side_point_value(side));
+	TB(buf, "%d", side_point_value(side));
     } else if (symbolp(sk->body)
         && match_keyword(sk->body, K_LAST_ALLIANCE_WINS)) {
 	if (has_allies(side)) {
-		tprintf(buf, "%d", alliance_point_value(side));
-		tprintf(buf, " (%d alone)", side_point_value(side));
+		TB(buf, "%d", alliance_point_value(side));
+		TB(buf, " (%d alone)", side_point_value(side));
     	} else {
-		tprintf(buf, "%d", side_point_value(side));
+		TB(buf, "%d", side_point_value(side));
        	}
     } else {
 	/* Compose the generic scorekeeper status display. */
 	if (sk->scorenum >= 0) {
-	    tprintf(buf, "%d", side->scores[sk->scorenum]);
+	    TB(buf, "%d", side->scores[sk->scorenum]);
 	}
     }
     return buf;
@@ -415,26 +450,26 @@ long_player_title(char *buf, Player *player, char *thisdisplayname)
 	/* Do nothing */
     } else if (player->displayname != NULL) {
 	if (player->name != NULL) {
-	    strcat(buf, player->name);
-	    strcat(buf, "@");
+	    BCAT(buf, player->name);
+	    BCAT(buf, "@");
 	}
 	if (thisdisplayname != NULL
 	    && strcmp(player->displayname, thisdisplayname) == 0
 	    && player->rid == my_rid) {
-	    strcat(buf, "You");
+	    BCAT(buf, "You");
 	} else {
-	    strcat(buf, player->displayname);
+	    BCAT(buf, player->displayname);
 	}
 	if (player->aitypename != NULL) {
-	    strcat(buf, "(& AI ");
-	    strcat(buf, player->aitypename);
-	    strcat(buf, ")");
+	    BCAT(buf, "(& AI ");
+	    BCAT(buf, player->aitypename);
+	    BCAT(buf, ")");
 	}
     } else if (player->aitypename != NULL) {
-	strcat(buf, "AI ");
-	strcat(buf, player->aitypename);
+	BCAT(buf, "AI ");
+	BCAT(buf, player->aitypename);
     } else {
-	strcat(buf, "-");
+	BCAT(buf, "-");
     }
     return buf;
 }
@@ -446,25 +481,25 @@ short_player_title(char *buf, Player *player, char *thisdisplayname)
     if (player == NULL)
       return buf;
     if (player->name != NULL) {
-	strcat(buf, player->name);
+	BCAT(buf, player->name);
     }
     if (player->aitypename != NULL) {
-	strcat(buf, ",");
-	strcat(buf, player->aitypename);
+	BCAT(buf, ",");
+	BCAT(buf, player->aitypename);
     }
     if ((player->name != NULL || player->aitypename != NULL)
 	&& player->displayname != NULL) {
-	strcat(buf, "@");
+	BCAT(buf, "@");
     }
     if (thisdisplayname != NULL
 	&& player->displayname != NULL
 	&& strcmp(player->displayname, thisdisplayname) == 0) {
-	strcat(buf, "You");
+	BCAT(buf, "You");
     } else if (player->displayname != NULL) {
-	strcat(buf, player->displayname);
+	BCAT(buf, player->displayname);
     }
     if (strlen(buf) == 0) {
-	strcat(buf, "-");
+	BCAT(buf, "-");
     }
     return buf;
 }
@@ -482,27 +517,27 @@ simple_player_title(char *buf, Player *player)
     if (player->displayname) {
     	/* If we are "You" we are done. */
     	if (player->rid == my_rid) {
-    		strcat(buf, "You");
+    		BCAT(buf, "You");
     	/* If we have a "name" use it. */
     	} else if (player->name) {
-    		strcat(buf, player->name);
+    		BCAT(buf, player->name);
 	/* Else use the "displayname". This is where we usually end up, since
 	whatever is passed in default_player_spec by default is used to set the 
 	"displayname" and not the "name". */
 	} else {
-    		strcat(buf, player->displayname);
+    		BCAT(buf, player->displayname);
 	}
 	/* Add the ai name if it exists. */
 	if (player->aitypename) {
-		strcat(buf, " + ");
-		strcat(buf, player->aitypename);	
+		BCAT(buf, " + ");
+		BCAT(buf, player->aitypename);	
 	}
     /* Then handle ai players. */
     } else if (player->aitypename) { 		
-	strcat(buf, player->aitypename);
+	BCAT(buf, player->aitypename);
     }
     if (strlen(buf) == 0) {
-	strcat(buf, "-");
+	BCAT(buf, "-");
     }
     return buf;
 }
@@ -520,22 +555,22 @@ simple_player_name(char *buf, Player *player)
     if (player->displayname) {
     	/* If we are "You" we are done. */
     	if (player->rid == my_rid) {
-    		strcat(buf, "You");
+    		BCAT(buf, "You");
     	/* If we have a "name" use it. */
     	} else if (player->name) {
-    		strcat(buf, player->name);
+    		BCAT(buf, player->name);
 	/* Else use the "displayname". This is where we usually end up, since
 	whatever is passed in default_player_spec by default is used to set the 
 	"displayname" and not the "name". */
 	} else {
-    		strcat(buf, player->displayname);
+    		BCAT(buf, player->displayname);
 	}
     /* Then handle ai players. */
     } else if (player->aitypename) { 		
-	strcat(buf, "Computer");
+	BCAT(buf, "Computer");
     }
     if (strlen(buf) == 0) {
-	strcat(buf, "Nobody");
+	BCAT(buf, "Nobody");
     }
     return buf;
 }
@@ -547,14 +582,14 @@ side_and_type_name(char *buf, Side *side, int u, Side *side2)
 {
     /* Decide how to identify the side. */
     if (side2 == NULL) {
-	sprintf(buf, "independent ");
+	snprintf(buf, BUFSIZE, "independent ");
     } else if (side == side2) {
-	sprintf(buf, "your ");
+	snprintf(buf, BUFSIZE, "your ");
     } else {
-	sprintf(buf, "%s ", side_adjective(side2));
+	snprintf(buf, BUFSIZE, "%s ", side_adjective(side2));
     }
     /* Glue the pieces together and return it. */
-    strcat(buf, u_type_name(u));
+    BCAT(buf, u_type_name(u));
 }
 
 #endif
@@ -596,7 +631,7 @@ apparent_unit_handle(Side *side, Unit *unit, Side *side2)
     if (unit == NULL)
       return "???";
     if (!alive(unit)) {
-    	sprintf(unitbuf, "dead #%d", unit->id);
+    	snprintf(unitbuf, BUFSIZE, "dead #%d", unit->id);
         return unitbuf;
     }
     unitbuf[0] = '\0';
@@ -607,7 +642,7 @@ apparent_unit_handle(Side *side, Unit *unit, Side *side2)
       side3 = unit->origside;
     sidebuf[0] = '\0';
     if (side2 == side) {
-	strcat(sidebuf, "your");
+	strbcat(sidebuf, "your", sizeof(sidebuf));
     } else {
 	/* If the side adjective is a genitive (ends in 's, s' or z')
 	   we should skip the definite article. */
@@ -617,24 +652,24 @@ apparent_unit_handle(Side *side, Unit *unit, Side *side2)
 	if (strcmp(end, "'s") != 0
 	    && strcmp(end, "s'") != 0
 	    && strcmp(end, "z'") != 0)
-	  strcat(sidebuf, "the ");
-	strcat(sidebuf, side_adjective(side2));
+	  strbcat(sidebuf, "the ", sizeof(sidebuf));
+	strbcat(sidebuf, side_adjective(side2), sizeof(sidebuf));
     }
 
 	/* Generates a lot of extra text of limited interest to the player. */
 #if 0
     if (side3 != NULL) {
 	if (side3 == side) {
-	    strcat(sidebuf, " (formerly your)");
+	    strbcat(sidebuf, " (formerly your)", sizeof(sidebuf));
 	} else if (side3 == indepside) {
 	    /* Don't add anything for captured independents.  While
 	       technically there's no reason not to do this, in
 	       practice a side will often have many captured indeps,
 	       and this keeps the text from getting too cluttered. */
 	} else {
-	    strcat(sidebuf, " (formerly ");
-	    strcat(sidebuf, side_adjective(side3));
-	    strcat(sidebuf, ")");
+	    strbcat(sidebuf, " (formerly ", sizeof(sidebuf));
+	    strbcat(sidebuf, side_adjective(side3), sizeof(sidebuf));
+	    strbcat(sidebuf, ")", sizeof(sidebuf));
 	}
     }
 #endif
@@ -647,60 +682,60 @@ apparent_unit_handle(Side *side, Unit *unit, Side *side2)
 	    fmt1 = car(frest);
 	    if (stringp(fmt1)) {
 		/* Append strings verbatim. */
-		strcat(unitbuf, c_string(fmt1));
+		BCAT(unitbuf, c_string(fmt1));
 	    } else if (symbolp(fmt1)) {
 		/* Symbols indicate the types of data to format and
                    output. */
 		fmtstr = c_string(fmt1);
 		if (strcmp(fmtstr, "name") == 0) {
-		    strcat(unitbuf, (unit->name ? unit->name : "anon"));
+		    BCAT(unitbuf, (unit->name ? unit->name : "anon"));
 		} else if (strcmp(fmtstr, "position") == 0) {
-		    sprintf(smallbuf, "%d,%d", unit->x, unit->y);
-		    strcat(unitbuf, smallbuf);
+		    snprintf(smallbuf, sizeof(smallbuf), "%d,%d", unit->x, unit->y);
+		    BCAT(unitbuf, smallbuf);
 		} else if (strcmp(fmtstr, "side") == 0) {
-		    strcat(unitbuf, sidebuf);
+		    BCAT(unitbuf, sidebuf);
 		} else if (strcmp(fmtstr, "type") == 0) {
-		    strcat(unitbuf, utypename);
+		    BCAT(unitbuf, utypename);
 		} else if (strcmp(fmtstr, "side-name") == 0) {
-		    strcat(unitbuf, side_name(unit->side));
+		    BCAT(unitbuf, side_name(unit->side));
 		} else if (strcmp(fmtstr, "side-adjective") == 0) {
-		    strcat(unitbuf, side_adjective(unit->side));
+		    BCAT(unitbuf, side_adjective(unit->side));
 		} else {
-		    strcat(unitbuf, "??description-format??");
+		    BCAT(unitbuf, "??description-format??");
 		}
 	    } else {
-		strcat(unitbuf, "??description-format??");
+		BCAT(unitbuf, "??description-format??");
 	    }
 	}
 	return unitbuf;
     } else {
-	strcat(unitbuf, sidebuf);
-	strcat(unitbuf, " ");
+	BCAT(unitbuf, sidebuf);
+	BCAT(unitbuf, " ");
     }
     /* If this unit is a self unit, say so. */
     if (unit->side != NULL && unit == unit->side->self_unit) {
     	if (!mobile(unit->type) || u_advanced(unit->type)) {
-	  	strcat(unitbuf, "capital ");
+	  	BCAT(unitbuf, "capital ");
 	} else {
-		strcat(unitbuf, "leader ");
+		BCAT(unitbuf, "leader ");
     	}
 	if (unit->name) {
-		tprintf(unitbuf, "%s", unit->name);
+		TB(unitbuf, "%s", unit->name);
 	} else if (unit->number > 0) {
-		tprintf(unitbuf, "%d%s %s",
+		TB(unitbuf, "%d%s %s",
 			unit->number, ordinal_suffix(unit->number), utypename);
 	} else {
-		strcat(unitbuf, utypename);
+		BCAT(unitbuf, utypename);
 	}
     /* Default formats for units. */
     } else {
 	    if (unit->name) {
-		tprintf(unitbuf, "%s %s", utypename, unit->name);
+		TB(unitbuf, "%s %s", utypename, unit->name);
 	    } else if (unit->number > 0) {
-		tprintf(unitbuf, "%d%s %s",
+		TB(unitbuf, "%d%s %s",
 			unit->number, ordinal_suffix(unit->number), utypename);
 	    } else {
-		strcat(unitbuf, utypename);
+		BCAT(unitbuf, utypename);
 	    }
     }
     return unitbuf;
@@ -721,24 +756,24 @@ short_unit_handle(Unit *unit)
     if (unit == NULL)
       return "???";
     if (!alive(unit)) {
-    	sprintf(unitbuf, "dead #%d", unit->id);
+    	snprintf(unitbuf, BUFSIZE, "dead #%d", unit->id);
         return unitbuf;
     }
     u = unit->type;
     /* Use the name alone if the unit is named, or else use optional
        ordinal and the shortest type name available. */
     if (!empty_string(unit->name)) {
-	strcpy(unitbuf, unit->name);
+	BCPY(unitbuf, unit->name);
     } else {
 	unitbuf[0] = '\0';
 	if (unit->number > 0) {
-	    sprintf(unitbuf, "%d%s ",
+	    snprintf(unitbuf, BUFSIZE, "%d%s ",
 		    unit->number, ordinal_suffix(unit->number));
 	}
 	if (!empty_string(u_short_name(u)))
-	  strcat(unitbuf, u_short_name(u));
+	  BCAT(unitbuf, u_short_name(u));
 	else
-	  strcat(unitbuf, u_type_name(u));
+	  BCAT(unitbuf, u_type_name(u));
     }
     return unitbuf;
 }
@@ -753,44 +788,44 @@ medium_long_unit_handle(Unit *unit)
     if (unit == NULL)
       return "???";
     if (!alive(unit)) {
-    	sprintf(unitbuf, "dead #%d", unit->id);
+    	snprintf(unitbuf, BUFSIZE, "dead #%d", unit->id);
         return unitbuf;
     }
-    strcpy(unitbuf, side_adjective(unit->side));
-    strcat(unitbuf, " ");
+    BCPY(unitbuf, side_adjective(unit->side));
+    BCAT(unitbuf, " ");
     /* If this unit is a self unit, say so. */
     if (unit->side != NULL && unit == unit->side->self_unit) {
 	if (!mobile(unit->type) || u_advanced(unit->type)) {
-		strcat(unitbuf, "capital ");
+		BCAT(unitbuf, "capital ");
 	} else {
-		strcat(unitbuf, "leader ");
+		BCAT(unitbuf, "leader ");
 	}
 	/* If the unit has a name, write its name. */
 	if (!empty_string(unit->name)) {
-		strcat(unitbuf, unit->name);
+		BCAT(unitbuf, unit->name);
 		/* If the unit has a number, write it followed by the type. */
 	} else if (unit->number > 0) {
-		tprintf(unitbuf, "%d%s %s",
+		TB(unitbuf, "%d%s %s",
 			unit->number, ordinal_suffix(unit->number),
 			u_type_name(unit->type));
 		/* Else just write the unit type. */
 	} else {
-		strcat(unitbuf, u_type_name(unit->type));
+		BCAT(unitbuf, u_type_name(unit->type));
 	}
     } else {
 	/* If the unit has a name, write its type followed by the name. */
 	if (!empty_string(unit->name)) {
-		strcat(unitbuf, u_type_name(unit->type));
-		strcat(unitbuf, " ");
-		strcat(unitbuf, unit->name);
+		BCAT(unitbuf, u_type_name(unit->type));
+		BCAT(unitbuf, " ");
+		BCAT(unitbuf, unit->name);
 		/* If the unit has a number, write it followed by the type. */
 	} else if (unit->number > 0) {
-		tprintf(unitbuf, "%d%s %s",
+		TB(unitbuf, "%d%s %s",
 			unit->number, ordinal_suffix(unit->number),
 			u_type_name(unit->type));
 		/* Else just write the unit type. */
 	} else {
-		strcat(unitbuf, u_type_name(unit->type));
+		BCAT(unitbuf, u_type_name(unit->type));
 	}
     }
     return unitbuf;
@@ -799,12 +834,13 @@ medium_long_unit_handle(Unit *unit)
 /* Put either the unit's name or its number into the given buffer. */
 
 void
-name_or_number(Unit *unit, char *buf)
+name_or_number(Unit *unit, char *buf, size_t size)
 {
     if (unit->name) {
-	strcpy(buf, unit->name);
+	/* unit->name is player-supplied; truncate to the caller's buffer. */
+	strbcpy(buf, unit->name, size);
     } else if (unit->number > 0) {
-	sprintf(buf, "%d%s", unit->number, ordinal_suffix(unit->number));
+	snprintf(buf, size, "%d%s", unit->number, ordinal_suffix(unit->number));
     } else {
 	buf[0] = '\0';
     }
@@ -828,9 +864,9 @@ past_unit_handle(Side *side, PastUnit *past_unit)
     /* Decide how to identify the side. */
     side2 = past_unit->side;
     if (side2 == NULL) {
-	sprintf(past_unitbuf, "the ");
+	snprintf(past_unitbuf, BUFSIZE, "the ");
     } else if (side2 == side) {
-	sprintf(past_unitbuf, "your ");
+	snprintf(past_unitbuf, BUFSIZE, "your ");
     } else {
 	/* If the side adjective is a genitive (ends in 's, s' or z')
 	   we should skip the definite article. */
@@ -840,20 +876,20 @@ past_unit_handle(Side *side, PastUnit *past_unit)
 	if (strcmp(end, "'s") != 0
 	    && strcmp(end, "s'") != 0
 	    && strcmp(end, "z'") != 0)
-	  sprintf(past_unitbuf, "the ");
-	sprintf(past_unitbuf, "%s", side_adjective(side2));
-	strcat(past_unitbuf, " ");
+	  snprintf(past_unitbuf, BUFSIZE, "the ");
+	snprintf(past_unitbuf, BUFSIZE, "%s", side_adjective(side2));
+	BCAT(past_unitbuf, " ");
     }
     /* Now add the past_unit's unique description. */
     utypename = u_type_name(past_unit->type);
     if (past_unit->name) {
-	tprintf(past_unitbuf, "%s %s", utypename, past_unit->name);
+	TB(past_unitbuf, "%s %s", utypename, past_unit->name);
     } else if (past_unit->number > 0) {
-	tprintf(past_unitbuf, "%d%s %s",
+	TB(past_unitbuf, "%d%s %s",
 		past_unit->number, ordinal_suffix(past_unit->number),
 		utypename);
     } else {
-	strcat(past_unitbuf, utypename);
+	BCAT(past_unitbuf, utypename);
     }
     return past_unitbuf;
 }
@@ -872,31 +908,31 @@ construction_desc(char *buf, Unit *unit, int u)
     if (u != NONUTYPE) {
 	est = est_completion_time(unit, u);
 	if (est >= 0) {
-	    sprintf(ubuf, "[%2d] ", est);
+	    snprintf(ubuf, sizeof(ubuf), "[%2d] ", est);
 	} else {
-	    strcpy(ubuf, " --  ");
+	    strbcpy(ubuf, " --  ", sizeof(ubuf));
 	}
     } else {
 	ubuf[0] = '\0';
     }
-    name_or_number(unit, tmpbuf);
-    sprintf(buf, "%s%s %s", ubuf, u_type_name(unit->type), tmpbuf);
+    name_or_number(unit, tmpbuf, sizeof(tmpbuf));
+    snprintf(buf, BUFSIZE, "%s%s %s", ubuf, u_type_name(unit->type), tmpbuf);
     pad_out(buf, 25);
     if (unit->plan
 	&& unit->plan->tasks) {
 	task = unit->plan->tasks;
 	if (task->type == TASK_BUILD) {
 	    u2 = task->args[0];
-	    tprintf(buf, " %s ", (is_unit_type(u2) ? u_type_name(u2) : "?"));
+	    TB(buf, " %s ", (is_unit_type(u2) ? u_type_name(u2) : "?"));
 	    unit2 = find_unit(task->args[1]);
 	    if (in_play(unit2) && unit2->type == u2) {
-		tprintf(buf, "%d/%d done ", unit2->cp, u_cp(unit2->type));
+		TB(buf, "%d/%d done ", unit2->cp, u_cp(unit2->type));
 	    }
-	    tprintf(buf, "(%d of %d)", task->args[2] + 1, task->args[3]);
+	    TB(buf, "(%d of %d)", task->args[2] + 1, task->args[3]);
 	} else if (task->type == TASK_DEVELOP) {
 	    u2 = task->args[0];
 	    if (is_unit_type(u2)) {
-		tprintf(buf, " %s tech %d/%d",
+		TB(buf, " %s tech %d/%d",
 			u_type_name(u2), unit->side->tech[u2], task->args[1]);
 	    }
 	}
@@ -913,15 +949,15 @@ research_desc(char *buf, Unit *unit, int a)
 
     if (a != NONATYPE) {
 	if (u_can_research(unit->type)) {
-	    sprintf(abuf, "[%2d] ", a_rp(a));
+	    snprintf(abuf, sizeof(abuf), "[%2d] ", a_rp(a));
 	} else {
-	    strcpy(abuf, " --  ");
+	    strbcpy(abuf, " --  ", sizeof(abuf));
 	}
     } else {
 	abuf[0] = '\0';
     }
-    name_or_number(unit, tmpbuf);
-    sprintf(buf, "%s%s %s", abuf, u_type_name(unit->type), tmpbuf);
+    name_or_number(unit, tmpbuf, sizeof(tmpbuf));
+    snprintf(buf, BUFSIZE, "%s%s %s", abuf, u_type_name(unit->type), tmpbuf);
     pad_out(buf, 25);
 }
 
@@ -932,14 +968,14 @@ researchible_desc(char *buf, Unit *unit, int a)
 
     if (a != NONATYPE && unit != NULL) {
 	if (u_advanced(unit->type)) {
-	    sprintf(abuf, "[%2d] ", a_rp(a));
+	    snprintf(abuf, sizeof(abuf), "[%2d] ", a_rp(a));
 	} else {
-	    strcpy(abuf, " --  ");
+	    strbcpy(abuf, " --  ", sizeof(abuf));
 	}
     } else {
 	abuf[0] = '\0';
     }
-    sprintf(buf, "%s%s", abuf, a_type_name(a));
+    snprintf(buf, BUFSIZE, "%s%s", abuf, a_type_name(a));
     pad_out(buf, 25);
 }
 
@@ -958,39 +994,39 @@ constructible_desc(char *buf, Side *side, int u, Unit *unit)
     if (unit != NULL) {
 	est = est_completion_time(unit, u);
     	if (est >= 0) {
-	    sprintf(estbuf, "[%2d] ", est);
+	    snprintf(estbuf, sizeof(estbuf), "[%2d] ", est);
 	    if (uu_tp_to_build(unit->type, u) > 0) {
 		tp = (unit->tooling ? unit->tooling[u] : 0);
-		tprintf(estbuf, "(%2d) ", tp);
+		tnprintf(estbuf, sizeof(estbuf), "(%2d) ", tp);
 	    }
     	} else {
-	    strcpy(estbuf, " --  ");
+	    strbcpy(estbuf, " --  ", sizeof(estbuf));
     	}
     } else {
 	estbuf[0] = '\0';
     }
     if (u_tech_max(u) > 0) {
-    	sprintf(techbuf, "[Tech %d/%d/%d] ",
+    	snprintf(techbuf, sizeof(techbuf), "[Tech %d/%d/%d] ",
 		side->tech[u], u_tech_to_build(u), u_tech_max(u));
     } else {
 	techbuf[0] = '\0';
     }
-    strcpy(typenamebuf, u_type_name(u));
+    strbcpy(typenamebuf, u_type_name(u), sizeof(typenamebuf));
     /* If the single char for the type is different from the first character
        of its type name, mention the char. */
     if (!empty_string(u_uchar(u)) && (u_uchar(u))[0] != typenamebuf[0]) {
-	tprintf(typenamebuf, "(%c)", (u_uchar(u))[0]);
+	tnprintf(typenamebuf, sizeof(typenamebuf), "(%c)", (u_uchar(u))[0]);
     }
-    sprintf(buf, "%s%s%-16.16s", estbuf, techbuf, typenamebuf);
+    snprintf(buf, BUFSIZE, "%s%s%-16.16s", estbuf, techbuf, typenamebuf);
     num = num_units_in_play(side, u);
     if (num > 0) {
-	tprintf(buf, "  %3d", num);
+	TB(buf, "  %3d", num);
     } else {
-	strcat(buf, "     ");
+	BCAT(buf, "     ");
     }
     num = num_units_incomplete(side, u);
     if (num > 0) {
-	tprintf(buf, "(%d)", num);
+	TB(buf, "(%d)", num);
     }
 }
 
@@ -999,7 +1035,7 @@ constructible_desc(char *buf, Side *side, int u, Unit *unit)
 void
 historical_event_date_desc(HistEvent *hevt, char *buf)
 {
-    sprintf(buf, "%d: ", hevt->startdate);
+    snprintf(buf, BUFSIZE, "%d: ", hevt->startdate);
 }
 
 #endif
@@ -1037,7 +1073,7 @@ historical_event_desc(Side *side, HistEvent *hevt, char *buf)
 		&& find_event_type(pattern) == hevt->type) {
 		text = cadr(head);
 		if (stringp(text)) {
-		    sprintf(buf, "%s", c_string(text));
+		    snprintf(buf, BUFSIZE, "%s", c_string(text));
 		} else {
 		    sprintlisp(buf, text, 50);
 		}
@@ -1048,7 +1084,7 @@ historical_event_desc(Side *side, HistEvent *hevt, char *buf)
 		       ) {
 		text = cadr(head);
 		if (stringp(text)) {
-		    sprintf(buf, "%s", c_string(text));
+		    snprintf(buf, BUFSIZE, "%s", c_string(text));
 		} else {
 		    event_desc_from_list(side, text, hevt, buf);
 		}
@@ -1059,101 +1095,101 @@ historical_event_desc(Side *side, HistEvent *hevt, char *buf)
     /* Generate a default description of the event. */
     switch (hevt->type) {
       case H_LOG_STARTED:
-	sprintf(buf, "we started recording events");
+	snprintf(buf, BUFSIZE, "we started recording events");
 	break;
       case H_LOG_ENDED:
-	sprintf(buf, "we stopped recording events");
+	snprintf(buf, BUFSIZE, "we stopped recording events");
 	break;
       case H_GAME_STARTED:
-	sprintf(buf, "we started the game");
+	snprintf(buf, BUFSIZE, "we started the game");
 	break;
       case H_GAME_SAVED:
-	sprintf(buf, "we saved the game");
+	snprintf(buf, BUFSIZE, "we saved the game");
 	break;
       case H_GAME_RESTARTED:
-	sprintf(buf, "we restarted the game");
+	snprintf(buf, BUFSIZE, "we restarted the game");
 	break;
       case H_GAME_ENDED:
-	sprintf(buf, "we ended the game");
+	snprintf(buf, BUFSIZE, "we ended the game");
 	break;
       case H_SIDE_JOINED:
       	side2 = side_n(data0);
-	sprintf(buf, "%s joined the game",
+	snprintf(buf, BUFSIZE, "%s joined the game",
 		(side == side2 ? "you" : side_name(side2)));
 	break;
       case H_SIDE_LOST:
       	side2 = side_n(data0);
-	sprintf(buf, "%s lost!", (side == side2 ? "you" : side_name(side2)));
+	snprintf(buf, BUFSIZE, "%s lost!", (side == side2 ? "you" : side_name(side2)));
 	/* Include an explanation of the cause, if there is one. */
 	if (data1 == -1) {
-	    tprintf(buf, " (resigned)");
+	    TB(buf, " (resigned)");
 	} else if (data1 == -2) {
-	    tprintf(buf, " (self-unit died)");
+	    TB(buf, " (self-unit died)");
 	} else if (data1 > 0) {
-	    tprintf(buf, " (scorekeeper %d)", data1);
+	    TB(buf, " (scorekeeper %d)", data1);
 	} else {
-	    tprintf(buf, " (don't know why)");
+	    TB(buf, " (don't know why)");
 	}
 	break;
       case H_SIDE_WITHDREW:
       	side2 = side_n(data0);
-	sprintf(buf, "%s withdrew!", (side == side2 ? "you" : side_name(side2)));
+	snprintf(buf, BUFSIZE, "%s withdrew!", (side == side2 ? "you" : side_name(side2)));
 	break;
       case H_SIDE_WON:
       	side2 = side_n(data0);
-	sprintf(buf, "%s won!", (side == side2 ? "you" : side_name(side2)));
+	snprintf(buf, BUFSIZE, "%s won!", (side == side2 ? "you" : side_name(side2)));
 	/* Include an explanation of the cause, if there is one. */
 	if (data1 > 0) {
-	    tprintf(buf, " (scorekeeper %d)", data1);
+	    TB(buf, " (scorekeeper %d)", data1);
 	} else {
-	    tprintf(buf, " (don't know why)");
+	    TB(buf, " (don't know why)");
 	}
 	break;
       case H_UNIT_CREATED:
       	side2 = side_n(data0);
-	sprintf(buf, "%s created ",
+	snprintf(buf, BUFSIZE, "%s created ",
 		(side == side2 ? "you" : side_name(side2)));
 	unit = find_unit(data1);
 	if (unit != NULL) {
-	    strcat(buf, unit_handle(side, unit));
+	    BCAT(buf, unit_handle(side, unit));
 	} else {
 	    pastunit = find_past_unit(data1);
 	    if (pastunit != NULL) {
-		strcat(buf, past_unit_handle(side, pastunit));
+		BCAT(buf, past_unit_handle(side, pastunit));
 	    } else {
-		tprintf(buf, "%d??", data1);
+		TB(buf, "%d??", data1);
 	    }
 	}
 	break;
       case H_UNIT_COMPLETED:
       	side2 = side_n(data0);
-	sprintf(buf, "%s completed ",
+	snprintf(buf, BUFSIZE, "%s completed ",
 		(side == side2 ? "you" : side_name(side2)));
 	unit = find_unit(data1);
 	if (unit != NULL) {
-	    strcat(buf, unit_handle(side, unit));
+	    BCAT(buf, unit_handle(side, unit));
 	} else {
 	    pastunit = find_past_unit(data1);
 	    if (pastunit != NULL) {
-		strcat(buf, past_unit_handle(side, pastunit));
+		BCAT(buf, past_unit_handle(side, pastunit));
 	    } else {
-		tprintf(buf, "%d??", data1);
+		TB(buf, "%d??", data1);
 	    }
 	}
 	break;
       case H_UNIT_DAMAGED:
 	unit = find_unit_dead_or_alive(data0);
 	if (unit != NULL) {
-	    strcpy(buf, unit_handle(side, unit));
+	    BCPY(buf, unit_handle(side, unit));
 	} else {
  	    pastunit = find_past_unit(data0);
 	    if (pastunit != NULL) {
-		strcpy(buf, past_unit_handle(side, pastunit));
+		BCPY(buf, past_unit_handle(side, pastunit));
 	    } else {
-		sprintf(buf, "%d??", data0);
+		snprintf(buf, BUFSIZE, "%d??", data0);
 	    }
 	}
-	tprintf(buf, " damaged (%d -> %d hp)", data1, hevt->data[2]);
+	TB(buf, " damaged (%d -> %d hp)", data1, hevt->data[2]);
 	break;
       case H_UNIT_CAPTURED:
 	buf[0] = '\0';
@@ -1161,28 +1197,28 @@ historical_event_desc(Side *side, HistEvent *hevt, char *buf)
 	   of the unit that did the capturing. */
 	unit = find_unit_dead_or_alive(data1);
 	if (unit != NULL) {
-	    strcat(buf, unit_handle(side, unit));
+	    BCAT(buf, unit_handle(side, unit));
 	} else {
  	    pastunit = find_past_unit(data1);
 	    if (pastunit != NULL) {
-		strcat(buf, past_unit_handle(side, pastunit));
+		BCAT(buf, past_unit_handle(side, pastunit));
 	    } else if (data1 == 0) {
-		tprintf(buf, "somebody");
+		TB(buf, "somebody");
 	    } else {
-		tprintf(buf, "%d??", data1);
+		TB(buf, "%d??", data1);
 	    }
 	}
- 	tprintf(buf, " captured ");
+ 	TB(buf, " captured ");
  	/* Describe the unit that was captured. */
 	unit = find_unit_dead_or_alive(data0);
 	if (unit != NULL) {
-	    strcat(buf, unit_handle(side, unit));
+	    BCAT(buf, unit_handle(side, unit));
 	} else {
  	    pastunit = find_past_unit(data0);
 	    if (pastunit != NULL) {
-		strcat(buf, past_unit_handle(side, pastunit));
+		BCAT(buf, past_unit_handle(side, pastunit));
 	    } else {
-		tprintf(buf, "%d??", data0);
+		TB(buf, "%d??", data0);
 	    }
 	}
 	break;
@@ -1191,29 +1227,29 @@ historical_event_desc(Side *side, HistEvent *hevt, char *buf)
  	/* Describe the unit that surrendered. */
 	unit = find_unit_dead_or_alive(data0);
 	if (unit != NULL) {
-	    strcat(buf, unit_handle(side, unit));
+	    BCAT(buf, unit_handle(side, unit));
 	} else {
  	    pastunit = find_past_unit(data0);
 	    if (pastunit != NULL) {
-		strcat(buf, past_unit_handle(side, pastunit));
+		BCAT(buf, past_unit_handle(side, pastunit));
 	    } else {
-		tprintf(buf, "%d??", data0);
+		TB(buf, "%d??", data0);
 	    }
 	}
- 	tprintf(buf, " surrendered to ");
+ 	TB(buf, " surrendered to ");
 	/* The second optional value, if present, is the id of the
 	   unit that accepted the surrender. */
 	unit = find_unit_dead_or_alive(data1);
 	if (unit != NULL) {
-	    strcat(buf, unit_handle(side, unit));
+	    BCAT(buf, unit_handle(side, unit));
 	} else {
  	    pastunit = find_past_unit(data1);
 	    if (pastunit != NULL) {
-		strcat(buf, past_unit_handle(side, pastunit));
+		BCAT(buf, past_unit_handle(side, pastunit));
 	    } else if (data1 == 0) {
-		tprintf(buf, "somebody");
+		TB(buf, "somebody");
 	    } else {
-		tprintf(buf, "%d??", data1);
+		TB(buf, "%d??", data1);
 	    }
 	}
 	break;
@@ -1221,21 +1257,21 @@ historical_event_desc(Side *side, HistEvent *hevt, char *buf)
 	buf[0] = '\0';
 	if (data1 >= 0) {
 	    side2 = side_n(data1);
-	    strcat(buf, (side == side2 ? "you" : side_name(side2)));
+	    BCAT(buf, (side == side2 ? "you" : side_name(side2)));
 	} else {
-	    tprintf(buf, "somebody");
+	    TB(buf, "somebody");
 	}
- 	tprintf(buf, " acquired ");
+ 	TB(buf, " acquired ");
  	/* Describe the unit that was acquired. */
 	unit = find_unit_dead_or_alive(data0);
 	if (unit != NULL) {
-	    strcat(buf, unit_handle(side, unit));
+	    BCAT(buf, unit_handle(side, unit));
 	} else {
  	    pastunit = find_past_unit(data0);
 	    if (pastunit != NULL) {
-		strcat(buf, past_unit_handle(side, pastunit));
+		BCAT(buf, past_unit_handle(side, pastunit));
 	    } else {
-		tprintf(buf, "%d??", data0);
+		TB(buf, "%d??", data0);
 	    }
 	}
 	break;
@@ -1244,19 +1280,19 @@ historical_event_desc(Side *side, HistEvent *hevt, char *buf)
  	/* Describe the unit that revolted. */
 	unit = find_unit_dead_or_alive(data0);
 	if (unit != NULL) {
-	    strcat(buf, unit_handle(side, unit));
+	    BCAT(buf, unit_handle(side, unit));
 	} else {
  	    pastunit = find_past_unit(data0);
 	    if (pastunit != NULL) {
-		strcat(buf, past_unit_handle(side, pastunit));
+		BCAT(buf, past_unit_handle(side, pastunit));
 	    } else {
-		tprintf(buf, "%d??", data0);
+		TB(buf, "%d??", data0);
 	    }
 	}
- 	tprintf(buf, " revolted");
+ 	TB(buf, " revolted");
  	if (data1 >= 0) {
 	    side2 = side_n(data1);
-	    tprintf(buf, ", went over to %s", (side == side2 ? "you" : side_name(side2)));
+	    TB(buf, ", went over to %s", (side == side2 ? "you" : side_name(side2)));
 	}
 	break;
       case H_UNIT_KILLED:
@@ -1266,140 +1302,140 @@ historical_event_desc(Side *side, HistEvent *hevt, char *buf)
 	/* Obviously, the unit mentioned here can only be a past unit. */
 	pastunit = find_past_unit(data0);
 	if (pastunit != NULL) {
-	    sprintf(buf, "%s", past_unit_handle(side, pastunit));
+	    snprintf(buf, BUFSIZE, "%s", past_unit_handle(side, pastunit));
 	} else {
-	    sprintf(buf, "%d??", data0);
+	    snprintf(buf, BUFSIZE, "%d??", data0);
 	}
 	if (hevt->type == H_UNIT_KILLED)
-	  tprintf(buf, " was destroyed");
+	  TB(buf, " was destroyed");
 	else if (hevt->type == H_UNIT_DIED_IN_ACCIDENT)
-	  tprintf(buf, " died in an accident");
+	  TB(buf, " died in an accident");
 	else if (hevt->type == H_UNIT_DIED_FROM_ATTRITION)
-	  tprintf(buf, " died in damaging terrain");
+	  TB(buf, " died in damaging terrain");
 	else
-	  tprintf(buf, " died from excessive temperature");
+	  TB(buf, " died from excessive temperature");
 	break;
       case H_UNIT_WRECKED:
       case H_UNIT_WRECKED_IN_ACCIDENT:
       case H_UNIT_WRECKED_FROM_ATTRITION:
 	pastunit = find_past_unit(data0);
 	if (pastunit != NULL) {
-	    sprintf(buf, "%s", past_unit_handle(side, pastunit));
+	    snprintf(buf, BUFSIZE, "%s", past_unit_handle(side, pastunit));
 	} else {
-	    sprintf(buf, "%d??", data0);
+	    snprintf(buf, BUFSIZE, "%d??", data0);
 	}
 	if (hevt->type == H_UNIT_WRECKED)
-	  tprintf(buf, " was wrecked");
+	  TB(buf, " was wrecked");
 	else if (hevt->type == H_UNIT_WRECKED_FROM_ATTRITION)
-	  tprintf(buf, " was wrecked in damaging terrain");
+	  TB(buf, " was wrecked in damaging terrain");
 	else
-	  tprintf(buf, " was wrecked in an accident");
+	  TB(buf, " was wrecked in an accident");
 	break;
       case H_UNIT_VANISHED:
 	pastunit = find_past_unit(data0);
 	if (pastunit != NULL) {
-	    sprintf(buf, "%s", past_unit_handle(side, pastunit));
+	    snprintf(buf, BUFSIZE, "%s", past_unit_handle(side, pastunit));
 	} else {
-	    sprintf(buf, "%d??", data0);
+	    snprintf(buf, BUFSIZE, "%d??", data0);
 	}
-	tprintf(buf, " vanished");
+	TB(buf, " vanished");
 	break;
       case H_UNIT_DISBANDED:
 	pastunit = find_past_unit(data0);
 	if (pastunit != NULL) {
-	    sprintf(buf, "%s", past_unit_handle(side, pastunit));
+	    snprintf(buf, BUFSIZE, "%s", past_unit_handle(side, pastunit));
 	} else {
-	    sprintf(buf, "%d??", data0);
+	    snprintf(buf, BUFSIZE, "%d??", data0);
 	}
-	tprintf(buf, " was disbanded");
+	TB(buf, " was disbanded");
 	break;
       case H_UNIT_GARRISONED:
 	pastunit = find_past_unit(data0);
 	if (pastunit != NULL) {
-	    sprintf(buf, "%s", past_unit_handle(side, pastunit));
+	    snprintf(buf, BUFSIZE, "%s", past_unit_handle(side, pastunit));
 	} else {
-	    sprintf(buf, "%d??", data0);
+	    snprintf(buf, BUFSIZE, "%d??", data0);
 	}
-	tprintf(buf, " was used to garrison ");
+	TB(buf, " was used to garrison ");
 	unit = find_unit(data1);
 	if (unit != NULL) {
-	    strcat(buf, unit_handle(side, unit));
+	    BCAT(buf, unit_handle(side, unit));
 	} else {
 	    pastunit2 = find_past_unit(data1);
 	    if (pastunit2 != NULL) {
-		strcat(buf, past_unit_handle(side, pastunit2));
+		BCAT(buf, past_unit_handle(side, pastunit2));
 	    } else {
 		/* Should never happen, but don't choke if it does. */
-		tprintf(buf, "?????");
+		TB(buf, "?????");
 	    }
 	}
 	break;
       case H_UNIT_STARVED:
 	pastunit = find_past_unit(data0);
 	if (pastunit != NULL) {
-	    sprintf(buf, "%s", past_unit_handle(side, pastunit));
+	    snprintf(buf, BUFSIZE, "%s", past_unit_handle(side, pastunit));
 	} else {
-	    sprintf(buf, "%d??", data0);
+	    snprintf(buf, BUFSIZE, "%d??", data0);
 	}
-	tprintf(buf, " starved to death");
+	TB(buf, " starved to death");
 	break;
       case H_UNIT_MERGED:
 	pastunit = find_past_unit(data0);
 	if (pastunit != NULL) {
-	    sprintf(buf, "%s", past_unit_handle(side, pastunit));
+	    snprintf(buf, BUFSIZE, "%s", past_unit_handle(side, pastunit));
 	} else {
-	    sprintf(buf, "%d??", data0);
+	    snprintf(buf, BUFSIZE, "%d??", data0);
 	}
-	tprintf(buf, " merged into another");
+	TB(buf, " merged into another");
 	break;
       case H_UNIT_LEFT_WORLD:
 	pastunit = find_past_unit(data0);
 	if (pastunit != NULL) {
-	    sprintf(buf, "%s", past_unit_handle(side, pastunit));
+	    snprintf(buf, BUFSIZE, "%s", past_unit_handle(side, pastunit));
 	} else {
-	    sprintf(buf, "%d??", data0);
+	    snprintf(buf, BUFSIZE, "%d??", data0);
 	}
-	tprintf(buf, " left the world");
+	TB(buf, " left the world");
 	break;
       case H_UNIT_NAME_CHANGED:
 	pastunit = find_past_unit(data0);
 	if (pastunit != NULL) {
-	    sprintf(buf, "%s", past_unit_handle(side, pastunit));
+	    snprintf(buf, BUFSIZE, "%s", past_unit_handle(side, pastunit));
 	} else {
-	    sprintf(buf, "%d??", data0);
+	    snprintf(buf, BUFSIZE, "%d??", data0);
 	}
 	unit = find_unit(data1);
 	if (unit != NULL) {
 	    if (unit->name != NULL)
-	      tprintf(buf, " changed name to \"%s\"", unit->name);
+	      TB(buf, " changed name to \"%s\"", unit->name);
 	    else
-	      tprintf(buf, " became anonymous");
+	      TB(buf, " became anonymous");
 	} else {
 	    pastunit2 = find_past_unit(data1);
 	    if (pastunit2 != NULL) {
 		if (pastunit2->name != NULL)
-		  tprintf(buf, " changed name to \"%s\"", pastunit2->name);
+		  TB(buf, " changed name to \"%s\"", pastunit2->name);
 		else
-		  tprintf(buf, " became anonymous");
+		  TB(buf, " became anonymous");
 	    } else
-	      tprintf(buf, " no name change???");
+	      TB(buf, " no name change???");
 	}
 	break;
       case H_UNIT_TYPE_CHANGED:
 	pastunit = find_past_unit(data0);
 	unit = find_unit(data1);
 	if (pastunit != NULL) {
-	    sprintf(buf, "%s", past_unit_handle(side, pastunit));
+	    snprintf(buf, BUFSIZE, "%s", past_unit_handle(side, pastunit));
 	} else if (unit != NULL) {
-	    sprintf(buf, "%s", unit_handle(side, unit));
+	    snprintf(buf, BUFSIZE, "%s", unit_handle(side, unit));
 	}
-	tprintf(buf, " changed into a %s", u_type_name(data2));
+	TB(buf, " changed into a %s", u_type_name(data2));
 	break;
       default:
 	/* Don't warn, will cause serious problems for windows that
 	   display lists of events, but make sure the non-understood event
 	   is obvious. */
-	sprintf(buf, "?????????? \"%s\" ??????????",
+	snprintf(buf, BUFSIZE, "?????????? \"%s\" ??????????",
 		hevtdefns[hevt->type].name);
 	break;
     }
@@ -1450,7 +1486,7 @@ event_desc_from_list(Side *side, Obj *lis, HistEvent *hevt, char *buf)
     for_all_list(lis, rest) {
 	item = car(rest);
 	if (stringp(item)) {
-	    strcat(buf, c_string(item));
+	    BCAT(buf, c_string(item));
 	} else if (numberp(item)) {
 	    n = c_number(item);
 	    if (between(0, n, 3)) {
@@ -1459,9 +1495,9 @@ event_desc_from_list(Side *side, Obj *lis, HistEvent *hevt, char *buf)
 		  case H_UNIT_VANISHED:
 		    pastunit = find_past_unit(hevt->data[0]);
 		    if (pastunit != NULL) {
-			strcat(buf, past_unit_handle(side, pastunit));
+			BCAT(buf, past_unit_handle(side, pastunit));
 		    } else {
-			tprintf(buf, "%d?", hevt->data[0]);
+			TB(buf, "%d?", hevt->data[0]);
 		    }
 		    break;
 		  /* (should add other event types) */
@@ -1469,10 +1505,10 @@ event_desc_from_list(Side *side, Obj *lis, HistEvent *hevt, char *buf)
 		    break;
 		}
 	    } else {
-		tprintf(buf, " ??%d?? ", n);
+		TB(buf, " ??%d?? ", n);
 	    }
 	} else {
-	    strcat(buf, " ????? ");
+	    BCAT(buf, " ????? ");
 	}
     }
 }
@@ -1576,31 +1612,31 @@ advance_failure_desc(char *buf, Unit *unit, HistEventType reason)
     /* impl_move_to has already returned a more detailed error 
     message, so we want to suppresss this one. */
     if (reason == A_MOVE_NO_PATH) {
-	strcpy(buf, "");
+	BCPY(buf, "");
 	return;
     }
-    strcpy(buf, unit_handle(unit->side, unit));
+    BCPY(buf, unit_handle(unit->side, unit));
     if (reason == A_ANY_CANNOT_DO)
-      strcat(buf, " can never do this!");
+      BCAT(buf, " can never do this!");
     else if (reason == A_ANY_NO_ACP)
-      strcat(buf, " does not have enough ACP!");
+      BCAT(buf, " does not have enough ACP!");
     else if (reason == A_ANY_NO_MATERIAL)
-      strcat(buf, " is out of some material!");
+      BCAT(buf, " is out of some material!");
     else if (reason == A_ANY_NO_AMMO)
-      strcat(buf, " is out of ammo!");
+      BCAT(buf, " is out of ammo!");
     else if (reason == A_MOVE_NO_MP)
       /* Player doesn't see mp calcs, so explain as ACP */
-      strcat(buf, " does not have enough ACP!");
+      BCAT(buf, " does not have enough ACP!");
     else if (reason == A_MOVE_CANNOT_LEAVE_WORLD)
-      strcat(buf, " can never leave the world!");
+      BCAT(buf, " can never leave the world!");
     else if (reason == A_MOVE_BLOCKING_ZOC)
-      strcat(buf, " cannot enter a blocking ZOC!");
+      BCAT(buf, " cannot enter a blocking ZOC!");
     else if (reason == A_MOVE_DEST_FULL)
-      strcat(buf, " cannot fit into the destination!");
+      BCAT(buf, " cannot fit into the destination!");
     else if (reason != H_UNDEFINED)
-      sprintf(buf, " cannot act, reason is %s", action_result_desc(reason));
+      snprintf(buf, BUFSIZE, " cannot act, reason is %s", action_result_desc(reason));
     else
-      strcat(buf, " is unable to act, don't know why");
+      BCAT(buf, " is unable to act, don't know why");
 }
 
 /* Generate a description of the borders and connections in and around
@@ -1620,18 +1656,18 @@ linear_desc(char *buf, int x, int y)
 
 #if 0 /* Confusing. */
 		if (first) {
-		    strcat(buf, " at ");
+		    BCAT(buf, " at ");
 		    first = FALSE;
 		} else {
-		    strcat(buf, ",");
+		    BCAT(buf, ",");
 		}
-		strcat(buf, t_type_name(t));
+		BCAT(buf, t_type_name(t));
 #endif
 
 #if 0 /* takes up more space, but not very useful */
 		for_all_directions(dir) {
 		    if (border_at(x, y, dir, t)) {
-			tprintf(buf, "/%s", dirnames[dir]);
+			TB(buf, "/%s", dirnames[dir]);
 		    }
 		}
 #endif
@@ -1640,16 +1676,16 @@ linear_desc(char *buf, int x, int y)
 		       && aux_terrain_defined(t)
 		       && any_connections_at(x, y, t)) {
 		if (first) {
-		    strcat(buf, " + ");
+		    BCAT(buf, " + ");
 		    first = FALSE;
 		} else {
-		    strcat(buf, ",");
+		    BCAT(buf, ",");
 		}
-		strcat(buf, t_type_name(t));
+		BCAT(buf, t_type_name(t));
 #if 0
 		for_all_directions(dir) {
 		    if (connection_at(x, y, dir, t)) {
-			tprintf(buf, "/%s", dirnames[dir]);
+			TB(buf, "/%s", dirnames[dir]);
 		    }
 		}
 #endif
@@ -1662,7 +1698,7 @@ void
 elevation_desc(char *buf, int x, int y)
 {
     if (elevations_defined()) {
-	sprintf(buf, "(Elev %d)", elev_at(x, y));
+	snprintf(buf, BUFSIZE, "(Elev %d)", elev_at(x, y));
     }
 }
 
@@ -1689,7 +1725,7 @@ feature_desc(Feature *feature, char *buf)
 		      case 't':
 			if (feature->feattype) {
 			    buf[i] = '\0';
-			    strcat(buf, feature->feattype);
+			    BCAT(buf, feature->feattype);
 			    if (caps)
 			      capitalize(buf);
 			    i = strlen(buf);
@@ -1712,8 +1748,8 @@ feature_desc(Feature *feature, char *buf)
 	}
     } else {
 	if (feature->feattype) {
-	    strcpy(buf, "unnamed ");
-	    strcat(buf, feature->feattype);
+	    BCPY(buf, "unnamed ");
+	    BCAT(buf, feature->feattype);
 	    return buf;
 	}
     }
@@ -1745,7 +1781,7 @@ void
 temperature_desc(char *buf, int x, int y)
 {
     if (temperatures_defined()) {
-	sprintf(buf, "(Temp %d)", temperature_at(x, y));
+	snprintf(buf, BUFSIZE, "(Temp %d)", temperature_at(x, y));
     }
 }
 
@@ -1762,41 +1798,41 @@ temperature_desc(char *buf, int x, int y)
 	if (prevview != view) {
 	    if (prevview == EMPTY) {
 		/* misleading if prevview was set during init. */
-		sprintf(tmpbuf, "Up to date; had been empty.");
+		snprintf(tmpbuf, BUFSIZE, "Up to date; had been empty.");
 	    } else if (prevview == UNSEEN) {
-		sprintf(tmpbuf, "Up to date; had been unexplored.");
+		snprintf(tmpbuf, BUFSIZE, "Up to date; had been unexplored.");
 	    } else {
 		side2 = side_n(vside(prevview));
 		u = vtype(prevview);
 		if (side2 != side) {
-		    sprintf(tmpbuf, "Up to date; had seen %s %s.",
+		    snprintf(tmpbuf, BUFSIZE, "Up to date; had seen %s %s.",
 			    (side2 == NULL ? "independent" :
 			     side_name(side2)),
 			    u_type_name(u));
 		} else {
-		    sprintf(tmpbuf,
+		    snprintf(tmpbuf, BUFSIZE,
 			    "Up to date; had been occupied by your %s.",
 			    u_type_name(u));
 		}
 	    }
 	} else {
-	    sprintf(tmpbuf, "Up to date.");
+	    snprintf(tmpbuf, BUFSIZE, "Up to date.");
 	}
     } else {
 	if (prevview == EMPTY) {
-	    sprintf(tmpbuf, "Was empty %d turns ago.", age);
+	    snprintf(tmpbuf, BUFSIZE, "Was empty %d turns ago.", age);
 	} else if (prevview == UNSEEN) {
-	    sprintf(tmpbuf, "Terrain first seen %d turns ago.", age);
+	    snprintf(tmpbuf, BUFSIZE, "Terrain first seen %d turns ago.", age);
 	} else {
 	    side2 = side_n(vside(prevview));
 	    u = vtype(prevview);
 	    if (side2 != side) {
-		sprintf(tmpbuf, "Saw %s %s, %d turns ago.",
+		snprintf(tmpbuf, BUFSIZE, "Saw %s %s, %d turns ago.",
 			(side2 == NULL ? "independent" :
 			 side_name(side2)),
 			u_type_name(u), age);
 	    } else {
-		sprintf(tmpbuf, "Was occupied by your %s %d turns ago.",
+		snprintf(tmpbuf, BUFSIZE, "Was occupied by your %s %d turns ago.",
 			u_type_name(u), age);
 	    }
 	}
@@ -1809,22 +1845,22 @@ size_desc(char *buf, Unit *unit, int label)
     buf[0] = '\0';
     if (!u_advanced(unit->type))
       return;
-    tprintf(buf, "(%d)", unit->size);
+    TB(buf, "(%d)", unit->size);
 }
 
 void
 hp_desc(char *buf, Unit *unit, int label)
 {
     if (label) {
-	sprintf(buf, "HP ");
+	snprintf(buf, BUFSIZE, "HP ");
     } else {
 	buf[0] = '\0';
     }
     /* (print '-' or some such for zero hp case?) */
     if (unit->hp == u_hp(unit->type)) {
-	tprintf(buf, "%d", unit->hp);
+	TB(buf, "%d", unit->hp);
     } else {
-	tprintf(buf, "%d/%d", unit->hp, u_hp(unit->type));
+	TB(buf, "%d/%d", unit->hp, u_hp(unit->type));
     } 
 }
 
@@ -1834,17 +1870,17 @@ acp_desc(char *buf, Unit *unit, int label)
     int u = unit->type;
 
     if (!completed(unit)) {
-	sprintf(buf, "%d/%d done", unit->cp, u_cp(u));
+	snprintf(buf, BUFSIZE, "%d/%d done", unit->cp, u_cp(u));
     } else if (unit->act && new_acp_for_turn(unit) > 0) {
     	if (label) {
-    	    strcpy(buf, "ACP ");
+    	    BCPY(buf, "ACP ");
     	} else {
 	    buf[0] = '\0';
     	}
 	if (unit->act->acp == unit->act->initacp) {
-	    tprintf(buf, "%d", unit->act->acp);
+	    TB(buf, "%d", unit->act->acp);
 	} else {
-	    tprintf(buf, "%d/%d", unit->act->acp, unit->act->initacp);
+	    TB(buf, "%d/%d", unit->act->acp, unit->act->initacp);
 	}
     } else {
 	buf[0] = '\0';
@@ -1862,11 +1898,11 @@ cxp_desc(char *buf, Unit *unit, int label)
     if (cxpmax == 0)
       return;
     if (label)
-      strcat(buf, "  cXP ");
+      BCAT(buf, "  cXP ");
     if (unit->cxp == cxpmax) {
-	tprintf(buf, "%d", unit->cxp);
+	TB(buf, "%d", unit->cxp);
     } else {
-	tprintf(buf, "%d/%d", unit->cxp, cxpmax);
+	TB(buf, "%d/%d", unit->cxp, cxpmax);
     } 
 }
 
@@ -1881,11 +1917,11 @@ morale_desc(char *buf, Unit *unit, int label)
     if (moralemax == 0)
       return;
     if (label)
-      strcat(buf, "  Mor ");
+      BCAT(buf, "  Mor ");
     if (unit->morale == moralemax) {
-	tprintf(buf, "%d", unit->morale);
+	TB(buf, "%d", unit->morale);
     } else {
-	tprintf(buf, "%d/%d", unit->morale, moralemax);
+	TB(buf, "%d/%d", unit->morale, moralemax);
     } 
 }
 
@@ -1898,8 +1934,8 @@ point_value_desc(char *buf, Unit *unit, int label)
     if (unit_point_value(unit) < 0)
       return;
     if (label)
-      strcat(buf, "  Value ");
-    tprintf(buf, "%d", unit_point_value(unit));
+      BCAT(buf, "  Value ");
+    TB(buf, "%d", unit_point_value(unit));
 }
 
 /* Describe one "row" (group of 3) of a unit's supply status. */
@@ -1922,10 +1958,10 @@ supply_desc(char *buf, Unit *unit, int mrow)
 	    	if (um_storage_x(u, m) == 9999
 	    	    || um_storage_x(u, m) == 999
 	    	    || um_storage_x(u, m) == 99) {
-			tprintf(buf, "%s %d  ",
+			TB(buf, "%s %d  ",
 				m_type_name(m), unit->supply[m]);
 		} else {
-			tprintf(buf, "%s %d/%d  ",
+			TB(buf, "%s %d/%d  ",
 				m_type_name(m), unit->supply[m], um_storage_x(u, m));
 	    	}
 	    }
@@ -1952,13 +1988,13 @@ tooling_desc(char *buf, Unit *unit)
       if (unit->tooling[u2] > 0)
 	++num;
     if (num == 0) {
-	strcat(buf, "No tooling");
+	BCAT(buf, "No tooling");
 	return TRUE;
     }
-    strcat(buf, "Tooling: ");
+    BCAT(buf, "Tooling: ");
     for_all_unit_types(u2) {
 	if (unit->tooling[u2] > 0) {
-	    tprintf(buf, "%s %d/%d  ",
+	    TB(buf, "%s %d/%d  ",
 		    (num > 2 ? shortest_unique_name(u2) : u_type_name(u2)),
 		    unit->tooling[u2], uu_tp_to_build(unit->type, u2));
 	}
@@ -1973,35 +2009,35 @@ location_desc(char *buf, Side *side, Unit *unit, int u, int x, int y)
     const char *featurename;
 
     if (unit != NULL && unit->transport != NULL) {
-	sprintf(buf, "In %s", short_unit_handle(unit->transport));
+	snprintf(buf, BUFSIZE, "In %s", short_unit_handle(unit->transport));
     } else if (unit != NULL || u != NONUTYPE) {
-	sprintf(buf, "In %s", t_type_name(t));
+	snprintf(buf, BUFSIZE, "In %s", t_type_name(t));
 	linear_desc(buf + strlen(buf), x, y);
     } else if (terrain_visible(side, x, y)) {
-	sprintf(buf, "Empty %s", t_type_name(t));
+	snprintf(buf, BUFSIZE, "Empty %s", t_type_name(t));
 	linear_desc(buf + strlen(buf), x, y);
     } else {
-	sprintf(buf, "Unknown");
+	snprintf(buf, BUFSIZE, "Unknown");
     }
     if (terrain_visible(side, x, y)) {
 	featurename = feature_name_at(x, y);
 	if (!empty_string(featurename))
-	  tprintf(buf, " (%s)", featurename);
+	  TB(buf, " (%s)", featurename);
 	if (elevations_defined())
-	  tprintf(buf, " (El %d)", elev_at(x, y));
+	  TB(buf, " (El %d)", elev_at(x, y));
 	if (temperatures_defined())
-	  tprintf(buf, " (T %d)", temperature_at(x, y));
+	  TB(buf, " (T %d)", temperature_at(x, y));
 	if (winds_defined()) {
 	    int wforce = wind_force_at(x, y);
 
 	    if (wforce == 0)
-	      tprintf(buf, " (W calm)");
+	      TB(buf, " (W calm)");
 	    else
-	      tprintf(buf, " (W f%d %s)", wforce, dirnames[wind_dir_at(x, y)]);
+	      TB(buf, " (W f%d %s)", wforce, dirnames[wind_dir_at(x, y)]);
 	}
 	/* (should optionally list other local weather also) */
     }
-    tprintf(buf, " at %d,%d", x, y);
+    TB(buf, " at %d,%d", x, y);
 }
 
 /* Given a cell, describe where it is. */
@@ -2013,17 +2049,17 @@ destination_desc(char *buf, Side *side, Unit *unit, int x, int y, int z)
     Unit *unit2;
 
     if (!in_area(x, y)) {
-	sprintf(buf, "?%d,%d?", x, y);
+	snprintf(buf, BUFSIZE, "?%d,%d?", x, y);
 	return;
     }
     unit2 = unit_at(x, y);
     if (unit2 != NULL && unit2->side == side) {
 	if (unit2 == unit) {
-	    sprintf(buf, "self (%d,%d)", x, y);
+	    snprintf(buf, BUFSIZE, "self (%d,%d)", x, y);
 	} else if (!empty_string(unit2->name)) {
-	    sprintf(buf, "%s (%d,%d)", unit2->name, x, y);
+	    snprintf(buf, BUFSIZE, "%s (%d,%d)", unit2->name, x, y);
 	} else {
-	    sprintf(buf, "%s (%d,%d)", u_type_name(unit2->type), x, y);
+	    snprintf(buf, BUFSIZE, "%s (%d,%d)", u_type_name(unit2->type), x, y);
 	}
 	return;
     }
@@ -2033,13 +2069,13 @@ destination_desc(char *buf, Side *side, Unit *unit, int x, int y, int z)
 	    /* (should look at stack) */
 	    if (unit2 != NULL && unit2->side == side) {
 		if (unit2 == unit) {
-		    sprintf(buf, "%s (%d,%d)",
+		    snprintf(buf, BUFSIZE, "%s (%d,%d)",
 			    dirnames[opposite_dir(dir)], x, y);
 		} else if (!empty_string(unit2->name)) {
-		    sprintf(buf, "%s of %s (%d,%d)",
+		    snprintf(buf, BUFSIZE, "%s of %s (%d,%d)",
 			    dirnames[opposite_dir(dir)], unit2->name, x, y);
 		} else {
-		    sprintf(buf, "%s of %s (%d,%d)",
+		    snprintf(buf, BUFSIZE, "%s of %s (%d,%d)",
 			    dirnames[opposite_dir(dir)],
 			    u_type_name(unit2->type), x, y);
 		}
@@ -2048,9 +2084,9 @@ destination_desc(char *buf, Side *side, Unit *unit, int x, int y, int z)
 	}
     }
     /* This is the old reliable case. */
-    sprintf(buf, "%d,%d", x, y);
+    snprintf(buf, BUFSIZE, "%d,%d", x, y);
     if (z != 0)
-      tprintf(buf, ",%d", z);
+      TB(buf, ",%d", z);
 }
 
 void
@@ -2068,8 +2104,8 @@ latlong_desc(char *buf, int x, int y, int xf, int yf, int which)
 	latmin = abs(rawlat) % 60;
 	minbuf[0] = '\0';
 	if (latmin != 0)
-	  sprintf(minbuf, "%dm", latmin);
-	sprintf(buf, "%dd%s %c",
+	  snprintf(minbuf, sizeof(minbuf), "%dm", latmin);
+	snprintf(buf, BUFSIZE, "%dd%s %c",
 		latdeg, minbuf, (rawlat >= 0 ? 'N' : 'S'));
     }
     if (which & 1) {
@@ -2077,10 +2113,10 @@ latlong_desc(char *buf, int x, int y, int xf, int yf, int which)
 	lonmin = abs(rawlon) % 60;
 	minbuf[0] = '\0';
 	if (lonmin != 0)
-	  sprintf(minbuf, "%dm", lonmin);
+	  snprintf(minbuf, sizeof(minbuf), "%dm", lonmin);
 	if (!empty_string(buf))
-	  strcat(buf, " ");
-	sprintf(buf + strlen(buf), "%dd%s %c",
+	  BCAT(buf, " ");
+	snprintf(buf + strlen(buf), BUFSIZE - strlen(buf), "%dd%s %c",
 		londeg, minbuf, (rawlon >= 0 ? 'E' : 'W'));
     }
 }
@@ -2118,16 +2154,16 @@ others_here_desc(char *buf, Unit *unit)
 		if (first)
 		  first = FALSE;
 		else
-		  strcat(buf, " ");
+		  BCAT(buf, " ");
 		if (ohd_nums[u2] > 0)
-		  tprintf(buf, "%d", ohd_nums[u2]);
+		  TB(buf, "%d", ohd_nums[u2]);
 		if (ohd_incomplete[u2] > 0)
-		  tprintf(buf, "(%d)", ohd_incomplete[u2]);
-		strcat(buf, " ");
-		strcat(buf, shortest_generic_name(u2));
+		  TB(buf, "(%d)", ohd_incomplete[u2]);
+		BCAT(buf, " ");
+		BCAT(buf, shortest_generic_name(u2));
 	    }
 	}
-	strcat(buf, " here also");
+	BCAT(buf, " here also");
     }
 }
 
@@ -2143,7 +2179,7 @@ occupants_desc(char *buf, Unit *unit)
       ohd_incomplete = (int *) xmalloc(numutypes * sizeof(int));
     buf[0] = '\0';
     if (unit->occupant != NULL) {
-	strcat(buf, "Occs ");
+	BCAT(buf, "Occs ");
 	for_all_unit_types(u2)
 	  ohd_nums[u2] = ohd_incomplete[u2] = 0;
 	for_all_occupants(unit, occ)
@@ -2156,13 +2192,13 @@ occupants_desc(char *buf, Unit *unit)
 		if (first)
 		  first = FALSE;
 		else
-		  strcat(buf, " ");
+		  BCAT(buf, " ");
 		if (ohd_nums[u2] > 0)
-		  tprintf(buf, "%d", ohd_nums[u2]);
+		  TB(buf, "%d", ohd_nums[u2]);
 		if (ohd_incomplete[u2] > 0)
-		  tprintf(buf, "(%d)", ohd_incomplete[u2]);
-		strcat(buf, " ");
-		strcat(buf, shortest_generic_name(u2));
+		  TB(buf, "(%d)", ohd_incomplete[u2]);
+		BCAT(buf, " ");
+		BCAT(buf, shortest_generic_name(u2));
 	    }
 	}
     }
@@ -2218,39 +2254,39 @@ plan_desc(char *buf, Unit *unit)
     if (oprole && (PLAN_PASSIVE == plan->type)) 
 	oprole_desc(buf, oprole);
     else
-	sprintf(buf, "Plan: %s", plantypenames[plan->type]);
+	snprintf(buf, BUFSIZE, "Plan: %s", plantypenames[plan->type]);
     if (plan->waitingfortasks)
-      strcat(buf, " Waiting");
+      BCAT(buf, " Waiting");
     if (plan->asleep)
-      strcat(buf, " Asleep");
+      BCAT(buf, " Asleep");
     if (plan->reserve)
-      strcat(buf, " Reserve");
+      BCAT(buf, " Reserve");
     if (plan->delayed)
-      strcat(buf, " Delay");
+      BCAT(buf, " Delay");
     /* The more usual case is to allow AI control of units, so we only
        mention it when it's off. */
     if (!plan->aicontrol)
-      strcat(buf, " NoAI");
+      BCAT(buf, " NoAI");
     if (plan->supply_is_low)
-      strcat(buf, " SupplyLow");
+      BCAT(buf, " SupplyLow");
     if (plan->waitingfortransport)
-      strcat(buf, " WaitingForTransport");
+      BCAT(buf, " WaitingForTransport");
     if (plan->maingoal) {
-	strcat(buf, ". Goal: ");
-	strcat(buf, goal_desc(goalbuf, plan->maingoal));
+	BCAT(buf, ". Goal: ");
+	BCAT(buf, goal_desc(goalbuf, plan->maingoal));
     }
     if (plan->formation) {
-	strcat(buf, ". Formation: ");
-	strcat(buf, goal_desc(goalbuf, plan->formation));
+	BCAT(buf, ". Formation: ");
+	BCAT(buf, goal_desc(goalbuf, plan->formation));
     }
     /* For tasks, just put out a count. */
     if (plan->tasks) {
 	i = 0;
 	for_all_tasks(plan, task)
 	  ++i;
-	tprintf(buf, ". %d task%s", i, (i == 1 ? "" : "s"));
+	TB(buf, ". %d task%s", i, (i == 1 ? "" : "s"));
     } 
-    strcat(buf, ".");
+    BCAT(buf, ".");
 }
 
 /* Describe a task in a brief but intelligible way.  Note that the
@@ -2274,14 +2310,13 @@ task_desc(char *buf, Side *side, Unit *unit, Task *task)
     arg2 = task->args[2];
     arg3 = task->args[3];
     arg4 = task->args[4];
-    sprintf(buf, "%s ", taskdefns[task->type].display_name);
+    snprintf(buf, BUFSIZE, "%s ", taskdefns[task->type].display_name);
     switch (task->type) {
       case TASK_BUILD:
 	if (arg0 != 0) {
 	    unit2 = find_unit(arg0);
 	    if (unit2 != NULL) {
-		tprintf(
-		    buf, "%s: %d/%d done", medium_long_unit_handle(unit2), 
+		TB(buf, "%s: %d/%d done", medium_long_unit_handle(unit2), 
 		    unit2->cp, u_cp(unit2->type));
 	    }
 	} 
@@ -2289,130 +2324,130 @@ task_desc(char *buf, Side *side, Unit *unit, Task *task)
 	else if (is_unit_type(arg0)) {
 	    tp = (unit->tooling ? unit->tooling[arg0] : 0);
 	    if (tp < uu_tp_to_build(unit->type, arg0)) {
-		tprintf(buf, " (tooling up: %d/%d)", tp, 
+		TB(buf, " (tooling up: %d/%d)", tp, 
 			uu_tp_to_build(unit->type, arg0));
 	    }	
 	}
 	if (arg3 > 1) {
-	    tprintf(buf, " (%d%s of %d)", arg2 + 1, ordinal_suffix(arg2 + 1), 
+	    TB(buf, " (%d%s of %d)", arg2 + 1, ordinal_suffix(arg2 + 1), 
 		    arg3);
 	}
 #endif
 	break;
       case TASK_CAPTURE:
 	unit2 = find_unit(arg0);
-	tprintf(buf, "%s", medium_long_unit_handle(unit2));
+	TB(buf, "%s", medium_long_unit_handle(unit2));
 	if (in_play(unit2))
-	    tprintf(buf, " at (%d,%d)", unit2->x, unit2->y);
+	    TB(buf, " at (%d,%d)", unit2->x, unit2->y);
 	break;
       case TASK_COLLECT:
-	tprintf(buf, "%s around ", m_type_name(arg0));
-	tprintf(buf, "%d,%d", arg1, arg2);
+	TB(buf, "%s around ", m_type_name(arg0));
+	TB(buf, "%d,%d", arg1, arg2);
 	break;
       case TASK_CONSTRUCT:
-	tprintf(buf, "%d %s ", arg1, u_type_name(arg0));
+	TB(buf, "%d %s ", arg1, u_type_name(arg0));
 	unit2 = find_unit(arg2);
 	if (in_play(unit2))
-	    tprintf(buf, "in %s", 
+	    TB(buf, "in %s", 
 		    unit == unit2 ? "self" : medium_long_unit_handle(unit2));
 	else
-	    tprintf(buf, "at %d,%d", arg3, arg4);
+	    TB(buf, "at %d,%d", arg3, arg4);
 	break;
       case TASK_DEVELOP:
-	tprintf(buf, "tech for %s: %d/%d", u_type_name(arg0), 
+	TB(buf, "tech for %s: %d/%d", u_type_name(arg0), 
 		(side ? side->tech[arg0] : 0), arg1);
 	break;
       case TASK_HIT_POSITION:
-	tprintf(buf, "at %d,%d", arg0, arg1);
+	TB(buf, "at %d,%d", arg0, arg1);
 	break;
       case TASK_HIT_UNIT:
 	unit2 = find_unit(arg0);
-	tprintf(buf, "%s", medium_long_unit_handle(unit2));
+	TB(buf, "%s", medium_long_unit_handle(unit2));
 	if (in_play(unit2))
-	    tprintf(buf, " at (%d,%d)", unit2->x, unit2->y);
+	    TB(buf, " at (%d,%d)", unit2->x, unit2->y);
 	break;
       case TASK_MOVE_DIR:
-	tprintf(buf, "%s, %d times", dirnames[arg0], arg1);
+	TB(buf, "%s, %d times", dirnames[arg0], arg1);
 	break;
       case TASK_MOVE_TO:
 	if (unit != NULL && unit->x == arg0 && unit->y == arg1) {
-	    tprintf(buf, "here");
+	    TB(buf, "here");
 	} else {
 	    if (arg3 == 0) {
 		/* do nothing */
 	    } else if (arg3 == 1) {
-		tprintf(buf, "adj ");
+		TB(buf, "adj ");
 	    } else {
-		tprintf(buf, "within %d of ", arg3);
+		TB(buf, "within %d of ", arg3);
 	    }
-	    tprintf(buf, "%d,%d", arg0, arg1);
+	    TB(buf, "%d,%d", arg0, arg1);
 	}
         break;
       case TASK_OCCUPY:
 	unit2 = find_unit(arg0);
 	if (unit2 != NULL) {
-	    tprintf(buf, "%s ", medium_long_unit_handle(unit2));
+	    TB(buf, "%s ", medium_long_unit_handle(unit2));
 	    if (!empty_string(unit2->name)) {
-		tprintf(buf, "(%d,%d)", unit2->x, unit2->y);
+		TB(buf, "(%d,%d)", unit2->x, unit2->y);
 	    } else {
-	   	tprintf(buf, "at %d,%d", unit2->x, unit2->y);
+	   	TB(buf, "at %d,%d", unit2->x, unit2->y);
 	    }
 	} else {
-	    tprintf(buf, "unknown unit #%d", arg0);
+	    TB(buf, "unknown unit #%d", arg0);
 	}
 	break;
       case TASK_PICKUP:
 	unit2 = find_unit(arg0);
 	if (unit2 != NULL) {
-	    tprintf(buf, "%s", medium_long_unit_handle(unit2));
+	    TB(buf, "%s", medium_long_unit_handle(unit2));
 	} else {
-	    tprintf(buf, "unknown unit #%d", arg0);
+	    TB(buf, "unknown unit #%d", arg0);
 	}
 	break;
       case TASK_REPAIR:
 	unit2 = find_unit(arg0);
 	if (!unit2) 
-	    tprintf(buf, "unknown unit #%d", arg0);
+	    TB(buf, "unknown unit #%d", arg0);
 	else if (unit2->id == unit->id) 
-	    tprintf(buf, "self");
+	    TB(buf, "self");
 	else
-	    tprintf(buf, "%s", medium_long_unit_handle(unit2));
+	    TB(buf, "%s", medium_long_unit_handle(unit2));
 	break;
       case TASK_RESUPPLY:
 	if (arg0 != NONMTYPE)
-	  tprintf(buf, "%s", m_type_name(arg0));
+	  TB(buf, "%s", m_type_name(arg0));
 	else
-	  tprintf(buf, "all");
+	  TB(buf, "all");
 	if (arg1 != 0) {
 	    unit2 = find_unit(arg1);
 	    if (unit2 != NULL) {
-		tprintf(buf, " at %s", short_unit_handle(unit2));
+		TB(buf, " at %s", short_unit_handle(unit2));
 	    }
 	}
 	break;
       case TASK_SENTRY:
 	/* (should display as calendar time) */
-	tprintf(buf, "for %d turns", arg0);
+	TB(buf, "for %d turns", arg0);
 	break;
       case TASK_PRODUCE:
-	tprintf(buf, "%s (%d/%d)", mtypes[task->args[0]].name, task->args[2],
+	TB(buf, "%s (%d/%d)", mtypes[task->args[0]].name, task->args[2],
 		task->args[1]);
 	break;
       default:
 	/* Default is just to dump out the raw data about the task. */
-	tprintf(buf, "raw");
+	TB(buf, "raw");
 	argtypes = taskdefns[task->type].argtypes;
 	slen = strlen(argtypes);
 	for (i = 0; i < slen; ++i) {
-	    tprintf(buf, "%c%d", (i == 0 ? ' ' : ','), task->args[i]);
+	    TB(buf, "%c%d", (i == 0 ? ' ' : ','), task->args[i]);
 	}
 	break;
     }
     if (Debug) {
 	/* Include the number of executions and retries. */
-	tprintf(buf, " x %d", task->execnum);
+	TB(buf, " x %d", task->execnum);
 	if (task->retrynum > 0) {
-	    tprintf(buf, " fail %d", task->retrynum);
+	    TB(buf, " fail %d", task->retrynum);
 	}
     }
 }
@@ -2434,71 +2469,71 @@ action_desc(char *buf, Action *action, Unit *unit)
     }
     args = action->args;
     /* Print the name of the action. */
-    sprintf(buf, "%s ", actiondefns[(int) action->type].name);
+    snprintf(buf, BUFSIZE, "%s ", actiondefns[(int) action->type].name);
     /* Print things specific to the type of action. */
     switch (action->type) {
       case ACTION_MOVE:
 	if (in_area(args[0], args[1])) {
 	    tv = terrain_view(unit->side, args[0], args[1]);
-	    tprintf(buf, "to %s at (%d,%d)", 
+	    TB(buf, "to %s at (%d,%d)", 
 		    (tv == UNSEEN) ? "unknown cell" 
 				   : t_type_name(vterrain(tv)),
 		    args[0], args[1]);
 	    /* (TODO: Consider elevation.) */
 	}
 	else
-	  tprintf(buf, "%s", "out of playing area");
+	  TB(buf, "%s", "out of playing area");
 	break;
       case ACTION_ENTER:
 	/* (TODO: This should be rewritten to handle unit views instead of 
 	    raw units.) */
 	unit2 = find_unit(args[0]);
 	if (!unit2)
-	  tprintf(buf, "%s", "missing or out-of-play transport");
+	  TB(buf, "%s", "missing or out-of-play transport");
 	else
-	  tprintf(buf, "%s", unit_desig(unit2));
+	  TB(buf, "%s", unit_desig(unit2));
 	break;
       case ACTION_ATTACK: case ACTION_FIRE_AT: case ACTION_CAPTURE:
 	/* (TODO: This should be rewritten to handle unit views instead of 
 	    raw units.) */
 	unit2 = find_unit(args[0]);
 	if (!unit2)
-	  tprintf(buf, "%s", "missing or out-of-play defender");
+	  TB(buf, "%s", "missing or out-of-play defender");
 	else
-	  tprintf(buf, "%s %s at (%d,%d)", side_desig(unit2->side), 
+	  TB(buf, "%s %s at (%d,%d)", side_desig(unit2->side), 
 		  u_type_name(unit2->type), unit2->x, unit2->y);
 	break;
       case ACTION_OVERRUN: case ACTION_FIRE_INTO:
 	if (in_area(args[0], args[1])) {
 	    tv = terrain_view(unit->side, args[0], args[1]);
-	    tprintf(buf, "%s at (%d,%d)", 
+	    TB(buf, "%s at (%d,%d)", 
 		    (tv == UNSEEN) ? "unknown cell" 
 				   : t_type_name(vterrain(tv)),
 		    args[0], args[1]);
 	    /* (TODO: Consider elevation?) */
 	}
 	else
-	  tprintf(buf, "%s", "a cell out of playing area");
+	  TB(buf, "%s", "a cell out of playing area");
 	break;
       case ACTION_DETONATE:
 	if (in_area(args[0], args[1])) {
 	    tv = terrain_view(unit->side, args[0], args[1]);
-	    tprintf(buf, "in %s at (%d,%d)", 
+	    TB(buf, "in %s at (%d,%d)", 
 		    (tv == UNSEEN) ? "unknown cell" 
 				   : t_type_name(vterrain(tv)),
 		    args[0], args[1]);
 	    /* (TODO: Consider elevation?) */
 	}
 	else
-	  tprintf(buf, "%s", "in a cell out of playing area");
+	  TB(buf, "%s", "in a cell out of playing area");
 	break;
       case ACTION_PRODUCE:
-	tprintf(buf, "%d %s", args[1], m_type_name(args[0]));
+	TB(buf, "%d %s", args[1], m_type_name(args[0]));
 	break;
       case ACTION_EXTRACT:
 	if (in_area(args[0], args[1])) {
 	    tv = terrain_view(unit->side, args[0], args[1]);
-	    tprintf(buf, "%d %s from %s at (%d,%d)", args[3], 
+	    TB(buf, "%d %s from %s at (%d,%d)", args[3], 
 		    m_type_name(args[2]),  
 		    (tv == UNSEEN) ? "unknown cell" 
 				   : t_type_name(vterrain(tv)),
@@ -2506,54 +2541,54 @@ action_desc(char *buf, Action *action, Unit *unit)
 	    /* (TODO: Consider elevation?) */
 	}
 	else
-	  tprintf(buf, "%d %s from a cell out of playing area", 
+	  TB(buf, "%d %s from a cell out of playing area", 
 		  args[3], m_type_name(args[2]));
 	break;
       case ACTION_TRANSFER:
 	unit2 = find_unit(args[2]);
 	if (!unit2)
-	  tprintf(buf, "%s", "missing or out-of-play recipient");
+	  TB(buf, "%s", "missing or out-of-play recipient");
 	else
-	  tprintf(buf, "%d %s to %s %s at (%d,%d)", 
+	  TB(buf, "%d %s to %s %s at (%d,%d)", 
 		  args[1], m_type_name(args[0]), 
 		  side_desig(unit2->side), 
 		  u_type_name(unit2->type), unit2->x, unit2->y);
 	break;
       case ACTION_DEVELOP:
-	tprintf(buf, "%s", u_type_name(args[0]));
+	TB(buf, "%s", u_type_name(args[0]));
 	break;
       case ACTION_TOOL_UP:
-	tprintf(buf, "for constructing %s", u_type_name(args[0]));
+	TB(buf, "for constructing %s", u_type_name(args[0]));
 	break;
       case ACTION_CREATE_IN:
 	/* (TODO: This should be rewritten to handle unit views instead of 
 	    raw units.) */
 	unit2 = find_unit(args[1]);
 	if (!unit2)
-	  tprintf(buf, "%s", "missing or out-of-play womb unit");
+	  TB(buf, "%s", "missing or out-of-play womb unit");
 	else
-	  tprintf(buf, "%s %s at (%d,%d): %s", side_desig(unit2->side), 
+	  TB(buf, "%s %s at (%d,%d): %s", side_desig(unit2->side), 
 		  u_type_name(unit2->type), unit2->x, unit2->y, 
 		  u_type_name(args[0]));
 	break;
       case ACTION_CREATE_AT:
 	if (in_area(args[1], args[2])) {
 	    tv = terrain_view(unit->side, args[1], args[2]);
-	    tprintf(buf, "%s at (%d,%d): %s", 
+	    TB(buf, "%s at (%d,%d): %s", 
 		    (tv == UNSEEN) ? "unknown cell" 
 				   : t_type_name(vterrain(tv)),
 		    args[1], args[2], u_type_name(args[0]));
 	    /* (TODO: Consider elevation?) */
 	}
 	else
-	  tprintf(buf, "%s", "a cell out of playing area");
+	  TB(buf, "%s", "a cell out of playing area");
 	break;
       case ACTION_BUILD: case ACTION_REPAIR:
 	unit2 = find_unit(args[0]);
 	if (!unit2)
-	  tprintf(buf, "%s", "missing or out-of-play unit");
+	  TB(buf, "%s", "missing or out-of-play unit");
 	else
-	  tprintf(buf, "%s %s at (%d,%d)", side_desig(unit2->side), 
+	  TB(buf, "%s %s at (%d,%d)", side_desig(unit2->side), 
 		  u_type_name(unit2->type), unit2->x, unit2->y);
 	break;
       default: break;
@@ -2574,27 +2609,27 @@ goal_desc(char *buf, Goal *goal)
       return "null goal";
     switch (goal->type) {
       case GOAL_KEEP_FORMATION:
-	sprintf(buf, " %d,%d from %s (var %d)",
+	snprintf(buf, BUFSIZE, " %d,%d from %s (var %d)",
 		goal->args[1], goal->args[2],
 		unit_handle(NULL, find_unit(goal->args[0])),
 		goal->args[3]);
 	break;
       case GOAL_VICINITY_HELD:
-	sprintf(buf, "Hold %dx%d area around %d,%d",
+	snprintf(buf, BUFSIZE, "Hold %dx%d area around %d,%d",
 		goal->args[2], goal->args[3], goal->args[0], goal->args[1]);
 	break;
       case GOAL_UNIT_OCCUPIED:
 	unit = find_unit(goal->args[0]);
-	sprintf(buf, "Hold %s ", medium_long_unit_handle(unit));
+	snprintf(buf, BUFSIZE, "Hold %s ", medium_long_unit_handle(unit));
 	    if (!empty_string(unit->name)) {
-		tprintf(buf, "(%d,%d)", unit->x, unit->y);
+		TB(buf, "(%d,%d)", unit->x, unit->y);
 	    } else {
-	   	tprintf(buf, "at %d,%d", unit->x, unit->y);
+	   	TB(buf, "at %d,%d", unit->x, unit->y);
 	    }
 	break;
 	/* (should add more cases specific to common types of goals) */
       default:
-	sprintf(buf, "%s%s", (goal->tf ? "" : "not "),
+	snprintf(buf, BUFSIZE, "%s%s", (goal->tf ? "" : "not "),
 		goaldefns[goal->type].display_name);
 	argtypes = goaldefns[goal->type].argtypes;
 	numargs = strlen(argtypes);
@@ -2602,37 +2637,37 @@ goal_desc(char *buf, Goal *goal)
 	    arg = goal->args[i];
 	    switch (argtypes[i]) {
 	      case 'h':
-		tprintf(buf, "%d", arg);
+		TB(buf, "%d", arg);
 		break;
 	      case 'm':
 		if (is_material_type(arg))
-		  tprintf(buf, " %s", m_type_name(arg));
+		  TB(buf, " %s", m_type_name(arg));
 		else
-		  tprintf(buf, " m%d?", arg);
+		  TB(buf, " m%d?", arg);
 		break;
 	      case 'S':
-		tprintf(buf, " %s", short_side_title(side_n(arg)));
+		TB(buf, " %s", short_side_title(side_n(arg)));
 		break;
 	      case 'u':
 		if (is_unit_type(arg))
-		  tprintf(buf, " %s", u_type_name(arg));
+		  TB(buf, " %s", u_type_name(arg));
 		else
-		  tprintf(buf, " u%d?", arg);
+		  TB(buf, " u%d?", arg);
 		break;
 	      case 'U':
-		tprintf(buf, " %s", unit_handle(NULL, find_unit(arg)));
+		TB(buf, " %s", unit_handle(NULL, find_unit(arg)));
 		break;
 	      case 'w':
-		tprintf(buf, " %dx", arg);
+		TB(buf, " %dx", arg);
 		break;
 	      case 'x':
-		tprintf(buf, " %d,", arg);
+		TB(buf, " %d,", arg);
 		break;
 	      case 'y':
-		tprintf(buf, "%d", arg);
+		TB(buf, "%d", arg);
 		break;
 	      default:
-		tprintf(buf, " %d", arg);
+		TB(buf, " %d", arg);
 		break;
 	    }
 	}
@@ -2654,12 +2689,12 @@ time_desc(char *buf, int seconds, int maxtime)
 	minute = (seconds / 60) % 60;  
 	second = seconds % 60;
     	if (between(1, maxtime, 3600) && hour == 0) {
-	    sprintf(buf, "%.2d:%.2d", minute, second);
+	    snprintf(buf, BUFSIZE, "%.2d:%.2d", minute, second);
 	} else {
-	    sprintf(buf, "%.2d:%.2d:%.2d", hour, minute, second);
+	    snprintf(buf, BUFSIZE, "%.2d:%.2d:%.2d", hour, minute, second);
 	}
     } else {
-    	sprintf(buf, "??:??:??");
+    	snprintf(buf, BUFSIZE, "??:??:??");
     }
 }
 
@@ -2677,8 +2712,8 @@ summarize_units(char *buf, int *ucnts)
     buf[0] = '\0';
     for_all_unit_types(u) {
 	if (ucnts[u] > 0) {
-	    sprintf(tmp, " %d %s", ucnts[u], utype_name_n(u, 3));
-	    strcat(buf, tmp);
+	    snprintf(tmp, BUFSIZE, " %d %s", ucnts[u], utype_name_n(u, 3));
+	    BCAT(buf, tmp);
 	}
     }
     return buf;
@@ -2722,11 +2757,11 @@ notify_doctrine(Side *side, char *spec)
 	outbuf[0] = '\0';
 	for_all_doctrines(doctrine) {
 	    if (!empty_string(doctrine->name))
-	      tprintf(outbuf, " %s", doctrine->name);
+	      TB(outbuf, " %s", doctrine->name);
 	    else
-	      tprintf(outbuf, " #%d", doctrine->id);
+	      TB(outbuf, " #%d", doctrine->id);
 	    if (doctrine->next != NULL)
-	      tprintf(outbuf, ",");
+	      TB(outbuf, ",");
 	}
 	notify(side, "Doctrines available:%s", outbuf);
 	for_all_doctrines(doctrine) {
@@ -2765,7 +2800,7 @@ notify_doctrine_1(Side *side, Doctrine *doctrine)
     }
 #endif
     for_all_unit_types(u) {
-	tprintf(abuf, "  %s %d",
+	tnprintf(abuf, sizeof(abuf), "  %s %d",
 		u_type_name(u), doctrine->construction_run[u]);
 	if (i > 0 && (i++) % 4 == 0 && !empty_string(abuf)) {
 	    notify(side, "  Construction run:%s", abuf);
@@ -2834,8 +2869,8 @@ notify_combat(Unit *unit1, Unit *unit2, const char *str)
 	    && (side3->see_all
 		|| (unit1 != NULL && side3 == unit1->side)
 		|| (unit2 != NULL && side3 == unit2->side))) {
-	    strcpy(buf1, unit_handle(side3, unit1));
-	    strcpy(buf2, unit_handle(side3, unit2));
+	    BCPY(buf1, unit_handle(side3, unit1));
+	    BCPY(buf2, unit_handle(side3, unit2));
 	    notify(side3, str, buf1, buf2);
 	}
     }
@@ -2872,7 +2907,7 @@ report_combat_special(Unit *unit1, Unit *unit2, const char *str)
     if (found) {
 	msgdesc = cadr(head);
 	if (stringp(msgdesc)) {
-	    strcpy(abuf, c_string(msgdesc));
+	    strbcpy(abuf, c_string(msgdesc), sizeof(abuf));
 	} else {
 	    /* Notify all sides that could have seen the combat. */
 	    for_all_sides(side3) {
@@ -2949,24 +2984,24 @@ combat_desc_from_list(Side *side, Obj *lis, Unit *unit, Unit *unit2,
     for_all_list(lis, rest) {
 	item = car(rest);
 	if (stringp(item)) {
-	    strcat(buf, c_string(item));
+	    BCAT(buf, c_string(item));
 	} else if (symbolp(item)) {
 	    symname = c_string(item);
 	    if (strcmp(symname, "actor") == 0) {
-		strcat(buf, unit_handle(side, unit));
+		BCAT(buf, unit_handle(side, unit));
 	    } else if (strcmp(symname, "actee") == 0) {
-		strcat(buf, unit_handle(side, unit2));
+		BCAT(buf, unit_handle(side, unit2));
 	    } else {
-		tprintf(buf, " ??%s?? ", symname);
+		TB(buf, " ??%s?? ", symname);
 	    }
 	} else if (numberp(item)) {
 	    n = c_number(item);
 	    if (0 /* special processing */) {
 	    } else {
-		tprintf(buf, "%d", n);
+		TB(buf, "%d", n);
 	    }
 	} else {
-	    strcat(buf, " ????? ");
+	    BCAT(buf, " ????? ");
 	}
     }
 }
@@ -2977,18 +3012,18 @@ report_give(Side *side, Unit *unit, Unit *unit2, short *rslts)
     char buf[BUFSIZE];
     int m, something = FALSE;
 
-    sprintf(buf, "%s gave", unit_handle(side, unit));
+    snprintf(buf, BUFSIZE, "%s gave", unit_handle(side, unit));
     for_all_material_types(m) {
 	if (rslts[m] > 0) {
-	    tprintf(buf, " %d %s", rslts[m], m_type_name(m));
+	    TB(buf, " %d %s", rslts[m], m_type_name(m));
 	    something = TRUE;
 	}
     }
     if (!something) {
-	strcat(buf, " nothing");
+	BCAT(buf, " nothing");
     }
     if (unit2 != NULL) {
-	tprintf(buf, " to %s", unit_handle(side, unit2));
+	TB(buf, " to %s", unit_handle(side, unit2));
     }
     notify(side, "%s.", buf);
 }
@@ -3006,7 +3041,7 @@ report_take(Side *side, Unit *unit, int needed, short *rslts)
     buf[0] = '\0';
     for_all_material_types(m) {
 	if (rslts[m] > 0) {
-	    tprintf(buf, " %d %s", rslts[m], m_type_name(m));
+	    TB(buf, " %d %s", rslts[m], m_type_name(m));
 	    something = TRUE;
 	}
     }
@@ -3082,9 +3117,9 @@ plural_form(const char *word)
     if (len > 1)
       nextend = word[len - 2];
     if (endch == 'h' || endch == 's' || (endch == 'e' && nextend == 's')) {
-	sprintf(pluralbuf, "%s", word);
+	snprintf(pluralbuf, BUFSIZE, "%s", word);
     } else {
-	sprintf(pluralbuf, "%ss", word);
+	snprintf(pluralbuf, BUFSIZE, "%ss", word);
     }
     return pluralbuf;
 }
@@ -3124,7 +3159,7 @@ absolute_date_string(int date)
       init_calendar();
     switch (calendar_type) {
       case cal_number:
-	sprintf(datebuf, "%s%4d", turn_name, date);
+	snprintf(datebuf, BUFSIZE, "%s%4d", turn_name, date);
 	return datebuf;
       case cal_usual:
 	return usual_date_string(date);
@@ -3443,13 +3478,13 @@ usual_date_string(int date)
       case ds_second:
 	second = date % 60;
 	minute = date / 60;
-	sprintf(datebuf, "%d:%d", minute, second);
+	snprintf(datebuf, BUFSIZE, "%d:%d", minute, second);
 	/* (should add day/month/year if available?) */
 	break;
       case ds_minute:
 	minute = date % 60;
 	hour = date / 60 + usual_initial->hour;
-	sprintf(datebuf, "%d:%d", hour, minute);
+	snprintf(datebuf, BUFSIZE, "%d:%d", hour, minute);
 	/* (should add day/month/year if available?) */
 	break;
       case ds_hour:
@@ -3469,7 +3504,7 @@ usual_date_string(int date)
 	}
 	++day;
 	year = date / 365 + usual_initial->year;
-	sprintf(datebuf, "%d:00 %2d %s %d",
+	snprintf(datebuf, BUFSIZE, "%d:00 %2d %s %d",
 		hour, day, months[month], ABS(year));
 	break;
       case ds_week:
@@ -3491,18 +3526,18 @@ usual_date_string(int date)
 	}
 	++day;
 	year = date / 365 + usual_initial->year;
-	sprintf(datebuf, "%2d %s %d", day, months[month], ABS(year));
+	snprintf(datebuf, BUFSIZE, "%2d %s %d", day, months[month], ABS(year));
 	break;
       case ds_month:
 	date += usual_initial->month;
     	month = date % 12;
 	year = date / 12 + usual_initial->year;
-	sprintf(datebuf, "%s %d", months[month], ABS(year));
+	snprintf(datebuf, BUFSIZE, "%s %d", months[month], ABS(year));
 	break;
       case ds_season:
      	season = date % 4;
 	year = date / 4 + usual_initial->year;
-	sprintf(datebuf, "%s %d", seasons[season], ABS(year));
+	snprintf(datebuf, BUFSIZE, "%s %d", seasons[season], ABS(year));
 	break;
       case ds_year:
 	year = usual_initial->year;
@@ -3513,20 +3548,20 @@ usual_date_string(int date)
 		   * date_step_ranges[r].step_size);
 	year += (date - (date_step_ranges[range].turn_start
 			 * date_step_ranges[range].step_size));
-	sprintf(datebuf, "%d", ABS(year));
+	snprintf(datebuf, BUFSIZE, "%d", ABS(year));
 	break;
       default:
-	sprintf(datebuf, "%d is unknown date step type",
+	snprintf(datebuf, BUFSIZE, "%d is unknown date step type",
 		date_step_ranges[0].step_type);
 	break;
     }
     if (year < 0) {
-	strcat(datebuf, " BC");
+	BCAT(datebuf, " BC");
 	ever_mentioned_bc = TRUE;
     } else if (ever_mentioned_bc) {
 	/* If any date was displayed as "BC", use "AD" with all positive
 	   year numbers. */
-	strcat(datebuf, " AD");
+	BCAT(datebuf, " AD");
     }
     return datebuf;
 }
@@ -3721,11 +3756,11 @@ record_missing_image(int typtyp, const char *str)
     /* Add the name of the image-less type, but only if one of
        the first few. */
     if (between(1, totlisted, NUMTOLIST))
-      strcat(missinglist, ",");
+      BCAT(missinglist, ",");
     if (totlisted < NUMTOLIST) {
-	strcat(missinglist, str);
+	BCAT(missinglist, str);
     } else if (totlisted == NUMTOLIST) {
-	strcat(missinglist, "...");
+	BCAT(missinglist, "...");
     }
     ++totlisted;
 }
@@ -3740,12 +3775,12 @@ missing_images(char *buf)
       return FALSE;
     buf[0] = '\0';
     if (missing[UTYP] > 0)
-      tprintf(buf, " %d unit images", missing[UTYP]);
+      TB(buf, " %d unit images", missing[UTYP]);
     if (missing[TTYP] > 0)
-      tprintf(buf, " %d terrain images", missing[TTYP]);
+      TB(buf, " %d terrain images", missing[TTYP]);
     if (missing[3] > 0)
-      tprintf(buf, " %d emblems", missing[3]);
-    tprintf(buf, " - %s", missinglist);
+      TB(buf, " %d emblems", missing[3]);
+    TB(buf, " - %s", missinglist);
     return TRUE;
 }
 
@@ -3764,19 +3799,19 @@ char
     }
     *spbuf = 0;
     if (value < 10 * thousand) {
-    	sprintf(spbuf, "%d", value);
+    	snprintf(spbuf, BUFSIZE, "%d", value);
     } else if (value < 100 * thousand) {
-    	sprintf(spbuf,"%4.1fk", ((double) value) / thousand);
+    	snprintf(spbuf, BUFSIZE,"%4.1fk", ((double) value) / thousand);
     } else if (value < million) {
-    	sprintf(spbuf,"%dK", value / thousand);
+    	snprintf(spbuf, BUFSIZE,"%dK", value / thousand);
     } else if (value < 10 * million) {
-    	sprintf(spbuf,"%4.2fM", ((double) value) / million);
+    	snprintf(spbuf, BUFSIZE,"%4.2fM", ((double) value) / million);
     } else if(value < 100 * million) {
-    	sprintf(spbuf,"%4.1fM", ((double) value) / million);
+    	snprintf(spbuf, BUFSIZE,"%4.1fM", ((double) value) / million);
     } else if(value < 1000 * million) {
-    	sprintf(spbuf,"%dM", value / million);
+    	snprintf(spbuf, BUFSIZE,"%dM", value / million);
     } else {
-    	sprintf(spbuf,"%4.2G",((double) value) / (1000 * million));
+    	snprintf(spbuf, BUFSIZE,"%4.2G",((double) value) / (1000 * million));
     }
     return buf;
 }

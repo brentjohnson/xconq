@@ -883,7 +883,7 @@ draw_unit_list_entry(int line)
 	draw_text(listwin, 0, line, "*");
     }
     if (alive(unit)) {
-	name_or_number(unit, tmpbuf);
+	name_or_number(unit, tmpbuf, sizeof(tmpbuf));
 	sprintf(spbuf, "%c%d %-16s ",
 		unitchars[unit->type], side_number(unit->side), tmpbuf);
 	if (has_acp_left(unit)) {

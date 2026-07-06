@@ -899,7 +899,7 @@ name_of_seen_unit_at(int x, int y, Side *side)
     unit = unit_seen_at(side, x, y);
     if (unit) {
 	if (pp->names > 1) {
-	    name_or_number(unit, buffer);
+	    name_or_number(unit, buffer, PSBUFSIZE);
 	    if (buffer[0]) {
 		return add_esc_string(buffer);
 	    }

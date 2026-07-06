@@ -563,7 +563,7 @@ extern char *simple_player_name(char *buf, Player *player);
 extern const char *unit_handle(Side *side, Unit *unit);
 extern const char *short_unit_handle(Unit *unit);
 extern const char *medium_long_unit_handle(Unit *unit);
-extern void name_or_number(Unit *unit, char *buf);
+extern void name_or_number(Unit *unit, char *buf, size_t size);
 extern const char *apparent_unit_handle(Side *side, Unit *unit, Side *side2);
 extern void construction_desc(char *buf, Unit *unit, int u);
 extern void research_desc(char *buf, Unit *unit, int a);
