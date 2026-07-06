@@ -309,7 +309,15 @@ accept_remote_connection(void)
 	init_warning("Accept failed");
 	return 0;
     }
-    /* Record the new file descriptor as a valid remote program. */
+    /* Record the new file descriptor as a valid remote program.  nextrid
+       grows once per accepted connection and indexes the fixed remote_fd[]/
+       fd_valid[] arrays; refuse connections past their end rather than
+       writing out of bounds. */
+    if (nextrid >= (int) (sizeof(remote_fd) / sizeof(remote_fd[0]))) {
+	init_warning("Too many remote connections");
+	close(new_fd);
+	return 0;
+    }
     rid = nextrid++;
     remote_fd[rid] = new_fd;
     fd_valid[rid] = TRUE;

@@ -636,52 +636,23 @@ way pending that decision.
   already-bounded kernel handle strings into local buffers, but they should
   get the same pass; the fuzzers from §3 cover the kernel reader, not UI
   formatting.
-- **[M] Review the homegrown networking layer** (`kernel/tp.c`,
-  `kernel/socket.c`): it's a custom peer-to-peer protocol whose messages feed
+- **[M] Review the homegrown networking layer** (`kernel/tp.cc`,
+  `kernel/socket.cc`): it's a custom peer-to-peer protocol whose messages feed
   the GDL reader. At minimum, fuzz the message decoder; longer term consider
   whether multiplayer survives at all and behind what transport.
-
-**⚙ PROMPT 6.2 — recommended model: Opus.** *(A security review whose
-deliverable is analysis and threat modeling, not mechanical edits.)*
-
-```text
-Task: security-review Xconq's homegrown networking layer and produce a
-written assessment plus fixes for any outright memory-safety bugs found.
-This is primarily an ANALYSIS deliverable — do not redesign the protocol.
-
-Context: kernel/tp.c ("transfer protocol") and kernel/socket.c implement a
-custom peer-to-peer multiplayer protocol. Received messages ultimately feed
-the GDL reader (kernel/read.c / lisp.c), which also parses saves and
-modules. Assume a hostile peer.
-Method:
-1. Read tp.c and socket.c end to end. Document (for the report): framing/
-   message format, how lengths are parsed and trusted, buffer handling on
-   receive, how messages are dispatched, and exactly where received bytes
-   enter the GDL reader or other interpreters (e.g. remote-designer or
-   chat paths).
-2. Hunt specifically for: unchecked length fields driving memcpy/reads,
-   sprintf/strcpy of network data into fixed buffers (coordinate with the
-   §6 unsafe-string task if both are in flight), integer overflow in size
-   arithmetic, missing bounds on array indices taken from the wire (side
-   numbers, unit ids), and any path where a peer can make this host open
-   an arbitrary file.
-3. Fix ONLY clear, local memory-safety bugs (bounds checks, bounded
-   copies) — behavior-preserving hardening. Anything architectural goes in
-   the report instead.
-4. Deliverable: doc/net-security-review.md containing the protocol
-   description, trust-boundary diagram in prose, findings (severity-ordered,
-   file:line), what was fixed vs deferred, and a recommendation on the
-   plan's open question: is the multiplayer layer worth keeping as-is,
-   fuzz-and-harden, or should it be wrapped/replaced (e.g. run only over a
-   trusted relay) long-term?
-Verify: build all UIs; quick ctest green. If two skelconq/xconq instances
-can be made to connect locally (check doc + tp.c for how hosting works),
-smoke-test that multiplayer still handshakes after your fixes; if that is
-not practical, say so honestly in the report.
-Commit code fixes + report; add a dated pointer to the report on this plan
-item in MODERNIZATION-PLAN.md (the item stays open until the fuzzing work
-from §3 lands).
-```
+  *(Security review done 2026-07-05 — see `doc/net-security-review.md`.)* The
+  hostile-peer audit fixed seven local memory-safety bugs in place, two of them
+  Critical: a heap overflow de-escaping an oversized packet body into the
+  255-byte `rsltbuf` (`tp.cc` receive path) and the undersized `send_packet`
+  framing buffer it re-broadcast through; plus wire-controlled array indices
+  (`rid`→`online[]`/`numremotes`, assignment/variant indices), a `receive_command`
+  NULL-deref, and an unbounded accept `nextrid`. Deferred (documented, not
+  patched): a peer can steer this host into opening arbitrary files (`f`/`g`/`w`
+  handlers) and into the un-hardened GDL reader, and there is no auth/integrity.
+  **This item stays open** pending the §3-style *decoder* fuzzing (the report's
+  recommendation: fuzz-and-harden the decoder + contain the file-open surface
+  now, and long term run multiplayer only over a trusted transport rather than
+  re-securing the protocol). Build clean, quick ctest 559/559.
 - **[S] Review the custom image decoders** (`kernel/gif.c`, `kernel/imf.c`,
   X11 XBM/XPM readers) — classic CVE territory. Consider delegating GIF to a
   library or restricting to trusted install dirs.

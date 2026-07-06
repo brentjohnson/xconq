@@ -31,6 +31,11 @@ extern long randstate;
 #define ENDPKTESC '&'
 #define ESCAPEPKTESC '@'
 
+/* Maximum size of the raw receive buffer in which a single packet is
+   reassembled.  Defined here (rather than beside packetbuf below) so
+   send_packet can size its escaped-output buffer against it. */
+#define PACKETBUFSIZE 1000
+
 static void broadcast_command_5(const char *cmd, int val, int val2, int val3,
 				int val4, int val5);
 static void broadcast_side_property(Side *side, const char *prop, int val);
@@ -2567,8 +2572,22 @@ int
 send_packet(int id, const char *inbuf)
 {
     int i, j, csum, numtimeouts;
-    char buf[BUFSIZE];
+    /* Framing adds STARTPKT, ENDPKT, two checksum nibbles and a NUL, and
+       escaping can at most double every body byte, so the outgoing buffer
+       must hold 2*strlen(inbuf) + 5.  inbuf is bounded below by PACKETBUFSIZE
+       (rebroadcast traffic comes straight from the PACKETBUFSIZE-sized
+       receive buffer), hence this size.  It was formerly BUFSIZE (255),
+       which a single escaped >127-byte body -- or any rebroadcast of a large
+       received packet -- would overflow. */
+    char buf[2 * PACKETBUFSIZE + 8];
 
+    /* Defensively refuse anything that would not fit rather than truncating
+       a control packet (which would desync the protocol) or overflowing. */
+    if (strlen(inbuf) >= PACKETBUFSIZE) {
+	run_warning("Outgoing packet too large (%d bytes), dropping",
+		    (int) strlen(inbuf));
+	return FALSE;
+    }
     if (my_rid != master_rid && !sendnow) {
 	/* Add packet to the outgoing queue. */
 	save_outgoing_packet(id, inbuf);
@@ -2739,13 +2758,13 @@ static char *rsltbuf;
 
 static int rsltid;
 
-#define PACKETBUFSIZE 1000
-
 static time_t nothing_start_time;
 
 static int nothing_count;
 
 static int nothing_timeout;
+
+/* PACKETBUFSIZE is defined near the top of this file. */
 
 static void
 remove_chars(char *buf, int n)
@@ -2767,8 +2786,14 @@ receive_data(int timeout, int lim)
     /* (should have buffers for each remote prog) */
     if (packetbuf == NULL)
       packetbuf = (char *)xmalloc(PACKETBUFSIZE);
+    /* rsltbuf receives the de-escaped body of a packet accumulated in
+       packetbuf, which is PACKETBUFSIZE bytes.  De-escaping only ever
+       shrinks the data, so sizing rsltbuf to match packetbuf guarantees
+       the copy below cannot overflow no matter what a hostile peer sends.
+       (It was formerly BUFSIZE == 255, while a peer can build up a packet
+       body approaching PACKETBUFSIZE -- a heap overflow.) */
     if (rsltbuf == NULL)
-      rsltbuf = (char *)xmalloc(BUFSIZE);
+      rsltbuf = (char *)xmalloc(PACKETBUFSIZE);
     if (incoming != NULL && process_packets && !expecting_ack) {
 	packets += flush_incoming_queue(lim - packets);
 	return;
@@ -2784,7 +2809,11 @@ receive_data(int timeout, int lim)
 		   chars and computing checksum along the way. */
 		j = 0;
 		csum = 0;
-		for (i = 1; i < len + 1; ++i) {
+		/* j is bounded against rsltbuf (PACKETBUFSIZE) as a
+		   belt-and-suspenders guard; len is already < PACKETBUFSIZE
+		   and de-escaping only shrinks, so this never trips for
+		   well-formed traffic. */
+		for (i = 1; i < len + 1 && j < PACKETBUFSIZE - 1; ++i) {
 		    if (packetbuf[i] == ESCAPEPKT
 			&& packetbuf[i+1] == STARTPKTESC) {
 			rsltbuf[j++] = STARTPKT;
@@ -3176,6 +3205,15 @@ receive_command(char *str)
     Unit *unit, *unit2;
 
     argstr = strchr(str, ' ');
+    /* A malformed C packet with no space yields a NULL here; deref would
+       crash the host. Also zero args[] so branches that read fewer than
+       five integers never consume uninitialized stack. */
+    if (argstr == NULL) {
+	run_warning("Command packet \"%s\" has no arguments, ignoring", str);
+	return;
+    }
+    for (i = 0; i < 5; ++i)
+      args[i] = 0;
     i = 0;
     while (*argstr != '\0' && i < 5) {
 	args[i++] = strtol(argstr, &nstr, 10);
@@ -3360,6 +3398,11 @@ receive_quit(char *str)
 
     rid = strtol(str, &nstr, 10);
     Dprintf("Received quit from %d\n", rid);
+    /* rid indexes online[MAXSIDES]; a hostile peer controls it. */
+    if (rid < 1 || rid >= MAXSIDES) {
+	run_warning("Quit packet with out-of-range rid %d, ignoring", rid);
+	return;
+    }
     online[rid] = FALSE;
     quitter = rid;
 }
@@ -3848,6 +3891,13 @@ receive_remote_program(char *str)
     char *nstr;
 
     rid = strtol(str, &nstr, 10);
+    /* rid indexes online[]/remote_player_specs[] (both MAXSIDES) and
+       seeds numremotes, which later bounds loops over remote_fd[]; a
+       hostile master controls it, so range-check before trusting it. */
+    if (rid < 1 || rid >= MAXSIDES) {
+	run_warning("Program packet with out-of-range rid %d, ignoring", rid);
+	return;
+    }
     str = nstr + 1;
     numremotes = max(rid, numremotes);
     online[rid] = TRUE;
@@ -3882,6 +3932,21 @@ receive_variant_setting(char *str)
     v2 = strtol(str, &nstr, 10);
     str = nstr + 1;
     v3 = strtol(str, &nstr, 10);
+    /* which indexes mainmodule->variants[] (a heap array terminated by
+       an id == lispnil sentinel); a hostile peer controls it, so refuse
+       anything outside the module's actual variant list. */
+    {
+	int nvariants = 0;
+	if (mainmodule != NULL && mainmodule->variants != NULL) {
+	    while (mainmodule->variants[nvariants].id != lispnil)
+	      ++nvariants;
+	}
+	if (which < 0 || which >= nvariants) {
+	    run_warning("Variant packet with out-of-range index %d, ignoring",
+			which);
+	    return;
+	}
+    }
     set_variant_value(which, v1, v2, v3);
     if (update_variant_callback)
       (*update_variant_callback)(which);
@@ -3897,10 +3962,21 @@ receive_assignment_setting(char *str)
     n = strtol(str, &nstr, 10);
     str = nstr;
     ++str;
+    /* n indexes assignments[MAXSIDES+1] (directly below and via the UI
+       callbacks) and is peer-controlled; range-check it up front. The
+       add branch recomputes n internally, so a valid packet is unaffected. */
+    if (n < 0 || n > MAXSIDES) {
+	run_warning("Assignment packet with out-of-range index %d, ignoring", n);
+	return;
+    }
     if (strncmp(str, "add", 3) == 0) {
 	n = add_side_and_player();
     } else if (strncmp(str, "remove ", 7) == 0) {
 	n = strtol(str + 7, NULL, 10);
+	if (n < 0 || n > MAXSIDES) {
+	    run_warning("Remove packet with out-of-range index %d, ignoring", n);
+	    return;
+	}
 	remove_side_and_player(n);
   	if (update_assignment_callback) {
 		for (n2 = n; n2 <= numsides + 1; n2++) {
