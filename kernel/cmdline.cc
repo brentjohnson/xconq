@@ -180,7 +180,7 @@ parse_command_line(int argc, char *argv[], int spec)
 		if (strlen(arg) > 2) {
 		    aispec = arg + 2;
 		    if (*aispec != ',') {
-			sprintf(tmpspec, "%s%s", default_ai_type, aispec);
+			snprintf(tmpspec, sizeof(tmpspec), "%s%s", default_ai_type, aispec);
 			aispec = tmpspec;
 		    }
 		} else {

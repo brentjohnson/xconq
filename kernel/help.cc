@@ -327,7 +327,7 @@ create_game_help_nodes(void)
     for_all_unit_types(u) {
 	longname = u_long_name(u);
 	if (!empty_string(longname)) {
-	    sprintf(spbuf, "%s (%s)", longname, u_type_name(u));
+	    snprintf(spbuf, BUFSIZE, "%s (%s)", longname, u_type_name(u));
 	    name = copy_string(spbuf);
 	} else {
 	    name = u_type_name(u);
@@ -461,7 +461,7 @@ get_help_text(HelpNode *node)
 		node->textend = strlen(node->text);
 	    } else {
 		/* Generate a default message if nothing to compute help. */
-		sprintf(spbuf, "%s: No info available.", node->key);
+		snprintf(spbuf, BUFSIZE, "%s: No info available.", node->key);
 		node->text = copy_string(spbuf);
 		node->textend = strlen(node->text);
 	    }
@@ -792,8 +792,11 @@ describe_game_module_aux(TextBuffer *buf, Module *module, int level)
     indentbuf[0] = '\0';
     indentsz = strlen(help_indent(3));
     for (i = 0; i < level; ++i) {
-	strcat(dashbuf, "-- ");
-	strncat(indentbuf, help_indent(3), BUFSIZE - (indentsz * i));
+	/* level is module nesting depth (attacker-influenceable); keep the
+	   per-level appends inside the buffers. */
+	bounded_strcat(dashbuf, "-- ", sizeof(dashbuf));
+	if (strlen(indentbuf) + indentsz < sizeof(indentbuf))
+	  strncat(indentbuf, help_indent(3), sizeof(indentbuf) - strlen(indentbuf) - 1);
     }
     tbprintf(buf, "%s\"%s\"", dashbuf,
 	    (module->title ? module->title : module->name));
@@ -4207,7 +4210,7 @@ meta_prep_help_cc(HelpPage hpage, int hpageidx)
 	  default: break;
 	}
 	sprintf(numbuf, "%d", hpageidx);
-	strcat(filebnamebuf, numbuf);
+	bounded_strcat(filebnamebuf, numbuf, BUFSIZE);
 	indentlvl = 1;
     }
     prep_help_cc_any(filebnamebuf, namebuf);
@@ -4402,7 +4405,7 @@ meta_finish_help_cc(HelpPage hpage, int hpageidx, HelpNode *helpnode)
 	  default: break;
 	}
 	sprintf(numbuf, "%d", hpageidx);
-	strcat(filebnamebuf, numbuf);
+	bounded_strcat(filebnamebuf, numbuf, BUFSIZE);
     }
     flush_help_cc_tmp(helpnode);
     write_help_section_footer(help_output_tmp_filep, namebuf);

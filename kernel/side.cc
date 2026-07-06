@@ -1562,7 +1562,7 @@ set_controlled_by(Side *side, Side *side2, int val)
 	}
     }
     if (changed) {
-	strcpy(tmpbuf, short_side_title(side2));
+	bounded_strcpy(tmpbuf, short_side_title(side2), BUFSIZE);
 	/* (should be handled by nlang.c) */
 	notify_all("%s%s control%s %s now.",
 		   tmpbuf,
@@ -3978,23 +3978,23 @@ side_desig(Side *side)
       sidedesigbuf = (char *)xmalloc(BUFSIZE);
     if (side != NULL) {
 	/* The side name is all capitalized in the output. Why? */
-	sprintf(sidedesigbuf, "s%d %s", side_number(side), side_name(side));
+	snprintf(sidedesigbuf, BUFSIZE, "s%d %s", side_number(side), side_name(side));
 	if (side->self_unit) {
 		unit = find_unit_dead_or_alive(side->self_unit->id);
 		if (in_play(unit)) {
 			if (!mobile(unit->type) || u_advanced(unit->type)) {
-				tprintf(sidedesigbuf, " (capital %s %s)", 
+				tnprintf(sidedesigbuf, BUFSIZE, " (capital %s %s)", 
 						(side->ingame ? "is" : "was"),
 						short_unit_handle(unit));
 			} else {
-				tprintf(sidedesigbuf, " (leader %s %s)", 
+				tnprintf(sidedesigbuf, BUFSIZE, " (leader %s %s)", 
 						(side->ingame ? "is" : "was"),
 						short_unit_handle(unit));
 			}
 		}
 	}
     } else {
-	sprintf(sidedesigbuf, "nullside");
+	snprintf(sidedesigbuf, BUFSIZE, "nullside");
     }
     return sidedesigbuf;
 }
@@ -4065,7 +4065,7 @@ player_desig(Player *player)
 		(player->displayname ? player->displayname : ""),
 		player->advantage);
     } else {
-	sprintf(playerdesigbuf, "nullplayer");
+	snprintf(playerdesigbuf, BUFSIZE, "nullplayer");
     }
     return playerdesigbuf;
 }
@@ -4356,23 +4356,23 @@ standing_order_desc(StandingOrder *sorder, char *buf)
 	}
     }
     if (v < 0 || sorder->task == NULL) {
-	strcpy(buf, "invalid");
+	bounded_strcpy(buf, "invalid", BUFSIZE);
 	return buf;
     }
-    sprintf(buf, "if %s ", (i ? "all" : u_type_name(v)));
+    snprintf(buf, BUFSIZE, "if %s ", (i ? "all" : u_type_name(v)));
 
     switch (sorder->condtype) {
     case sorder_at:
-	tprintf(buf, "at %d,%d ", sorder->a1, sorder->a2);
+	tnprintf(buf, BUFSIZE, "at %d,%d ", sorder->a1, sorder->a2);
 	break;
     case sorder_in:
-	tprintf(buf, "in %s ", short_unit_handle(find_unit(sorder->a1)));
+	tnprintf(buf, BUFSIZE, "in %s ", short_unit_handle(find_unit(sorder->a1)));
 	break;
     case sorder_near:
-	tprintf(buf, "within %d %d,%d ", sorder->a3,  sorder->a1, sorder->a2);
+	tnprintf(buf, BUFSIZE, "within %d %d,%d ", sorder->a3,  sorder->a1, sorder->a2);
 	break;
     default:
-	strcat(buf, "unknown");
+	bounded_strcat(buf, "unknown", BUFSIZE);
 	return buf;
     }
 
@@ -4380,10 +4380,10 @@ standing_order_desc(StandingOrder *sorder, char *buf)
     args = sorder->task->args;
     switch (i) {
     case TASK_MOVE_TO:
-	tprintf(buf, "%s %d,%d", taskdefns[i].display_name, args[0], args[1]);
+	tnprintf(buf, BUFSIZE, "%s %d,%d", taskdefns[i].display_name, args[0], args[1]);
 	break;
     case TASK_SENTRY:
-	tprintf(buf, "%s %d", taskdefns[i].display_name, args[0]);
+	tnprintf(buf, BUFSIZE, "%s %d", taskdefns[i].display_name, args[0]);
 	break;
     default:
 	task_desc(buf+strlen(buf), NULL, NULL, sorder->task);
@@ -4400,7 +4400,7 @@ get_next_arg(const char *str, char *buf, char **rsltp)
 {
     char *p;
 
-    strcpy(buf, str);
+    bounded_strcpy(buf, str, BUFSIZE);
     p = buf;
     /* Skip past any leading whitespace. */
     while (isspace(*p))
@@ -4480,7 +4480,7 @@ agreement_desig(Agreement *ag)
 {
     if (agreement_desig_buf == NULL)
       agreement_desig_buf = (char *)xmalloc(BUFSIZE);
-    sprintf(agreement_desig_buf, "<ag %s %s %s>",
+    snprintf(agreement_desig_buf, BUFSIZE, "<ag %s %s %s>",
 	    (ag->agtype ? ag->agtype : "(null)"),
 	    (ag->name ? ag->name : "(null)"),
 	    (ag->terms == lispnil ? "(no terms)" : "...terms..."));

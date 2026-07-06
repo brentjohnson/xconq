@@ -2946,16 +2946,16 @@ plan_desig(Plan *plan)
     if (planbuf == NULL)
       planbuf = (char *)xmalloc(1000);
     if (plan == NULL) {
-	sprintf(planbuf, "no plan");
+	snprintf(planbuf, 1000, "no plan");
     } else if (plan->type == PLAN_NONE) {
-	sprintf(planbuf, "unformed plan");
+	snprintf(planbuf, 1000, "unformed plan");
     } else {
 	if (plan->tasks) {
 	    tmpbuf[0] = '\0';
 	    for_all_tasks(plan, task) {
 		if (strlen(tmpbuf) < 100) {
-		    strcat(tmpbuf, " ");
-		    strcat(tmpbuf, task_desig(task));
+		    bounded_strcat(tmpbuf, " ", BUFSIZE);
+		    bounded_strcat(tmpbuf, task_desig(task), BUFSIZE);
 		} else {
 		    ++extra;
 		}
@@ -2964,27 +2964,27 @@ plan_desig(Plan *plan)
 		tprintf(tmpbuf, " ... %d more ...", extra);
 	    }
 	} else {
-	    sprintf(tmpbuf, " no tasks");
+	    snprintf(tmpbuf, BUFSIZE, " no tasks");
 	}
-	sprintf(planbuf, "type %s %s",
+	snprintf(planbuf, 1000, "type %s %s",
 		plantypenames[plan->type], goal_desig(plan->maingoal));
 	if (plan->formation) {
-	    strcat(planbuf, " ");
-	    strcat(planbuf, goal_desig(plan->formation));
+	    bounded_strcat(planbuf, " ", 1000);
+	    bounded_strcat(planbuf, goal_desig(plan->formation), 1000);
 	}
 	if (plan->asleep)
-	  strcat(planbuf, " asleep");
+	  bounded_strcat(planbuf, " asleep", 1000);
 	if (plan->reserve)
-	  strcat(planbuf, " reserve");
+	  bounded_strcat(planbuf, " reserve", 1000);
 	if (plan->delayed)
-	  strcat(planbuf, " delayed");
+	  bounded_strcat(planbuf, " delayed", 1000);
 	if (plan->waitingfortasks)
-	  strcat(planbuf, " waiting");
+	  bounded_strcat(planbuf, " waiting", 1000);
 	if (plan->supply_alarm)
-	  strcat(planbuf, " supply_alarm");
+	  bounded_strcat(planbuf, " supply_alarm", 1000);
 	if (plan->supply_is_low)
-	  strcat(planbuf, " supply_is_low");
-	strcat(planbuf, tmpbuf);
+	  bounded_strcat(planbuf, " supply_is_low", 1000);
+	bounded_strcat(planbuf, tmpbuf, 1000);
     }
     return planbuf;
 }

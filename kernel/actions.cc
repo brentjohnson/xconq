@@ -4521,7 +4521,7 @@ notify_action(Unit *unit, Action *action)
     if (found) {
 	msgdesc = cadr(head);
 	if (stringp(msgdesc)) {
-	    strcpy(abuf, c_string(msgdesc));
+	    bounded_strcpy(abuf, c_string(msgdesc), sizeof(abuf));
 	} else {
 	    action_desc_from_list(unit->side, msgdesc, unit, action, abuf);
 	}
@@ -4580,28 +4580,28 @@ action_desc_from_list(Side *side, Obj *lis, Unit *unit, Action *action,
     for_all_list(lis, rest) {
 	item = car(rest);
 	if (stringp(item)) {
-	    strcat(buf, c_string(item));
+	    bounded_strcat(buf, c_string(item), BUFSIZE);
 	} else if (symbolp(item)) {
 	    symname = c_string(item);
 	    if (strcmp(symname, "unit") == 0) {
-		sprintf(buf+strlen(buf), "%s", unit_handle(side, unit));
+		snprintf(buf+strlen(buf), BUFSIZE-strlen(buf), "%s", unit_handle(side, unit));
 	    } else if (strcmp(symname, "actee") == 0) {
 		if (action->actee == unit->id)
 		  actee = unit;
 		else
 		  actee = find_unit(action->actee);
-		sprintf(buf+strlen(buf), "%s", unit_handle(side, actee));
+		snprintf(buf+strlen(buf), BUFSIZE-strlen(buf), "%s", unit_handle(side, actee));
 	    } else {
-		sprintf(buf+strlen(buf), " ??%s?? ", symname);
+		snprintf(buf+strlen(buf), BUFSIZE-strlen(buf), " ??%s?? ", symname);
 	    }
 	} else if (numberp(item)) {
 	    n = c_number(item);
 	    if (0 /* special processing */) {
 	    } else {
-		sprintf(buf+strlen(buf), "%d", n);
+		snprintf(buf+strlen(buf), BUFSIZE-strlen(buf), "%d", n);
 	    }
 	} else {
-	    strcat(buf, " ????? ");
+	    bounded_strcat(buf, " ????? ", BUFSIZE);
 	}
     }
 }
@@ -4918,7 +4918,7 @@ action_desig(Action *act)
     if (actiondesigbuf == NULL)
       actiondesigbuf = (char *)xmalloc(BUFSIZE);
     str = actiondesigbuf;
-    sprintf(str, "[%s", actiondefns[act->type].name);
+    snprintf(str, BUFSIZE, "[%s", actiondefns[act->type].name);
     slen = strlen(actiondefns[act->type].argtypes);
     for (i = 0; i < slen; ++i) {
 	ch = (actiondefns[act->type].argtypes)[i];
@@ -4934,6 +4934,6 @@ action_desig(Action *act)
     if (act->actee != 0) {
 	tprintf(str, " (#%d)", act->actee);
     }
-    strcat(str, "]");
+    bounded_strcat(str, "]", BUFSIZE);
     return actiondesigbuf;
 }

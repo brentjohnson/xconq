@@ -84,8 +84,8 @@ make_up_side_name(Side *side)
 		while (tries++ < 100 * numsides) {
 			sidename = run_namer(symbol_value(intern_symbol(method)));
 			if (!name_in_use(side, sidename)) {
-				sprintf(spbuf, "%s", sidename);
-				sprintf(tmpbuf, "%sian", sidename);
+				snprintf(spbuf, BUFSIZE, "%s", sidename);
+				snprintf(tmpbuf, BUFSIZE, "%sian", sidename);
 				filler = cons(cons(intern_symbol(keyword_name(K_NAME)),
 						   cons(new_string(copy_string(spbuf)),
 							lispnil)),
@@ -102,8 +102,8 @@ make_up_side_name(Side *side)
 		   we don't test for these "names" being already in use, but this
 		   should be OK, because real games should rarely need these. */
 		n = side_number(side) - 1;
-		sprintf(spbuf, "%c", 'A' + n);
-		sprintf(tmpbuf, "%cian", 'A' + n); /* should be in nlang.c? */
+		snprintf(spbuf, BUFSIZE, "%c", 'A' + n);
+		snprintf(tmpbuf, BUFSIZE, "%cian", 'A' + n); /* should be in nlang.c? */
 		filler = cons(cons(intern_symbol(keyword_name(K_NAME)),
 				   cons(new_string(copy_string(spbuf)),
 					lispnil)),
@@ -250,13 +250,13 @@ propose_unit_name(Unit *unit)
 	    /* Kind of a bizarre thing, but flavorful sometimes. */
 	    sidename = side_name(unit->side);
 	    if (!empty_string(sidename) && strlen(sidename) >= 2) {
-		sprintf(spbuf, "%c%c-%s-%02d",
+		snprintf(spbuf, BUFSIZE, "%c%c-%s-%02d",
 			uppercase(sidename[0]), uppercase(sidename[1]),
 			utype_name_n(u, 3), unit->number);
 	    } else {
 		/* If no side name, use unit id to get better chance
 		   of uniqueness. */
-		sprintf(spbuf, "%s-%d", utype_name_n(u, 3), unit->id);
+		snprintf(spbuf, BUFSIZE, "%s-%d", utype_name_n(u, 3), unit->id);
 	    }
 	    return copy_string(spbuf);
 	  default:
@@ -403,11 +403,11 @@ gen_name(Obj *nonterm, Obj *rules, int depth, char *rslt)
     if (symbolp(nonterm)
 	&& boundp(nonterm)
 	&& pointerp(symbol_value(nonterm))) {
-	strcat(rslt, run_namer(symbol_value(nonterm)));
+	bounded_strcat(rslt, run_namer(symbol_value(nonterm)), sizeof(rslt));
     } else {
 	/* Assume that the purported nonterm symbol is actually a
            terminal and just concatenate it. */
-	strcat(rslt, c_string(nonterm));
+	bounded_strcat(rslt, c_string(nonterm), sizeof(rslt));
     }
 }
 
@@ -430,7 +430,7 @@ gen_from_rule(Obj *rule, Obj *rules, int depth, char *rslt)
 	break;
       case STRING:
 	/* Strings are always terminals, just append them directly. */
-	strcat(rslt, c_string(rule));
+	bounded_strcat(rslt, c_string(rule), sizeof(rslt));
 	break;
       case SYMBOL:
 	/* Assume that a symbol might be a nonterminal, and recurse. */

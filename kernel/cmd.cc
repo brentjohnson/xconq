@@ -483,7 +483,7 @@ do_c_rate(Side *side)
     for_all_material_types(m2) {
 	if (mm_conversion(m, m2) > 0) {
 	    pct = (tot > 0 ? ((side->c_rates[m2] * 100) / tot) : 0);
-	    sprintf(tbuf+strlen(tbuf), "  %s %d%%", m_type_name(m2), pct);
+	    snprintf(tbuf+strlen(tbuf), BUFSIZE-strlen(tbuf), "  %s %d%%", m_type_name(m2), pct);
 	}
     }
     notify(side, "%s conversion rates: %s", m_type_name(m), tbuf);
@@ -657,8 +657,8 @@ notify_relationships(Side *side)
 	    }
 	    /* Add the side's title to the chosen bucket. */
 	    if (strlen(buf) > 0)
-	      strcat(buf, ", ");
-	    strcat(buf, short_side_title(side2));
+	      bounded_strcat(buf, ", ", 1000);
+	    bounded_strcat(buf, short_side_title(side2), 1000);
 	}
     }
     /* Describe each bucket. */
@@ -880,12 +880,12 @@ do_research(Side *side)
 	}
 	/* List the available advances. */
 	/* (should be a separate function perhaps) */
-	strcpy(abuf, "Next advances: ");
+	bounded_strcpy(abuf, "Next advances: ", BUFSIZE);
 	for_all_advance_types(a) {
 	    if (side_can_research(side, a)) {
 		if (i > 0)
-		  strcat(abuf, ", ");
-		strcat(abuf, a_type_name(a));
+		  bounded_strcat(abuf, ", ", BUFSIZE);
+		bounded_strcat(abuf, a_type_name(a), BUFSIZE);
 		++i;
 		if (i == 4) {
 		    notify(side, "%s", abuf);

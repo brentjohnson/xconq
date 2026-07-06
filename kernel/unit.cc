@@ -2123,7 +2123,7 @@ resurrect_self_unit(Unit *unit, Side *oldside, Side *newside)
 	if (is_active(unit2)
 	    && u_can_be_self(unit2->type)) {
 	    oldside->self_unit = unit2;
-	    strcpy(unitname2, short_unit_handle(unit2));
+	    bounded_strcpy(unitname2, short_unit_handle(unit2), sizeof(unitname2));
 	    break;
 	}
     } /* for all side units */
@@ -2159,7 +2159,7 @@ resurrect_self_unit(Unit *unit, Side *oldside, Side *newside)
 	   required. */
 	else {
 	    if (g_self_required()) {
-		strcpy(oldsidename, short_side_title(oldside));
+		bounded_strcpy(oldsidename, short_side_title(oldside), sizeof(oldsidename));
 		if (newside != oldside) {
 		    notify_all("%s HAS BEEN DEFEATED BY %s!", 
 			       all_capitals(oldsidename), 
@@ -2556,7 +2556,7 @@ kill_self_unit(Unit *unit, char *unitname)
     char sidename[BUFSIZE];
 
     unit->side->self_unit = NULL;
-    strcpy(sidename, side_adjective(unit->side));
+    bounded_strcpy(sidename, side_adjective(unit->side), sizeof(sidename));
     if (u_self_resurrects(u)) {
 	/* Find a new self unit if possible. */
 	Unit *unit2;
@@ -2566,7 +2566,7 @@ kill_self_unit(Unit *unit, char *unitname)
 		&& u_can_be_self(unit2->type)) {
 		char unitname2[BUFSIZE];
 		unit->side->self_unit = unit2;
-		strcpy(unitname2, short_unit_handle(unit2));
+		bounded_strcpy(unitname2, short_unit_handle(unit2), sizeof(unitname2));
 		if (!mobile(unit->type) || u_advanced(unit->type)) {
 		    notify_all("THE %s CAPITAL %s HAS BEEN DESTROYED!", 
 			       all_capitals(sidename), all_capitals(unitname)); 
@@ -2594,7 +2594,7 @@ kill_self_unit(Unit *unit, char *unitname)
 	}
 	/* ... and we really need one. */
 	if (g_self_required()) {
-	    strcpy(sidename, short_side_title(unit->side));
+	    bounded_strcpy(sidename, short_side_title(unit->side), sizeof(sidename));
 	    notify_all("%s HAS LOST THE GAME!", all_capitals(sidename));
 	    /* If the capital/leader has been killed, we lose to NULL, rather
 	       than to the killing side. */
@@ -2617,7 +2617,7 @@ kill_unit_aux(Unit *unit, int reason)
     Side *side = unit->side;
     
     /* Save this handle before the unit is killed. */
-    strcpy(unitname, short_unit_handle(unit));
+    bounded_strcpy(unitname, short_unit_handle(unit), sizeof(unitname));
     /* Now kill the unit. */
     unit->hp = 0;
     /* Get rid of the unit's plan/tasks.  This should be safe, because
@@ -2838,17 +2838,17 @@ unit_desig(Unit *unit)
     shortbuf = shortbufs[curshortbuf];
     curshortbuf = (curshortbuf + 1) % NUMSHORTBUFS;
     if (unit->id == -1) {
-	sprintf(shortbuf, "s%d head", side_number(unit->side));
+	snprintf(shortbuf, BUFSIZE, "s%d head", side_number(unit->side));
 	return shortbuf;
     } else if (is_unit_type(unit->type)) {
-	sprintf(shortbuf, "s%d %s %d (%d,%d",
+	snprintf(shortbuf, BUFSIZE, "s%d %s %d (%d,%d",
 		side_number(unit->side), shortest_unique_name(unit->type),
 		unit->id, unit->x, unit->y);
 	if (unit->z != 0)
-	  tprintf(shortbuf, ",%d", unit->z);
+	  tnprintf(shortbuf, BUFSIZE, ",%d", unit->z);
 	if (unit->transport)
-	  tprintf(shortbuf, ",in%d", unit->transport->id);
-	strcat(shortbuf, ")");  /* close out the unit location */
+	  tnprintf(shortbuf, BUFSIZE, ",in%d", unit->transport->id);
+	bounded_strcat(shortbuf, ")", BUFSIZE);  /* close out the unit location */
 	return shortbuf;
     } else {
 	return "!garbage unit!";
@@ -2871,10 +2871,10 @@ unit_desig_no_loc(Unit *unit)
     shortbuf = shortbufs[curshortbuf];
     curshortbuf = (curshortbuf + 1) % NUMSHORTBUFS;
     if (unit->id == -1) {
-	sprintf(shortbuf, "s%d head", side_number(unit->side));
+	snprintf(shortbuf, BUFSIZE, "s%d head", side_number(unit->side));
 	return shortbuf;
     } else if (is_unit_type(unit->type)) {
-	sprintf(shortbuf, "s%d %-3.3s %d",
+	snprintf(shortbuf, BUFSIZE, "s%d %-3.3s %d",
 		side_number(unit->side), shortest_unique_name(unit->type),
 		unit->id);
 	return shortbuf;
@@ -3096,7 +3096,7 @@ actorstate_desig(ActorState *as)
     if (actorstatebuf == NULL)
       actorstatebuf = (char *)xmalloc(BUFSIZE);
     if (as != NULL) {
-	sprintf(actorstatebuf, "acp %d/%d %s",
+	snprintf(actorstatebuf, BUFSIZE, "acp %d/%d %s",
 		as->acp, as->initacp, action_desig(&(as->nextaction)));
 	return actorstatebuf;
     } else {

@@ -2508,7 +2508,7 @@ plot_meridians(VP *vp,
 			    minbuf[0] = '\0';
 			    if (latminu != 0)
 			      sprintf(minbuf, "%dm", latminu);
-			    sprintf(tmpbuf, "%dd%s%c",
+			    snprintf(tmpbuf, BUFSIZE, "%dd%s%c",
 				    latdeg, minbuf, (lat >= 0 ? 'N' : 'S'));
 			    (*text_callback)(xmid, ymid, xmidf, ymidf, tmpbuf);
 			}
@@ -2532,14 +2532,14 @@ plot_meridians(VP *vp,
 			    minbuf[0] = '\0';
 			    if (lonminu != 0)
 			      sprintf(minbuf, "%dm", lonminu);
-			    sprintf(tmpbuf, "%dd%s%c",
+			    snprintf(tmpbuf, BUFSIZE, "%dd%s%c",
 				    londeg, minbuf, (lon >= 0 ? 'E' : 'W'));
 			    (*text_callback)(xmid, ymid, xmidf, ymidf, tmpbuf);
 			}
 		    }
 		}
 #if 0 /* use to debug meridian plotting */
-		sprintf(tmpbuf, "%d %d", lat, lon);
+		snprintf(tmpbuf, BUFSIZE, "%d %d", lat, lon);
 		(*text_callback)(x1, y1, x1f, y1f, tmpbuf);
 		latlong_desc(tmpbuf, x1, y1, x1f, y1f, 3);
 		(*text_callback)(x1, y1, x1f, y1f, tmpbuf);
@@ -2822,10 +2822,10 @@ oneliner(Side *side, VP *vp, int sx, int sy)
     nearest_unit(side, vp, sx, sy, &unit);
     nearest_unit_view(side, vp, sx, sy, &uview);
     if (!in_area(x, y)) {
-	strcpy(tmpbuf, "(nothing)");
+	bounded_strcpy(tmpbuf, "(nothing)", BUFSIZE);
 	return;
     } else if (vp->show_all || terrain_visible(side, x, y)) {
-	strcpy(tmpbuf, " ");
+	bounded_strcpy(tmpbuf, " ", BUFSIZE);
 	/* Describe the side of the people here. */
 	if (people_sides_defined()) {
 	    ps = people_side_at(x, y);
@@ -2849,19 +2849,19 @@ oneliner(Side *side, VP *vp, int sx, int sy)
 	    if (cs != ps) {
 		side3 = side_n(cs);
 		if (side3 == NULL) {
-		    strcpy(ctrlbuf, "uncontrolled");
+		    bounded_strcpy(ctrlbuf, "uncontrolled", sizeof(ctrlbuf));
 		} else if (side3 == side) {
-		    strcpy(ctrlbuf, "your");
+		    bounded_strcpy(ctrlbuf, "your", sizeof(ctrlbuf));
 		} else {
-		    strcpy(ctrlbuf, side_adjective(side3));
+		    bounded_strcpy(ctrlbuf, side_adjective(side3), sizeof(ctrlbuf));
 		    if (ctrlbuf[0] == '\0') {
-			sprintf(ctrlbuf, "s%d", side3->id);
+			snprintf(ctrlbuf, sizeof(ctrlbuf), "s%d", side3->id);
 		    }
-		    strcat(ctrlbuf, "-controlled");
+		    bounded_strcat(ctrlbuf, "-controlled", sizeof(ctrlbuf));
 		}
 		if (peopdesc != NULL) {
-		    strcat(ctrlbuf, " ");
-		    strcat(ctrlbuf, peopdesc);
+		    bounded_strcat(ctrlbuf, " ", sizeof(ctrlbuf));
+		    bounded_strcat(ctrlbuf, peopdesc, sizeof(ctrlbuf));
 		}
 		peopdesc = ctrlbuf;
 	    }
@@ -2873,7 +2873,7 @@ oneliner(Side *side, VP *vp, int sx, int sy)
 			peopdesc = "own";
 		    }
 		}
-		strcat(tmpbuf, unit_handle(side, unit));
+		bounded_strcat(tmpbuf, unit_handle(side, unit), BUFSIZE);
 		sayin = TRUE;
 	    }
 	} else {
@@ -2895,30 +2895,30 @@ oneliner(Side *side, VP *vp, int sx, int sy)
 		    }
 		}
 		if (unit != NULL) {
-		    strcat(tmpbuf,
-			   apparent_unit_handle(side, unit, side2));
+		    bounded_strcat(tmpbuf,
+			   apparent_unit_handle(side, unit, side2), BUFSIZE);
 		} else {
-		    strcat(tmpbuf, side_adjective(side2));
-		    strcat(tmpbuf, " ");
-		    strcat(tmpbuf, u_type_name(u));
+		    bounded_strcat(tmpbuf, side_adjective(side2), BUFSIZE);
+		    bounded_strcat(tmpbuf, " ", BUFSIZE);
+		    bounded_strcat(tmpbuf, u_type_name(u), BUFSIZE);
 		}
 		sayin = TRUE;
 	    }
 	}
 	if (sayin) {
-	    strcat(tmpbuf, " (in ");
+	    bounded_strcat(tmpbuf, " (in ", BUFSIZE);
 	}
 	if (peopdesc != NULL) {
-	    strcat(tmpbuf, peopdesc);
-	    strcat(tmpbuf, " ");
+	    bounded_strcat(tmpbuf, peopdesc, BUFSIZE);
+	    bounded_strcat(tmpbuf, " ", BUFSIZE);
 	}
 	if (vp->show_all)
 	  t2 = terrain_at(x, y);
 	else
 	  t2 = vterrain(terrain_view(side, x, y));
-	strcat(tmpbuf, t_type_name(t2));
+	bounded_strcat(tmpbuf, t_type_name(t2), BUFSIZE);
 	if (sayin) {
-	    strcat(tmpbuf, ")");
+	    bounded_strcat(tmpbuf, ")", BUFSIZE);
 	}
 	/* (should be able to display views of these) */
 	if (elevations_defined()) {
@@ -2937,14 +2937,14 @@ oneliner(Side *side, VP *vp, int sx, int sy)
 	    }
 	}
     } else {
-	sprintf(tmpbuf, "(unknown)");
+	snprintf(tmpbuf, BUFSIZE, "(unknown)");
     }
-    strcat(tmpbuf, " @");
+    bounded_strcat(tmpbuf, " @", BUFSIZE);
     if (1 /* drawxy */) {
 	tprintf(tmpbuf, "%d,%d", x, y);
     } else if (vp->draw_meridians) {
 	latlong_desc(descbuf, x, y, xf, yf, 3);
-	strcat(tmpbuf, descbuf);
+	bounded_strcat(tmpbuf, descbuf, BUFSIZE);
     }
     if (vp->show_all || terrain_visible(side, x, y)) {
 	feature = feature_at(x, y);
@@ -2952,37 +2952,37 @@ oneliner(Side *side, VP *vp, int sx, int sy)
 	    if (feature->size > 0) {
 		str = feature_desc(feature, buf);
 		if (str != NULL) {
-		    strcat(tmpbuf, " (");
-		    strcat(tmpbuf, str);
-		    strcat(tmpbuf, ")");
+		    bounded_strcat(tmpbuf, " (", BUFSIZE);
+		    bounded_strcat(tmpbuf, str, BUFSIZE);
+		    bounded_strcat(tmpbuf, ")", BUFSIZE);
 		}
 	    }
 	}
     }
     if (1 /* drawxy */ && vp->draw_meridians) {
 	latlong_desc(descbuf, x, y, xf, yf, 3);
-	strcat(tmpbuf, " (");
-	strcat(tmpbuf, descbuf);
-	strcat(tmpbuf, ")");
+	bounded_strcat(tmpbuf, " (", BUFSIZE);
+	bounded_strcat(tmpbuf, descbuf, BUFSIZE);
+	bounded_strcat(tmpbuf, ")", BUFSIZE);
     }
     if (user_defined()
 	&& ((userid = user_at(x, y)) != NOUSER)) {
 	user = find_unit(userid);
 	if (in_play(user)) {
-	    strcat(tmpbuf, " (used by ");
+	    bounded_strcat(tmpbuf, " (used by ", BUFSIZE);
 	    if (user->name != NULL)
-	      strcat(tmpbuf, user->name);
+	      bounded_strcat(tmpbuf, user->name, BUFSIZE);
 	    else
-	      sprintf(tmpbuf+strlen(tmpbuf), "%s u#%d",
+	      snprintf(tmpbuf+strlen(tmpbuf), BUFSIZE-strlen(tmpbuf), "%s u#%d",
 		      u_type_name(user->type), user->id);
-	    strcat(tmpbuf, ")");
+	    bounded_strcat(tmpbuf, ")", BUFSIZE);
 	}
     }
     if (vp->draw_ai && side_has_ai(side)) {
 	str = ai_at_desig(side, x, y);
 	if (str) {
-	    strcat(tmpbuf, " ");
-	    strcat(tmpbuf, str);
+	    bounded_strcat(tmpbuf, " ", BUFSIZE);
+	    bounded_strcat(tmpbuf, str, BUFSIZE);
 	}
     }
 }

@@ -1279,7 +1279,7 @@ dump_ps_view(Side *side, PrintParameters *ipp, const char *filename)
 			name = name_of_seen_unit_at(x, y, side);
 			/* free buffer */
 			if (name) {
-			    strcpy(tmppsbuf,name);
+			    bounded_strcpy(tmppsbuf, name, sizeof(tmppsbuf));
 			    name = tmppsbuf;
 			}
 			summary = summary_of_seen_units_at(x, y, side);
@@ -1331,7 +1331,7 @@ dump_ps_view(Side *side, PrintParameters *ipp, const char *filename)
 		    name = name_of_seen_unit_at(x, y, side);
 		    /* free buffer */
 		    if (name) {
-			strcpy(tmppsbuf,name);
+			bounded_strcpy(tmppsbuf, name, sizeof(tmppsbuf));
 			name = tmppsbuf;
 		    }
 		    summary = summary_of_seen_units_at(x, y, side);

@@ -1352,8 +1352,8 @@ get_scores(Side *side)
     thisgametitle = thisgame;
     if (!empty_string(mainmodule->title))
       thisgametitle = mainmodule->title;
-    sprintf(buf, "Scores for %s", thisgametitle);
-    strcat(buf, ":\n");
+    snprintf(buf, 5000, "Scores for %s", thisgametitle);
+    bounded_strcat(buf, ":\n", 5000);
     playername = NULL;
     if (side != NULL) {
 	playername = basic_player_name(side->player);
@@ -1452,9 +1452,9 @@ get_scores(Side *side)
 			      sr->numturns, (sr->numturns != 1 ? "s" : ""));
 		    score_variant_desc(sr, varbuf);
 		    if (!empty_string(varbuf)) {
-			strcat(buf, " (variants");
-			strcat(buf, varbuf);
-			strcat(buf, ")");
+			bounded_strcat(buf, " (variants", 5000);
+			bounded_strcat(buf, varbuf, 5000);
+			bounded_strcat(buf, ")", 5000);
 		    }
 		    tprintf(buf, "\n");
 		    if (strlen(buf) > 4500)

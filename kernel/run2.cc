@@ -648,7 +648,7 @@ save_checkpoint(int curturn)
 	  last_checkpoint_filename = (char *)xmalloc(BUFSIZE);
 	if (strcmp(checkfname, last_checkpoint_filename) != 0)
 	  remove_file(last_checkpoint_filename);
-	strcpy(last_checkpoint_filename, checkfname);
+	bounded_strcpy(last_checkpoint_filename, checkfname, BUFSIZE);
 	Dprintf("Saved checkpoint %s\n", checkfname);
     }
 }
@@ -879,20 +879,20 @@ compute_season(void)
 	curyearpart = 0;
     }
     /* Update the preformatted date/season string. */
-    strcpy(curdatestr, absolute_date_string(g_turn()));
+    bounded_strcpy(curdatestr, absolute_date_string(g_turn()), BUFSIZE);
     if (curseasonname != NULL) {
-	strcat(curdatestr, " (");
-	strcat(curdatestr, curseasonname);
-	strcat(curdatestr, ")");
+	bounded_strcat(curdatestr, " (", BUFSIZE);
+	bounded_strcat(curdatestr, curseasonname, BUFSIZE);
+	bounded_strcat(curdatestr, ")", BUFSIZE);
     }
     /* Even though this has nothing to do with seasons, this is
        when the curdatestr is being updated. */
     if (area_lighting >= 0) {
-	strcat(curdatestr, " (");
-	strcat(curdatestr,
+	bounded_strcat(curdatestr, " (", BUFSIZE);
+	bounded_strcat(curdatestr,
 	       (area_lighting == 2 ? "day" :
-		(area_lighting == 1 ? "twilight" : "night")));
-	strcat(curdatestr, ")");
+		(area_lighting == 1 ? "twilight" : "night")), BUFSIZE);
+	bounded_strcat(curdatestr, ")", BUFSIZE);
     }
 }
 
@@ -2370,7 +2370,7 @@ run_disappearances(void)
     	if (in_play(unit)
 	    && unit_disappear_turn(unit) >= 0
 	    && unit_disappear_turn(unit) <= curturn) {
-	    strcpy(buf1, unit_handle(unit->side, unit));
+	    bounded_strcpy(buf1, unit_handle(unit->side, unit), sizeof(buf1));
 	    destination_desc(buf2, unit->side, unit, unit->x, unit->y, 0);
 	    /* (should eject occupants first if possible) */
 	    kill_unit(unit, H_UNIT_LEFT_WORLD);

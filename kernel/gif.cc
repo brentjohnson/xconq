@@ -81,7 +81,7 @@ get_gif(FileImage *fimg)
 
     /* First try a sibling images dir in case we opened a game
     file from a non-standard location. */
-    sprintf(fallback, "../images/%s", fimg->name);
+    snprintf(fallback, BUFSIZE, "../images/%s", fimg->name);
     if ((fp = open_file(fallback, "rb")) != NULL) {
 	rslt = get_gif_from_file(fimg, fp);
 	fclose(fp);

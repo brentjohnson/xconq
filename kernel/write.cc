@@ -2950,7 +2950,7 @@ shortest_escaped_name(int u)
 {
     const char *internalname = u_internal_name(u);
 
-    sprintf(shortestbuf, "%s", escaped_symbol(internalname));
+    snprintf(shortestbuf, BUFSIZE, "%s", escaped_symbol(internalname));
     return shortestbuf;
 }
 

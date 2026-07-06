@@ -190,7 +190,7 @@ notify_event(Side *side, HistEvent *hevt)
 		&& find_event_type(pattern) == hevt->type) {
 		text = cadr(head);
 		if (stringp(text)) {
-		    sprintf(abuf, "%s", c_string(text));
+		    snprintf(abuf, sizeof(abuf), "%s", c_string(text));
 		} else {
 		    sprintlisp(abuf, text, 50);
 		}
@@ -202,7 +202,7 @@ notify_event(Side *side, HistEvent *hevt)
 		       ) {
 		text = cadr(head);
 		if (stringp(text)) {
-		    strcpy(abuf, c_string(text));
+		    bounded_strcpy(abuf, c_string(text), sizeof(abuf));
 		} else {
 		    event_desc_from_list(side, text, hevt, abuf);
 		}
@@ -703,16 +703,16 @@ past_unit_desig(PastUnit *pastunit)
     shortbuf = pastbufs[curpastbuf];
     curpastbuf = (curpastbuf + 1) % NUMPASTBUFS;
     if (pastunit->id == -1) {
-	sprintf(shortbuf, "s%d head", side_number(pastunit->side));
+	snprintf(shortbuf, BUFSIZE, "s%d head", side_number(pastunit->side));
 	return shortbuf;
     } else if (is_unit_type(pastunit->type)) {
-	sprintf(shortbuf, "s%d %-3.3s %d (%d,%d",
+	snprintf(shortbuf, BUFSIZE, "s%d %-3.3s %d (%d,%d",
 		side_number(pastunit->side),
 		shortest_unique_name(pastunit->type),
 		pastunit->id, pastunit->x, pastunit->y);
 	if (pastunit->z != 0)
 	  tprintf(shortbuf, ",%d", pastunit->z);
-	strcat(shortbuf, ")");  /* close out the pastunit location */
+	bounded_strcat(shortbuf, ")", BUFSIZE);  /* close out the pastunit location */
 	return shortbuf;
     } else {
 	return "!garbage pastunit!";

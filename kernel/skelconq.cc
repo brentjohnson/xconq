@@ -650,7 +650,7 @@ do_action(Side *side, Unit *unit, Obj *cmd, Obj *args)
 		    return TRUE;
 		}
 	    }
-	    sprintf(localbuf, "%s tries %s",
+	    snprintf(localbuf, BUFSIZE, "%s tries %s",
 		    unit_desig(unit), action_desig(&action));
 	    rslt = execute_action(unit, &action);
 	    printf("%s - %s\n", localbuf, hevtdefns[rslt].name);

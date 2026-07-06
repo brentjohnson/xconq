@@ -2994,7 +2994,7 @@ task_desig(Task *task)
     if (taskbuf == NULL)
       taskbuf = (char *)xmalloc(BUFSIZE);
     if (task) {
-	sprintf(taskbuf, "{%s", taskdefns[task->type].name);
+	snprintf(taskbuf, BUFSIZE, "{%s", taskdefns[task->type].name);
 	argtypes = taskdefns[task->type].argtypes;
 	slen = strlen(argtypes);
 	for (i = 0; i < slen; ++i) {
@@ -3004,9 +3004,9 @@ task_desig(Task *task)
 	if (task->retrynum > 0) {
 	    tprintf(taskbuf, " fail %d", task->retrynum);
 	}
-	strcat(taskbuf, "}");
+	bounded_strcat(taskbuf, "}", BUFSIZE);
     } else {
-	sprintf(taskbuf, "no task");
+	snprintf(taskbuf, BUFSIZE, "no task");
     }
     return taskbuf;
 }

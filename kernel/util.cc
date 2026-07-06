@@ -576,6 +576,28 @@ select_by_weight(int *arr, int numvals)
     return -1;
 }
 
+/* Bounded string copy/append: never write past `size' bytes (including the
+   terminating NUL).  Used to keep attacker-influenced strings (GDL type/unit/
+   side names, save and network data, player names) from overflowing the fixed
+   display/path buffers scattered through the kernel; overflow becomes
+   truncation.  bounded_strcat is a no-op if the buffer is already full. */
+
+void
+bounded_strcpy(char *dst, const char *src, size_t size)
+{
+    if (size > 0)
+      snprintf(dst, size, "%s", src);
+}
+
+void
+bounded_strcat(char *dst, const char *src, size_t size)
+{
+    size_t dl = strlen(dst);
+
+    if (dl < size)
+      snprintf(dst + dl, size - dl, "%s", src);
+}
+
 /* Copy a string to newly-allocated space.  The new space is never freed. */
 
 char *

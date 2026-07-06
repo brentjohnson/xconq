@@ -363,6 +363,8 @@ extern void tprintf(char *buf, const char *str, ...);
 extern void tnprintf(char *buf, int n, const char *str, ...);
 extern int select_by_weight(int *arr, int numvals);
 extern char *copy_string(const char *str);
+extern void bounded_strcpy(char *dst, const char *src, size_t size);
+extern void bounded_strcat(char *dst, const char *src, size_t size);
 extern char *pad_blanks(const char *str, int n);
 extern int iindex(int ch, const char *str);
 extern long idifftime(time_t t1, time_t t0);

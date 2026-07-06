@@ -895,7 +895,7 @@ goal_desig(Goal *goal)
       return "<null goal>";
     if (goalbuf == NULL)
       goalbuf = (char *)xmalloc(BUFSIZE);
-    sprintf(goalbuf, "<goal s%d %s%s",
+    snprintf(goalbuf, BUFSIZE, "<goal s%d %s%s",
 	    side_number(goal->side), (goal->tf ? "" : "not "),
 	    goaldefns[goal->type].name);
     argtypes = goaldefns[goal->type].argtypes;
@@ -904,41 +904,41 @@ goal_desig(Goal *goal)
 	arg = goal->args[i];
 	switch (argtypes[i]) {
 	  case 'h':
-	    tprintf(goalbuf, "%d", arg);
+	    tnprintf(goalbuf, BUFSIZE, "%d", arg);
 	    break;
 	  case 'm':
 	    if (is_material_type(arg))
-	      tprintf(goalbuf, " %s", m_type_name(arg));
+	      tnprintf(goalbuf, BUFSIZE, " %s", m_type_name(arg));
 	    else
-	      tprintf(goalbuf, " m%d?", arg);
+	      tnprintf(goalbuf, BUFSIZE, " m%d?", arg);
 	    break;
 	  case 'S':
-	    tprintf(goalbuf, " `%s'", side_desig(side_n(arg)));
+	    tnprintf(goalbuf, BUFSIZE, " `%s'", side_desig(side_n(arg)));
 	    break;
 	  case 'u':
 	    if (is_unit_type(arg))
-	      tprintf(goalbuf, " %s", u_type_name(arg));
+	      tnprintf(goalbuf, BUFSIZE, " %s", u_type_name(arg));
 	    else
-	      tprintf(goalbuf, " m%d?", arg);
+	      tnprintf(goalbuf, BUFSIZE, " m%d?", arg);
 	    break;
 	  case 'U':
-	    tprintf(goalbuf, " `%s'", unit_desig(find_unit(arg)));
+	    tnprintf(goalbuf, BUFSIZE, " `%s'", unit_desig(find_unit(arg)));
 	    break;
 	  case 'w':
-	    tprintf(goalbuf, " %dx", arg);
+	    tnprintf(goalbuf, BUFSIZE, " %dx", arg);
 	    break;
 	  case 'x':
-	    tprintf(goalbuf, " %d,", arg);
+	    tnprintf(goalbuf, BUFSIZE, " %d,", arg);
 	    break;
 	  case 'y':
-	    tprintf(goalbuf, "%d", arg);
+	    tnprintf(goalbuf, BUFSIZE, "%d", arg);
 	    break;
 	  default:
-	    tprintf(goalbuf, " %d", arg);
+	    tnprintf(goalbuf, BUFSIZE, " %d", arg);
 	    break;
 	}
     }
-    strcat(goalbuf, ">");
+    bounded_strcat(goalbuf, ">", BUFSIZE);
     return goalbuf;
 }
 
