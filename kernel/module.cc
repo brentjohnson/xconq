@@ -837,7 +837,8 @@ module_desig(Module *module)
 {
     if (moduledesigbuf == NULL)
       moduledesigbuf = (char *)xmalloc(BUFSIZE);
-    sprintf(moduledesigbuf, "module %s (%s)",
+    /* name/title come from GDL; truncate rather than overflow. */
+    snprintf(moduledesigbuf, BUFSIZE, "module %s (%s)",
 	    module->name, (module->title ? module->title : "no title"));
     return moduledesigbuf;
 }
@@ -848,7 +849,7 @@ saved_game_filename(void)
     const char *str;
     char name[BUFSIZE];
 
-    sprintf(name, "%s-%d.xcq", mainmodule->name, g_turn());
+    snprintf(name, sizeof(name), "%s-%d.xcq", mainmodule->name, g_turn());
     str = game_filename("XCONQSAVEFILE", name);
     return str;
 }
@@ -859,7 +860,7 @@ checkpoint_filename(int n)
     const char *str;
     char name[BUFSIZE];
 
-    sprintf(name, "check%d.xcq", n);
+    snprintf(name, sizeof(name), "check%d.xcq", n);
     str = game_filename(NULL, name);
     return str;
 }

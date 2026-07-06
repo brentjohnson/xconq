@@ -382,6 +382,7 @@ extern void record_activity_end(const char *type, int detail);
 extern void dump_activity_trace(void);
 
 extern void vtprintf(char *buf, const char *str, va_list ap);
+extern void vtnprintf(char *buf, int n, const char *str, va_list ap);
 
 extern void log_warning(const char *typ, const char *str);
 

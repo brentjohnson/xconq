@@ -17,7 +17,7 @@ extern int actually_read_lisp;
 
 extern int nextsideid;
 
-static void module_and_line(Module *module, char *buf);
+static void module_and_line(Module *module, char *buf, int bufsize);
 static void init_constant(int key, int val);
 static void init_self_eval(int key);
 static void useless_form_warning(Module *module, Obj *form);
@@ -288,14 +288,15 @@ type_error(Obj *x, const char *msg)
   (VAL) = cadr(BDG);
 
 static void
-module_and_line(Module *module, char *buf)
+module_and_line(Module *module, char *buf, int bufsize)
 {
     if (module) {
+	/* module->name comes from GDL/save/network; truncate, don't overflow. */
 	if (module->startlineno != module->endlineno) {
-	    sprintf(buf, "%s:%d-%d: ",
+	    snprintf(buf, bufsize, "%s:%d-%d: ",
 		    module->name, module->startlineno, module->endlineno);
 	} else {
-	    sprintf(buf, "%s:%d: ",
+	    snprintf(buf, bufsize, "%s:%d: ",
 		    module->name, module->startlineno);
 	}
     } else {
@@ -517,7 +518,7 @@ useless_form_warning(Module *module, Obj *form)
 
     if (!actually_read_lisp)
       return;
-    module_and_line(module, posbuf);
+    module_and_line(module, posbuf, sizeof(posbuf));
     sprintlisp(buf, form, BUFSIZE);
     init_warning("%sA useless form: %s", posbuf, buf);
 }
@@ -4299,10 +4300,10 @@ read_warning(const char *str, ...)
     char buf[BUFSIZE];
     va_list ap;
 
-    module_and_line(curmodule, buf);
+    module_and_line(curmodule, buf, sizeof(buf));
 
     va_start(ap, str);
-    vtprintf(buf, str, ap);
+    vtnprintf(buf, sizeof(buf), str, ap);
     va_end(ap);
 
     if (warnings_logged)

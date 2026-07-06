@@ -531,6 +531,22 @@ vtprintf(char *buf, const char *str, va_list ap)
     strcat(buf, line);
 }
 
+/* Bounded counterpart to vtprintf: appends without letting `buf` exceed
+   `n` bytes (including the NUL).  Used on the GDL read-warning path, where
+   the message can carry attacker-influenced names. */
+
+void
+vtnprintf(char *buf, int n, const char *str, va_list ap)
+{
+    int n1 = n - strlen(buf);
+    char line[TBUFSIZE];
+
+    if (n1 > 0) {
+	vsnprintf(line, TBUFSIZE, str, ap);
+	strncat(buf, line, n1 - 1);
+    }
+}
+
 int
 select_by_weight(int *arr, int numvals)
 {

@@ -76,6 +76,31 @@ static int *endlineno;
 static char *linenobuf;
 
 static char *escapedthingbuf;
+static int escapedthingbuf_size;
+
+/* Grow the shared escaped-text buffer to hold at least `need` bytes.
+   escaped_string()/escaped_symbol() format attacker-influenced strings
+   (unit/side/module/doc names from GDL, saves, or the network) into this
+   single shared buffer; a fixed BUFSIZE was a real overflow, so grow on
+   demand instead.  The buffer is a plain malloc block (never tracked by the
+   allocation accounting), so realloc is safe here. */
+
+static void
+ensure_escapedthingbuf(int need)
+{
+    if (need > escapedthingbuf_size) {
+	int newsize = escapedthingbuf_size;
+
+	while (newsize < need)
+	  newsize *= 2;
+	escapedthingbuf = (char *)realloc(escapedthingbuf, newsize);
+	if (escapedthingbuf == NULL) {
+	    run_error("Memory exhausted!!");
+	    exit(1);
+	}
+	escapedthingbuf_size = newsize;
+    }
+}
 
 namespace Xconq {
 
@@ -143,6 +168,7 @@ init_lisp(void)
     numsymbols = 0;
     init_predefined_symbols();
     escapedthingbuf = (char *)xmalloc(BUFSIZE);
+    escapedthingbuf_size = BUFSIZE;
 }
 
 /* Ultra-simple "streams" that can be stdio FILEs or strings. */
@@ -248,27 +274,35 @@ sprintf_context(char *buf, int n, int *start, int *end, Strm *strm)
 {
     int printedlineno = FALSE;
 
-    strcpy(buf, "(");
+    /* strm->lastread is raw reader input (untrusted); keep every write inside
+       `n` and reserve room for the closing `"` and `)`.  snprintf-at-offset
+       never advances the offset past the buffer, so the reserve holds. */
+    snprintf(buf, n, "(");
     if (start != NULL && end != NULL) {
 	if (*start == *end) {
-	    sprintf(buf + strlen(buf), "at line %d", *start);
+	    snprintf(buf + strlen(buf), n - strlen(buf), "at line %d", *start);
 	} else {
-	    sprintf(buf + strlen(buf), "lines %d to %d", *start, *end);
+	    snprintf(buf + strlen(buf), n - strlen(buf), "lines %d to %d",
+		     *start, *end);
 	}
 	printedlineno = TRUE;
     }
     if (!empty_string(strm->lastread)) {
 	if (printedlineno)
-	  strcat(buf, ", ");
-	strcat(buf, "context \"");
-	if (strm->numread > (CONTEXTSIZE - 1) && (strm->numread % (CONTEXTSIZE - 1)) > 0) {
-	    strncpy(buf + strlen(buf), strm->lastread + (strm->numread % (CONTEXTSIZE - 1)), n - strlen(buf) - 1);
+	  snprintf(buf + strlen(buf), n - strlen(buf), ", ");
+	snprintf(buf + strlen(buf), n - strlen(buf), "context \"");
+	/* Leave 2 bytes for the trailing "\")" below. */
+	if (n - (int) strlen(buf) - 2 > 0) {
+	    if (strm->numread > (CONTEXTSIZE - 1)
+		&& (strm->numread % (CONTEXTSIZE - 1)) > 0) {
+		strncat(buf, strm->lastread + (strm->numread % (CONTEXTSIZE - 1)),
+			n - strlen(buf) - 2);
+	    }
+	    strncat(buf, strm->lastread, n - strlen(buf) - 2);
 	}
-	strncpy(buf + strlen(buf), strm->lastread, n - strlen(buf) - 1);
-	buf[n - 1] = '\0';
-	strcat(buf, "\"");
+	snprintf(buf + strlen(buf), n - strlen(buf), "\"");
     }
-    strcat(buf, ")");
+    snprintf(buf + strlen(buf), n - strlen(buf), ")");
 }
 
 /* The main body of the the Lisp reader, works from a stream and returns
@@ -1374,12 +1408,16 @@ escaped_symbol(const char *str)
 
     if (str[0] == '|' && str[strlen(str)-1] == '|')
       return str;
+    /* Bracket the symbol with |...| if it starts with a digit or contains a
+       character that would otherwise not read back as a single symbol. */
     if (isdigit(str[0])) {
+	ensure_escapedthingbuf((int) strlen(str) + 3);
 	sprintf(escapedthingbuf, "|%s|", str);
 	return escapedthingbuf;
     }
     while (*tmp != '\0') {
 	if (((char *) strchr(" ()#\";|", *tmp)) != NULL) {
+	    ensure_escapedthingbuf((int) strlen(str) + 3);
 	    sprintf(escapedthingbuf, "|%s|", str);
 	    return escapedthingbuf;
 	}
@@ -1395,8 +1433,11 @@ char *
 escaped_string(const char *str)
 {
     const char *tmp = str;
-    char *rslt = escapedthingbuf;
+    char *rslt;
 
+    /* Worst case every char is escaped: 2 quotes + 2*len + NUL. */
+    ensure_escapedthingbuf(2 * (str != NULL ? (int) strlen(str) : 0) + 3);
+    rslt = escapedthingbuf;
     *rslt++ = '"';
     if (str != NULL) {
 	while (*tmp != 0) {
