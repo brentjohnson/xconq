@@ -265,14 +265,14 @@ add_remote_program(int rid, char *name)
     /* Inform our new program of all the existing programs. */
     for_all_remotes(rid2) {
 	if (rid2 != rid) {
-	    sprintf(spbuf, "p%d %s", rid2, remote_player_specs[rid2]);
+	    snprintf(spbuf, BUFSIZE, "p%d %s", rid2, remote_player_specs[rid2]);
 	    send_packet(rid, spbuf);
 	}
     }
     remote_player_specs[rid] = copy_string(name);
     add_remote_locally(rid, name);
     /* Now broadcast info about the new program to everybody. */
-    sprintf(spbuf, "p%d %s", rid, name);
+    snprintf(spbuf, BUFSIZE, "p%d %s", rid, name);
     broadcast_packet(spbuf);
 }
 
@@ -314,7 +314,7 @@ send_join(const char *str)
 {
     int successful;
 
-    sprintf(spbuf, "j%s", str);
+    snprintf(spbuf, BUFSIZE, "j%s", str);
     timeout_warnings = FALSE;
     successful = send_packet(0, spbuf);
     timeout_warnings = TRUE;
@@ -326,7 +326,7 @@ send_join(const char *str)
 void
 send_remote_id(int rid)
 {
-    sprintf(spbuf, "r%d", rid);
+    snprintf(spbuf, BUFSIZE, "r%d", rid);
     send_packet(rid, spbuf);
 }
 
@@ -335,7 +335,7 @@ send_remote_id(int rid)
 void
 send_bugoff(int rid)
 {
-    sprintf(spbuf, "B");
+    snprintf(spbuf, BUFSIZE, "B");
     send_packet(rid, spbuf);
     close_remote_connection(rid);
 }
@@ -347,7 +347,7 @@ net_send_chat(int rid, char *str)
 	send_chat(rid, str);
     }
     if (numremotes > 0) {
-	sprintf(spbuf, "c%d %s", rid, str);
+	snprintf(spbuf, BUFSIZE, "c%d %s", rid, str);
 	broadcast_packet(spbuf);
     }
 }
@@ -357,7 +357,7 @@ send_version(int rid)
 {
     /* In order to guarantee that the kernels can actually stay in
        sync, we require that the program versions match exactly. */
-    sprintf(spbuf, "V%s", version_string());
+    snprintf(spbuf, BUFSIZE, "V%s", version_string());
     send_packet(rid, spbuf);
 }
 
@@ -368,7 +368,7 @@ net_set_variant_value(int which, int v1, int v2, int v3)
 	set_variant_value(which, v1, v2, v3);
     }
     if (numremotes > 0) {
-	sprintf(spbuf, "v %d %d %d %d", which, v1, v2, v3);
+	snprintf(spbuf, BUFSIZE, "v %d %d %d %d", which, v1, v2, v3);
 	broadcast_packet(spbuf);
     }
 }
@@ -380,7 +380,7 @@ net_set_player_advantage(int n, int newadv)
 	set_player_advantage(n, newadv);
     }
     if (numremotes > 0) {
-	sprintf(spbuf, "a%d advantage %d", n, newadv);
+	snprintf(spbuf, BUFSIZE, "a%d advantage %d", n, newadv);
 	broadcast_packet(spbuf);
     }
 }
@@ -394,7 +394,7 @@ net_add_side_and_player(void)
 	rslt = add_side_and_player();
     }
     if (numremotes > 0) {
-	sprintf(spbuf, "a0 add");
+	snprintf(spbuf, BUFSIZE, "a0 add");
 	broadcast_packet(spbuf);
     }
     return rslt;
@@ -409,7 +409,7 @@ net_remove_side_and_player(int s)
 	rslt = remove_side_and_player(s);
     }
     if (numremotes > 0) {
-	sprintf(spbuf, "a remove %d", s);
+	snprintf(spbuf, BUFSIZE, "a remove %d", s);
 	broadcast_packet(spbuf);
     }
     return rslt;
@@ -422,7 +422,7 @@ net_rename_side_for_player(int n, int which)
 	rename_side_for_player(n, which);
     }
     if (numremotes > 0) {
-	sprintf(spbuf, "a%d rename %d", n, which);
+	snprintf(spbuf, BUFSIZE, "a%d rename %d", n, which);
 	broadcast_packet(spbuf);
     }
 }
@@ -434,7 +434,7 @@ net_set_ai_for_player(int n, const char *aitype)
 	set_ai_for_player(n, aitype);
     }
     if (numremotes > 0) {
-	sprintf(spbuf, "a%d ai %s", n, (aitype ? aitype : ""));
+	snprintf(spbuf, BUFSIZE, "a%d ai %s", n, (aitype ? aitype : ""));
 	broadcast_packet(spbuf);
     }
 }
@@ -448,7 +448,7 @@ net_exchange_players(int n, int n2)
 	rslt = exchange_players(n, n2);
     }
     if (numremotes > 0) {
-	sprintf(spbuf, "a%d exchange %d", n, n2);
+	snprintf(spbuf, BUFSIZE, "a%d exchange %d", n, n2);
 	broadcast_packet(spbuf);
     }
     return rslt;
@@ -457,7 +457,7 @@ net_exchange_players(int n, int n2)
 void
 net_update_player(Player *player)
 {
-    sprintf(spbuf, "a%d update %s", player->id, player_desig(player));
+    snprintf(spbuf, BUFSIZE, "a%d update %s", player->id, player_desig(player));
     broadcast_packet(spbuf);
 }
 
@@ -473,10 +473,10 @@ download_game_module(int rid)
     if (1 /* sending name only */) {
 	/* If the module has a filename it is a saved game. */
     	if (!empty_string(mainmodule->filename)) {
-		sprintf(spbuf, "f %s", mainmodule->filename);
+		snprintf(spbuf, BUFSIZE, "f %s", mainmodule->filename);
 	/* else it is a library module. */
 	} else {    	
-		sprintf(spbuf, "g %s", mainmodule->name);
+		snprintf(spbuf, BUFSIZE, "g %s", mainmodule->name);
 	}
 	send_packet(rid, spbuf);
 	/* (should send some sort of state checksum also) */
@@ -559,14 +559,14 @@ broadcast_game_module(void)
 void
 broadcast_start_game_load(void)
 {
-    sprintf(spbuf, "s");
+    snprintf(spbuf, BUFSIZE, "s");
     broadcast_packet(spbuf);
 }
 
 void
 broadcast_start_variant_setup(void)
 {
-    sprintf(spbuf, "vSTART");
+    snprintf(spbuf, BUFSIZE, "vSTART");
     broadcast_packet(spbuf);
 }
 
@@ -576,23 +576,23 @@ broadcast_variants_chosen(void)
     /* Once variants have been chosen, programs will advance to making
        trial assignments immediately, so make sure randstates are in
        sync first. */
-    sprintf(spbuf, "R%ld", randstate);
+    snprintf(spbuf, BUFSIZE, "R%ld", randstate);
     broadcast_packet(spbuf); 
-    sprintf(spbuf, "vOK");
+    snprintf(spbuf, BUFSIZE, "vOK");
     broadcast_packet(spbuf);
 }
 
 void
 broadcast_start_player_setup(void)
 {
-    sprintf(spbuf, "aSTART");
+    snprintf(spbuf, BUFSIZE, "aSTART");
     broadcast_packet(spbuf);
 }
 
 void
 broadcast_players_assigned(void)
 {
-    sprintf(spbuf, "aOK");
+    snprintf(spbuf, BUFSIZE, "aOK");
     broadcast_packet(spbuf);
 }
 
@@ -600,21 +600,21 @@ broadcast_players_assigned(void)
 void
 broadcast_randstate(void)
 {
-    sprintf(spbuf, "R%ld", randstate);
+    snprintf(spbuf, BUFSIZE, "R%ld", randstate);
     broadcast_packet(spbuf);
 }
 
 void
 broadcast_game_checksum(void)
 {
-    sprintf(spbuf, "Z%d %d", my_rid, game_checksum());
+    snprintf(spbuf, BUFSIZE, "Z%d %d", my_rid, game_checksum());
     broadcast_packet(spbuf); 
 }
 
 void
 send_game_checksum_error(int rid, int my_csum, int master_csum)
 {
-    sprintf(spbuf, "Echecksum %d %d %d", my_rid, my_csum, master_csum);
+    snprintf(spbuf, BUFSIZE, "Echecksum %d %d %d", my_rid, my_csum, master_csum);
     send_packet(rid, spbuf); 
 }
 
@@ -661,10 +661,10 @@ net_run_game(int maxactions)
 		nothing must be allowed to happen here that will change the
 		state of the game. */
 #if 0
-		sprintf(spbuf, "Za%d %d", my_rid, oldcsum);
+		snprintf(spbuf, BUFSIZE, "Za%d %d", my_rid, oldcsum);
 		broadcast_packet(spbuf);
 #endif
-		sprintf(spbuf, "X%d %d %d", maxactions, oldsernum, oldstate);
+		snprintf(spbuf, BUFSIZE, "X%d %d %d", maxactions, oldsernum, oldstate);
 		broadcast_packet(spbuf);
 		/* This caused the network game to hang on exit. */
 		if (!endofgame) {
@@ -689,7 +689,7 @@ net_request_additional_side(char *playerspec)
 	request_additional_side(playerspec);
     }
     if (numremotes > 0) {
-	sprintf(spbuf, "Padd %s", (playerspec ? playerspec : ""));
+	snprintf(spbuf, BUFSIZE, "Padd %s", (playerspec ? playerspec : ""));
 	broadcast_packet(spbuf);
     }
 }
@@ -701,7 +701,7 @@ net_send_message(Side *side, SideMask sidemask, const char *str)
 	send_message(side, sidemask, str);
     }
     if (numremotes > 0) {
-	sprintf(spbuf, "M%d %d %s", side_number(side), sidemask, str);
+	snprintf(spbuf, BUFSIZE, "M%d %d %s", side_number(side), sidemask, str);
 	broadcast_packet(spbuf);
     }
 }
@@ -709,7 +709,7 @@ net_send_message(Side *side, SideMask sidemask, const char *str)
 static void
 broadcast_command_5(const char *cmd, int a1, int a2, int a3, int a4, int a5)
 {
-    sprintf(spbuf, "C%s %d %d %d %d %d", cmd, a1, a2, a3, a4, a5);
+    snprintf(spbuf, BUFSIZE, "C%s %d %d %d %d %d", cmd, a1, a2, a3, a4, a5);
     broadcast_packet(spbuf);
 }
 
@@ -739,7 +739,7 @@ net_save_game(char *fname)
    	save_game(name);
    }
     if (numremotes > 0) {
-	sprintf(spbuf, "w%s", name);
+	snprintf(spbuf, BUFSIZE, "w%s", name);
 	broadcast_packet(spbuf);
     }
 }
@@ -1023,7 +1023,7 @@ net_paint_view(Side *side, int x, int y, int r, int tview, int uview)
 	paint_view(side, x, y, r, tview, uview);
     }
     if (numremotes > 0)  {
-	sprintf(spbuf, "D%d view %d %d %d %d %d %d",
+	snprintf(spbuf, BUFSIZE, "D%d view %d %d %d %d %d %d",
 		side_number(side), side_number(side), x, y, r, tview, uview);
 	broadcast_packet(spbuf);
     }
@@ -1034,21 +1034,21 @@ net_paint_view(Side *side, int x, int y, int r, int tview, int uview)
 static void
 broadcast_side_property(Side *side, const char *prop, int val)
 {
-    sprintf(spbuf, "S%d %s %d", side_number(side), prop, val);
+    snprintf(spbuf, BUFSIZE, "S%d %s %d", side_number(side), prop, val);
     broadcast_packet(spbuf);
 }
 
 static void
 broadcast_side_property_2(Side *side, const char *prop, int val, int val2)
 {
-    sprintf(spbuf, "S%d %s %d %d", side_number(side), prop, val, val2);
+    snprintf(spbuf, BUFSIZE, "S%d %s %d %d", side_number(side), prop, val, val2);
     broadcast_packet(spbuf);
 }
 
 static void
 broadcast_side_str_property(Side *side, const char *prop, const char *val)
 {
-    sprintf(spbuf, "S%d %s %s", side_number(side), prop, val);
+    snprintf(spbuf, BUFSIZE, "S%d %s %s", side_number(side), prop, val);
     broadcast_packet(spbuf);
 }
 
@@ -1382,7 +1382,7 @@ net_toggle_user_at(int u, int x, int y)
     	toggle_user_at(find_unit(u), x, y);
     }
     if (numremotes > 0) {
-	sprintf(spbuf, "Wuser %d %d %d %d", 0, x, y, u);
+	snprintf(spbuf, BUFSIZE, "Wuser %d %d %d %d", 0, x, y, u);
 	broadcast_packet(spbuf);
     }
 }
@@ -1392,7 +1392,7 @@ broadcast_unit_property(Side *side, Unit *unit, const char *prop, int val)
 {
     char buf[BUFSIZE];
 
-    sprintf(buf, "U%d %d %s %d", side_number(side), unit->id, prop, val);
+    snprintf(buf, BUFSIZE, "U%d %d %s %d", side_number(side), unit->id, prop, val);
     broadcast_packet(buf);
 }
 
@@ -1401,7 +1401,7 @@ broadcast_unit_property_2(Side *side, Unit *unit, const char *prop, int val, int
 {
     char buf[BUFSIZE];
 
-    sprintf(buf, "U%d %d %s %d %d", side_number(side), unit->id, prop, val, val2);
+    snprintf(buf, BUFSIZE, "U%d %d %s %d %d", side_number(side), unit->id, prop, val, val2);
     broadcast_packet(buf);
 }
 
@@ -1411,7 +1411,7 @@ broadcast_unit_property_5(Side *side, Unit *unit, const char *prop,
 {
     char buf[BUFSIZE];
 
-    sprintf(buf, "U%d %d %s %d %d %d %d %d", side_number(side), unit->id, prop,
+    snprintf(buf, BUFSIZE, "U%d %d %s %d %d %d %d %d", side_number(side), unit->id, prop,
 	    val, val2, val3, val4, val5);
     broadcast_packet(buf);
 }
@@ -1421,7 +1421,7 @@ broadcast_unit_str_property(Side *side, Unit *unit, const char *prop, const char
 {
     char buf[BUFSIZE];
 
-    sprintf(buf, "U%d %d %s %s", side_number(side), unit->id, prop, val);
+    snprintf(buf, BUFSIZE, "U%d %d %s %s", side_number(side), unit->id, prop, val);
     broadcast_packet(buf);
 }
 
@@ -1434,7 +1434,7 @@ broadcast_action(Unit *unit, int actee, ActionType atype,
     int n;
     char buf[BUFSIZE];
     
-    sprintf(buf, "A%d", unit->id);
+    snprintf(buf, BUFSIZE, "A%d", unit->id);
     if (unit->id != actee) {
 	tprintf(buf, "/%d", actee);
     }
@@ -2364,7 +2364,7 @@ broadcast_add_task(Unit *unit, int pos, Task *task)
     char buf[BUFSIZE];
     const char *argtypes;
 
-    sprintf(buf, "T%d %d %d %d %d",
+    snprintf(buf, BUFSIZE, "T%d %d %d %d %d",
 	    unit->id, pos, task->type, task->execnum, task->retrynum);
     argtypes = taskdefns[task->type].argtypes;
     numargs = strlen(argtypes);
@@ -2519,7 +2519,7 @@ broadcast_layer_change(const char *layername, Side *side, int x, int y,
 {
     char buf[BUFSIZE];
 
-    sprintf(buf, "W%s %d %d %d %d %d %d %d",
+    snprintf(buf, BUFSIZE, "W%s %d %d %d %d %d %d %d",
 	    layername, side->id, x, y, a1, a2, a3, a4);
     broadcast_packet(buf);
 }
@@ -2531,7 +2531,7 @@ send_quit(void)
 {
     /* (should have more error-handling, since may be called in bad
        situations) */
-    sprintf(spbuf, "Q%d", my_rid);
+    snprintf(spbuf, BUFSIZE, "Q%d", my_rid);
     broadcast_packet(spbuf);
     flush_outgoing_queue();
 }
@@ -2924,7 +2924,10 @@ receive_data(int timeout, int lim)
 		nothing_timeout = timeout;
 	    }
 	    if (gotsome) {
-		if (strlen(packetbuf) + strlen(buf) > PACKETBUFSIZE) {
+		/* packetbuf is PACKETBUFSIZE bytes; the strcat below also
+		   writes a NUL, so reject when the sum would leave no room
+		   for it (>= not >), else a full packet overflows by one. */
+		if (strlen(packetbuf) + strlen(buf) >= PACKETBUFSIZE) {
 		    run_warning("packet buffer overflow");
 		    return;
 		}
@@ -3671,7 +3674,7 @@ receive_game_checksum(char *str)
 		other_csum, other_rid, our_csum, 
 		(before_run ? ", before run_game" : ""));
 	if (!dumped_checksums) {
-		sprintf(tmpbuf, 
+		snprintf(tmpbuf, BUFSIZE, 
 			"CLIENT (rid %d) checksums at first sync error:", 
 			my_rid);
 		dump_checksums(tmpbuf);
@@ -3830,7 +3833,7 @@ receive_error(int id, char *str)
     Dprintf("Error from #%d, \"%s\"\n", id, str);
 
     if (!dumped_checksums) {
-	sprintf(tmpbuf, "MASTER (rid %d) checksums at first sync error:", my_rid);
+	snprintf(tmpbuf, BUFSIZE, "MASTER (rid %d) checksums at first sync error:", my_rid);
 	dump_checksums(tmpbuf);
 	dumped_checksums = TRUE;
 	notify_all("Checksums dumped into Xconq-Master.Csums");
@@ -3992,13 +3995,13 @@ download_to_player(Player *player)
 void
 send_assignment(int rid, Side *side, Player *player)
 {
-    sprintf(spbuf, "Passign %d %d", side->id, player->id);
+    snprintf(spbuf, BUFSIZE, "Passign %d %d", side->id, player->id);
     send_packet(rid, spbuf);                                               
  }
 
 void
 send_randstate(int rid)
 {
-    sprintf(spbuf, "R%ld", randstate);
+    snprintf(spbuf, BUFSIZE, "R%ld", randstate);
     send_packet(rid, spbuf);                                              
  }

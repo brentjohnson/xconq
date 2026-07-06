@@ -319,8 +319,14 @@ accept_remote_connection(void)
 			    AF_INET);
 
     if (hostent) {
-	memcpy(hostname, hostent->h_name, hostent->h_length);
-	hostname[hostent->h_length] = '\0';
+	/* h_name is a (reverse-DNS, thus untrusted) hostname string; clamp
+	   the copy to the buffer rather than trusting the length field. */
+	int hlen = hostent->h_length;
+
+	if (hlen < 0 || hlen > (int) sizeof(hostname) - 1)
+	  hlen = sizeof(hostname) - 1;
+	memcpy(hostname, hostent->h_name, hlen);
+	hostname[hlen] = '\0';
     } else {
 	strcpy(hostname, "unknown");
     }
