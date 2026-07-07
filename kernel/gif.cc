@@ -47,7 +47,20 @@ static struct {
        **
        */
        int             GrayScale;
+       /* Actual number of bytes allocated for the decoded image of
+          interest, so downstream consumers can bounds-check reads
+          against the real extent of GifScreen-reported dimensions. */
+       long            DataSize;
 } GifScreen;
+
+/* Reject GIFs whose declared dimensions are non-positive, absurdly large,
+   or whose pixel count would overflow the int arithmetic used to index the
+   decoded buffer.  Real Xconq images are at most a few hundred pixels on a
+   side; 64M pixels is a wide margin that still keeps len*height (and the
+   ypos*len+xpos index) safely within a signed int. */
+
+#define GIF_MAX_DIM    16384
+#define GIF_MAX_PIXELS (1L << 26)
 
 static struct {
        int     transparent;
@@ -102,19 +115,31 @@ get_gif(FileImage *fimg)
 int
 get_gif_from_file(FileImage *fimg, FILE *fp)
 {
-    char *rawdata;
+    char *rawdata = NULL;
     int rslt, i, j, numcolors = 0, rawpal[1024];
     int blacki = -1;
+    long datasize;
 
     rslt = ReadGIF(fp, 1, &numcolors, rawpal, &rawdata);
     if (rslt == 0)
       return FALSE;
+    /* ReadGIF only fills in rawdata if it actually decoded an image; a
+       file with no (kept) image leaves it NULL. */
+    if (rawdata == NULL)
+      return FALSE;
+    datasize = GifScreen.DataSize;
     fimg->width = GifScreen.Width;  fimg->height = GifScreen.Height;
     fimg->data = rawdata;
-    /* Collect the transparent colors. */
+    fimg->datasize = datasize;
+    /* Collect the transparent colors.  These are read out of the decoded
+       pixel data, so clamp every access to the real buffer extent - a small
+       image may hold fewer than the 12 pixels this loop would otherwise
+       inspect. */
     fimg->transparent = (char *) xmalloc(12);
-    fimg->transparent[0] = rawdata[0];
+    fimg->transparent[0] = (datasize > 0 ? rawdata[0] : 0);
     for (i = 1; i < 12; ++i) {
+	if (2 * i >= datasize)
+	  break;
 	if (rawdata[2 * i] != fimg->transparent[0])
 	  fimg->transparent[i] = rawdata[2 * i];
 	else
@@ -408,6 +433,7 @@ GetCode(FILE *fd, int code_size, int flag)
        if (flag) {
                curbit = 0;
                lastbit = 0;
+               last_byte = 0;
                done = FALSE;
                return 0;
        }
@@ -418,8 +444,16 @@ GetCode(FILE *fd, int code_size, int flag)
                                init_warning("ran off the end of my bits" );
                        return -1;
                }
-               buf[0] = buf[last_byte-2];
-               buf[1] = buf[last_byte-1];
+               /* Carry the last two bytes forward for bit continuity, but
+                  only once we actually have them; on the first block
+                  last_byte is 0 and there is nothing to carry (guarding this
+                  avoids a buf[-2]/buf[-1] underflow read). */
+               if (last_byte >= 2) {
+                       buf[0] = buf[last_byte-2];
+                       buf[1] = buf[last_byte-1];
+               } else {
+                       buf[0] = buf[1] = 0;
+               }
 
                if ((count = GetDataBlock(fd, &buf[2])) == 0)
                        done = TRUE;
@@ -449,6 +483,7 @@ LWZReadByte(FILE *fd, int flag, int input_code_size)
        static int      clear_code, end_code;
        static int      table[2][(1<< MAX_LWZ_BITS)];
        static int      stack[(1<<(MAX_LWZ_BITS))*2], *sp;
+       int    *stackend = stack + sizeof(stack) / sizeof(stack[0]);
        int    i;
 
        if (flag) {
@@ -523,6 +558,14 @@ LWZReadByte(FILE *fd, int flag, int input_code_size)
                }
 
                while (code >= clear_code) {
+                       /* A hostile stream can build a prefix chain that
+                          cycles without ever hitting the self-reference case
+                          below; bound the stack so such a chain can't run off
+                          the end of it. */
+                       if (sp >= stackend) {
+			 init_warning("LZW prefix chain too long, corrupt GIF");
+			 return -3;
+		       }
                        *sp++ = table[1][code];
                        if (code == table[0][code]) {
 			 init_warning("circular table entry BIG ERROR");
@@ -585,7 +628,25 @@ ReadImage(FILE *fd, int len, int height, int pbm_format, int interlace, int igno
                return TRUE;
        }
 
-       image = (char *)malloc(len * height);
+       /* Validate the image-descriptor dimensions before using them to size
+          the allocation and to index into it.  len and height come straight
+          from the file (each up to 65535); an unchecked len*height overflows
+          the int arithmetic used both here and in the ypos*len+xpos index
+          below, which classically yields an undersized buffer and a heap
+          overflow. */
+       if (len <= 0 || height <= 0
+	   || len > GIF_MAX_DIM || height > GIF_MAX_DIM
+	   || (long) len * height > GIF_MAX_PIXELS) {
+	 init_warning("bogus GIF image dimensions %d by %d", len, height);
+	 return FALSE;
+       }
+
+       image = (char *)malloc((size_t) len * height);
+       if (image == NULL) {
+	 init_warning("could not allocate %d by %d GIF image", len, height);
+	 return FALSE;
+       }
+       GifScreen.DataSize = (long) len * height;
 
        if (verbose)
                run_warning("reading %d by %d%s GIF image",

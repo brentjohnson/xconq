@@ -627,6 +627,15 @@ interp_image(ImageFamily *imf, Obj *size, Obj *parts)
     } else if (poor_memory) { /* FIXME - what about hexgrid? */
     	numsubs = min(numsubs, 3);
     }
+    /* numsubs can come from GDL (an explicit "x" count or hexgrid
+       dimensions); clamp it so a hostile value can't drive a negative or
+       integer-overflowing xmalloc below.  No real image needs anywhere near
+       this many subimages (connections use 64). */
+    if (numsubs < 0 || numsubs > 4096) {
+	run_warning("absurd subimage count %d in %dx%d image of \"%s\", ignoring",
+		    numsubs, w, h, imf->name);
+	numsubs = 0;
+    }
     /* Deal with possible weird situations. */
     if (img->numsubimages > 0 && numsubs != img->numsubimages) {
 	run_warning("Going from %d to %d subimages in %dx%d image of \"%s\"",
@@ -1652,6 +1661,13 @@ make_raw_palette(Image *img)
     /* (should allocate and store directly instead of using ipal) */
     c = 0;
     for_all_list(img->palette, pal) {
+	/* The palette comes from (untrusted) GDL and can list more than the
+	   256 entries ipal holds; stop before overflowing the stack array.
+	   The raw palette below is likewise sized for 256 colors. */
+	if (c >= 256) {
+	    run_warning("image palette has more than 256 colors, truncating");
+	    break;
+	}
 	parse_lisp_palette_entry(car(pal), &ipal[0][c],
 				 &ipal[1][c], &ipal[2][c], &ipal[3][c]);
 	c++;
@@ -2365,8 +2381,14 @@ copy_from_file_image(Image *img, FileImage *fimg, int xoffset, int yoffset,
 		     int actualw, int actualh)
 {
     char pix;
-    int i, j, k, ii, val, kk, kkb;
+    int i, j, ii, val, kk, kkb;
+    long k;
 
+    /* Reject nonsensical target dimensions before they size an allocation
+       or bound the copy loop below; img->w/img->h are shorts derived from
+       GDL numbers and could be zero or negative. */
+    if (img->w <= 0 || img->h <= 0)
+      return;
     /* Make space for the color data (assuming 1 byte/pixel). */
     img->rawcolrdata = (char *) xmalloc(img->w * img->h);
     if (fimg->numtransparent > 0)
@@ -2375,8 +2397,12 @@ copy_from_file_image(Image *img, FileImage *fimg, int xoffset, int yoffset,
     /* Scan through all the pixels of the subimage we're building. */
     for (i = 0; i < img->h; ++i) {
 	for (j = 0; j < img->w; ++j) {
-	    k = (yoffset + i) * fimg->width + xoffset + j;
-	    pix = fimg->data[k];
+	    k = (long) (yoffset + i) * fimg->width + xoffset + j;
+	    /* The source offset/size fields come from (untrusted) GDL, and
+	       fimg->width need not match the actual decoded stride, so k can
+	       fall outside the decoded buffer.  Treat out-of-range source
+	       pixels as the background rather than reading past the buffer. */
+	    pix = (k >= 0 && k < fimg->datasize) ? fimg->data[k] : 0;
 	    kk = i * img->w + j;
 	    img->rawcolrdata[kk] = pix;
 	    if ((actualw > 0 && j >= actualw)

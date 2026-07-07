@@ -653,54 +653,49 @@ way pending that decision.
   recommendation: fuzz-and-harden the decoder + contain the file-open surface
   now, and long term run multiplayer only over a trusted transport rather than
   re-securing the protocol). Build clean, quick ctest 559/559.
-- **[S] Review the custom image decoders** (`kernel/gif.c`, `kernel/imf.c`,
-  X11 XBM/XPM readers) — classic CVE territory. Consider delegating GIF to a
-  library or restricting to trusted install dirs.
-
-**⚙ PROMPT 6.3 — recommended model: Opus.** *(Decoder auditing is
-subtle-bug territory — LZW state machines and dimension arithmetic — where
-a superficial pass gives false confidence.)*
-
-```text
-Task: security-review and harden Xconq's custom image decoders. Fix
-concrete bounds/overflow bugs in place; larger delegation decisions go in
-a report note.
-
-Context: the decoders parse files that can arrive alongside downloaded
-game modules, so treat input as untrusted. Targets:
-- kernel/gif.c — homegrown GIF reader (LZW decoder inside: the classic
-  CVE pattern is missing code-size/table bounds and dimension-arithmetic
-  overflow).
-- kernel/imf.c (+ imf.h, and the imf2imf tool) — the image-family format:
-  parsed via the GDL/lisp reader, so structure is lisp-checked, but look
-  at what happens with hostile numeric fields (dimensions, offsets, color
-  counts) and embedded raw data lengths.
-- Any per-UI image loading (sdl/ mostly delegates to its toolkit — verify,
-  don't assume). (The x11/ XBM/XPM readers this item used to name were
-  removed along with the Xt/Xaw UI in Step 2.)
-Method:
-1. For each decoder: map every length/dimension/count read from input to
-   where it sizes an allocation, indexes an array, or bounds a loop.
-   Verify each is range-checked BEFORE use; check multiplication for
-   overflow (w*h*depth patterns).
-2. In gif.c's LZW loop: check code values against table size, table
-   growth against its maximum, and output writes against the pixel
-   buffer's real extent.
-3. Fix what you find with minimal local checks that fail the load
-   gracefully (existing error idiom: init_warning/run_warning — match
-   surrounding code) rather than exiting.
-4. Keep a findings list (file:line, what an attacker-controlled file could
-   do, fix applied) — put it in the commit message, and if anything was
-   serious, a dated note on this plan item.
-5. Recommendation note (no implementation): whether gif.c should be
-   replaced by a library dependency or GIF support dropped (check whether
-   images/ actually ships GIFs and whether .imf families reference them).
-Verify: build all UIs; ctest quick suite green (the imf machinery is
-exercised by the image-family tooling and games with custom images);
-run imf2imf over a few images/ files as a smoke test.
-Commit; mark this item done (strikethrough + date) in MODERNIZATION-PLAN.md
-with the delegation recommendation noted.
-```
+- ~~**[S] Review the custom image decoders** (`kernel/gif.cc`, `kernel/imf.cc`)~~
+  — **done 2026-07-07.** Audited the homegrown GIF/LZW reader and the
+  image-family interpreter (the X11 XBM/XPM readers this item used to name were
+  removed with the Xt/Xaw UI in Step 2; SDL renders from the kernel's raw
+  buffers rather than decoding files itself, so it inherits the kernel fixes).
+  Found and fixed six bounds/overflow bugs, two critical:
+  - `gif.cc:ReadImage` — `malloc(len*height)` with unchecked, unbounded
+    image-descriptor dimensions: the `int` product overflows (so does the
+    `ypos*len+xpos` write index), the classic decompression-bomb → heap
+    overflow. Now validates dims (`>0`, `≤16384`, product `≤64M px`) and
+    checks the allocation before use.
+  - `imf.cc:make_raw_palette` — a GDL palette longer than 256 entries
+    overflowed the `int ipal[4][256]` stack array. Now truncates at 256.
+  - `imf.cc:copy_from_file_image` — `fimg->data[k]` indexed by GDL-supplied
+    offsets/sizes with no check against the decoded buffer (heap over-read
+    leaking adjacent memory into the rendered image). Now bounds-checked via a
+    new `FileImage.datasize`; also guards non-positive target dims.
+  - `gif.cc:LWZReadByte` — LZW prefix-chain walk could run the decode stack
+    off its end on a crafted cyclic table (the self-reference check misses
+    longer cycles). Now bounded against the stack end.
+  - `gif.cc:GetCode` / `get_gif_from_file` — `buf[last_byte-2]` underflow read
+    and use of uninitialized `rawdata` / over-read of the transparent-color
+    probe on tiny images. Guarded.
+  - `imf.cc:interp_image` — a hostile `numsubs` (from `x`/hexgrid counts) could
+    overflow the `xmalloc(numsubs * sizeof(Image*))` size (`xmalloc` takes an
+    `int`); now clamped to 4096.
+  Verified: all UIs build clean; quick ctest 559/559; a standalone harness
+  decodes every real library GIF correctly and rejects the crafted malicious
+  ones gracefully, clean under ASan+UBSan.
+  **Delegation recommendation:** GIF support is load-bearing — `images/` ships
+  ~200 `.gif` files and many `lib/*.g` families reference them via `(file
+  ...gif)`, so dropping the format is not viable. The right long-term move is
+  to **replace the hand-rolled `gif.cc` with a maintained decoder** (giflib, or
+  stb_image for a header-only zero-dep option) behind the existing
+  `get_gif(FileImage*)` seam — the decoder is self-contained and has a single
+  entry point, so the swap is localized. The `copy_from_file_image` bounds
+  check should stay regardless, since it guards the GDL-supplied
+  offset/size fields independent of which decoder produced the buffer. Until
+  then the hardening above contains the known memory-safety bugs. A residual,
+  lower-severity surface remains in the GDL-driven imf path (attacker-chosen
+  `pixel-size`/dimensions still size large allocations and drive palette-index
+  reads) — worth a follow-up pass with global clamping of GDL numeric image
+  fields, but not memory-unsafe after the fixes above.
 - **[S] Audit file-path handling** in save/restore and module loading
   (`fopen` of names derived from GDL input or network messages — check for
   directory traversal out of the library dir).

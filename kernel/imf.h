@@ -97,6 +97,7 @@ typedef struct a_file_image {
     short loaded;
     short width, height;
     char *data;
+    long datasize;		/* Actual number of bytes in data[]. */
     short numcolors;
     int *palette;
     short numtransparent;
