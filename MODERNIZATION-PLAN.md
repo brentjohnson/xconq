@@ -88,6 +88,14 @@ docs (`CLAUDE.md`, `CONTRIBUTING.md`, `README`, `doc/INSTALL`,
 `test/fuzz/README.md`) were updated accordingly. §4's curses/PDCurses items
 below are stale as a result and should be read as historical.
 
+Step 4 (planned, adopted 2026-07-11): the **client/server rearchitecture** —
+the kernel becomes server-only (`xconqd`), the SDL client and a new browser
+client become thin clients over a new WebSocket protocol, and the legacy
+lockstep protocol (`kernel/tp.cc`/`socket.cc`) is removed. The decision record
+and target architecture live in **ARCHITECTURE.md**; the task-by-task work
+plan is **§10** below. This supersedes §9.2 (the successor-UI design study)
+and changes the disposition of several §6 items — each carries a dated note.
+
 ## 1. Language & toolchain
 
 > **All of §1 is complete (7/2026)** — every task below is done, so the
@@ -608,7 +616,10 @@ contributes a plausible starting point for the kernel-level path/signal
 glue (it's small and already CMake-wired) but is unverified and pre-dates
 modern Win32/UTF-8 path conventions; everything UI-side would be new
 work. This is a maintainer call, not made here — the Win32 files are left
-in place either way pending that decision.
+in place either way pending that decision. *(Note 2026-07-11: the §10 web
+client will become the practical no-install play story on Windows/macOS —
+any browser against a hosted server — which lowers the stakes of the native
+Win32 question considerably; revisit after §10 phase B.)*
 - ~~**[S] Replace kernel/config.h's homegrown size detection**, which checks
   `SIZEOF_INT`/`SIZEOF_LONG` for its `Z16`/`Z32` typedefs — replace with
   `<cstdint>` fixed width types and delete the checks from `acdefs.h`.~~ (done 7/2026)
@@ -653,7 +664,10 @@ in place either way pending that decision.
   strings into local buffers; it should get the same pass. (`curses/` — the
   bulk of the original ~130-call count — was deleted in Step 3, so its share
   of this item is moot.) The fuzzers from §3 cover the kernel reader, not UI
-  formatting.
+  formatting. *(Note 2026-07-11: the §10 SDL client port — tasks 10.14/10.15 —
+  rewrites those display paths wholesale against `libclientmodel`, so don't
+  invest in a standalone `sdl/` string pass unless the port stalls; fold the
+  bounded-formatting discipline into the port instead.)*
 - **[M] Review the homegrown networking layer** (`kernel/tp.cc`,
   `kernel/socket.cc`): it's a custom peer-to-peer protocol whose messages feed
   the GDL reader. At minimum, fuzz the message decoder; longer term consider
@@ -667,10 +681,17 @@ in place either way pending that decision.
   NULL-deref, and an unbounded accept `nextrid`. Deferred (documented, not
   patched): a peer can steer this host into opening arbitrary files (`f`/`g`/`w`
   handlers) and into the un-hardened GDL reader, and there is no auth/integrity.
-  **This item stays open** pending the §3-style *decoder* fuzzing (the report's
-  recommendation: fuzz-and-harden the decoder + contain the file-open surface
-  now, and long term run multiplayer only over a trusted transport rather than
-  re-securing the protocol). Build clean, quick ctest 559/559.
+  ~~**This item stays open** pending the §3-style *decoder* fuzzing~~ (the
+  report's recommendation: fuzz-and-harden the decoder + contain the file-open
+  surface now, and long term run multiplayer only over a trusted transport
+  rather than re-securing the protocol). Build clean, quick ctest 559/559.
+  *(Superseded 2026-07-11 by §10 / ARCHITECTURE.md: `tp.cc`/`socket.cc` are
+  slated for outright removal — task 10.17 — so the planned decoder fuzzing is
+  dropped as investment in code being deleted. The "what transport does
+  multiplayer survive behind" question this item posed is now answered:
+  server-authoritative WebSocket, kernel never parses peer input. Until 10.17
+  lands, legacy multiplayer remains trusted-LAN-only per
+  `doc/net-security-review.md`.)*
 - ~~**[S] Review the custom image decoders** (`kernel/gif.cc`, `kernel/imf.cc`)~~
   — **done 2026-07-07.** Audited the homegrown GIF/LZW reader and the
   image-family interpreter (the X11 XBM/XPM readers this item used to name were
@@ -716,7 +737,10 @@ in place either way pending that decision.
   fields, but not memory-unsafe after the fixes above.
 - **[S] Audit file-path handling** in save/restore and module loading
   (`fopen` of names derived from GDL input or network messages — check for
-  directory traversal out of the library dir).
+  directory traversal out of the library dir). *(Priority raised 2026-07-11:
+  this is a hard prerequisite for running a public `xconqd` server —
+  ARCHITECTURE.md §6 — so it should land before §10 phase D deploys anything
+  internet-facing.)*
 
 **⚙ PROMPT 6.4 — recommended model: Opus.** *(Requires tracing where each
 filename can originate and deciding a containment policy — a wrong "safe"
@@ -1090,7 +1114,11 @@ ready and the item stays open until the maintainer cuts 7.5.0.
 - **[L] De-globalize the kernel.** World state, sides, and units are global;
   the engine is single-instance and non-reentrant. Wrapping state in a context
   struct would enable a test harness, engine-as-library embedding, and a
-  headless server.
+  headless server. *(Note 2026-07-11: §10's server deliberately does NOT
+  depend on this — `xconqd` is process-per-game precisely because the kernel
+  is global-state (ARCHITECTURE.md §3.1). This item stays optional; its
+  remaining motivations are test-harness teardown/reload and eventual
+  multi-game-per-process density, neither on the §10 critical path.)*
 
 **⚙ PROMPT 9.1 — recommended model: Opus.** *(A weeks-scale structural
 refactor; the phasing below makes each session mechanical, but classifying
@@ -1147,58 +1175,21 @@ happening to get re-inited).
 Update doc/deglobalization.md and the plan item with a dated note each
 session (subsystems done / remaining).
 ```
-- **[L] Consider a modern UI built on the SDL3 port** (or a web frontend
+- ~~**[L] Consider a modern UI built on the SDL3 port** (or a web frontend
   driven by a headless kernel over the existing network protocol) as the
-  long-term evolution of `sdlconq`, now the sole graphical client since the
-  Tcl/Tk interface was removed (Step 2, 7/2026).
-
-**⚙ PROMPT 9.2 — recommended model: Opus.** *(The plan says "consider":
-the deliverable is an architecture decision document grounded in reading
-the real code, not an implementation. Getting the UI-callback surface
-analysis right determines years of subsequent work.)*
-
-```text
-Task: produce the design assessment for Xconq's successor UI. This is an
-ANALYSIS deliverable (doc/ui-successor-design.md) — implement nothing
-beyond throwaway measurements. The maintainer decides afterward.
-
-PREREQUISITES: the §4 SDL3 port has landed (7/2026); the §6.2 networking
-review, if done, is direct input for the web-frontend option.
-Method:
-1. Ground truth first — measure the UI contract. Every UI implements the
-   callback surface the kernel expects (the interface functions declared
-   in kernel/conq.h / kpublic.h that each UI must provide — enumerate them
-   from an existing UI, e.g. what skelconq stubs out vs what sdl/
-   implements; tcltk/ was removed in Step 2 and curses/ in Step 3, so sdl/
-   is now the sole reference implementation). Document: how big is the required surface,
-   which parts are display-only vs input vs blocking dialogs, and where
-   the kernel assumes synchronous UI responses (the pain point for any async/web
-   frontend).
-2. Assess the three candidate paths honestly, each with: effort estimate,
-   what §1-§9 work it depends on (esp. 9.1 de-globalization for anything
-   server-shaped), risks, and what the 200-module games library demands of
-   it (arbitrary map sizes, hex/rect terrain, image families, the full
-   command set in kernel/cmd.def):
-   a. Native SDL3 UI evolved from the sdl/ port (the plan's stated intent
-      for it: "sleeker, faster replacement").
-   b. Web frontend against a headless kernel over the EXISTING network
-      protocol (read kernel/tp.c enough to judge whether the protocol can
-      carry a full client or assumes shared local game state — this
-      usually kills the idea or reshapes it into option c).
-   c. Web frontend against a NEW thin protocol (JSON over websocket)
-      exposed by a headless server built on skelconq's null-interface
-      pattern (kernel/skelconq.c is the existence proof that the kernel
-      runs UI-less).
-3. Recommend ONE path with a phased milestone plan (milestone 1 must be
-   a playable spectator/hotseat client of the default game, not feature
-   parity) and name the first three concrete engineering tasks.
-4. Keep `sdlconq`'s fate explicit: the recommendation must say what
-   happens to it — now the sole remaining UI — under each option. (This
-   item previously asked the same question about the Tcl/Tk UI, removed
-   rather than ported in Step 2, and the curses UI, removed in Step 3.)
-Deliverable: doc/ui-successor-design.md committed; add a dated pointer on
-this plan item. Nothing else changes in the tree.
-```
+  long-term evolution of `sdlconq`.~~ *(resolved 2026-07-11)*: the decision
+  this item asked for was made directly with the maintainer and recorded in
+  **ARCHITECTURE.md** rather than via the design-study prompt that used to
+  live here (removed; see git history). Outcome, in this item's own terms: a
+  variant of its "option c" — a web client against a NEW protocol (JSON over
+  WebSocket) served by a headless server built on the kernel + the
+  skelconq null-interface pattern — with the twist that the protocol is
+  **server-authoritative** (per-side view sync via the UI callback surface,
+  real fog of war), the existing lockstep protocol is removed rather than
+  reused (its shared-replicated-state assumption is exactly what the old
+  option b analysis would have tripped over), and `sdlconq` is kept and
+  ported to the same protocol as the native thin client (plus LAN listen-
+  server host). The §10 work plan implements it.
 - **[M] GDL ergonomics:** a syntax description for editors (tree-sitter
   grammar or TextMate bundle), plus a `skelconq --validate` mode for game
   authors, would lower the barrier for the games library — which is the
@@ -1260,6 +1251,914 @@ touches nothing in the build). Commit each part; mark this item done
 lives.
 ```
 
+## 10. Client/server rearchitecture
+
+The major-version track adopted 2026-07-11: kernel becomes server-only
+(`xconqd`), a new browser client and the ported SDL client are thin clients
+over a new server-authoritative WebSocket protocol, and the legacy lockstep
+protocol is removed. **ARCHITECTURE.md is the decision record and context
+anchor** — every prompt below assumes it has been read, and it must be kept
+truthful as work lands. `doc/net-protocol.md` (task 10.2) becomes the second
+anchor once it exists.
+
+Prompt conventions as in §1/§3–§9: each task carries a ready-to-run fenced
+prompt written so a fresh session can execute it with no conversation
+context (CLAUDE.md loads automatically; ARCHITECTURE.md and
+doc/net-protocol.md carry the architecture context), labeled **Opus** for
+tasks needing design judgment or kernel-semantics triage, **Sonnet** for
+well-bounded mechanical work against a written spec.
+
+**Standing rule for every §10 task** (also restated in each prompt): when a
+task finishes, in this file mark the task done (strikethrough + a dated note
+of what *actually* happened, including surprises), add any newly identified
+work as new §10 tasks in this same prompt convention, and update
+ARCHITECTURE.md in the same commit if the implementation deviated from it.
+
+Phases: **A** (protocol + server core, 10.1–10.8) is largely sequential.
+**B** (web client, 10.9–10.12) follows A and deliberately precedes the SDL
+port — the thinnest client validates the protocol while it is still cheap to
+change. **C** (SDL client port + legacy removal, 10.13–10.17) can overlap B.
+**D** (production server, 10.18–10.22) follows A; nothing internet-facing
+deploys before §6.4 (path traversal) is done.
+
+### Phase A — protocol and server core
+
+- **[10.1] [M] Client-state inventory.** Enumerate everything a client needs:
+  the callback surface plus every kernel data structure `sdl/` reads and every
+  kernel call it makes. This inventory *is* the protocol's state-sync schema;
+  its completeness is the top risk of the whole rearchitecture
+  (ARCHITECTURE.md §9). Analysis only.
+
+**⚙ PROMPT 10.1 — recommended model: Opus.** *(Judgment about which kernel
+reads are per-side view state vs process-local scratch determines the
+protocol's shape; a missed class surfaces as a redesign later.)*
+
+```text
+Task: produce doc/client-state-inventory.md — the complete inventory of
+kernel state and entry points a thin Xconq client needs. ANALYSIS ONLY: no
+code changes. Read ARCHITECTURE.md first (§2, §3.6, §9).
+
+Method:
+1. Callback surface: list every required-interface callback from
+   kernel/skelconq_stubs.cc and the "must be supplied by an interface"
+   declarations in kernel/conq.h. For each: what state changed, what
+   content a network message must carry (the callback args are dirty
+   notifications; the UI then reads kernel memory — name WHICH memory).
+2. Direct reads: sweep sdl/*.cc for kernel data access — side->/unit->/
+   plan->/task-> field reads, view-layer accessors (terrain_view, unit_view
+   chains, coverage), area./world globals, type-property and table
+   accessors (u_*/t_*/m_*/g_* and table macros), history, scores,
+   doctrine, agreements. Classify each: (a) reachable from an existing
+   callback moment; (b) read-on-demand side state that must enter the
+   snapshot + deltas; (c) static per-game data for the manifest (type
+   rosters, display properties); (d) process-local (prefs, window state —
+   not protocol).
+3. Command entry points: every kernel call sdl/ makes that CHANGES game
+   state — the net_* action wrappers in kernel/kpublic.h, task/plan
+   setters, side settings, naming, end-turn/resign, design-mode commands.
+   This list becomes the command plane.
+4. Blocking/modal spots: any place the kernel expects a synchronous UI
+   answer (search conq.h/kpublic.h for query/ask/choose-style interface
+   functions). These need async request/response pairs — flag each.
+5. Deliverable: doc/client-state-inventory.md with one table per class,
+   counts, and a "surprises/risks" section. Cross-check: skim curses/ in
+   git history (deleted Step 3) ONLY if sdl/ coverage of some feature is
+   in doubt; sdl/ is the reference.
+Verify: nothing to build; the doc must cite real symbols (spot-check a
+sample compiles the claim, i.e. the symbol exists where stated).
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.1 done (strikethrough +
+dated note incl. surprises), add newly identified work as new §10 tasks,
+and update ARCHITECTURE.md if findings contradict it.
+```
+
+- **[10.2] [M] Protocol specification** (`doc/net-protocol.md`): message
+  envelope, session/lobby, snapshot, deltas, commands, errors, versioning.
+
+**⚙ PROMPT 10.2 — recommended model: Opus.** *(The contract every later task
+codes against; wrong altitude here is expensive everywhere.)*
+
+```text
+Task: write doc/net-protocol.md, the wire-protocol spec for the Xconq
+client/server architecture. Read ARCHITECTURE.md (§4, §5) and
+doc/client-state-inventory.md (task 10.1) first. Spec only — no code.
+
+Requirements:
+1. Transport: one JSON object per WebSocket text message; a "t" field
+   names the message type. Document the hello/welcome handshake with an
+   integer protocol version and clean-rejection semantics.
+2. Session plane: join (game id, requested side, optional token), rejoin
+   (token -> rebind + fresh snapshot), side assignment, variant settings,
+   chat, error responses (machine-readable code + human text).
+3. State-sync plane: define the join snapshot and one delta message per
+   netui callback moment, carrying content per the 10.1 inventory
+   (class a + b). Layers (terrain view etc.) need a compact encoding —
+   specify run-length-encoded strings (the save writer's layer RLE is the
+   conceptual precedent; keep the JSON form self-describing). Unit views,
+   side state, turn/clock, history events, notices.
+4. Command plane: one message per 10.1 class-(c) entry point that a
+   player actually uses (audit against kernel/cmd.def for player-facing
+   coverage); each carries acting unit/side ids; server validation rules
+   stated per command. Async request/response pairs for every 10.1
+   class-4 modal spot.
+5. Manifest: schema for the per-game static data (type rosters, display
+   properties, image-family names, world geometry) per ARCHITECTURE.md
+   §3.4.
+6. Worked examples: a full join transcript (hello -> welcome -> snapshot
+   -> a turn of deltas -> a move command -> resulting deltas) as literal
+   JSON.
+7. State the versioning policy (pre-1.0: version bump on any breaking
+   change, no compat shims) and message-size limits.
+Verify: every snapshot/delta field traces to a 10.1 inventory row and
+vice versa (class a-c rows all covered or explicitly deferred with a
+reason — deferred rows get a "v2" appendix table).
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.2 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if the spec deviated from it.
+```
+
+- **[10.3] [M] WebSocket + HTTP server module** (`server/net/`): standalone,
+  kernel-free, unit-tested.
+
+**⚙ PROMPT 10.3 — recommended model: Sonnet.** *(Well-bounded protocol code
+against RFC 6455, mechanically testable; hostile-input handling has clear
+acceptance tests.)*
+
+```text
+Task: implement a minimal, dependency-free WebSocket + static-HTTP server
+module for Xconq under server/net/, with unit tests. No kernel linkage.
+Read ARCHITECTURE.md §4 first.
+
+Method:
+1. server/net/: C++17, poll()-based, non-blocking, single-threaded, no
+   threads anywhere. Public API: a listener object the caller polls
+   (fd-set integration for xconqd's event loop), per-connection send/
+   receive of complete text messages, close with status codes.
+2. HTTP/1.1: parse only what is needed — GET for static files (root dir
+   configurable, strict path sanitization: reject "..", encoded dots,
+   absolute paths; small mime map for .html/.js/.css/.png/.json/.wasm)
+   and the ws Upgrade handshake (Sec-WebSocket-Accept = SHA-1 + base64;
+   implement SHA-1 in-tree, ~100 lines, cite the FIPS reference in a
+   comment). Hard limits: header size, request line length, connection
+   count; slow/oversized inputs get a clean close.
+3. RFC 6455 frames: text, ping/pong (auto-reply), close; server-to-client
+   unmasked, client-to-server masking REQUIRED (reject unmasked);
+   fragmented messages reassembled up to a configurable max message size
+   (default 4 MB), oversized -> close 1009. Binary frames: accept and
+   deliver (future CBOR) but nothing sends them yet.
+4. Vendor nlohmann/json single header under server/vendor/ with a
+   LICENSE note (MIT) — used by later tasks; this module itself stays
+   JSON-agnostic (bytes in, bytes out).
+5. Tests: test/net/ CTest suite (label "net", quick lane): a raw-socket
+   test client exercising handshake, echo, ping, fragmentation,
+   oversized-frame rejection, unmasked-frame rejection, bad-path static
+   requests (traversal attempts must 404, never escape root), header
+   bombs. Follow test/unit/'s hand-rolled CHECK style — no new test
+   framework.
+Verify: full build + ctest quick lane green including the new net label;
+run the net tests under the sanitizer toggle (-DXCONQ_SANITIZE=
+address,undefined) locally and note the result in the commit message.
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.3 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if you deviated from it.
+```
+
+- **[10.4] [M] `xconqd` server skeleton**: event loop, sessions, join/side
+  binding, chat — the process every later server task grows.
+
+**⚙ PROMPT 10.4 — recommended model: Opus.** *(Marries the kernel's
+init/run_game lifecycle to an event loop; wrong lifecycle decisions here
+ripple through every later task.)*
+
+```text
+Task: create the xconqd game-server skeleton under server/. Read
+ARCHITECTURE.md (§3.1) and doc/net-protocol.md first. Prereqs: 10.2, 10.3.
+
+Method:
+1. server/xconqd.cc + CMake target xconqd (always builds, like skelconq;
+   links libconq + server/net + vendored json). Args: game module,
+   --port, --http-root (web bundle/atlases; optional), --seed, variant
+   flags as needed. Model the kernel init sequence on kernel/skelconq.cc
+   (init_library_path, module load, side/player setup, run_game(0) start
+   sequence — copy its order, don't reinvent). For the required-interface
+   callbacks, start from a copy of the skelconq_stubs pattern in a new
+   server/netui.cc (fleshed out by 10.5); leave kernel/skelconq_stubs.cc
+   itself untouched — skelconq and unittests keep using it.
+2. Event loop: single thread; poll ws listener + connections with a short
+   timeout; between polls run bounded run_game(maxactions) slices exactly
+   like skelconq's free-run mode; never block on network I/O. SIGTERM ->
+   clean shutdown (close 1001 to clients, exit 0).
+3. Sessions: implement hello/welcome (protocol version check), join ->
+   bind connection to a side (respecting player assignments; reject taken
+   sides), chat relay, disconnect -> side marked unattended (game keeps
+   running; policy refinement is task 10.20). Malformed JSON or unknown
+   "t" -> protocol error message, repeated offenses -> close.
+4. Smoke test: a CTest (label "net") that starts xconqd on an ephemeral
+   port with a small lib/game.dir module, performs hello/join/chat with
+   the 10.3 test-client utilities, and asserts a clean shutdown on
+   SIGTERM. Bound it (timeout, hermetic XCONQHOME) per test/common.sh
+   conventions.
+Verify: full build + quick ctest green (555+ existing tests must be
+unaffected — xconqd must not disturb skelconq/unittests linkage).
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.4 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if you deviated from it.
+```
+
+- **[10.5] [M] netui: callback→delta serialization** — the server half of the
+  state-sync plane.
+
+**⚙ PROMPT 10.5 — recommended model: Opus.** *(Requires reading kernel view
+semantics correctly; a wrong view read leaks fogged state or desyncs
+clients.)*
+
+```text
+Task: implement server/netui.cc — the per-side delta emitters behind the
+required-interface callbacks in xconqd. Read ARCHITECTURE.md (§2, §3.2)
+and doc/net-protocol.md (state-sync plane) first. Prereq: 10.4.
+
+Method:
+1. For each callback in the required surface (list: kernel/
+   skelconq_stubs.cc), implement the xconqd version to build the
+   corresponding delta message per the spec: read the SIDE'S VIEW at
+   callback time (terrain view layers, unit views, side/turn/clock state
+   — the exact reads are mapped in doc/client-state-inventory.md class
+   a), never ground truth the side cannot see. update_cell_display's
+   flags argument tells you which layers changed — honor it rather than
+   resending everything.
+2. Emit only to sides with a live connection; drop silently otherwise
+   (unattended sides catch up via rejoin snapshot, task 10.6/10.18).
+   Respect flush_display_buffers as the batching boundary: accumulate
+   deltas and send on flush, so one kernel action doesn't produce dozens
+   of tiny ws messages.
+3. History events (update_event_display) map to first-class hist
+   messages; low_notify/update_message_display to notice/chat-adjacent
+   messages per spec.
+4. Testing: extend the 10.4 smoke test: join a side, run several turns,
+   assert (a) turn deltas arrive in order, (b) a cell delta's coordinates
+   are within the world, (c) NO message ever carries data for a cell the
+   side's coverage says it cannot see (pick a game with fog — check
+   see-all is off) — that last assertion is the fog-integrity canary and
+   the most important line in the test.
+Verify: full build + quick ctest green, including net label.
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.5 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if you deviated from it.
+```
+
+- **[10.6] [M] Join snapshot + game manifest.**
+
+**⚙ PROMPT 10.6 — recommended model: Opus.** *(Serializing a side's complete
+view without leaking ground truth; the save writer is the precedent but its
+output is full-knowledge, not per-side.)*
+
+```text
+Task: implement the join/rejoin snapshot and the game manifest in xconqd.
+Read ARCHITECTURE.md (§3.2, §3.4) and doc/net-protocol.md (snapshot +
+manifest schemas) first. Prereqs: 10.4, 10.5.
+
+Method:
+1. Manifest (sent in welcome): generated from the loaded game's type
+   tables — unit/material/terrain/advance rosters with names, display
+   chars, image-family names, and the display-relevant per-type
+   properties enumerated in doc/client-state-inventory.md class (c);
+   plus side roster and world geometry (hex/rect, dimensions, wrap).
+   Type-property access goes through the generated accessors (u_*/t_*/
+   m_* — see the .def X-macro system in CLAUDE.md), never hand-copied
+   tables.
+2. Snapshot (sent on join/rejoin, after welcome, before deltas resume):
+   the side's terrain view layers RLE-encoded per spec, all unit views
+   the side holds, own units' full state incl. plans/tasks (inventory
+   class b), side state (treasury, research, scores), turn/date/clock.
+   Model the layer walk on kernel/write.cc's layer writers (write_area
+   RLE machinery) but emit the spec's JSON form; view accessors, not
+   ground-truth layers.
+3. Ordering: queue deltas generated during snapshot construction and
+   send them after it (single-threaded, so this is just buffering
+   discipline in the netui, not locking).
+4. Test: extend the net CTest: join, capture snapshot, run turns, then
+   REJOIN with a second connection and assert the second snapshot equals
+   the first client's accumulated model for overlapping fields (turn,
+   unit-view count, a sampled RLE row). This is the state-sync fidelity
+   check — the analogue of check-save for the wire.
+Verify: full build + quick ctest green including net label.
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.6 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if you deviated from it.
+```
+
+- **[10.7] [M] Command plane**: client intents → validated kernel actions.
+
+**⚙ PROMPT 10.7 — recommended model: Opus.** *(Every handler is a trust
+boundary; validation must lean on kernel legality checks, not reimplement
+them wrongly.)*
+
+```text
+Task: implement the client->server command plane in xconqd. Read
+ARCHITECTURE.md (§3.3, §6) and doc/net-protocol.md (command plane) first.
+Prereqs: 10.5, 10.6.
+
+Method:
+1. Implement one handler per command message in the spec, mapping to the
+   existing kernel entry points inventoried in doc/client-state-
+   inventory.md class (c) — the net_* wrappers in kernel/kpublic.h and
+   task/plan setters. NOTE: the net_* wrappers have a local-execution leg
+   and a legacy tp.cc broadcast leg; call so the local leg runs (hosting
+   is FALSE in xconqd's process — verify, don't assume). Task 10.17
+   deletes the broadcast legs later; do not touch tp.cc now.
+2. Validation order per command: session bound to a side -> unit exists
+   and belongs to that side -> arguments in range (coords in area, types
+   valid) -> hand to the kernel entry point and let ITS legality checks
+   decide (execute_action already rejects invalid types/inactive actors
+   — step 1 hardening, see plan intro). Rejections produce the spec's
+   error response with a code; never a crash, never silence.
+3. Cover: movement/build/fire/attack tasks, plan mode/standing orders,
+   unit naming, end-turn/resign, side settings, the async answers for
+   10.1's modal spots. Chat existed since 10.4.
+4. Test: extend the net CTest: issue a legal move (assert resulting
+   deltas), an out-of-area move (assert error code), a command for
+   ANOTHER side's unit (assert rejection — the anti-cheat assertion),
+   and end-turn round-trip.
+Verify: full build + quick ctest green including net label.
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.7 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if you deviated from it.
+```
+
+- **[10.8] [M] Headless protocol test client + CI wiring** — the protocol's
+  reference consumer and regression harness.
+
+**⚙ PROMPT 10.8 — recommended model: Sonnet.** *(Scripted client against a
+written spec, with existing test-suite conventions to follow.)*
+
+```text
+Task: build a headless scripted protocol client and wire protocol
+regression tests into CTest. Read ARCHITECTURE.md and doc/net-protocol.md
+first. Prereqs: 10.4–10.7 (extend the tests they started rather than
+duplicating).
+
+Method:
+1. test/net/protoclient.cc: a C++ CLI reusing the 10.3 test-client ws
+   code: connects, joins, then executes a simple line-oriented script
+   (from a file): expect <msg-type> [field=value...], send <json>,
+   run-turns <n>, save-transcript <file>. Timeouts on every expect.
+2. Transcript mode: --record <file> writes every received message as
+   JSON-lines with a direction marker — task 10.13 replays these to
+   unit-test libclientmodel, so the format is a deliverable, document it
+   in a comment header and in doc/net-protocol.md's appendix.
+3. Tests: consolidate the 10.4–10.7 assertions plus a longer scenario —
+   join the default introductory game vs AI, play a scripted opening
+   (move a starting unit, end several turns), assert turn progression
+   and fog integrity. One CTest per scenario script (mirror how test/
+   CMakeLists.txt registers per-module tests: own scratch dir, bounded,
+   label "net", quick lane). Record one canonical transcript into
+   test/net/transcripts/ and add a replay-freshness test that regenerates
+   it and diffs structurally (message-type sequence, not full bytes —
+   timestamps/ids may vary; document what is normalized).
+4. CI: the net label already runs in the quick lane on every leg —
+   verify the sanitizer leg passes it too (widened timeouts via
+   XCONQ_TEST_TIMEOUT_SCALE apply; check test/common.sh conventions are
+   respected for any per-game bound you add).
+Verify: full build; ctest quick lane green twice under -j$(nproc)
+(parallel-safety check); sanitizer-toggle build of the net tests locally.
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.8 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if you deviated from it.
+```
+
+### Phase B — web client
+
+- **[10.9] [M] Asset pipeline**: `.imf`/GIF image families → PNG sprite
+  atlases + JSON index.
+
+**⚙ PROMPT 10.9 — recommended model: Sonnet.** *(A standalone converter tool
+with an existing link-closure precedent and mechanically checkable
+output.)*
+
+```text
+Task: build tools/imf2atlas — converts Xconq image families to PNG sprite
+atlases + a JSON index for the web and SDL clients. Read ARCHITECTURE.md
+§3.4 first.
+
+Method:
+1. tools/imf2atlas/: a standalone C++ CLI linking the kernel's image
+   machinery the way kernel/imf2imf.cc does (copy its link closure /
+   stub arrangement — it is the existence proof for a standalone imf
+   reader). Input: one or more .imf files (default: sweep lib/*.imf and
+   the families referenced by images/); output: <name>.png atlas sheets
+   + <name>.json index mapping family name -> frame rect, size variants,
+   and terrain/unit usage hints available from the imf data.
+2. PNG writing: vendor stb_image_write.h under tools/vendor/ with a
+   license note (public domain/MIT dual). Pack rects with a simple
+   shelf/row packer — no dependency, no cleverness; atlases under
+   4096x4096, spill to multiple sheets.
+3. Color/transparency: the kernel decodes GIF + imf color/mask data into
+   raw buffers (kernel/imf.cc, hardened 7/2026 — see §6.3); convert
+   palette+mask to RGBA. Solid-color families (colors, no bitmap) get
+   entries in the JSON index without atlas pixels.
+4. Acceptance: run over the standard library; assert zero errors, spot-
+   check counts (the index entry count vs families defined — compare
+   against test/imf-uses.sh's counting approach), and visually inspect
+   one atlas (write a trivial HTML contact sheet next to the output for
+   manual checks). Wire a CTest (label "tools", quick) that converts one
+   small .imf and validates the JSON schema + PNG signature.
+5. Not wired into the normal build artifacts yet; xconqd's --http-root
+   just serves whatever directory gets generated (document the flow in
+   tools/imf2atlas/README.md).
+Verify: full build + quick ctest green.
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.9 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if you deviated from it.
+```
+
+- **[10.10] [M] Web client scaffold**: connection, lobby, chat, protocol
+  types.
+
+**⚙ PROMPT 10.10 — recommended model: Sonnet.** *(Project scaffolding plus
+transcription of a written spec into TypeScript types.)*
+
+```text
+Task: scaffold the Xconq web client under web/: TypeScript + Vite, no UI
+framework, connecting to xconqd through the session plane. Read
+ARCHITECTURE.md (§3.5, §4) and doc/net-protocol.md first. Prereqs: 10.4,
+10.6 running (a live xconqd to test against: build/server/xconqd <module>
+--port ...).
+
+Method:
+1. web/: vite + strict TypeScript, zero runtime dependencies (dev deps
+   only). Node toolchain confined to web/ — the C++ build must not grow
+   a node requirement. web/README.md: dev-server usage (vite proxy or
+   --http-root serving of a built bundle), build instructions.
+2. web/src/protocol.ts: hand-written types for every message in
+   doc/net-protocol.md, plus a thin ws wrapper (connect, hello/version,
+   typed send/receive, reconnect-with-token stub). Keep this file
+   organized as the spec's mirror — one section per plane, spec section
+   references in comments.
+3. UI (plain DOM, minimal CSS): connect form (server URL), game info +
+   side list from welcome/manifest, side pick + join, chat pane, and a
+   collapsible raw-message log (the debugging tool every later task
+   uses). Render notices/history messages as text in the log for now.
+4. CI: extend the workflow with a small web job (node LTS, npm ci, tsc
+   --noEmit + vite build), non-blocking (continue-on-error) initially,
+   mirroring how the macOS job is staged.
+Verify: tsc clean; manual round-trip against a live local xconqd (join,
+chat, see turn notices arrive) — record what you did in the commit
+message; C++ build + quick ctest untouched and green.
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.10 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if you deviated from it.
+```
+
+- **[10.11] [M] Map rendering**: canvas renderer for the side's view.
+
+**⚙ PROMPT 10.11 — recommended model: Opus.** *(Hex geometry, view/fog
+semantics, and incremental redraw need real judgment; this is the web
+client's core.)*
+
+```text
+Task: implement the web client's map view — canvas rendering of the
+side's view from snapshot + deltas, using the 10.9 atlases. Read
+ARCHITECTURE.md and doc/net-protocol.md first. Prereqs: 10.6, 10.9,
+10.10.
+
+Method:
+1. web/src/model.ts: the client-side view model — apply snapshot then
+   deltas (terrain view layers from RLE, unit views keyed by view id,
+   side/turn state). Keep it renderer-independent and unit-testable
+   (vitest is acceptable as a dev dep if tests accompany it; otherwise
+   assert-heavy code paths).
+2. Renderer: canvas, hex AND rect grids (world geometry from the
+   manifest — get the hex row-offset math right; the SDL client's
+   sdl/*.cc drawing code documents Xconq's cell geometry conventions,
+   read it before inventing any). Terrain from atlas sprites or solid
+   colors per the atlas JSON; units from unit views with side emblem
+   overlays if the atlas provides them; three visibility states
+   rendered distinctly: never-seen (blank), remembered-but-not-covered
+   (dimmed, stale views), currently-covered (full). Viewport pan
+   (drag/keys) + zoom (2-3 fixed levels); redraw only dirtied cells on
+   delta application, full redraw on pan/zoom.
+3. Turn/date/side status header from side/turn deltas.
+4. Acceptance: against a live xconqd running the default introductory
+   game with fog on: initial view shows only the starting area;
+   exploring (AI or scripted moves via 10.8's protoclient on the same
+   game) grows the map; remembered vs covered renders distinguishably.
+   Screenshot(s) in the PR/commit description.
+Verify: tsc clean, web build green; C++ side untouched (quick ctest
+green).
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.11 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if you deviated from it.
+```
+
+- **[10.12] [M] Web client interactions — the playable milestone.**
+
+**⚙ PROMPT 10.12 — recommended model: Opus.** *(Order-giving UX against the
+command plane; the acceptance bar is a full game, which exercises
+everything built so far.)*
+
+```text
+Task: make the web client playable: unit selection, orders, turn flow.
+Read ARCHITECTURE.md and doc/net-protocol.md first. Prereqs: 10.7, 10.11.
+
+Method:
+1. Selection: click cycles through own units in a cell; selected-unit
+   panel (type, hp, acp, supply, current task from own-unit state) from
+   the model.
+2. Orders -> command messages: move (click destination; show the
+   resulting task on the unit), build (chooser from manifest's buildable
+   types for the unit type), fire/attack (target click), sentry/skip,
+   unit naming, plus a "next unit needing orders" key (drive from
+   own-unit task state, client-side).
+3. Turn flow: end-turn button + state (waiting on you / waiting on
+   others from side deltas), server error responses surfaced as toasts,
+   history/notice log pane grown from the 10.10 raw log into a readable
+   message list.
+4. Acceptance (the phase-B milestone): play the default introductory
+   game against the AI in the browser from first turn to a decided
+   result (win/lose/resign) without touching another client. Note the
+   session length and any protocol gaps hit — gaps become new §10 tasks,
+   which is exactly the churn phase B exists to surface before the SDL
+   port consumes the protocol.
+Verify: tsc clean; C++ quick ctest untouched and green.
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.12 done (strikethrough +
+dated note incl. the gap list), add newly identified work as new §10
+tasks, and update ARCHITECTURE.md if you deviated from it.
+```
+
+### Phase C — SDL client port and legacy removal
+
+- **[10.13] [M] `libclientmodel`**: the C++ mirror of a side's view.
+
+**⚙ PROMPT 10.13 — recommended model: Opus.** *(API design that determines
+the SDL port's diff size; the accessor-compatibility judgment calls need
+the inventory internalized.)*
+
+```text
+Task: implement client/ — libclientmodel, the C++ client-side view model
+shared by the SDL client. Read ARCHITECTURE.md §3.6, doc/net-protocol.md,
+and doc/client-state-inventory.md first. Prereqs: 10.2, 10.8 (recorded
+transcripts).
+
+Method:
+1. client/ builds libclientmodel.a: C++17, links the vendored
+   server/vendor JSON header, NOT the kernel. Contents: manifest-derived
+   type info, terrain-view layers, unit views, own-unit state (plans/
+   tasks), side/turn/clock state, history log; an apply(message) entry
+   point; a subscription hook for UI dirty-notification (mirroring the
+   update_* callback granularity, so SDL's existing redraw structure
+   maps on).
+2. Accessor shape: for each sdl/ kernel-read in the 10.1 inventory
+   (class a/b), provide an accessor with a DELIBERATELY similar
+   signature/name where reasonable (e.g. terrain_view(x,y)-alikes) and
+   record the mapping table in client/README.md — the SDL port (10.14)
+   consumes that table as its checklist. Do not contort the design for
+   perfect name parity; note divergences in the table.
+3. Tests: a client/test/ CTest (label "unit") replaying the 10.8
+   transcripts through apply() and asserting model invariants (final
+   turn number, unit-view counts, spot-checked cells vs values recorded
+   in the transcript scenario). Hand-rolled CHECK style per test/unit/.
+Verify: full build + quick ctest green.
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.13 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if you deviated from it.
+```
+
+- **[10.14] [L] SDL client read-path port** (multi-session): render from
+  `libclientmodel` in a new network-client mode.
+
+**⚙ PROMPT 10.14 — recommended model: Opus.** *(A weeks-scale port touching
+every screen; per-session scoping and kernel-read triage need judgment.
+Expect multiple sessions — the prompt is phased so each ends committable.)*
+
+```text
+Task: port the SDL client's DISPLAY paths to libclientmodel, as a new
+network-client mode. Multi-session; stop at any phase end, each phase
+leaves the tree green and committed. Read ARCHITECTURE.md (§3.6),
+client/README.md's mapping table, and doc/client-state-inventory.md
+first. Prereq: 10.13.
+
+Strategy (two coexisting modes during the port — the legacy in-process
+mode keeps working until 10.15 deletes it):
+Phase 1: `sdlconq --connect <host:port>` starts a network mode: ws
+  client (reuse/adapt the 10.3 client-side code into client/), hello/
+  join/side pick (minimal text UI or args), a libclientmodel instance,
+  and an SDL window that renders ONLY what is ported so far (map view
+  first); unported panels display "not available in network mode".
+  Session/input plumbing stays isolated from the legacy path (new files
+  preferred over #ifdef soup in existing ones).
+Phase 2..N: port one display surface per session, replacing kernel reads
+  with model accessors per the mapping table, checking items off IN
+  client/README.md's table (that file is the cross-session progress
+  tracker): map drawing + view/fog states, unit info panel, side/turn
+  status, history/notices, help screens that only need manifest data.
+  Where a read has no model accessor yet, add it to libclientmodel WITH
+  a transcript test (10.13's harness) in the same commit.
+Each session: build both modes; quick ctest green; manual network-mode
+run against a live xconqd noting what newly renders (commit message).
+Update MODERNIZATION-PLAN.md §10 with a dated progress note on THIS task
+each session (surfaces done/remaining), add newly identified work as new
+§10 tasks, and update ARCHITECTURE.md if you deviated. Mark the task done
+(strikethrough) only when every display surface renders from the model in
+network mode.
+```
+
+- **[10.15] [M] SDL client command-path port + kernel de-link** — network
+  mode reaches parity; legacy in-process mode is removed.
+
+**⚙ PROMPT 10.15 — recommended model: Opus.** *(The cutover: parity
+judgment, then an irreversible unlink of the kernel from the UI.)*
+
+```text
+Task: finish the SDL client port — input/commands over the protocol,
+then DELETE the legacy in-process mode and stop linking the kernel. Read
+ARCHITECTURE.md (§3.6, §8) and doc/net-protocol.md first. Prereq: 10.14
+complete.
+
+Method:
+1. Command paths: for each player-facing command the SDL client
+   implements (sweep sdl/sdlcmd.cc against kernel/cmd.def), send the
+   protocol command instead of calling the kernel; server errors surface
+   in the UI. The 10.1 class-(c) inventory + 10.12's web implementation
+   are the reference for message usage.
+2. Parity check: play the default introductory game to a result in
+   network mode using only the SDL client (against a local xconqd).
+   Missing-but-previously-working functionality either gets ported now
+   or listed explicitly in the plan note as accepted regressions —
+   nothing silently dropped.
+3. Cutover: remove the legacy in-process game path from sdl/ (local
+   game setup screens, direct kernel calls, the tp.cc host/join UI);
+   sdlconq's default behavior becomes connect/host (host = task 10.16;
+   if 10.16 hasn't landed, default to a connect dialog and note it).
+   Drop libconq linkage from sdl/CMakeLists.txt — sdlconq links
+   libclientmodel + SDL3 only. Re-evaluate the direct X11 (Xlib/Xmu/
+   Xext) linkage while in there: if it only served legacy paths, drop
+   it and note the macOS implication (CLAUDE.md documents the current
+   X11 gate).
+4. Docs: update CLAUDE.md's UI/build description and README to match.
+Verify: full build + quick ctest green (kernel tests unaffected); the
+parity game from step 2 recorded in the commit message.
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.15 done (strikethrough +
+dated note incl. accepted regressions), add newly identified work as new
+§10 tasks, and update ARCHITECTURE.md if you deviated from it.
+```
+
+- **[10.16] [M] Listen server**: "host a game" from the SDL client; LAN
+  peers and browsers join.
+
+**⚙ PROMPT 10.16 — recommended model: Sonnet.** *(Process management with a
+clearly specified lifecycle; the architecture decision — child process,
+never in-process — is already made.)*
+
+```text
+Task: implement LAN hosting from the SDL client — spawn xconqd as a
+child process, connect over loopback, let LAN peers join. Read
+ARCHITECTURE.md (§3.7) first. Prereqs: 10.4 (xconqd), 10.14 phase 1+
+(network mode exists); best after 10.15.
+
+Method:
+1. Host flow in sdlconq: a host dialog (game module from lib/game.dir,
+   port with a sensible default, variants) -> fork/exec the xconqd
+   binary (locate it relative to the sdlconq executable, with the same
+   source-checkout fallback logic style as default_library_pathname —
+   see kernel/unix.cc) -> wait for readiness (xconqd prints a READY
+   line / or poll-connect the port with a timeout) -> connect over
+   127.0.0.1 as an ordinary client.
+2. Lifecycle: child killed (SIGTERM, then KILL after grace) when the
+   hosting client exits or the host cancels; child crash -> clear UI
+   error, not a hang. Reap zombies. Pass --http-root pointing at the
+   installed/checkout web bundle + atlases if present, so LAN browsers
+   can load the web client from http://<host-ip>:<port>/ per
+   ARCHITECTURE.md's mixed-content note; show that URL and the LAN
+   ip:port in the host dialog for sharing.
+3. Join flow: a connect dialog accepting host:port (discovery is task
+   10.21).
+4. Test: a CTest (label "net") scripting the spawn/ready/connect/
+   teardown cycle through the same helper functions the UI uses
+   (factor them so they are testable without SDL video — a small
+   client/hosting.cc library piece).
+Verify: full build + quick ctest green; manual: host on one machine,
+join from a browser on the LAN URL (or a second local browser window),
+note the result in the commit message.
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.16 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if you deviated from it.
+```
+
+- **[10.17] [S] Retire the legacy network protocol** (`tp.cc`, `socket.cc`)
+  — closes the §6.2 residual.
+
+**⚙ PROMPT 10.17 — recommended model: Sonnet.** *(A removal with a clear
+blast radius and an established Step-2/Step-3 removal precedent to
+follow.)*
+
+```text
+Task: remove the legacy lockstep network protocol now that no client
+uses it. Read ARCHITECTURE.md §8 first. Prereq: 10.15 (SDL client no
+longer calls tp.cc) — verify that, don't assume it.
+
+Method:
+1. git rm kernel/tp.cc kernel/socket.cc (and tp.h); remove them from
+   kernel/CMakeLists.txt.
+2. The net_* wrappers in kpublic.h/tp.cc: their LOCAL execution legs are
+   the seams xconqd's command plane calls (task 10.7). Relocate the
+   local legs to a non-network-named home (e.g. kernel/kpublic.cc or
+   wherever 10.7 put its dispatch) and delete the broadcast legs, the
+   hosting/downloading/my_rid/master_rid globals, remote_player_specs,
+   and the rid plumbing. grep -r for every removed symbol; the compiler
+   is the checklist.
+3. Docs per the Step-3 removal precedent (see the Step 3 note in this
+   plan's intro): update ACTIVE docs (CLAUDE.md, CONTRIBUTING.md,
+   README, doc/INSTALL, man pages) to drop legacy-multiplayer claims;
+   leave historical material (doc/net-security-review.md, dated plan
+   notes, deep manual chapters) untouched.
+4. Update the §6.2 plan item's note: the deferred findings (hostile-peer
+   file-open, GDL-reader exposure, no auth) are now moot in-tree — the
+   code is gone.
+Verify: full fresh configure + build + quick ctest green (all suites —
+skelconq/unittests must be unaffected); grep confirms no live references
+to tp/socket symbols remain outside git history.
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.17 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if you deviated from it (§8 should now be describable in
+past tense — update it).
+```
+
+### Phase D — production server
+
+- **[10.18] [M] Persistence and reconnect**: durable games, session tokens.
+
+**⚙ PROMPT 10.18 — recommended model: Opus.** *(Save/session semantics
+across restarts touch kernel restore behavior — the area with the most
+historical bugs in this codebase.)*
+
+```text
+Task: make xconqd games durable and reconnectable. Read ARCHITECTURE.md
+§7 and doc/net-protocol.md (session plane) first. Prereq: 10.7.
+
+Method:
+1. Auto-save: xconqd saves via the kernel's existing save machinery
+   every N turns (flag) and on SIGTERM; --resume <save> restarts a game
+   from one. Respect XCONQHOME conventions; know that check-save waives
+   ten KNOWN_UNFAITHFUL modules (test/test-save.sh) — resumed fidelity
+   inherits those limits, document that in --help.
+2. Session tokens: issued in welcome (crypto-random, from /dev/urandom),
+   required for rejoin; persist the token->side map alongside the
+   auto-save so reconnect works across a server restart. Expiry policy:
+   tokens live as long as the game.
+3. Reconnect flow already partially exists (10.6 rejoin snapshot);
+   finish it: rejoin after RESTART must land the client in a consistent
+   state (fresh snapshot from restored kernel state).
+4. Test: net CTest: join, play turns, SIGTERM, restart with --resume,
+   rejoin with the old token, assert turn number and a sampled unit
+   survive the round trip. Use a save-faithful module (not in
+   KNOWN_UNFAITHFUL).
+Verify: full build + quick ctest green including check-save (you must
+not disturb save semantics for the existing suite).
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.18 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if you deviated from it.
+```
+
+- **[10.19] [M] Front door**: multi-game hosting, process-per-game.
+
+**⚙ PROMPT 10.19 — recommended model: Opus.** *(Multi-process lifecycle and
+the routing design; keeps all game logic out of itself, which is a
+discipline call.)*
+
+```text
+Task: implement the front-door/lobby process for multi-game hosting.
+Read ARCHITECTURE.md (§3.8) first. Prereqs: 10.4, 10.18.
+
+Method:
+1. server/frontdoor.cc (target xconq-frontdoor, reusing server/net):
+   serves the web bundle + atlases, and a lobby plane (extend
+   doc/net-protocol.md: list games with status/players, create game
+   (module + variants from an allowlist directory — lib/game.dir),
+   join -> redirect). Routing model: REDIRECT, not proxy — the client
+   receives the game process's port and reconnects there; document the
+   firewall implication (a port range for game processes, configurable).
+2. Game process management: spawn xconqd per created game (port from
+   the configured range, --http-root unset — the front door serves
+   statics), track children (pid, port, module, created-at), reap on
+   exit, cap concurrent games (flag), idle-game shutdown after
+   configurable inactivity (xconqd auto-saves on SIGTERM per 10.18, so
+   idle shutdown is safe and games are resumable — wire resume-on-join
+   for shut-down games).
+3. State: the game registry persists (JSON file) so a front-door restart
+   rediscovers resumable games.
+4. Test: net CTest: create two games through the lobby plane, join each
+   (assert isolation — chat in one never reaches the other), kill one
+   game process (assert the lobby notices), restart front door (assert
+   the registry survives).
+Verify: full build + quick ctest green.
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.19 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if you deviated from it.
+```
+
+- **[10.20] [M] Turn deadlines, AFK policy, spectators.**
+
+**⚙ PROMPT 10.20 — recommended model: Opus.** *(Gameplay-semantics
+decisions: what happens to an absent side is a game-design call with
+kernel implications.)*
+
+```text
+Task: server-enforced turn pacing and spectators for xconqd. Read
+ARCHITECTURE.md §7 and doc/net-protocol.md first. Prereq: 10.7; 10.18
+for async play to be meaningful.
+
+Method:
+1. Investigate first, then build on what exists: the kernel has
+   real-time game variables (rt-* gvars in kernel/gvar.def) and the
+   sequential/simultaneous turn model in run.cc — document in the
+   commit message what the kernel already enforces vs what xconqd must
+   add. Do not duplicate a kernel mechanism in the server layer.
+2. Deadlines: per-game turn deadline (variant/flag); on expiry the
+   server finishes the turn for laggards (units go reserve/sentry — use
+   the least-surprising existing kernel behavior; state your choice).
+   Deadline/remaining-time deltas keep clients' clocks honest.
+3. Absent sides: configurable policy — wait (default for 2-player),
+   deadline-skip, or hand to AI after N missed turns (the kernel
+   supports AI attachment to a side; verify via how players/sides bind
+   at setup). Notices to other players on state changes.
+4. Spectators: join as observer (protocol has the concept from 10.2;
+   implement binding) — sees a designated side's view or a global view
+   ONLY if the game's see-all variant is on; never a fog bypass.
+   Spectators cannot send commands (enforce in the command plane).
+5. Tests: net CTests for deadline expiry (short deadline, assert turn
+   advances without the laggard's end-turn), spectator fog integrity
+   (the 10.5 canary assertion, run for a spectator), spectator command
+   rejection.
+Verify: full build + quick ctest green.
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.20 done (strikethrough +
+dated note incl. the policy decisions made), add newly identified work
+as new §10 tasks, and update ARCHITECTURE.md if you deviated from it.
+```
+
+- **[10.21] [S] LAN discovery** (mDNS/DNS-SD) for listen servers.
+
+**⚙ PROMPT 10.21 — recommended model: Sonnet.** *(Bounded protocol feature
+with a vendorable single-header implementation path.)*
+
+```text
+Task: LAN game discovery — listen servers announce via mDNS, the SDL
+client's connect dialog lists discovered games. Read ARCHITECTURE.md
+§3.7 first. Prereq: 10.16.
+
+Method:
+1. Announce: xconqd (when started with a --lan flag, which the 10.16
+   host flow sets) publishes _xconq._tcp via mDNS with TXT records
+   (game module, player count, protocol version). Implementation:
+   vendor a single-header mDNS library (e.g. mjansson/mdns, public
+   domain — license note in server/vendor/) rather than depending on
+   avahi; integrate with the existing poll loop (one UDP socket).
+2. Browse: the SDL connect dialog (10.16) gains a discovered-games list
+   (same mdns header, browse mode, few-second refresh); manual host:port
+   entry stays.
+3. Web: browsers cannot mDNS; the LAN web path stays "type the URL the
+   host dialog shows" — note that limitation in the host dialog text.
+4. Test: a net CTest doing announce + browse over loopback multicast in
+   one process pair; skip cleanly (ctest SKIP return) if the sandbox/CI
+   environment blocks multicast — probe first, don't fail.
+Verify: full build + quick ctest green (including the skip path).
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.21 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if you deviated from it.
+```
+
+- **[10.22] [S] Deployment kit**: docs, systemd units, reverse-proxy TLS.
+
+**⚙ PROMPT 10.22 — recommended model: Sonnet.** *(Docs + config templates
+against decisions already recorded.)*
+
+```text
+Task: write the server deployment kit. Read ARCHITECTURE.md (§4, §6)
+first. Prereqs: 10.18, 10.19. HARD PREREQUISITE: §6.4 (path-traversal
+audit) must be done before these docs can honestly call a public
+deployment supported — check its status in this plan; if it is not done,
+say so prominently in the doc and in your plan note.
+
+Method:
+1. doc/SERVER.md: architecture recap (one diagram, link ARCHITECTURE.md),
+   single-game vs front-door deployment, sample nginx AND caddy configs
+   terminating wss:// and proxying to the front door + game-port range,
+   firewall notes, resource expectations (a game process's memory/CPU —
+   measure one and state the number), backup guidance (the 10.18/10.19
+   save + registry files), upgrade procedure (protocol version bump =
+   clients must update; no rolling compat pre-1.0).
+2. misc/systemd/: xconq-frontdoor.service (hardening directives:
+   DynamicUser, ProtectSystem=strict with the state dir, NoNewPrivileges
+   — game processes inherit), an example env file. Document manual
+   install; no packaging work.
+3. A smoke checklist in doc/SERVER.md: commands to verify a fresh
+   deployment (protoclient hello against the public endpoint, a browser
+   join).
+Verify: configs lint (nginx -t / caddy validate if available locally;
+otherwise careful review, noted); builds/tests untouched.
+Commit. In MODERNIZATION-PLAN.md §10: mark 10.22 done (strikethrough +
+dated note), add newly identified work as new §10 tasks, and update
+ARCHITECTURE.md if you deviated from it.
+```
+
 ## Suggested sequencing
 
 1. ~~§3 test honesty (fail on errors) + §2 bug fixes~~ (done 7/2026) — green
@@ -1274,4 +2173,13 @@ lives.
 4. ~~§4 SDL2/3 port~~ (done 7/2026, SDL2 then SDL3) — `sdlconq` now builds
    against native SDL3 instead of through the sdl12-compat shim.
 5. §5–§8 as continuous background work.
-6. §9 only if the project attracts sustained interest.
+6. ~~§9 only if the project attracts sustained interest.~~ *(revised
+   2026-07-11: §9.2 is resolved — the successor-UI decision is made and
+   recorded in ARCHITECTURE.md; §9.1 de-globalization is explicitly NOT on
+   the new critical path; §9.3 GDL ergonomics remains nice-to-have.)*
+7. **§10 client/server rearchitecture** (adopted 2026-07-11) is the main
+   track going forward: phase A (protocol + `xconqd`), then B (web client,
+   which validates the protocol), C (SDL port + legacy protocol removal)
+   overlapping B, D (production server) last. **§6.4 (path traversal) must
+   land before anything internet-facing deploys** (phase D); the remaining
+   §7/§8 items stay background work and are unaffected.
