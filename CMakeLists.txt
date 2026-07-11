@@ -18,7 +18,6 @@ include(CheckIncludeFileCXX)
 # User-facing options.
 # ---------------------------------------------------------------------------
 
-option(XCONQ_UI_CURSES "Build the curses interface (cconq)" ON)
 option(XCONQ_UI_SDL    "Build the SDL 3 interface (sdlconq)" ON)
 
 set(XCONQ_DATA_DIR "${CMAKE_INSTALL_FULL_DATADIR}/xconq" CACHE PATH
@@ -50,13 +49,6 @@ option(XCONQ_FUZZ "Build the libFuzzer GDL-reader harness (Clang only)" OFF)
 # dependencies are missing, so a bare kernel build always works.
 # ---------------------------------------------------------------------------
 
-if(XCONQ_UI_CURSES)
-    find_package(Curses)
-    if(NOT CURSES_FOUND)
-        message(WARNING "Curses not found; skipping the cconq interface")
-    endif()
-endif()
-
 if(XCONQ_UI_SDL)
     find_package(SDL3)
     if(NOT SDL3_FOUND)
@@ -70,15 +62,6 @@ endif()
 # ---------------------------------------------------------------------------
 
 check_include_file_cxx(dirent.h HAVE_DIRENT_H)
-
-# Which curses flavor did we find?
-if(CURSES_FOUND)
-    if(CURSES_NCURSES_LIBRARY OR CURSES_HAVE_NCURSES_H OR CURSES_HAVE_NCURSES_NCURSES_H)
-        set(HAVE_NCURSES_LIB 1)
-    else()
-        set(HAVE_CURSES_LIB 1)
-    endif()
-endif()
 
 configure_file(kernel/acdefs.h.in   ${CMAKE_BINARY_DIR}/include/acdefs.h)
 
@@ -150,9 +133,6 @@ endfunction()
 
 add_subdirectory(kernel)
 
-if(XCONQ_UI_CURSES AND CURSES_FOUND)
-    add_subdirectory(curses)
-endif()
 if(XCONQ_UI_SDL AND SDL3_FOUND AND X11_FOUND)
     add_subdirectory(sdl)
 endif()

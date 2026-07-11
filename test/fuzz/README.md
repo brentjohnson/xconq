@@ -33,7 +33,7 @@ The harness is Clang-only (libFuzzer) and off by default. Configure with
 
 ```sh
 CC=clang CXX=clang++ cmake -B build-fuzz -DXCONQ_FUZZ=ON \
-    -DCMAKE_BUILD_TYPE=RelWithDebInfo -DXCONQ_UI_CURSES=OFF -DXCONQ_UI_SDL=OFF
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo -DXCONQ_UI_SDL=OFF
 cmake --build build-fuzz --target fuzz_gdl -j
 ```
 

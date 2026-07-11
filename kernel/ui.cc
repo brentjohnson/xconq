@@ -3750,12 +3750,6 @@ impl_build(
 	Unit *resume = NULL, *occ = NULL;
 	UnitView *uview = NULL;
 
-	/* This is to support the curses interface, which cannot 
-           pick places to build and therefore passes 0 as x and y. */
-	if (x == -1 && y == -1) {
-	    x = unit->x;
-	    y = unit->y;
-	}
 	/* Check that build is possible before proceeding. */
 	if (!unit_can_build_type_at(unit, u2, x, y)) {
 	    return FALSE;

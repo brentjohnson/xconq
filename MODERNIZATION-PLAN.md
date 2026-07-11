@@ -75,6 +75,19 @@ sole X11 consumer. Build options, CI packages, and docs (`CLAUDE.md`,
 accordingly; the §4 items about the Tcl/Tk 9 port, the Xt/Xaw fate decision,
 and the BWidget vendor-audit are resolved by this removal (see §4 below).
 
+Step 3 (done, July 2026): removed the `curses/` UI client (`cconq`), the last
+UI besides `sdlconq`. `sdlconq` is now the sole UI; `-DXCONQ_UI_SDL` is the
+only remaining UI build option. Removed `HAVE_CURSES_LIB`/`HAVE_NCURSES_LIB`/
+`HAVE_PDCURSES_LIB` from `kernel/acdefs.h.in` and the `find_package(Curses)`
+detection from the top-level `CMakeLists.txt`, along with the curses-only
+`impl_build` `x == -1 && y == -1` special case in `kernel/ui.cc` (only
+`curses/ccmd.cc` ever passed that sentinel; `sdl/sdlcmd.cc` always passes a
+real position). Build options, CI packages (`libncurses-dev` dropped), and
+docs (`CLAUDE.md`, `CONTRIBUTING.md`, `README`, `doc/INSTALL`,
+`doc/commands.texi`, `doc/refman.texi`, `doc/hacking.texi`,
+`test/fuzz/README.md`) were updated accordingly. §4's curses/PDCurses items
+below are stale as a result and should be read as historical.
+
 ## 1. Language & toolchain
 
 > **All of §1 is complete (7/2026)** — every task below is done, so the
@@ -521,6 +534,10 @@ and the BWidget vendor-audit are resolved by this removal (see §4 below).
   list the game properly. (The old `xconq.desktop`/`xconq.png`, which
   launched the now-removed `xconq` binary, was deleted in Step 2; a fresh
   desktop entry pointing at `sdlconq` is part of this item.)
+- ~~**[S] Decide the fate of the curses UI (`cconq`).**~~ *(resolved by
+  removal, 7/2026)*: deleted outright — see Step 3. `sdlconq` is now the
+  sole UI, so the §5.1 PDCurses-parity question this used to motivate is
+  moot too.
 
 ## 5. Platform behavior
 
@@ -567,31 +584,31 @@ in place and inventoried:
   `kernel/CMakeLists.txt:63-67` (`if(WIN32) ... win32.c ... else() ...
   unix.c`), but untested for at least 20 years — no CI leg, no MinGW/MSVC
   box has built it since the CMake migration or before.
-- `sdl/Xconq.RC`, `curses/Xconq.RC`: trivial 2-line `.rc` scripts, each
-  just associating `Xconq.ico`/`Xcdoc.ico` (present in both directories)
-  as the executable's icon. Not referenced by any CMakeLists.txt — dead
-  weight, but harmless and tiny.
+- `sdl/Xconq.RC`: a trivial 2-line `.rc` script associating `Xconq.ico` as
+  the executable's icon. Not referenced by any CMakeLists.txt — dead
+  weight, but harmless and tiny. (`curses/Xconq.RC`/`Xcdoc.ico` no longer
+  exist — `curses/` was deleted in Step 3, 7/2026.)
 - Not previously inventoried, but decision-relevant: `sdl/CMakeLists.txt`
   unconditionally links `X11::Xext`/`X11::Xmu`/`X11::X11` and always
   builds `sdlunix.cc`, whose `main()` (sdlconq's actual entry point) calls
   `setuid`/`geteuid`/X11 geometry parsing directly — i.e. the SDL UI's
   platform glue is Unix/X11-coupled, not just "missing a WIN32 branch."
-  There is no `sdlwin32.cc` or equivalent. `curses/` has no such coupling
-  (no X11, no setuid) and would be the easier UI to port via PDCurses.
+  There is no `sdlwin32.cc` or equivalent, and `sdlconq` is now the sole UI
+  (curses, which had no such X11/setuid coupling, was deleted in Step 3).
 
 Recommendation: reviving Windows support is more than flipping the
 existing `if(WIN32)` switch on. The plausible modern path is an SDL2/3
-port of the SDL UI (already the top §4 UI priority) with a real
-`sdlwin32.cc`-equivalent main/platform file, `winsock2`/`ws2_32` linkage
-for networking (`socket.c` already has partial `WIN32`/`winsock2.h`
-handling, untested), a MinGW or MSVC CI leg, and a decision on whether
-`curses` gets a parallel PDCurses build (cheaper, since it has no
-Unix-specific coupling today). `kernel/win32.c` contributes a plausible
-starting point for the kernel-level path/signal glue (it's small and
-already CMake-wired) but is unverified and pre-dates modern Win32/UTF-8
-path conventions; everything UI-side would be new work. This is a
-maintainer call, not made here — the Win32 files are left in place either
-way pending that decision.
+port of the SDL UI (already the top §4 UI priority, and now the only UI)
+with a real `sdlwin32.cc`-equivalent main/platform file, `winsock2`/
+`ws2_32` linkage for networking (`socket.c` already has partial `WIN32`/
+`winsock2.h` handling, untested), and a MinGW or MSVC CI leg. (A parallel
+PDCurses build for `curses` was a candidate cheaper first step, but it no
+longer applies — `curses` was deleted in Step 3, 7/2026.) `kernel/win32.c`
+contributes a plausible starting point for the kernel-level path/signal
+glue (it's small and already CMake-wired) but is unverified and pre-dates
+modern Win32/UTF-8 path conventions; everything UI-side would be new
+work. This is a maintainer call, not made here — the Win32 files are left
+in place either way pending that decision.
 - ~~**[S] Replace kernel/config.h's homegrown size detection**, which checks
   `SIZEOF_INT`/`SIZEOF_LONG` for its `Z16`/`Z32` typedefs — replace with
   `<cstdint>` fixed width types and delete the checks from `acdefs.h`.~~ (done 7/2026)
@@ -631,10 +648,11 @@ way pending that decision.
   green (`ctest --label-exclude long`, 559/559, including `check-save`
   fidelity — no truncation regressed a save).
 
-  **Still open:** the two UIs (`curses/`, `sdl/`) still have ~130 unbounded
-  calls (`curses/cdraw.cc` is the bulk). Most format the same
-  already-bounded kernel handle strings into local buffers, but they should
-  get the same pass; the fuzzers from §3 cover the kernel reader, not UI
+  **Still open:** `sdl/` (the sole remaining UI as of Step 3, 7/2026) still
+  has unbounded calls formatting the same already-bounded kernel handle
+  strings into local buffers; it should get the same pass. (`curses/` — the
+  bulk of the original ~130-call count — was deleted in Step 3, so its share
+  of this item is moot.) The fuzzers from §3 cover the kernel reader, not UI
   formatting.
 - **[M] Review the homegrown networking layer** (`kernel/tp.cc`,
   `kernel/socket.cc`): it's a custom peer-to-peer protocol whose messages feed
@@ -796,9 +814,9 @@ Task: stand up clang-tidy for Xconq with a minimal high-signal profile,
 triage the findings, and fix the clear true positives.
 
 PREREQUISITE: the §1 -fpermissive removal must be committed (clang-tidy
-uses Clang's frontend, which has no equivalent of -fpermissive). If curses
-or SDL/X11 headers still trip Clang, scope this task to kernel/ and say
-so in the plan note.
+uses Clang's frontend, which has no equivalent of -fpermissive). If SDL/X11
+headers still trip Clang, scope this task to kernel/ and say so in the
+plan note.
 Method:
 1. Configure with -DCMAKE_EXPORT_COMPILE_COMMANDS=ON. Note the LANGUAGE CXX
    arrangement: if the §1 .cc rename has NOT landed yet, .c entries in
@@ -982,12 +1000,13 @@ forward old text unchecked.
 Method:
 1. README: rewrite as the front door. What Xconq is (game system + GDL +
    games library — keep/adapt the existing good prose), current status
-   (CMake build, two UIs: curses (cconq) and native SDL3 (sdlconq, the
-   primary graphical client, ported from SDL 1.2 through SDL2 to SDL3,
-   7/2026 — see §4) — the Tcl/Tk and Xt/Xaw UIs were removed in Step 2, 7/2026; a
-   minimal UI-section update already landed with that removal, but
-   re-verify against the current tree rather than trusting it), quick
-   build instructions (cmake -B build &&
+   (CMake build, one UI: native SDL3 (sdlconq, the sole and primary
+   graphical client, ported from SDL 1.2 through SDL2 to SDL3, 7/2026 — see
+   §4) — the Tcl/Tk and Xt/Xaw UIs were removed in Step 2, 7/2026, and the
+   curses UI (cconq) was removed in Step 3, 7/2026; a minimal UI-section
+   update already landed with each removal, but re-verify against the
+   current tree rather than trusting it), quick build instructions
+   (cmake -B build &&
    cmake --build build -j, dependency list matching the CI workflow's
    apt packages), how to run tests, pointer to MODERNIZATION-PLAN.md and
    CONTRIBUTING.md (if it exists), license note. Delete dead URLs
@@ -1150,8 +1169,8 @@ Method:
    callback surface the kernel expects (the interface functions declared
    in kernel/conq.h / kpublic.h that each UI must provide — enumerate them
    from an existing UI, e.g. what skelconq stubs out vs what sdl/
-   implements; tcltk/ was removed in Step 2, so sdl/ or curses/ is now the
-   reference implementation). Document: how big is the required surface,
+   implements; tcltk/ was removed in Step 2 and curses/ in Step 3, so sdl/
+   is now the sole reference implementation). Document: how big is the required surface,
    which parts are display-only vs input vs blocking dialogs, and where
    the kernel assumes synchronous UI responses (the pain point for any async/web
    frontend).
@@ -1173,10 +1192,10 @@ Method:
 3. Recommend ONE path with a phased milestone plan (milestone 1 must be
    a playable spectator/hotseat client of the default game, not feature
    parity) and name the first three concrete engineering tasks.
-4. Keep `sdlconq`'s (and `cconq`'s) fate explicit: the recommendation must
-   say what happens to each of the two remaining UIs under each option.
-   (This item previously asked the same question about the Tcl/Tk UI,
-   which was removed rather than ported — see Step 2.)
+4. Keep `sdlconq`'s fate explicit: the recommendation must say what
+   happens to it — now the sole remaining UI — under each option. (This
+   item previously asked the same question about the Tcl/Tk UI, removed
+   rather than ported in Step 2, and the curses UI, removed in Step 3.)
 Deliverable: doc/ui-successor-design.md committed; add a dated pointer on
 this plan item. Nothing else changes in the tree.
 ```

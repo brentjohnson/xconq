@@ -13,7 +13,3 @@ any later version.  See the file COPYING.  */
 /* Is 'dirent.h' available? */
 #cmakedefine HAVE_DIRENT_H 1
 
-/* Which curses library is being used? */
-#cmakedefine HAVE_CURSES_LIB 1
-#cmakedefine HAVE_NCURSES_LIB 1
-#cmakedefine HAVE_PDCURSES_LIB 1

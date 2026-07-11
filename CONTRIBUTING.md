@@ -22,22 +22,22 @@ cmake --build build -j
 cmake --install build
 ```
 
-UI options, all `ON` by default:
+UI option, `ON` by default:
 
-- `-DXCONQ_UI_CURSES=ON|OFF` — curses interface, `cconq`
 - `-DXCONQ_UI_SDL=ON|OFF` — SDL3 interface, `sdlconq`
 
 (The Tcl/Tk `xconq` and legacy Xt/Xaw `xtconq` interfaces were removed 7/2026;
-see MODERNIZATION-PLAN.md's Step 2 note.)
+the curses interface (`cconq`) was removed 7/2026; see MODERNIZATION-PLAN.md's
+Step 2 note.)
 
 Other useful cache variables: `XCONQ_DATA_DIR` (installed location of the
 games library/images/UI scripts) and `XCONQ_SCORES_DIR` (runtime score file
 location). Generated config headers (`acdefs.h`, `version.h`) land in
 `build/include/`, produced from templates in `kernel/*.h.in`.
 
-Everything is compiled as C++: the kernel and curses sources use `.cc`
-extensions (renamed from `.c` 7/2026), pinned to **gnu++17**. Don't be
-surprised to see C-style code; treat it as C++ for compiler-flag purposes.
+Everything is compiled as C++: the kernel sources use `.cc` extensions
+(renamed from `.c` 7/2026), pinned to **gnu++17**. Don't be surprised to see
+C-style code; treat it as C++ for compiler-flag purposes.
 
 ## Testing
 

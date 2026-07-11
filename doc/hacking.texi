@@ -1006,11 +1006,10 @@ turn is likely to be over is tremendous.
 
 @section Graphics
 
-Graphics are an important feature of @i{Xconq}.  Although not every
-interface needs it -- for instance the curses interface is limited to
-drawing two ASCII characters for each cell, and its ``graphics'' code
-just has to choose which two to draw -- nearly all players prefer a
-graphically rich display.
+Graphics are an important feature of @i{Xconq}.  (The now-removed curses
+interface was a historical exception, limited to drawing two ASCII
+characters for each cell.)  Nearly all players prefer a graphically rich
+display.
 
 @i{Xconq} graphics basically consists of the drawing of a number of
 small images into a map or view window, along with some geometric

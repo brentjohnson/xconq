@@ -8369,8 +8369,8 @@ style by making it be the default.
 This variable is a string whose first character will be used to
 represent unexplored terrain.  If the string consists of two characters,
 the second char will be scattered throughout a field of the first char.
-Defaults to @code{" ?"}.  (At present, this is used only by the curses
-interface.)
+Defaults to @code{" ?"}.  (Only used by the curses interface, removed
+7/2026; not currently consulted by any UI.)
 @end deffn
 
 @deffn GlobalVariable @code{unseen-color} str

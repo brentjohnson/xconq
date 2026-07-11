@@ -10,7 +10,7 @@ a Lisp-like declarative language. The games library (`lib/*.g`) contains dozens 
 scenarios (Empire-style default game, historical battles, fantasy/space, etc.). Multiple
 swappable user interfaces sit on top of the same kernel.
 
-Everything is compiled as C++: the kernel and curses sources use `.cc` extensions
+Everything is compiled as C++: the kernel sources use `.cc` extensions
 (renamed from `.c` 7/2026), pinned to **gnu++17**.
 
 ## Build & test
@@ -25,37 +25,36 @@ ctest --test-dir build --label-exclude long   # 'long' tests play full games
 cmake --install build
 ```
 
-UI options (`-DXCONQ_UI_CURSES/SDL=ON|OFF`) gate the two interfaces.
-Executables: `cconq` (curses), `sdlconq` (SDL3), and `skelconq` (headless) all
-find `lib/`/`images/` from the source checkout (`kernel/unix.cc`'s
-`default_library_pathname()`, compiled-in `XCONQ_SRCDIR` fallback) even before
-`cmake --install`, so e.g. `build/sdl/sdlconq` run from the repo root works
-uninstalled. `-L <path>` or `XCONQLIB`/`XCONQIMAGES` env vars still override
-this for a non-default checkout layout. The Tcl/Tk
+`-DXCONQ_UI_SDL=ON|OFF` gates the sole UI. Executables: `sdlconq` (SDL3) and
+`skelconq` (headless) both find `lib/`/`images/` from the source checkout
+(`kernel/unix.cc`'s `default_library_pathname()`, compiled-in `XCONQ_SRCDIR`
+fallback) even before `cmake --install`, so e.g. `build/sdl/sdlconq` run from
+the repo root works uninstalled. `-L <path>` or `XCONQLIB`/`XCONQIMAGES` env
+vars still override this for a non-default checkout layout. The Tcl/Tk
 (`xconq`) and legacy Xt/Xaw (`xtconq`) UIs were removed 7/2026 — see
-MODERNIZATION-PLAN.md's Step 2 note. Other knobs: `XCONQ_DATA_DIR`,
+MODERNIZATION-PLAN.md's Step 2 note; the curses UI (`cconq`) was removed
+7/2026 as well. Other knobs: `XCONQ_DATA_DIR`,
 `XCONQ_SCORES_DIR`. Generated config headers (`acdefs.h`, `version.h`) land in
 `build/include/`, from templates in `kernel/*.h.in`.
 
 CI (`.github/workflows/c-cpp.yml`) is a matrix: on Ubuntu, GCC and Clang
-each build Debug and Release (4 legs), installing `libncurses-dev
-libxmu-dev` plus SDL3's X11 build deps and building SDL3 from source (no
-`libsdl3-dev` package on `ubuntu-latest` yet); both UIs build and the
-quick ctest lane (`--label-exclude long`) runs on every leg. A macOS job
-(`brew install sdl3`) builds the kernel, `skelconq`, and `cconq` and runs
-the same quick ctest lane; `sdlconq` needs X11 (it links Xlib/Xmu/Xext
-directly, not just SDL3 — see `sdl/CMakeLists.txt`), which isn't present
-on the runner, so the top-level `X11_FOUND` gate just skips it there.
-The macOS job is `continue-on-error: true` pending a longer green track
-record. A separate `sanitizers` job builds the kernel + `skelconq` with GCC
-on RelWithDebInfo and `-DXCONQ_SANITIZE=address,undefined` (the toggle wires
-`-fsanitize` into compile and link via `xconq_common`) and runs the quick
-ctest lane under `ASAN_OPTIONS=detect_leaks=0` (leak checking is deferred —
-the kernel frees almost nothing by design) and
-`UBSAN_OPTIONS=halt_on_error=1`; it configures `-DXCONQ_TEST_TIMEOUT_SCALE=3`
-to widen the test timeouts (CTest `TIMEOUT` and `test/common.sh`'s per-game
-bound) for the 2–5× sanitizer slowdown. All legs build with `-j` and skip the
-`long` label.
+each build Debug and Release (4 legs), installing `libxmu-dev` plus SDL3's
+X11 build deps and building SDL3 from source (no `libsdl3-dev` package on
+`ubuntu-latest` yet); the UI builds and the quick ctest lane
+(`--label-exclude long`) runs on every leg. A macOS job (`brew install sdl3`)
+builds the kernel and `skelconq` and runs the same quick ctest lane;
+`sdlconq` needs X11 (it links Xlib/Xmu/Xext directly, not just SDL3 — see
+`sdl/CMakeLists.txt`), which isn't present on the runner, so the top-level
+`X11_FOUND` gate just skips it there. The macOS job is `continue-on-error:
+true` pending a longer green track record. A separate `sanitizers` job
+builds the kernel + `skelconq` with GCC on RelWithDebInfo and
+`-DXCONQ_SANITIZE=address,undefined` (the toggle wires `-fsanitize` into
+compile and link via `xconq_common`) and runs the quick ctest lane under
+`ASAN_OPTIONS=detect_leaks=0` (leak checking is deferred — the kernel frees
+almost nothing by design) and `UBSAN_OPTIONS=halt_on_error=1`; it configures
+`-DXCONQ_TEST_TIMEOUT_SCALE=3` to widen the test timeouts (CTest `TIMEOUT`
+and `test/common.sh`'s per-game bound) for the 2–5× sanitizer slowdown. All
+legs build with `-j` and skip the `long` label.
 
 ### Running tests
 
@@ -148,7 +147,7 @@ stay in sync.
   turns; `kernel.h` is the internal header, `conq.h`/`kpublic.h` the public API to UIs.
 - **`kernel/ai*.cc`, `plan.cc`, `mplayer.cc`** — the AIs. GDL games are analyzed by
   a generic AI that infers how to play arbitrary rulesets.
-- **UIs** (`curses/`, `sdl/`) — each provides a `main` and implements the
+- **UIs** (`sdl/`) — each provides a `main` and implements the
   interface callbacks the kernel expects. They link the kernel as `libconq.a` / `libconqlow.a`.
 - **`lib/`** — the GDL games library (`*.g`). This is data, but it is where most "content"
   changes happen and is exercised by the test suite.

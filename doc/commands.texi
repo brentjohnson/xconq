@@ -766,7 +766,8 @@ This causes the side to lose, but leaves the game running.
 @end ifset
 
 @item run
-[This command only has effect in curses interface.]  Run continuously
+[Only implemented by the curses interface, removed 7/2026; not currently
+available in any UI.]  Run continuously
 for several turns.  By default, you must manually end each turn.  This
 command allows you to set the number of turns that will auto-finish.
 Note that if the AI is controlling your side, and turns auto-finish, you
