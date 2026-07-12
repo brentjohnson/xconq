@@ -614,6 +614,51 @@ copy_string(const char *str)
     return rslt;
 }
 
+/* Validate a file or module name that came from UNTRUSTED input -- GDL module
+   content (e.g. an `(include ...)` or a base-module/filename property), a saved
+   game, or a network peer -- before it is resolved against the library search
+   path or the working directory.  A safe name is a *relative* path built only
+   from letters, digits, and the punctuation '-', '_', '.', '/' (forward slash
+   permits library subdirectories such as "lib/foo"), with no leading slash, no
+   backslash, and no ".." path component.  Such a name can never escape the
+   directory it is resolved against, so it cannot be used as a directory-
+   traversal arbitrary-file read/write primitive.
+
+   The user's OWN explicit paths (command line, UI file dialog, .xconq
+   preferences) are trusted and must NOT be routed through this check -- doing
+   so would break "load my file from anywhere".  Returns TRUE if NAME is safe to
+   resolve as untrusted input, FALSE (with no side effects) otherwise; the
+   caller issues the appropriate warning and skips the load. */
+
+int
+valid_untrusted_filename(const char *name)
+{
+    const char *p;
+    char c;
+
+    if (empty_string(name))
+      return FALSE;
+    /* No absolute paths. */
+    if (name[0] == '/')
+      return FALSE;
+    for (p = name; (c = *p) != '\0'; ++p) {
+	/* Allowlist of permitted characters (rejects backslashes, colons,
+	   whitespace, control chars, shell metacharacters, etc.). */
+	if (!((c >= 'A' && c <= 'Z')
+	      || (c >= 'a' && c <= 'z')
+	      || (c >= '0' && c <= '9')
+	      || c == '-' || c == '_' || c == '.' || c == '/'))
+	  return FALSE;
+	/* Reject any ".." path component -- i.e. a "..\0" or "../" at the
+	   start of the name or immediately following a '/'. */
+	if (c == '.' && p[1] == '.'
+	    && (p == name || p[-1] == '/')
+	    && (p[2] == '\0' || p[2] == '/'))
+	  return FALSE;
+    }
+    return TRUE;
+}
+
 /* Insert the given number of blanks between each char of the string. */
 
 char *

@@ -272,7 +272,11 @@ load_image_families(FILE *fp, int loadnow,
 	    if (imf != NULL) {
 		imfile = get_image_file(buf2);
 		imf->location = imfile;
-		if (loadnow && !imfile->loaded) {
+		if (loadnow && !imfile->loaded
+		    && !valid_untrusted_filename(imfile->name)) {
+		    init_warning("Ignoring unsafe image-family file \"%s\"",
+				 imfile->name);
+		} else if (loadnow && !imfile->loaded) {
 		    load_imf_file(imfile->name, callback);
 		    imfile->loaded = TRUE;
 		} else {
@@ -2483,7 +2487,14 @@ get_generic_images(const char *name)
 	imf = get_imf(name);
 	if (imf == NULL)
 	  return NULL;
-	if (imf->location != NULL) {
+	/* The image-family file location is (untrusted) imf-dir/GDL content
+	   resolved against the library search path; contain traversal out of
+	   it.  A rejected name simply leaves the family unloaded. */
+	if (imf->location != NULL
+	    && !valid_untrusted_filename(imf->location->name)) {
+	    init_warning("Ignoring unsafe image-family file \"%s\"",
+			 imf->location->name);
+	} else if (imf->location != NULL) {
 	    /* Load data filling in the family. */
 	    for_all_library_paths(path) {
 		make_pathname(path->path, imf->location->name, "", spbuf);
@@ -2494,7 +2505,7 @@ get_generic_images(const char *name)
 	    }
 	    /* Maybe try the plain filename, just in case. */
 	    if (!imf->location->loaded) {
-	    	imf->location->loaded = 
+	    	imf->location->loaded =
 		    load_imf_file(imf->location->name, NULL);
 	    }
 	    /* We don't complain here about not finding the file, because

@@ -3087,6 +3087,15 @@ receive_packet(int id, char *buf)
 	  case 'f':
 	  /* We received the filename of a saved game. */
 	    if (buf[1] == ' ') {
+		/* The filename comes from an (untrusted) network peer and is
+		   resolved against the saved-game and library dirs; reject any
+		   directory-traversal attempt rather than opening it. */
+		if (!valid_untrusted_filename(buf + 2)) {
+		    run_warning("Ignoring unsafe saved-game filename \"%s\" from peer",
+				buf + 2);
+		    should_rebroadcast = FALSE;
+		    break;
+		}
 		Module *module = create_game_module(NULL);
    		module->filename = copy_string(buf + 2);
 		mainmodule = module;
@@ -3104,6 +3113,14 @@ receive_packet(int id, char *buf)
 	  case 'g':
 	  /* We received the name of a library module. */
 	    if (buf[1] == ' ') {
+		/* Library module name from an (untrusted) network peer,
+		   resolved against the library search path; contain traversal. */
+		if (!valid_untrusted_filename(buf + 2)) {
+		    run_warning("Ignoring unsafe library module name \"%s\" from peer",
+				buf + 2);
+		    should_rebroadcast = FALSE;
+		    break;
+		}
 		Module *module = get_game_module(buf + 2);
 		mainmodule = module;
 		load_game_module(mainmodule, TRUE);
@@ -3159,7 +3176,16 @@ receive_packet(int id, char *buf)
 	    }
 	    break;
 	  case 'w':
-	    save_game(buf + 1);
+	    /* Any peer can request a coordinated save; the filename is
+	       (untrusted) and is resolved (via save_game -> game_filename)
+	       against the per-user data dir, so contain traversal to keep it
+	       from becoming an arbitrary-file-write primitive. */
+	    if (valid_untrusted_filename(buf + 1)) {
+		save_game(buf + 1);
+	    } else {
+		run_warning("Ignoring unsafe save filename \"%s\" from peer",
+			    buf + 1);
+	    }
 	    /* This can be issued by any player. */
 	    should_rebroadcast = TRUE;
 	    break;

@@ -397,6 +397,11 @@ extern char *find_name(const char *fname);
 /* New wrapper for fopen defined in mac.c and unix.c. */
 extern FILE *open_file(const char *filename, const char *mode);
 
+/* Containment check for a file/module name from untrusted (GDL/save/network)
+   input; TRUE if the name is a safe relative path that cannot escape the
+   directory it is resolved against.  Defined in util.cc. */
+extern int valid_untrusted_filename(const char *name);
+
 /* For coordinated saving of network games. */
 extern void save_game(const char *fname);
 

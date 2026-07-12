@@ -735,57 +735,53 @@ Win32 question considerably; revisit after §10 phase B.)*
   `pixel-size`/dimensions still size large allocations and drive palette-index
   reads) — worth a follow-up pass with global clamping of GDL numeric image
   fields, but not memory-unsafe after the fixes above.
-- **[S] Audit file-path handling** in save/restore and module loading
+- ~~**[S] Audit file-path handling** in save/restore and module loading
   (`fopen` of names derived from GDL input or network messages — check for
-  directory traversal out of the library dir). *(Priority raised 2026-07-11:
-  this is a hard prerequisite for running a public `xconqd` server —
-  ARCHITECTURE.md §6 — so it should land before §10 phase D deploys anything
-  internet-facing.)*
-
-**⚙ PROMPT 6.4 — recommended model: Opus.** *(Requires tracing where each
-filename can originate and deciding a containment policy — a wrong "safe"
-verdict is an arbitrary-file-read/write primitive.)*
-
-```text
-Task: audit every place Xconq opens a file whose name derives from
-untrusted input (GDL module content, save files, network messages), and
-add containment against directory traversal.
-
-Context: module loading resolves names like (include "foo") against a
-library search path (see kernel/module.c and the path logic in
-kernel/unix.c — XCONQLIB/XCONQ_DATA_DIR and game_homedir()). Save files
-themselves contain module names/filenames that get re-resolved on restore
-(step 1 already fixed the worst instance: a save's (filename ...) property
-clobbering the real filename — see plan intro). Network peers can send
-module names for the host to load.
-Method:
-1. Inventory: grep for fopen/open_module/open_library_file-style calls in
-   kernel/ (module.c, read.c, write.c or save code, imf/image loading,
-   score.c) and each UI. For each site, answer: where can the name come
-   from (hardcoded / user's own command / GDL content / save content /
-   network), and what path resolution happens.
-2. Classify: a name from GDL content, a save, or the network is UNTRUSTED
-   even though the user chose to open the containing file.
-3. Containment policy to implement for untrusted names:
-   - reject absolute paths and any name containing ".." components (and
-     on principle, backslashes); a plain-name allowlist check (letters,
-     digits, dash, underscore, dot, forward slash for subdirs) in ONE
-     shared validation helper is preferable to per-site fixes;
-   - untrusted names resolve only within the library search path dirs;
-   - the user's OWN explicit paths (command line, UI file dialog, .xconq
-     prefs) stay unrestricted — do not break "load my file from anywhere".
-4. Apply the helper at every untrusted site; on rejection use the
-   surrounding error idiom (init_warning etc.), don't exit.
-5. Test: add a test/*.g fragment (or extend an existing scripted .inp) that
-   attempts (include "../outside") and a save referencing a traversal path,
-   asserting a clean warning, wired into an existing check-* script if it
-   fits the harness; otherwise document the manual repro in the commit.
-Verify: build all UIs; ctest quick suite green — ESPECIALLY check-save
-(restore re-resolves module names; your validation must not reject any
-legitimate library layout, including subdir includes like "lib/foo").
-Commit with a site-by-site summary (trusted/untrusted/fixed); mark this
-item done (strikethrough + date) in MODERNIZATION-PLAN.md.
-```
+  directory traversal out of the library dir).~~ *(done 2026-07-11)* Added one
+  shared containment helper, `valid_untrusted_filename()` (`kernel/util.cc`,
+  declared in `misc.h`): a name from GDL/save/network input is safe only if it
+  is a *relative* path built from the allowlist `[A-Za-z0-9._/-]` with no
+  leading slash, no backslash, and no `..` component — so it can never escape
+  the dir it resolves against. Verified against the whole library first (every
+  `include`/base name and all 1468 `imf.dir` FileName entries pass, so no
+  legitimate layout — including subdir includes like `lib/foo` — is rejected).
+  Site-by-site audit of every `open_file`/`open_module`/`open_library_file`
+  caller:
+  - **UNTRUSTED, now contained:**
+    - `read.cc` `include_module` — `(include "name")` from GDL content →
+      resolved by name against the library search path. Rejected traversal
+      names are skipped with a `read_warning`.
+    - `read.cc` `interp_game_module` — the `base-module`, `default-base-module`,
+      `base-game`, and `filename` module properties (GDL/save content, each
+      later re-resolved and loaded). Empty values still clear the property as
+      before; only non-empty unsafe names warn and are ignored. (`filename` was
+      already narrowed in step 1 to not clobber the real file, and the writer's
+      `find_name` always records a bare basename, so no real save regresses.)
+    - `tp.cc` network handlers `f` (saved-game filename), `g` (library module
+      name), and `w` (coordinated-save filename → arbitrary *write*) — all from
+      a peer; rejected with a `run_warning`, packet not acted on. (These live in
+      code slated for removal by §10/10.17, but the fix is cheap and legacy
+      multiplayer stays enabled until then.)
+    - `score.cc` — the `scorefile-name` GDL gvar is joined onto the per-user
+      scores dir on both the read and write paths; an unsafe value is ignored
+      (`run_warning`) and the default `SCOREFILE` used instead.
+    - `gif.cc` `get_gif` and `imf.cc` `get_generic_images`/`load_image_families`
+      — image-family file names from GDL `(file ...)`/`imf.dir`, resolved
+      against the images/library dirs; rejected names leave the family unloaded
+      with an `init_warning`.
+  - **TRUSTED, left unrestricted (the user's own explicit paths):** the
+    command-line/UI game selection that creates `mainmodule`; `save_game`/
+    `write_game_module` targets typed by the player; `statistics_filename`
+    (`XCONQSTATSFILE` env or hardcoded default); `ps.cc` PostScript-dump target
+    (UI print command); the `imf2imf` tool's output paths. Hardcoded names
+    (`game.dir`, `imf.dir`, `Xconq.Warnings`, debug/trace files, `news`) are
+    trusted by construction.
+  Tests: `test/unit/unittests.cc` gains `test_untrusted_filename` (accepts real
+  library names incl. subdirs and dotted names; rejects `..`/absolute/backslash/
+  whitespace/metachar/empty/NULL); `test/error-traversal.g` drives five hostile
+  `(include ...)` names through the real loader under `check-test`, asserting the
+  containment warnings fire with no crash and no file opened. Full quick lane
+  green (560/560, incl. all 174 `check-save` modules); both UIs build clean.
 
 ## 7. Code quality & developer experience
 

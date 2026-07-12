@@ -535,6 +535,13 @@ include_module(Obj *form, Module *module)
     SYNTAX(mname, (symbolp(mname) || stringp(mname)),
 	   "included module name not a string or symbol");
     name = c_string(mname);
+    /* The name comes from (untrusted) GDL content; reject any attempt to
+       reach outside the library search path via directory traversal. (An
+       empty name is left to the existing not-found handling downstream.) */
+    if (!empty_string(name) && !valid_untrusted_filename(name)) {
+	read_warning("Ignoring unsafe included module name \"%s\"", name);
+	return;
+    }
     Dprintf("Including \"%s\" ...\n", name);
     submodule = add_game_module(name, module);
     load_game_module(submodule, FALSE);
@@ -794,13 +801,27 @@ interp_game_module(Obj *form, Module *module)
 	    module->picturename = strval;
 	    break;
 	  case K_BASE_MODULE:
-	    module->basemodulename = strval;
+	    /* Base/default-base module and game names are (untrusted) GDL
+	       content that gets resolved and loaded as a module; reject any
+	       directory-traversal attempt so it stays within the library. An
+	       empty value just leaves the property unset, as it always did. */
+	    if (empty_string(strval) || valid_untrusted_filename(strval))
+	      module->basemodulename = strval;
+	    else
+	      read_warning("Ignoring unsafe base-module name \"%s\"", strval);
 	    break;
 	  case K_DEFAULT_BASE_MODULE:
-	    module->defaultbasemodulename = strval;
+	    if (empty_string(strval) || valid_untrusted_filename(strval))
+	      module->defaultbasemodulename = strval;
+	    else
+	      read_warning("Ignoring unsafe default-base-module name \"%s\"",
+			   strval);
 	    break;
 	  case K_BASE_GAME:
-	    module->basegame = strval;
+	    if (empty_string(strval) || valid_untrusted_filename(strval))
+	      module->basegame = strval;
+	    else
+	      read_warning("Ignoring unsafe base-game name \"%s\"", strval);
 	    break;
 	  case K_FILENAME:
 	    /* A declared filename must never override the file the
@@ -808,9 +829,17 @@ interp_game_module(Obj *form, Module *module)
 	       the filename they were written to (e.g. "save.xcq"),
 	       and clobbering the real filename here made a reload
 	       re-resolve the module by name and silently load the
-	       original library game instead of the saved state. */
-	    if (empty_string(module->filename))
-	      module->filename = strval;
+	       original library game instead of the saved state.  The
+	       recorded name is (untrusted) save/GDL content re-resolved
+	       against the saved-game and library dirs, so contain it too;
+	       a legitimately-written save always records a bare basename
+	       (see find_name in write.cc). */
+	    if (empty_string(module->filename)) {
+	      if (empty_string(strval) || valid_untrusted_filename(strval))
+		module->filename = strval;
+	      else
+		read_warning("Ignoring unsafe module filename \"%s\"", strval);
+	    }
 	    break;
 	  case K_INSTRUCTIONS:
 	    /* The instructions are a list of strings. */

@@ -92,6 +92,12 @@ get_gif(FileImage *fimg)
     LibraryPath *p;
     FILE *fp;
 
+    /* The image filename is (untrusted) GDL content resolved against the
+       images/library dirs; reject directory traversal out of them. */
+    if (!valid_untrusted_filename(fimg->name)) {
+	init_warning("Ignoring unsafe image filename \"%s\"", fimg->name);
+	return FALSE;
+    }
     /* First try a sibling images dir in case we opened a game
     file from a non-standard location. */
     snprintf(fallback, BUFSIZE, "../images/%s", fimg->name);

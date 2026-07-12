@@ -1119,8 +1119,14 @@ record_into_scorefile(void)
 	}
     }
     filename = SCOREFILE;
-    if (!empty_string(g_scorefile_name()))
-      filename = g_scorefile_name();
+    /* scorefile-name is (untrusted) GDL content joined onto the scores dir;
+       only honor it if it can't escape that dir via directory traversal. */
+    if (!empty_string(g_scorefile_name())) {
+      if (valid_untrusted_filename(g_scorefile_name()))
+	filename = g_scorefile_name();
+      else
+	run_warning("Ignoring unsafe scorefile-name \"%s\"", g_scorefile_name());
+    }
     fp = open_scorefile_for_writing(filename);
     if (fp == NULL) {
 	run_warning("%s cannot be opened for writing, will not record score",
@@ -1247,8 +1253,14 @@ read_scorefile(void)
     ScoreRecord *sr;
 
     filename = SCOREFILE;
-    if (!empty_string(g_scorefile_name()))
-      filename = g_scorefile_name();
+    /* scorefile-name is (untrusted) GDL content joined onto the scores dir;
+       only honor it if it can't escape that dir via directory traversal. */
+    if (!empty_string(g_scorefile_name())) {
+      if (valid_untrusted_filename(g_scorefile_name()))
+	filename = g_scorefile_name();
+      else
+	run_warning("Ignoring unsafe scorefile-name \"%s\"", g_scorefile_name());
+    }
     fp = open_scorefile_for_reading(filename);
     if ((NULL == fp) && !strcmp(filename, SCOREFILE))
       fp = open_scorefile_for_reading(OLD_SCOREFILE);

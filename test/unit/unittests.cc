@@ -362,6 +362,58 @@ test_types_and_tables(void)
     printf("\tDone.\n");
 }
 
+/* valid_untrusted_filename (kernel/util.cc) is the shared containment check
+   applied to every file/module name that arrives from untrusted input --
+   GDL (include ...)/base-module/filename/scorefile-name properties, saved
+   games, and network peers -- before it is resolved against the library
+   search path or working directory. It must accept the plain relative names
+   real games use (including library subdirs) and reject anything that could
+   escape the directory via directory traversal. */
+
+static void
+test_untrusted_filename(void)
+{
+    printf("Testing untrusted filename containment.\n");
+
+    /* Legitimate names the library actually uses must be accepted. */
+    CHECK(valid_untrusted_filename("standard"));
+    CHECK(valid_untrusted_filename("standard.g"));
+    CHECK(valid_untrusted_filename("aircraft.imf"));
+    CHECK(valid_untrusted_filename("hex-grid.gif"));
+    CHECK(valid_untrusted_filename("under_score"));
+    CHECK(valid_untrusted_filename("lib/foo"));	 /* subdir include */
+    CHECK(valid_untrusted_filename("a/b/c.g"));	 /* nested subdir */
+    CHECK(valid_untrusted_filename("a.b.c"));	 /* dots that aren't ".." */
+    CHECK(valid_untrusted_filename("v1.0"));
+
+    /* Directory traversal, absolute paths, and metacharacters must be
+       rejected -- these are the arbitrary-read/write primitives. */
+    CHECK(!valid_untrusted_filename(".."));
+    CHECK(!valid_untrusted_filename("../outside"));
+    CHECK(!valid_untrusted_filename("../../etc/passwd"));
+    CHECK(!valid_untrusted_filename("foo/../bar"));	/* .. mid-path */
+    CHECK(!valid_untrusted_filename("foo/.."));		/* trailing .. */
+    CHECK(!valid_untrusted_filename("a/../../b"));
+    CHECK(!valid_untrusted_filename("/etc/passwd"));	/* absolute */
+    CHECK(!valid_untrusted_filename("/"));
+    CHECK(!valid_untrusted_filename("..\\..\\win"));	/* backslash */
+    CHECK(!valid_untrusted_filename("foo\\bar"));
+    CHECK(!valid_untrusted_filename("a b"));		/* whitespace */
+    CHECK(!valid_untrusted_filename("foo;rm -rf"));	/* shell metachar */
+    CHECK(!valid_untrusted_filename("C:\\x"));		/* drive + colon */
+    CHECK(!valid_untrusted_filename("$HOME/x"));
+    CHECK(!valid_untrusted_filename(""));		/* empty */
+    CHECK(!valid_untrusted_filename(NULL));		/* null */
+
+    /* A lone "." and names that merely start with a dot are legal (they are
+       not ".." components and cannot traverse upward). */
+    CHECK(valid_untrusted_filename("."));
+    CHECK(valid_untrusted_filename(".hidden"));
+    CHECK(valid_untrusted_filename("...g"));	 /* three dots, not a ".." seg */
+
+    printf("\tDone.\n");
+}
+
 int
 main(void)
 {
@@ -371,6 +423,7 @@ main(void)
     test_lisp_malformed();
     test_dice_and_utils();
     test_types_and_tables();
+    test_untrusted_filename();
 
     printf("\n%u checks run, %u failed\n", checks_run, checks_failed);
     return checks_failed ? EXIT_FAILURE : EXIT_SUCCESS;
